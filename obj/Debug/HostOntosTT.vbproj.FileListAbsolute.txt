@@ -1,0 +1,10 @@
+C:\HOME_2017\OES\VB\HostOntosTT\bin\Debug\HostOntosTT.exe.config
+C:\HOME_2017\OES\VB\HostOntosTT\bin\Debug\HostOntosTT.exe
+C:\HOME_2017\OES\VB\HostOntosTT\bin\Debug\HostOntosTT.pdb
+C:\HOME_2017\OES\VB\HostOntosTT\bin\Debug\HostOntosTT.xml
+C:\HOME_2017\OES\VB\HostOntosTT\obj\Debug\WindowsApplication1.Form1.resources
+C:\HOME_2017\OES\VB\HostOntosTT\obj\Debug\WindowsApplication1.Resources.resources
+C:\HOME_2017\OES\VB\HostOntosTT\obj\Debug\HostOntosTT.vbproj.GenerateResource.Cache
+C:\HOME_2017\OES\VB\HostOntosTT\obj\Debug\HostOntosTT.exe
+C:\HOME_2017\OES\VB\HostOntosTT\obj\Debug\HostOntosTT.xml
+C:\HOME_2017\OES\VB\HostOntosTT\obj\Debug\HostOntosTT.pdb

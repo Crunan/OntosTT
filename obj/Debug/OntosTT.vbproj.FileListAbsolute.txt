@@ -1,0 +1,36 @@
+C:\Users\cophi\Source\Repos\OES\OTT_PLUS_EXE\bin\Debug\OTT_PLUS.exe.config
+C:\Users\cophi\Source\Repos\OES\OTT_PLUS_EXE\bin\Debug\OTT_PLUS.exe
+C:\Users\cophi\Source\Repos\OES\OTT_PLUS_EXE\bin\Debug\OTT_PLUS.pdb
+C:\Users\cophi\Source\Repos\OES\OTT_PLUS_EXE\bin\Debug\OTT_PLUS.xml
+C:\Users\cophi\Source\Repos\OES\OTT_PLUS_EXE\bin\Debug\Guna.UI2.dll
+C:\Users\cophi\Source\Repos\OES\OTT_PLUS_EXE\obj\Debug\OntosTT.vbprojAssemblyReference.cache
+C:\Users\cophi\Source\Repos\OES\OTT_PLUS_EXE\obj\Debug\WindowsApplication1.AboutBox1.resources
+C:\Users\cophi\Source\Repos\OES\OTT_PLUS_EXE\obj\Debug\WindowsApplication1.MainWindow.resources
+C:\Users\cophi\Source\Repos\OES\OTT_PLUS_EXE\obj\Debug\WindowsApplication1.DiameterEntryDialog.resources
+C:\Users\cophi\Source\Repos\OES\OTT_PLUS_EXE\obj\Debug\WindowsApplication1.Resources.resources
+C:\Users\cophi\Source\Repos\OES\OTT_PLUS_EXE\obj\Debug\WindowsApplication1.TSSBForm.resources
+C:\Users\cophi\Source\Repos\OES\OTT_PLUS_EXE\obj\Debug\OntosTT.vbproj.GenerateResource.cache
+C:\Users\cophi\Source\Repos\OES\OTT_PLUS_EXE\obj\Debug\OntosTT.vbproj.CoreCompileInputs.cache
+C:\Users\cophi\Source\Repos\OES\OTT_PLUS_EXE\obj\Debug\OntosTT.vbproj.CopyComplete
+C:\Users\cophi\Source\Repos\OES\OTT_PLUS_EXE\obj\Debug\OTT_PLUS.exe
+C:\Users\cophi\Source\Repos\OES\OTT_PLUS_EXE\obj\Debug\OTT_PLUS.xml
+C:\Users\cophi\Source\Repos\OES\OTT_PLUS_EXE\obj\Debug\OTT_PLUS.pdb
+C:\Users\cophi\Source\Repos\OES\OTT_PLUS_EXE\obj\Debug\WindowsApplication1.Form4.resources
+C:\Users\cophi\Dropbox (OES)\OES Team Folder\Manufacturing\Software\ONTOS TT Software\OTT_PLUS_EXE - V1.2.4 (Cinderella Update)\bin\Debug\OTT_PLUS.exe.config
+C:\Users\cophi\Dropbox (OES)\OES Team Folder\Manufacturing\Software\ONTOS TT Software\OTT_PLUS_EXE - V1.2.4 (Cinderella Update)\bin\Debug\OTT_PLUS.exe
+C:\Users\cophi\Dropbox (OES)\OES Team Folder\Manufacturing\Software\ONTOS TT Software\OTT_PLUS_EXE - V1.2.4 (Cinderella Update)\bin\Debug\OTT_PLUS.pdb
+C:\Users\cophi\Dropbox (OES)\OES Team Folder\Manufacturing\Software\ONTOS TT Software\OTT_PLUS_EXE - V1.2.4 (Cinderella Update)\bin\Debug\OTT_PLUS.xml
+C:\Users\cophi\Dropbox (OES)\OES Team Folder\Manufacturing\Software\ONTOS TT Software\OTT_PLUS_EXE - V1.2.4 (Cinderella Update)\bin\Debug\Guna.UI2.dll
+C:\Users\cophi\Dropbox (OES)\OES Team Folder\Manufacturing\Software\ONTOS TT Software\OTT_PLUS_EXE - V1.2.4 (Cinderella Update)\obj\Debug\OntosTT.vbprojAssemblyReference.cache
+C:\Users\cophi\Dropbox (OES)\OES Team Folder\Manufacturing\Software\ONTOS TT Software\OTT_PLUS_EXE - V1.2.4 (Cinderella Update)\obj\Debug\WindowsApplication1.AboutBox1.resources
+C:\Users\cophi\Dropbox (OES)\OES Team Folder\Manufacturing\Software\ONTOS TT Software\OTT_PLUS_EXE - V1.2.4 (Cinderella Update)\obj\Debug\WindowsApplication1.MainWindow.resources
+C:\Users\cophi\Dropbox (OES)\OES Team Folder\Manufacturing\Software\ONTOS TT Software\OTT_PLUS_EXE - V1.2.4 (Cinderella Update)\obj\Debug\WindowsApplication1.DiameterEntryDialog.resources
+C:\Users\cophi\Dropbox (OES)\OES Team Folder\Manufacturing\Software\ONTOS TT Software\OTT_PLUS_EXE - V1.2.4 (Cinderella Update)\obj\Debug\WindowsApplication1.Form4.resources
+C:\Users\cophi\Dropbox (OES)\OES Team Folder\Manufacturing\Software\ONTOS TT Software\OTT_PLUS_EXE - V1.2.4 (Cinderella Update)\obj\Debug\WindowsApplication1.Resources.resources
+C:\Users\cophi\Dropbox (OES)\OES Team Folder\Manufacturing\Software\ONTOS TT Software\OTT_PLUS_EXE - V1.2.4 (Cinderella Update)\obj\Debug\WindowsApplication1.TSSBForm.resources
+C:\Users\cophi\Dropbox (OES)\OES Team Folder\Manufacturing\Software\ONTOS TT Software\OTT_PLUS_EXE - V1.2.4 (Cinderella Update)\obj\Debug\OntosTT.vbproj.GenerateResource.cache
+C:\Users\cophi\Dropbox (OES)\OES Team Folder\Manufacturing\Software\ONTOS TT Software\OTT_PLUS_EXE - V1.2.4 (Cinderella Update)\obj\Debug\OntosTT.vbproj.CoreCompileInputs.cache
+C:\Users\cophi\Dropbox (OES)\OES Team Folder\Manufacturing\Software\ONTOS TT Software\OTT_PLUS_EXE - V1.2.4 (Cinderella Update)\obj\Debug\OntosTT.vbproj.CopyComplete
+C:\Users\cophi\Dropbox (OES)\OES Team Folder\Manufacturing\Software\ONTOS TT Software\OTT_PLUS_EXE - V1.2.4 (Cinderella Update)\obj\Debug\OTT_PLUS.exe
+C:\Users\cophi\Dropbox (OES)\OES Team Folder\Manufacturing\Software\ONTOS TT Software\OTT_PLUS_EXE - V1.2.4 (Cinderella Update)\obj\Debug\OTT_PLUS.xml
+C:\Users\cophi\Dropbox (OES)\OES Team Folder\Manufacturing\Software\ONTOS TT Software\OTT_PLUS_EXE - V1.2.4 (Cinderella Update)\obj\Debug\OTT_PLUS.pdb

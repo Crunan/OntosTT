@@ -1,0 +1,12 @@
+C:\HOME_2019\OES\VB\OTT_PLUS_EXE\bin\Debug\OTT_PLUS.exe.config
+C:\HOME_2019\OES\VB\OTT_PLUS_EXE\bin\Debug\OTT_PLUS.exe
+C:\HOME_2019\OES\VB\OTT_PLUS_EXE\bin\Debug\OTT_PLUS.pdb
+C:\HOME_2019\OES\VB\OTT_PLUS_EXE\bin\Debug\OTT_PLUS.xml
+C:\HOME_2019\OES\VB\OTT_PLUS_EXE\obj\Debug\WindowsApplication1.AboutBox1.resources
+C:\HOME_2019\OES\VB\OTT_PLUS_EXE\obj\Debug\WindowsApplication1.Form1.resources
+C:\HOME_2019\OES\VB\OTT_PLUS_EXE\obj\Debug\WindowsApplication1.Resources.resources
+C:\HOME_2019\OES\VB\OTT_PLUS_EXE\obj\Debug\OTT.vbproj.GenerateResource.Cache
+C:\HOME_2019\OES\VB\OTT_PLUS_EXE\obj\Debug\OTT_PLUS.exe
+C:\HOME_2019\OES\VB\OTT_PLUS_EXE\obj\Debug\OTT_PLUS.xml
+C:\HOME_2019\OES\VB\OTT_PLUS_EXE\obj\Debug\OTT_PLUS.pdb
+C:\HOME_2019\OES\VB\OTT_PLUS_EXE\obj\Debug\WindowsApplication1.TSSBForm.resources
