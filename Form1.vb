@@ -35,15 +35,26 @@ Public Class MainWindow
 
     Dim WaferDiameter As Integer = 0
     'Recipe file management stuff
+    Dim CasRecipeNumber As Integer = 0 'The # associated with the order for a recipe within a cascaded recipe (0 index based)
     Dim st_RecipePath As String = "C:\OTT_PLUS\Recipes\" 'Recipe Path without filename
     Dim st_RecipePathFileName As String 'Recipe filename with path information
-    Dim st_RecipeFileName As String = "none_entered" 'Recipe filename for display
+    Public Shared st_RecipeFileName As String = "none_entered" 'Recipe filename for display
     Dim st_RecipeString As String 'Recipe file contents as continuous string
     Dim st_RecipeLines As String() 'st_RecipeString partitioned into array of parameter lines
     Dim st_RecipeParamStrArray As String() 'RecipeLine partitioned into Parameter and Value segments
     Dim st_RecipeParamName As String 'Parameter name part of a  RecipeLine
     Dim st_RecipeParamValue As String 'Value part of a RecipeLine
     Dim b_RecipeOpened As Boolean = False 'has a recipe been opened?
+
+    Dim st_CascadeRecipePath As String = "C:\OTT_PLUS\Cascade Recipes\" 'Recipe Path without filename    
+    Dim st_CascadeRecipeFileName As String = "none_entered" 'Recipe filename for display
+    Dim st_CascadeRecipeString As String = ""
+    Dim st_CascadeRecipePathFileName As String
+    Dim st_CascadeRecipeLines As String() 'st_RecipeString partitioned into array of parameter lines
+    Dim st_CascadeRecipeParamStrArray As String() 'RecipeLine partitioned into Parameter and Value segments
+    Dim st_CascadeRecipeParamName As String 'Parameter name part of a  RecipeLine
+    Dim st_CascadeRecipeParamValue As String 'Value part of a RecipeLine
+    
 
     'Configuration file management stuff
     Dim ExeConfigPath As String = "C:\OTT_PLUS\ExeConfig\" 'Configuration path without filename
@@ -320,7 +331,7 @@ Public Class MainWindow
 
     Dim b_AutoModeOn As Boolean
 
-    Dim b_Owned As Boolean 'the tool is paid for    
+    Dim b_Owned As Boolean = True 'the tool is paid for    
     Dim b_N2PurgeRecipe As Boolean 'For turning Recipe Purge on/off during Stage movements
     Dim b_N2PurgeON As Boolean 'For setting the substrate purge on/Off
     Dim st_HasPurgeSave As String = 0 'For saving the substrate purge state
@@ -946,20 +957,7 @@ Public Class MainWindow
 
     End Sub
 
-    Private Sub btnExit_Click(sender As Object, e As EventArgs) Handles ExitToolStripMenuItem.Click
-        'Reset the Auxiliary PCB before exit
-        WriteCommand("$A9%", 4)  'SOFT_RESET   $A9%; resp[!A9#]; causes Aux PCB Soft Reset
-        ReadResponse(0)
-        
-        'Reset the controller PCB before exit
-        WriteCommand("$90%", 4)  'SOFT_RESET   $90% ; resp[!90#] Resets CTL PCB and AUX PCB
-        ReadResponse(0)
-
-        SerialPort1.Close()
-        Me.Close()
-        Application.Exit()
-
-    End Sub
+    
     Private Sub AutoManBtn_Click(sender As Object, e As EventArgs) Handles AutoManBtn.Click, AUTO_MODE.Click
         b_ToggleAutoMode = True
     End Sub
@@ -1040,7 +1038,7 @@ Public Class MainWindow
         Dim ResponseLen As Integer
         Dim CMDIndex() As String = {"0", "01%", "02%", "03%", "04%"}
 
-        If GetBoughtorNot() = False Then CinderellaCode()
+        'If GetBoughtorNot() = False Then CinderellaCode()
                 
         PL_SIM_NOTICE.Visible = False 'just in case
 
@@ -1560,7 +1558,7 @@ Public Class MainWindow
 
 
         'Get Plasma Head Temperature
-        WriteCommand("$C5%", 4)  'GET_TEMP  $C5%: resp[!C5xx.xx#]; xx.xx = head temp degrees C base 10
+        WriteCommand("$8c%", 4)  'GET_TEMP  $C5%: resp[!8Cxx.xx#]; xx.xx = head temp degrees C base 10
         ResponseLen = ReadResponse(0)
         If ResponseLen > 3 Then
             StrVar = st_RCV.Substring(3, 4)
@@ -1904,8 +1902,10 @@ Public Class MainWindow
         End If
         If (myStatusBits And &H80) > 0 Then
             PROCESS_ABORT.BackColor = Color.Red
+            if errorActive_Label.Visible = false then errorActive_Label.Visible = true
             PublishAbortCode() 'ABORT detected, see if can display Abort Code
         Else
+            if errorActive_Label.Visible = true then errorActive_Label.Visible = False
             PROCESS_ABORT.BackColor = Color.Gainsboro
         End If
         If (myStatusBits And &H100) > 0 Then
@@ -1935,9 +1935,11 @@ Public Class MainWindow
         End If
         If (myStatusBits And &H1) > 0 Then
             PLASMA_ON.BackColor = Color.BlueViolet 'cause that is the actual color of plasma
+            if plasmaStable_Label.Visible = false Then plasmaStable_Label.Visible = true
             if b_plasmaActive = False Then b_plasmaActive = true
         Else
             PLASMA_ON.BackColor = Color.Gainsboro
+            if plasmaStable_Label.Visible = true then plasmaStable_Label.Visible = False
             if b_plasmaActive = true Then b_plasmaActive = False
         End If
     End Sub
@@ -2146,29 +2148,92 @@ Public Class MainWindow
         End If
                 
     End Sub
+    Private Sub BuildRecipeToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles BuildRecipeToolStripMenuItem.Click
+        'All recipe settings, except for Batchlogging which is set on the tool.
+        CascadingRecipesDialog.ShowDialog()
+    End Sub
+    Private Sub OpenCascadeRecipeToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles OpenCascadeRecipeToolStripMenuItem.Click
+        ' Displays an OpenFileDialog so the user can select a Recipe       
+        Dim openCascadeRecipeFileDialog1 As New OpenFileDialog()
+        Dim line As String
+        openCascadeRecipeFileDialog1.InitialDirectory = st_CascadeRecipePath 'hard coded st_RecipePath as initialized at startup above
+        openCascadeRecipeFileDialog1.Filter = "Cascade Recipe|*.crcp"
+        openCascadeRecipeFileDialog1.Title = "Select a Cascade Recipe File"
+
+        ' Show the Dialog.
+        ' If the user clicked OK in the dialog and 
+        ' a .crcp file was selected, open it.
+        If openCascadeRecipeFileDialog1.ShowDialog() = DialogResult.OK Then
+            'New cascade recipe loaded, clear recipes in box if any exist and reset casrecipenumber.
+            CascadingRecipesDialog.CascadeRecipeListBox.Items.Clear
+            CasRecipeNumber = 0
+            'Get selected recipe and store info
+            st_CascadeRecipeFileName = openCascadeRecipeFileDialog1.SafeFileName
+            st_CascadeRecipeFileName = st_CascadeRecipeFileName.Substring(0, st_CascadeRecipeFileName.Length - 5) 'strip off '.crcp'            
+            st_CascadeRecipePathFileName = openCascadeRecipeFileDialog1.FileName  
+            
+
+            'Fill the Cascade list
+            ' Open the file using a stream reader.
+            Using sr As New StreamReader(st_CascadeRecipePathFileName)
+                'Read lines from the file until the end of
+                'the file Is reached.
+                line = sr.ReadLine
+
+                While line <> ""                 
+                    CascadingRecipesDialog.CascadeRecipeListBox.Items.Add(line)
+                    line = sr.ReadLine
+                End While 
+                sr.Close()
+            End Using
+
+            LoadRecipeValues()
+        End If
+        
+    End Sub
     Private Sub OpenToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles OpenToolStripMenuItem.Click
-        ' Displays an OpenFileDialog so the user can select a Recipe.
-        Dim intVal As Integer
+        ' Displays an OpenFileDialog so the user can select a Recipe       
         Dim openFileDialog1 As New OpenFileDialog()
 
         openFileDialog1.InitialDirectory = st_RecipePath 'hard coded st_RecipePath as initialized at startup above
         openFileDialog1.Filter = "Recipe|*.rcp"
         openFileDialog1.Title = "Select a Recipe File"
-
+                
         ' Show the Dialog.
         ' If the user clicked OK in the dialog and 
         ' a .rcp file was selected, open it.
         If openFileDialog1.ShowDialog() = DialogResult.OK Then
+
+            'Clear the Cascade list because we assume user doesnt want cascade recipe now
+            CascadingRecipesDialog.CascadeRecipeListBox.Items.Clear
+            CasRecipeNumber = 0
             st_RecipeFileName = openFileDialog1.SafeFileName
-            st_RecipeFileName = st_RecipeFileName.Substring(0, st_RecipeFileName.Length - 4) 'strip off '.rcp'
-            ActiveRecipeName.Text = st_RecipeFileName
-            st_RecipePathFileName = openFileDialog1.FileName
+            st_RecipeFileName = st_RecipeFileName.Substring(0, st_RecipeFileName.Length - 4) 'strip off '.rcp'            
+            st_RecipePathFileName = openFileDialog1.FileName        
+            'Load the recipe values
+            LoadRecipeValues()
+        End If
+        
+        
+    End Sub
+
+    Public Sub LoadRecipeValues() 
+        Dim intval As Integer
+        
+            'If we have a value in the cascade list, then we are RUNNING CASCADED RECIPES
+            If CascadingRecipesDialog.CascadeRecipeListBox.Items.Count > 1 Then
+                st_RecipeFileName = CascadingRecipesDialog.CascadeRecipeListBox.Items(CasRecipeNumber)
+                st_RecipePathFileName = st_RecipePath & CascadingRecipesDialog.CascadeRecipeListBox.Items(CasRecipeNumber) & ".rcp"
+            End If
+
             ' Open the file using a stream reader.
             Using sr As New StreamReader(st_RecipePathFileName)
                 st_RecipeString = sr.ReadToEnd()
                 sr.Close()
             End Using
-
+            
+            'Set Active Field and write in log file
+            ActiveRecipeName.Text = st_RecipeFileName
             WriteLogLine("Loaded " + st_RecipeFileName + " : " + st_RecipeString.Replace(vbCr, "").Replace(vbLf, "")) 'Log this recipe entry
 
             st_RecipeLines = st_RecipeString.Split(New Char() {"<"c})
@@ -2245,7 +2310,6 @@ Public Class MainWindow
             Next
             b_RecipeOpened = True 'We have a recipe
 
-
             'We want to act like we pushed the Green Arrow for loading to the controller because we are in Operator Mode.
             MFC(1).b_MFCLoadRecipeFlow = True 'signal main loop to load the new flow
             MFC(2).b_MFCLoadRecipeFlow = True
@@ -2265,18 +2329,28 @@ Public Class MainWindow
                 RunRcpBtn.Enabled = True
                 RunRcpBtn.FillColor = Color.BlueViolet
             End If
-        End If
     End Sub
-    Private Sub ExitToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ExitToolStripMenuItem.Click
+    Private Sub btnExit_Click(sender As Object, e As EventArgs) Handles ExitToolStripMenuItem.Click
         Dim Response As Integer
+              
+                
         Response = MessageBox.Show("Do you really want to exit?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
         If Response = vbYes Then
+            'Reset the Auxiliary PCB before exit
+            WriteCommand("$A9%", 4)  'SOFT_RESET   $A9%; resp[!A9#]; causes Aux PCB Soft Reset
+            ReadResponse(0)
+        
+            'Reset the controller PCB before exit
+            WriteCommand("$90%", 4)  'SOFT_RESET   $90% ; resp[!90#] Resets CTL PCB and AUX PCB
+            ReadResponse(0)
+
             SerialPort1.Close()
             Me.Close()
             Application.Exit()
             End
         End If
     End Sub
+   
     Private Sub SaveToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SaveToolStripMenuItem.Click
         st_RecipePathFileName = st_RecipePath + st_RecipeFileName + ".rcp"
         'build the Recipe from current data
@@ -2358,11 +2432,13 @@ Public Class MainWindow
         Dim st_password As String = "9820"
 
         StrVar = InputBox("Enter the Password:", "Password", "")  
-        If StrVar.Length > 4 Or StrVar.Length = 0 Then Return  
         if StrVar = st_Password Then
             Engineer_Mode() 'loads the Engineer Interface
             WriteLogLine("Engineer Mode enabled")
-        End If
+        Else
+            MsgBox("Incorrect password")
+            Return
+        End If     
         
     End Sub
     Private Sub OperatorModeToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles OperatorModeToolStripMenuItem.Click
@@ -2419,16 +2495,8 @@ Public Class MainWindow
         Else
             SMHomeAxes.State = HASM_SHUT_DOWN
         End If
-    End Sub
-   
-    Private Function b_IsBitSet(TestInt As Integer, BitPos As Integer) As Boolean
-        Dim BitMask As Integer
-
-        BitMask = 1 << BitPos
-        Return (TestInt And BitMask) > 0
-
-    End Function
-
+    End Sub  
+    
     Private Sub Launch_SMDiameter(sender As Object, e As EventArgs) Handles SetDiameterBtn.Click
         Dim bp As Integer
 
@@ -2445,6 +2513,13 @@ Public Class MainWindow
         Form4.ShowDialog()       
     End Sub
 
+    Private Function b_IsBitSet(TestInt As Integer, BitPos As Integer) As Boolean
+        Dim BitMask As Integer
+
+        BitMask = 1 << BitPos
+        Return (TestInt And BitMask) > 0
+
+    End Function
     Function b_IsStringValid(st_Number As String, st_OKChars As String, st_Cmd As String) As Boolean
         Dim b_StrOK As Boolean = True 'optimistic
 
@@ -2705,15 +2780,21 @@ Public Class MainWindow
         Dim strVar As String
         Dim dt_shipDate As DateTime
         Dim dt_ExtensionDate As DateTime
+        Dim dt_Today As DateTime = DateTime.Now
+        Dim st_Today As String = dt_Today.ToString("ddMMyyyy")
 
         Select Case ToolDate
             Case 1  'Ship date 
-
                 WriteCommand("$23007C%", 8)
                 responseLen = ReadResponse(0)
                 strVar = st_RCV.Substring(7,8)                
-                dt_shipDate = DateTime.ParseExact(strVar, "ddMMyyyy",
+                try 
+                    dt_shipDate = DateTime.ParseExact(strVar, "ddMMyyyy",
                       System.Globalization.DateTimeFormatInfo.InvariantInfo)
+                Catch ex As Exception
+                    dt_shipDate = st_Today
+                End Try
+                
                 
                 Return dt_shipDate
 
@@ -2739,7 +2820,6 @@ Public Class MainWindow
 
     End Function
   
-
     Private Sub CinderellaCode()
         Dim dt_todayDate As DateTime
         Dim dt_ShipDate As DateTime
@@ -2859,6 +2939,8 @@ Public Class MainWindow
         com_portBox.Visible = False
         Start_Stop_Toggle.Visible = False
 
+         'Cascading Recipes button
+        BuildRecipeToolStripMenuItem.Visible = False
     End Sub
 
     Private Sub Engineer_Mode() 'Default size of Form 1024, 669
@@ -2914,6 +2996,8 @@ Public Class MainWindow
         com_portBox.Visible = True
         Start_Stop_Toggle.Visible = True
 
+        'Cascading Recipes button
+        BuildRecipeToolStripMenuItem.Visible = true
     End Sub
 
     Private Sub CollisionLaser()
@@ -2960,9 +3044,7 @@ Public Class MainWindow
         End Select
 
     End Sub
-
-  
-
+     
     Private Sub SetLightTower()
         Dim ResponseLen As Integer
 
@@ -3065,8 +3147,7 @@ Public Class MainWindow
                 'do nothing
         End Select
     End Sub
-
-    
+        
     Private Sub RunHomeAxesSM()
         Dim ResponseLen As Integer
         Dim st_Command As String
@@ -3455,7 +3536,7 @@ Public Class MainWindow
                             WriteCommand(st_Command, st_Command.Length) 'SET_SPEED  $B40xss.ss%; resp [!B40xss.ss#] 0x = axis number, ss.ss = mm/sec (float)
                             ResponseLen = ReadResponse(0)
                             LogStr = "Move Z at: " & Param.db_Z_Max_Speed.ToString("F") & " /sec "
-                            st_Command = "$B602" & SMScan.db_ZScanPos.ToString("F") & "%"
+                            st_Command = "$B602" & SMScan.db_ZScanPos.ToString("F") & "%" 
                             WriteCommand(st_Command, st_Command.Length) 'ABS_MOVE $B60xaa.aa%; resp [!B60xaa.aa#] 0x = axis num, aa.aa = destination in mm (float)
                             ResponseLen = ReadResponse(0)
                             WriteLogLine(LogStr & "to: " & SMScan.db_ZScanPos.ToString("F"))
@@ -3481,23 +3562,41 @@ Public Class MainWindow
                     WriteCommand("$C700%", 6) 'SET_VALVE_2 $C70n% resp[!C70n#] n = 0, 1 (off, on)
                     ResponseLen = ReadResponse(0)
 
+                    RunScanBtn.Text = "START SCAN"
+                    SMScan.State = SCSM_IDLE
                     CurrentStepTxtBox.Text = ("Scanning Completed")
                     HomeAxesBtn.Visible = True
+                    
+                    'Engineer buttons become visible in ENG mode
                     If b_ENG_mode Then
                         SetTwoSpotBtn.Visible = True
                         SetDiameterBtn.Visible = True
                     End If
-                    RunScanBtn.Text = "START SCAN"
-                    SMScan.State = SCSM_IDLE
-                    'Auto off will turn the recipe off and PLASMA.
+                    
+                                        
+                    'Reset the collision flag if using a collision system
+                    if b_CollisionPassed = true Then
+                        b_CollisionPassed = False 'reset the collision flag
+                    End If
+                    
+                    'If a cascaded recipe was used then run the next recipe
+                    If CascadingRecipesDialog.CascadeRecipeListBox.Items.Count - 1 > CasRecipeNumber Then
+                        'This increments in order to keep track of which recipe we are on in the cascade recipe.
+                        CasRecipeNumber += 1
+                        'This is to make sure we start the scan automatically
+                        b_toggleAutoScan = True
+                        'Now load the recipe
+                        LoadRecipeValues()
+                    Else 
+                        SMHomeAxes.State = HASM_START 'Go to the Load position everytime you finish scanning
+                                                      ''Auto off will turn the recipe off and PLASMA.
                     If b_autoScanActive = true Then
                         WriteLogLine("Plasma turned off (Auto-Off is active)")
                         WriteCommand("$8700%", 6)
                         ResponseLen = ReadResponse(0)
                     End If
-                    b_CollisionPassed = False 'reset the collision flag
-
-                    SMHomeAxes.State = HASM_START 'Go to the Load position everytime you finish scanning zm 
+                    End If
+                    
                 Else 'recycle the scan
                     SMScan.ThisCycleNum += 1
                         SMScan.ThisXRow = 1
@@ -3516,42 +3615,42 @@ Public Class MainWindow
 
                         SMScan.State = SCSM_SCAN
                         SMScan.SubState = SCSM_SUB_GO_XY_START 'reenter here because already Parked Z
-                    End If
-                    Case SCSM_SHUT_DOWN
-                    If SMScan.SubState = SCSM_SUB_IDLE Then 'not doing anything anyway, shut 'er down
-                        SMScan.State = SCSM_IDLE
-                    Else 'stop and park Z
-                        CurrentStepTxtBox.Text = ("Scanning Stopped - Parking Z")
-                        WriteCommand("$B3%", 4) 'stop any motors in motion
-                        ResponseLen = ReadResponse(0)
-                        'turn of Substrate N2 Purge (assume it's on)
-                        WriteCommand("$C700%", 6) 'SET_VALVE_2 $C70n% resp[!C70n#] n = 0, 1 (off, on)
-                        ResponseLen = ReadResponse(0)
-                        st_Command = "$B402" & Param.db_Z_Max_Speed.ToString("F") & "%"
-                        WriteCommand(st_Command, st_Command.Length) 'SET_SPEED  $B40xss.ss%; resp [!B40xss.ss#] 0x = axis number, ss.ss = mm/sec (float)
-                        ResponseLen = ReadResponse(0)
-                        LogStr = "Move Z at " & Param.db_Z_Max_Speed.ToString("F") & " /sec "
-                        st_Command = "$B602" & SMScan.db_ZParkPos.ToString("F") & "%"
-                        WriteCommand(st_Command, st_Command.Length) 'ABS_MOVE $B60xaa.aa%; resp [!B60xaa.aa#] 0x = axis num, aa.aa = destination in mm (float)
-                        ResponseLen = ReadResponse(0)
-                        WriteLogLine(LogStr & "to: " & SMScan.db_ZParkPos.ToString("F"))
-                        SMScan.State = SCSM_IDLE
-                        SMScan.SubState = SCSM_SUB_IDLE
-                        CurrentStepTxtBox.Text = ("Scanning Manually Stopped")
-                        RunScanBtn.Text = "START SCAN"
-                        b_CollisionPassed = False 'reset the collision flag
-                    
-                        
-                       
-                    End If
-                    HomeAxesBtn.Visible = True
-                    If b_ENG_mode Then
-                        SetTwoSpotBtn.Visible = True
-                        SetDiameterBtn.Visible = True
-                    End If
-                    RunScanBtn.Text = "START SCAN"
+                End If
 
-                    Case SCSM_IDLE
+            Case SCSM_SHUT_DOWN
+                If SMScan.SubState = SCSM_SUB_IDLE Then 'not doing anything anyway, shut 'er down
+                    SMScan.State = SCSM_IDLE
+                Else 'stop and park Z
+                    CurrentStepTxtBox.Text = ("Scanning Stopped - Parking Z")
+                    WriteCommand("$B3%", 4) 'stop any motors in motion
+                    ResponseLen = ReadResponse(0)
+                    'turn of Substrate N2 Purge (assume it's on)
+                    WriteCommand("$C700%", 6) 'SET_VALVE_2 $C70n% resp[!C70n#] n = 0, 1 (off, on)
+                    ResponseLen = ReadResponse(0)
+                    st_Command = "$B402" & Param.db_Z_Max_Speed.ToString("F") & "%"
+                    WriteCommand(st_Command, st_Command.Length) 'SET_SPEED  $B40xss.ss%; resp [!B40xss.ss#] 0x = axis number, ss.ss = mm/sec (float)
+                    ResponseLen = ReadResponse(0)
+                    LogStr = "Move Z at " & Param.db_Z_Max_Speed.ToString("F") & " /sec "
+                    st_Command = "$B602" & SMScan.db_ZParkPos.ToString("F") & "%"
+                    WriteCommand(st_Command, st_Command.Length) 'ABS_MOVE $B60xaa.aa%; resp [!B60xaa.aa#] 0x = axis num, aa.aa = destination in mm (float)
+                    ResponseLen = ReadResponse(0)
+                    WriteLogLine(LogStr & "to: " & SMScan.db_ZParkPos.ToString("F"))
+                    SMScan.State = SCSM_IDLE
+                    SMScan.SubState = SCSM_SUB_IDLE
+                    CurrentStepTxtBox.Text = ("Scanning Manually Stopped")
+                    RunScanBtn.Text = "START SCAN"
+                    b_CollisionPassed = False 'reset the collision flag
+                                                                   
+                End If
+                HomeAxesBtn.Visible = True
+                If b_ENG_mode Then
+                    SetTwoSpotBtn.Visible = True
+                    SetDiameterBtn.Visible = True
+                End If
+                RunScanBtn.Text = "START SCAN"
+
+            Case SCSM_IDLE
+                'do nothing
         End Select
     End Sub
 
@@ -3634,4 +3733,6 @@ Public Class MainWindow
             Case CPSM_IDLE 'do nothing
          End Select
     End Sub
+
+    
 End Class

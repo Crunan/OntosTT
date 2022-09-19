@@ -45,6 +45,8 @@ Partial Class MainWindow
         Me.PH_Temp_Label = New System.Windows.Forms.Label()
         Me.MenuStrip1 = New System.Windows.Forms.MenuStrip()
         Me.FileToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.BuildRecipeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.OpenCascadeRecipeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.OpenToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.toolStripSeparator = New System.Windows.Forms.ToolStripSeparator()
         Me.EnableServiceMenuToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -221,6 +223,8 @@ Partial Class MainWindow
         Me.SettingsBtn = New Guna.UI2.WinForms.Guna2Button()
         Me.Label17 = New System.Windows.Forms.Label()
         Me.LaserSenseSquare = New System.Windows.Forms.Label()
+        Me.plasmaStable_Label = New System.Windows.Forms.Label()
+        Me.errorActive_Label = New System.Windows.Forms.Label()
         Me.MenuStrip1.SuspendLayout
         CType(Me.MB_Left_Arrow,System.ComponentModel.ISupportInitialize).BeginInit
         CType(Me.MB_Right_Arrow,System.ComponentModel.ISupportInitialize).BeginInit
@@ -497,10 +501,23 @@ Partial Class MainWindow
         '
         'FileToolStripMenuItem
         '
-        Me.FileToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.OpenToolStripMenuItem, Me.toolStripSeparator, Me.EnableServiceMenuToolStripMenuItem, Me.SaveToolStripMenuItem, Me.SaveAsToolStripMenuItem, Me.LoadToolStripMenuItem, Me.SetDefaultToolStripMenuItem, Me.ExitToolStripMenuItem})
+        Me.FileToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.BuildRecipeToolStripMenuItem, Me.OpenCascadeRecipeToolStripMenuItem, Me.OpenToolStripMenuItem, Me.toolStripSeparator, Me.EnableServiceMenuToolStripMenuItem, Me.SaveToolStripMenuItem, Me.SaveAsToolStripMenuItem, Me.LoadToolStripMenuItem, Me.SetDefaultToolStripMenuItem, Me.ExitToolStripMenuItem})
         Me.FileToolStripMenuItem.Name = "FileToolStripMenuItem"
         Me.FileToolStripMenuItem.Size = New System.Drawing.Size(143, 54)
         Me.FileToolStripMenuItem.Text = "&Recipe"
+        '
+        'BuildRecipeToolStripMenuItem
+        '
+        Me.BuildRecipeToolStripMenuItem.Name = "BuildRecipeToolStripMenuItem"
+        Me.BuildRecipeToolStripMenuItem.Size = New System.Drawing.Size(470, 54)
+        Me.BuildRecipeToolStripMenuItem.Text = "Build Cascade Recipe"
+        Me.BuildRecipeToolStripMenuItem.Visible = false
+        '
+        'OpenCascadeRecipeToolStripMenuItem
+        '
+        Me.OpenCascadeRecipeToolStripMenuItem.Name = "OpenCascadeRecipeToolStripMenuItem"
+        Me.OpenCascadeRecipeToolStripMenuItem.Size = New System.Drawing.Size(470, 54)
+        Me.OpenCascadeRecipeToolStripMenuItem.Text = "Open Cascade Recipe"
         '
         'OpenToolStripMenuItem
         '
@@ -508,18 +525,18 @@ Partial Class MainWindow
         Me.OpenToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta
         Me.OpenToolStripMenuItem.Name = "OpenToolStripMenuItem"
         Me.OpenToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.O),System.Windows.Forms.Keys)
-        Me.OpenToolStripMenuItem.Size = New System.Drawing.Size(456, 54)
+        Me.OpenToolStripMenuItem.Size = New System.Drawing.Size(470, 54)
         Me.OpenToolStripMenuItem.Text = "&Open"
         '
         'toolStripSeparator
         '
         Me.toolStripSeparator.Name = "toolStripSeparator"
-        Me.toolStripSeparator.Size = New System.Drawing.Size(453, 6)
+        Me.toolStripSeparator.Size = New System.Drawing.Size(467, 6)
         '
         'EnableServiceMenuToolStripMenuItem
         '
         Me.EnableServiceMenuToolStripMenuItem.Name = "EnableServiceMenuToolStripMenuItem"
-        Me.EnableServiceMenuToolStripMenuItem.Size = New System.Drawing.Size(456, 54)
+        Me.EnableServiceMenuToolStripMenuItem.Size = New System.Drawing.Size(470, 54)
         Me.EnableServiceMenuToolStripMenuItem.Text = "Enable Service Menu"
         '
         'SaveToolStripMenuItem
@@ -529,21 +546,21 @@ Partial Class MainWindow
         Me.SaveToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta
         Me.SaveToolStripMenuItem.Name = "SaveToolStripMenuItem"
         Me.SaveToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.S),System.Windows.Forms.Keys)
-        Me.SaveToolStripMenuItem.Size = New System.Drawing.Size(456, 54)
+        Me.SaveToolStripMenuItem.Size = New System.Drawing.Size(470, 54)
         Me.SaveToolStripMenuItem.Text = "&Save"
         '
         'SaveAsToolStripMenuItem
         '
         Me.SaveAsToolStripMenuItem.Enabled = false
         Me.SaveAsToolStripMenuItem.Name = "SaveAsToolStripMenuItem"
-        Me.SaveAsToolStripMenuItem.Size = New System.Drawing.Size(456, 54)
+        Me.SaveAsToolStripMenuItem.Size = New System.Drawing.Size(470, 54)
         Me.SaveAsToolStripMenuItem.Text = "Save &As"
         '
         'LoadToolStripMenuItem
         '
         Me.LoadToolStripMenuItem.Enabled = false
         Me.LoadToolStripMenuItem.Name = "LoadToolStripMenuItem"
-        Me.LoadToolStripMenuItem.Size = New System.Drawing.Size(456, 54)
+        Me.LoadToolStripMenuItem.Size = New System.Drawing.Size(470, 54)
         Me.LoadToolStripMenuItem.Text = "Load to Controller"
         Me.LoadToolStripMenuItem.Visible = false
         '
@@ -551,13 +568,13 @@ Partial Class MainWindow
         '
         Me.SetDefaultToolStripMenuItem.Enabled = false
         Me.SetDefaultToolStripMenuItem.Name = "SetDefaultToolStripMenuItem"
-        Me.SetDefaultToolStripMenuItem.Size = New System.Drawing.Size(456, 54)
+        Me.SetDefaultToolStripMenuItem.Size = New System.Drawing.Size(470, 54)
         Me.SetDefaultToolStripMenuItem.Text = "Set Default"
         '
         'ExitToolStripMenuItem
         '
         Me.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem"
-        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(456, 54)
+        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(470, 54)
         Me.ExitToolStripMenuItem.Text = "E&xit"
         '
         'HelpToolStripMenuItem
@@ -2497,7 +2514,7 @@ Partial Class MainWindow
         Me.RecipeXMaxTxt.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.RecipeXMaxTxt.Font = New System.Drawing.Font("Arial", 20.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
         Me.RecipeXMaxTxt.ForeColor = System.Drawing.SystemColors.InactiveCaption
-        Me.RecipeXMaxTxt.Location = New System.Drawing.Point(1868, 512)
+        Me.RecipeXMaxTxt.Location = New System.Drawing.Point(1884, 512)
         Me.RecipeXMaxTxt.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.RecipeXMaxTxt.Name = "RecipeXMaxTxt"
         Me.RecipeXMaxTxt.ReadOnly = true
@@ -3045,6 +3062,32 @@ Partial Class MainWindow
         Me.LaserSenseSquare.TabIndex = 224
         Me.LaserSenseSquare.Text = "   "
         '
+        'plasmaStable_Label
+        '
+        Me.plasmaStable_Label.AutoSize = true
+        Me.plasmaStable_Label.BackColor = System.Drawing.Color.White
+        Me.plasmaStable_Label.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.8!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.plasmaStable_Label.Location = New System.Drawing.Point(25, 882)
+        Me.plasmaStable_Label.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.plasmaStable_Label.Name = "plasmaStable_Label"
+        Me.plasmaStable_Label.Size = New System.Drawing.Size(163, 24)
+        Me.plasmaStable_Label.TabIndex = 226
+        Me.plasmaStable_Label.Text = "PLASMA STABLE"
+        Me.plasmaStable_Label.Visible = false
+        '
+        'errorActive_Label
+        '
+        Me.errorActive_Label.AutoSize = true
+        Me.errorActive_Label.BackColor = System.Drawing.Color.White
+        Me.errorActive_Label.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.8!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.errorActive_Label.Location = New System.Drawing.Point(38, 915)
+        Me.errorActive_Label.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.errorActive_Label.Name = "errorActive_Label"
+        Me.errorActive_Label.Size = New System.Drawing.Size(150, 24)
+        Me.errorActive_Label.TabIndex = 227
+        Me.errorActive_Label.Text = "ERROR ACTIVE"
+        Me.errorActive_Label.Visible = false
+        '
         'MainWindow
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8!, 16!)
@@ -3053,6 +3096,8 @@ Partial Class MainWindow
         Me.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
         Me.ClientSize = New System.Drawing.Size(1924, 1055)
         Me.ControlBox = false
+        Me.Controls.Add(Me.errorActive_Label)
+        Me.Controls.Add(Me.plasmaStable_Label)
         Me.Controls.Add(Me.Label17)
         Me.Controls.Add(Me.LaserSenseSquare)
         Me.Controls.Add(Me.SettingsBtn)
@@ -3462,8 +3507,12 @@ End Sub
     Friend WithEvents CodeToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents BatchLoggingBTN As Guna.UI2.WinForms.Guna2Button
     Public WithEvents BatchIDTextBox As TextBox
-    Friend WithEvents SettingsBtn As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents Label17 As Label
     Friend WithEvents LaserSenseSquare As Label
     Friend WithEvents Door_Open_Label As Label
+    Friend WithEvents BuildRecipeToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents OpenCascadeRecipeToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents plasmaStable_Label As Label
+    Friend WithEvents errorActive_Label As Label
+    Friend WithEvents SettingsBtn As Guna.UI2.WinForms.Guna2Button
 End Class
