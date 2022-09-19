@@ -24,6 +24,7 @@ Partial Class MainWindow
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(MainWindow))
+        Me.Door_Open_Label = New System.Windows.Forms.Label()
         Me.SerialPort1 = New System.IO.Ports.SerialPort(Me.components)
         Me.MFC_1_Read_Flow = New System.Windows.Forms.TextBox()
         Me.MFC_1_Read_Range = New System.Windows.Forms.TextBox()
@@ -163,7 +164,6 @@ Partial Class MainWindow
         Me.Label24 = New System.Windows.Forms.Label()
         Me.Vacbtn = New Guna.UI2.WinForms.Guna2Button()
         Me.PinsSquare = New System.Windows.Forms.Label()
-        Me.Door_Open_Label = New System.Windows.Forms.Label()
         Me.Set_MFC_1_Recipe_Button = New Guna.UI2.WinForms.Guna2Button()
         Me.Set_MFC_3_Recipe_Button = New Guna.UI2.WinForms.Guna2Button()
         Me.Set_MFC_2_Recipe_Button = New Guna.UI2.WinForms.Guna2Button()
@@ -219,6 +219,8 @@ Partial Class MainWindow
         Me.BatchLoggingBTN = New Guna.UI2.WinForms.Guna2Button()
         Me.BatchIDTextBox = New System.Windows.Forms.TextBox()
         Me.SettingsBtn = New Guna.UI2.WinForms.Guna2Button()
+        Me.Label17 = New System.Windows.Forms.Label()
+        Me.LaserSenseSquare = New System.Windows.Forms.Label()
         Me.MenuStrip1.SuspendLayout
         CType(Me.MB_Left_Arrow,System.ComponentModel.ISupportInitialize).BeginInit
         CType(Me.MB_Right_Arrow,System.ComponentModel.ISupportInitialize).BeginInit
@@ -229,6 +231,20 @@ Partial Class MainWindow
         CType(Me.PictureBox5,System.ComponentModel.ISupportInitialize).BeginInit
         CType(Me.PictureBox6,System.ComponentModel.ISupportInitialize).BeginInit
         Me.SuspendLayout
+        '
+        'Door_Open_Label
+        '
+        Me.Door_Open_Label.AutoSize = true
+        Me.Door_Open_Label.BackColor = System.Drawing.Color.White
+        Me.Door_Open_Label.Font = New System.Drawing.Font("Microsoft Sans Serif", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.Door_Open_Label.Location = New System.Drawing.Point(1681, 638)
+        Me.Door_Open_Label.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.Door_Open_Label.Name = "Door_Open_Label"
+        Me.Door_Open_Label.Size = New System.Drawing.Size(198, 31)
+        Me.Door_Open_Label.TabIndex = 147
+        Me.Door_Open_Label.Text = "DOORS OPEN"
+        Me.Door_Open_Label.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.Door_Open_Label.Visible = false
         '
         'SerialPort1
         '
@@ -1261,7 +1277,6 @@ Partial Class MainWindow
         Me.RunScanBtn.BorderRadius = 30
         Me.RunScanBtn.CheckedState.Parent = Me.RunScanBtn
         Me.RunScanBtn.CustomImages.Parent = Me.RunScanBtn
-        Me.RunScanBtn.Enabled = false
         Me.RunScanBtn.FillColor = System.Drawing.Color.FromArgb(CType(CType(201,Byte),Integer), CType(CType(42,Byte),Integer), CType(CType(38,Byte),Integer))
         Me.RunScanBtn.Font = New System.Drawing.Font("Segoe UI", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
         Me.RunScanBtn.ForeColor = System.Drawing.Color.White
@@ -1919,7 +1934,7 @@ Partial Class MainWindow
         Me.AC_CODE.AutoSize = true
         Me.AC_CODE.BackColor = System.Drawing.Color.White
         Me.AC_CODE.Font = New System.Drawing.Font("Microsoft Sans Serif", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
-        Me.AC_CODE.Location = New System.Drawing.Point(1717, 671)
+        Me.AC_CODE.Location = New System.Drawing.Point(1705, 671)
         Me.AC_CODE.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.AC_CODE.Name = "AC_CODE"
         Me.AC_CODE.Size = New System.Drawing.Size(106, 31)
@@ -2097,20 +2112,6 @@ Partial Class MainWindow
         Me.PinsSquare.TabIndex = 146
         Me.PinsSquare.Text = "   "
         Me.PinsSquare.Visible = false
-        '
-        'Door_Open_Label
-        '
-        Me.Door_Open_Label.AutoSize = true
-        Me.Door_Open_Label.BackColor = System.Drawing.Color.White
-        Me.Door_Open_Label.Font = New System.Drawing.Font("Microsoft Sans Serif", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
-        Me.Door_Open_Label.Location = New System.Drawing.Point(1681, 638)
-        Me.Door_Open_Label.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
-        Me.Door_Open_Label.Name = "Door_Open_Label"
-        Me.Door_Open_Label.Size = New System.Drawing.Size(198, 31)
-        Me.Door_Open_Label.TabIndex = 147
-        Me.Door_Open_Label.Text = "DOORS OPEN"
-        Me.Door_Open_Label.TextAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.Door_Open_Label.Visible = false
         '
         'Set_MFC_1_Recipe_Button
         '
@@ -2794,7 +2795,7 @@ Partial Class MainWindow
         Me.ChuckVacSquare.BackColor = System.Drawing.Color.Gainsboro
         Me.ChuckVacSquare.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
         Me.ChuckVacSquare.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
-        Me.ChuckVacSquare.Location = New System.Drawing.Point(1579, 443)
+        Me.ChuckVacSquare.Location = New System.Drawing.Point(1553, 443)
         Me.ChuckVacSquare.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.ChuckVacSquare.Name = "ChuckVacSquare"
         Me.ChuckVacSquare.Size = New System.Drawing.Size(26, 22)
@@ -2805,13 +2806,13 @@ Partial Class MainWindow
         '
         Me.Label18.AutoSize = true
         Me.Label18.BackColor = System.Drawing.Color.White
-        Me.Label18.Font = New System.Drawing.Font("Microsoft Sans Serif", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
-        Me.Label18.Location = New System.Drawing.Point(1600, 439)
+        Me.Label18.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.8!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.Label18.Location = New System.Drawing.Point(1574, 441)
         Me.Label18.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label18.Name = "Label18"
-        Me.Label18.Size = New System.Drawing.Size(193, 29)
+        Me.Label18.Size = New System.Drawing.Size(119, 24)
         Me.Label18.TabIndex = 206
-        Me.Label18.Text = "CHUCK VAC ON"
+        Me.Label18.Text = "CHUCK VAC"
         '
         'AutoVacSquare
         '
@@ -2938,11 +2939,11 @@ Partial Class MainWindow
         '
         Me.PurgeOnLabel.AutoSize = true
         Me.PurgeOnLabel.BackColor = System.Drawing.Color.White
-        Me.PurgeOnLabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
-        Me.PurgeOnLabel.Location = New System.Drawing.Point(1841, 439)
+        Me.PurgeOnLabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.8!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.PurgeOnLabel.Location = New System.Drawing.Point(1733, 441)
         Me.PurgeOnLabel.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.PurgeOnLabel.Name = "PurgeOnLabel"
-        Me.PurgeOnLabel.Size = New System.Drawing.Size(140, 29)
+        Me.PurgeOnLabel.Size = New System.Drawing.Size(109, 24)
         Me.PurgeOnLabel.TabIndex = 217
         Me.PurgeOnLabel.Text = "PURGE ON"
         '
@@ -2952,7 +2953,7 @@ Partial Class MainWindow
         Me.N2PurgeSquare.BackColor = System.Drawing.Color.Gainsboro
         Me.N2PurgeSquare.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
         Me.N2PurgeSquare.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
-        Me.N2PurgeSquare.Location = New System.Drawing.Point(1813, 443)
+        Me.N2PurgeSquare.Location = New System.Drawing.Point(1708, 443)
         Me.N2PurgeSquare.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.N2PurgeSquare.Name = "N2PurgeSquare"
         Me.N2PurgeSquare.Size = New System.Drawing.Size(26, 22)
@@ -3019,15 +3020,41 @@ Partial Class MainWindow
         Me.SettingsBtn.Size = New System.Drawing.Size(92, 78)
         Me.SettingsBtn.TabIndex = 223
         '
+        'Label17
+        '
+        Me.Label17.AutoSize = true
+        Me.Label17.BackColor = System.Drawing.Color.White
+        Me.Label17.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.8!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.Label17.Location = New System.Drawing.Point(1886, 441)
+        Me.Label17.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.Label17.Name = "Label17"
+        Me.Label17.Size = New System.Drawing.Size(140, 24)
+        Me.Label17.TabIndex = 225
+        Me.Label17.Text = "LASER SENSE"
+        '
+        'LaserSenseSquare
+        '
+        Me.LaserSenseSquare.AutoSize = true
+        Me.LaserSenseSquare.BackColor = System.Drawing.Color.Gainsboro
+        Me.LaserSenseSquare.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
+        Me.LaserSenseSquare.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.LaserSenseSquare.Location = New System.Drawing.Point(1859, 443)
+        Me.LaserSenseSquare.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.LaserSenseSquare.Name = "LaserSenseSquare"
+        Me.LaserSenseSquare.Size = New System.Drawing.Size(26, 22)
+        Me.LaserSenseSquare.TabIndex = 224
+        Me.LaserSenseSquare.Text = "   "
+        '
         'MainWindow
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8!, 16!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.AutoSize = true
         Me.BackColor = System.Drawing.Color.White
         Me.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
-        Me.ClientSize = New System.Drawing.Size(1924, 985)
+        Me.ClientSize = New System.Drawing.Size(1924, 1055)
         Me.ControlBox = false
+        Me.Controls.Add(Me.Label17)
+        Me.Controls.Add(Me.LaserSenseSquare)
         Me.Controls.Add(Me.SettingsBtn)
         Me.Controls.Add(Me.BatchLoggingBTN)
         Me.Controls.Add(Me.BatchIDTextBox)
@@ -3210,6 +3237,7 @@ Partial Class MainWindow
         Me.Name = "MainWindow"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "OntosTT"
+        Me.WindowState = System.Windows.Forms.FormWindowState.Maximized
         Me.MenuStrip1.ResumeLayout(false)
         Me.MenuStrip1.PerformLayout
         CType(Me.MB_Left_Arrow,System.ComponentModel.ISupportInitialize).EndInit
@@ -3378,7 +3406,6 @@ End Sub
     Friend WithEvents Label24 As Label
     Friend WithEvents Vacbtn As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents PinsSquare As Label
-    Friend WithEvents Door_Open_Label As Label
     Friend WithEvents Set_MFC_1_Recipe_Button As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents Set_MFC_3_Recipe_Button As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents Set_MFC_2_Recipe_Button As Guna.UI2.WinForms.Guna2Button
@@ -3436,4 +3463,7 @@ End Sub
     Friend WithEvents BatchLoggingBTN As Guna.UI2.WinForms.Guna2Button
     Public WithEvents BatchIDTextBox As TextBox
     Friend WithEvents SettingsBtn As Guna.UI2.WinForms.Guna2Button
+    Friend WithEvents Label17 As Label
+    Friend WithEvents LaserSenseSquare As Label
+    Friend WithEvents Door_Open_Label As Label
 End Class

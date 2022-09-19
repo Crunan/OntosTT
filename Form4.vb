@@ -20,6 +20,12 @@
             MainWindow.b_toggleHeater = true
         End If
 
+        if CollisionCheckBox.Checked = true then
+            MainWindow.b_HasCollision = true
+        else
+            MainWindow.b_HasCollision = False  
+        End If
+
         if BatchChkBox.Checked = true then
             MainWindow.b_batchActive = True
             MainWindow.b_togglebatchIDLogging = True            

@@ -18,9 +18,11 @@ Public Class MainWindow
     Public Shared b_togglebatchIDLogging As Boolean = False ' This is the flag for batch ID logging
     Public Shared b_batchActive As Boolean = False   
     'Auto Scan
-    Public Shared b_toggleAutoScan As Boolean = False   
-    Public Shared b_autoScanActive As Boolean = False   
-    Public Shared st_AutoScanSave As String = 0 'For saving the AUTO SCAN state   
+    Public Shared b_toggleAutoScan As Boolean = true   
+    Public Shared b_autoScanActive As Boolean = True   
+    Public Shared st_AutoScanSave As String = 1 'For saving the AUTO SCAN state   
+    '
+    Public Shared b_HasCollision As Boolean = False 'the tool has a Collision System on 
     
 
     '    Serial Port Stuff
@@ -112,7 +114,16 @@ Public Class MainWindow
         Dim b_MFCLoadRecipeFlow As Boolean
     End Structure
     Dim MFC(4) As MFController
+    'Collision Laser Management
+    Structure CLASERSM
+        Dim State As Integer
+    End Structure
+    Dim CLaser As CLASERSM
 
+    Const CLSM_IDLE = 0 
+    Const CLSM_TRIPPED = 1 'Laser COLLISION DETECTED
+    Const CLSM_ACTIVATE = 2 'Turn Laser Sense ON
+    Const CLSM_DEACTIVATE = 3 'Turn Laser Sense OFF
     'Light Tower Management
     Structure LIGHTSM
         Dim State As Integer
@@ -142,6 +153,7 @@ Public Class MainWindow
         Dim b_XYZSameState As Boolean 'all three axes Same state?
         Dim b_LEDVacOn As Boolean 'is 3-AXIS PCB Valve 3 (Vacuum) On?
         Dim b_LEDN2PurgeOn As Boolean 'is N2 Substrate Purge On?
+        'Dim b_CollisionActive As Boolean 'has the laser sensor collision system been triggered?
 
         Dim XState As Integer
         Dim XError As Integer
@@ -223,6 +235,7 @@ Public Class MainWindow
     Const TSSM_GET_SECOND = 4 'get second X & Y pair
     Const TSSM_CLOSE_DOWN = 5 'end joystick session
 
+
     Structure SCANSTATEMACHINE
         Dim State As Integer
         Dim SubState As Integer
@@ -264,6 +277,18 @@ Public Class MainWindow
     Const SCSM_SUB_GO_XY_START = 2
     Const SCSM_SUB_GO_Z_SCAN_POS = 3
     Const SCSM_SUB_SCAN_COL = 4
+    Structure COLLISIONPASSSTATEMACHINE
+        Dim State As Integer
+
+    End Structure
+    Dim SMCollisionPass As COLLISIONPASSSTATEMACHINE
+
+    Const CPSM_IDLE = 0
+    Const CPSM_START_UP = 1
+    Const CPSM_GET_Z_DOWN = 2
+    Const CPSM_GET_Z_UP = 3
+    Const CPSM_SCAN_Y = 4
+    Const CPSM_SHUT_DOWN = 5
 
     'Tuner position management
     Structure TUNER_POS
@@ -302,8 +327,9 @@ Public Class MainWindow
     Dim b_HasPins As Boolean 'For setting the Pins as exposed or buried 
     Dim b_HasHeat As Boolean 'For setting the Heater On/Off
     Dim b_HasVac As Boolean = False 'For setting the chuck vacuum on/Off
-    Dim b_plasmaActive As Boolean = False 'For determining when Plasma is ACTIVE
-    
+    Dim b_plasmaActive As Boolean = False 'For determining when Plasma is ACTIVE    
+    Dim b_CollisionPassed As Boolean = False 'the tool has performed a collision test with NO collision.
+    Dim b_PlannedAutoStart As Boolean = False 'This is strictly for Auto Start PLasma, to prevent RUN SCAN from starting plasma.
     
 
     Dim b_LightTowerError As Boolean = False 'Flag for light tower (might not need)
@@ -938,7 +964,16 @@ Public Class MainWindow
         b_ToggleAutoMode = True
     End Sub
     Private Sub RunRcpBtn_Click(sender As Object, e As EventArgs) Handles RunRcpBtn.Click
-        b_ToggleRunRecipe = True
+        If b_HasCollision = True and b_autoScanActive and b_plasmaActive = False Then
+            b_PlannedAutoStart = True 'this will make sure we dont accidently start plasma when just clicking RUN SCAN button
+            if SMScan.State = SCSM_IDLE then
+                SMScan.ExternalNewState = SCSM_START_UP
+                SMScan.b_ExternalStateChange = True  'Start Collision test while auto scan is ON
+            End If 
+        Else 
+            b_ToggleRunRecipe = True
+        End If
+        
     End Sub
    
    
@@ -977,6 +1012,8 @@ Public Class MainWindow
                     RunInitAxesSM() 'run the Initialize Axes state machine
                     RunTwoSpotSM() 'run the Two Spot state machine                                   
                     RunScanSM() 'run the Scan state machine
+                    RunCollisionPassSM()
+                    CollisionLaser() 'run the Collision Laser System state machine
                     RunHomeAxesSM() 'run Home Axes state machine
                     SetLightTower() 'run the Light Tower state machine
                     UpdateStatus(StatusBits)
@@ -1327,6 +1364,7 @@ Public Class MainWindow
         AxesStatus.b_LEDJoyBtnOn = b_IsBitSet(AxesStatus.LEDStates, 14) '//VBWord bit 14 (NO LED) 
         AxesStatus.b_LEDVacOn = b_IsBitSet(AxesStatus.LEDStates, 12) 'LED_VALVE_3
         AxesStatus.b_LEDN2PurgeOn = b_IsBitSet(AxesStatus.LEDStates, 11) 'LED_VALVE_2
+        'if CLaser.State = CLSM_ACTIVATE then AxesStatus.b_CollisionActive = b_IsBitSet(AxesStatus.LEDStates, 8) 'EXT_IN_2
         'This LED will let us know when Valve 2 is open, which will tell us SUbstrate Purge is active. 
         'AxesStatus.b_LEDN2PurgeOn = b_IsBitSet(AxesStatus.LEDStates, 3) '//VBWord bit 3 (Valve 2)
 
@@ -1397,7 +1435,7 @@ Public Class MainWindow
         Else
             AxesStatus.b_XYZSameState = False
         End If
-
+                
         If b_StatusChanged = True Then
             WriteLogLine(LogStr)
         End If
@@ -1420,7 +1458,7 @@ Public Class MainWindow
         CloseLogFile() 'done logging
     End Sub
 
-    Private Sub RunPolling() 'Poll the Control and Axis PCBs for status
+    Private Sub RunPolling() 'Poll the Control and Axis PCBs for status (every 1 second)
         Dim Index As Integer
         Dim IntVal As Integer
         Dim DoubVal As Double
@@ -1513,7 +1551,7 @@ Public Class MainWindow
                 MFCActualFlow(Index).Text = MFC(Index).db_ActualFlow.ToString("F3") '2 decimal points
                 db_TempProgressBarValue = CDbl(StrVar) * 100 'this is to resolve progress bar 3 and 4 from being truncated during Cint.
                 MFC(Index).ActualFlow = CInt(db_TempProgressBarValue)
-            Else
+            Else 'This is for MFC 1 & 2 
                 MFCActualFlow(Index).Text = MFC(Index).db_ActualFlow.ToString("F") '2 decimal points
                 MFC(Index).ActualFlow = CInt(StrVar)
             End If
@@ -1601,10 +1639,7 @@ Public Class MainWindow
         Else
             RunRcpBtn.FillColor = Color.BlueViolet
             RunRcpBtn.Text = "START PLASMA"
-            'disable the Run Scan button for operatros while plasma is off
-            If b_ENG_mode = False And RunScanBtn.Enabled = True Then
-                RunScanBtn.Enabled = False
-            End If
+            
         End If
 
         If b_togglebatchIDLogging = True Then 'Settings button
@@ -1644,6 +1679,8 @@ Public Class MainWindow
         If AxesStatus.b_XYZSameState = True And AxesStatus.XState < ASM_IDLE Then
             CurrentStepTxtBox.Text = "Stage Not Initialized"
         End If
+
+
         'Manage Actual Position Windows
         If AxesStatus.XState >= ASM_IDLE Then
             DoubVal = db_C_XPos_RefB_2_RefPH(AxesStatus.db_XPos)
@@ -1766,10 +1803,10 @@ Public Class MainWindow
         If b_ToggleRunRecipe = True Then
             b_RunRecipeOn = Not b_RunRecipeOn
                     
-            If b_RunRecipeOn = True Then
+            If b_RunRecipeOn = True Then                  
                 WriteCommand("$8701%", 6) 'SET_EXEC_RECIPE  $870p% p=1 Execute Recipe, p=0 RF off, Recipe off
                 'This resets the flag for AUTO SCAN 
-                If b_autoScanActive = True Then b_toggleAutoScan = True                           '
+                If b_autoScanActive = True Then b_toggleAutoScan = True                                           '
             Else
                 WriteCommand("$8700%", 6)
             End If
@@ -1870,7 +1907,6 @@ Public Class MainWindow
             PublishAbortCode() 'ABORT detected, see if can display Abort Code
         Else
             PROCESS_ABORT.BackColor = Color.Gainsboro
-            AC_CODE.Visible = False
         End If
         If (myStatusBits And &H100) > 0 Then
             GAS_1.BackColor = Color.Lime
@@ -1991,7 +2027,6 @@ Public Class MainWindow
 
             End Select
         Else
-            AC_CODE.Visible = False
             ClearAbortbtn.Visible = False
         End If
     End Sub
@@ -2097,6 +2132,19 @@ Public Class MainWindow
         ClearAbortbtn.Visible = False
         b_ClearAbort = False
         RunRcpBtn.Enabled = True 're-enable the Start Plasma button
+        
+        if CLaser.State = CLSM_TRIPPED Then 
+            RunScanBtn.Text = "RUN SCAN"
+            CLaser.State = CLSM_DEACTIVATE
+            WriteCommand("$B800%", 6) 
+            ReadResponse(0)
+            WriteCommand("$B801%", 6) 
+            ReadResponse(0)
+            WriteCommand("$B802%", 6) 
+            ReadResponse(0)
+            SMHomeAxes.State = HASM_START
+        End If
+                
     End Sub
     Private Sub OpenToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles OpenToolStripMenuItem.Click
         ' Displays an OpenFileDialog so the user can select a Recipe.
@@ -2179,6 +2227,7 @@ Public Class MainWindow
                             Form4.AutoScanChkBox.Checked = true
                             b_toggleAutoScan = true
                         Else
+                            b_autoScanActive = false
                             Form4.AutoScanChkBox.Checked = False
                         End If
                     Case "HEATER"
@@ -2305,8 +2354,16 @@ Public Class MainWindow
     End Sub
     
     Private Sub EngineerModeToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles EngineerModeToolStripMenuItem.Click
-        Engineer_Mode() 'loads the Engineer Interface
-        WriteLogLine("Engineer Mode enabled")
+        Dim StrVar As String
+        Dim st_password As String = "9820"
+
+        StrVar = InputBox("Enter the Password:", "Password", "")  
+        If StrVar.Length > 4 Or StrVar.Length = 0 Then Return  
+        if StrVar = st_Password Then
+            Engineer_Mode() 'loads the Engineer Interface
+            WriteLogLine("Engineer Mode enabled")
+        End If
+        
     End Sub
     Private Sub OperatorModeToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles OperatorModeToolStripMenuItem.Click
         Operator_Mode() 'loads the Operator Interface
@@ -2342,7 +2399,7 @@ Public Class MainWindow
         End If
     End Sub
 
-    Private Sub Launch_SMScan(sender As Object, e As EventArgs) Handles RunScanBtn.Click
+    Private Sub Launch_SMScan(sender As Object, e As EventArgs) Handles RunScanBtn.Click        
         If SMScan.State = SCSM_IDLE Then 'IDLE, so must want me to start up
             SMScan.ExternalNewState = SCSM_START_UP
             SMScan.b_ExternalStateChange = True
@@ -2761,10 +2818,7 @@ Public Class MainWindow
         If b_RecipeOpened = False Then 'if a recipe is open, dont disable the button
             RunRcpBtn.Enabled = False
         End If
-
-        If b_RunRecipeOn = False Then 'Scan is disabled until the user starts plasma 
-            RunScanBtn.Enabled = False
-        End If
+               
 
         'Hide Engineer mode label
         EngLabel.Visible = False
@@ -2798,6 +2852,7 @@ Public Class MainWindow
 
          'Recipe Settings TURN OFF 
         form4.AutoScanChkBox.enabled = False
+        form4.CollisionCheckBox.enabled = False
         
         'Com Port
         Com_Port_Label.Visible = False
@@ -2852,6 +2907,7 @@ Public Class MainWindow
 
         'Recipe Settings TURN ON 
         form4.AutoScanChkBox.enabled = true
+        'form4.CollisionCheckBox.enabled = true 'disabled for amazon shipment 
         
         'Com Port
         Com_Port_Label.Visible = True
@@ -2859,6 +2915,54 @@ Public Class MainWindow
         Start_Stop_Toggle.Visible = True
 
     End Sub
+
+    Private Sub CollisionLaser()
+        Dim ResponseLen As Integer
+
+          if AxesStatus.XError = &H08 or AxesStatus.YError = &H08 or AxesStatus.ZError = &H08 Then 
+            CLaser.State = CLSM_TRIPPED            
+          End If
+
+        Select Case CLaser.State
+
+            Case CLSM_TRIPPED 'Laser Sense TRIPPED/COLLISION detected
+                AC_CODE.Visible = True
+                AC_CODE.Text = "LASER TRIPPED"
+                WriteLogLine("Laser Sensor Tripped")
+                b_ClearAbort = True
+                
+                ClearAbortbtn.Visible = True
+                b_CollisionPassed = False 'reset the collision flag
+                    
+                SMScan.State = SCSM_IDLE 'disable other motor moving state machines and buttons
+                SMScan.SubState = SCSM_SUB_IDLE
+                SMTwoSpot.State = TSSM_IDLE
+                SMCollisionPass.State = CPSM_IDLE                
+                LaserSenseSquare.BackColor = Color.Red
+                                
+                
+            Case CLSM_ACTIVATE 'Turn ON Laser Sense
+                WriteCommand("$BA01%", 6) '//  'WATCH_SUBST_SENSE $BA0p%; resp[!BA0p#] p = 0, 1 turn watch (OFF, ON)
+                ResponseLen = ReadResponse(0)    
+                WriteLogLine("Laser Sensor Active")
+                LaserSenseSquare.BackColor = Color.Lime
+
+                CLaser.State = CLSM_IDLE
+            Case CLSM_DEACTIVATE 'Turn OFF Laser Sense
+                WriteCommand("$BA00%", 6) '//  'WATCH_SUBST_SENSE $BA0p%; resp[!BA0p#] p = 0, 1 turn watch (OFF, ON)
+                ResponseLen = ReadResponse(0)
+                WriteLogLine("Laser Sense Deactived")
+                LaserSenseSquare.BackColor = Color.Gainsboro
+                'The Operator Scan button is enabled when plasma is on
+                CLaser.State = CLSM_IDLE
+            Case CLSM_IDLE
+                'DO NOTHING
+        End Select
+
+    End Sub
+
+  
+
     Private Sub SetLightTower()
         Dim ResponseLen As Integer
 
@@ -2866,7 +2970,7 @@ Public Class MainWindow
         If (GlobalmyStatusBits And &H80) > 0 Then 'For setting the light tower red during PublishAbortCode() 
             LightTwr.State = LTSM_ERROR
         ElseIf AxesStatus.b_DoorsOpen Then 'Light Tower Red for doors open
-            LightTwr.State = LTSM_ERROR
+            LightTwr.State = LTSM_ERROR        
         ElseIf b_RunRecipeOn And AxesStatus.b_DoorsOpen = False Then 'Light Tower Green for PLASMA 
             LightTwr.State = LTSM_ACTIVE
         Else 'set the tower to Yellow if its not already in yellow mode
@@ -2975,6 +3079,8 @@ Public Class MainWindow
                 SetTwoSpotBtn.Visible = False
                 SetDiameterBtn.Visible = False
                 HomeAxesBtn.Text = "STOP"
+                               
+
                 WriteLogLine("Homing Start")
                 CurrentStepTxtBox.Text = "Homing Start"
                 st_Command = "$B402" & Param.db_Z_Max_Speed.ToString("F") & "%"
@@ -2985,6 +3091,7 @@ Public Class MainWindow
                 WriteCommand(st_Command, st_Command.Length) 'ABS_MOVE $B60xaa.aa%; resp [!B60xaa.aa#] 0x = axis num, aa.aa = destination in mm (float)
                 ResponseLen = ReadResponse(0)
                 WriteLogLine("Move Z Speed: " & Param.db_Z_Max_Speed.ToString("F") & " /sec " & "to " & db_ZParkPos.ToString("F"))
+                               
 
                 SMHomeAxes.State = HASM_WAIT_PARK_Z
 
@@ -3047,7 +3154,7 @@ Public Class MainWindow
                         SetTwoSpotBtn.Visible = True
                         SetDiameterBtn.Visible = True
                     End If
-
+                   
                 End If
             Case HASM_SHUT_DOWN
                 WriteCommand("$B3%", 4) 'stop any motors in motion
@@ -3068,6 +3175,7 @@ Public Class MainWindow
                     SetTwoSpotBtn.Visible = True
                     SetDiameterBtn.Visible = True
                 End If
+                
                 HomeAxesBtn.Text = "LOAD POSITION"
                 CurrentStepTxtBox.Text = ""
                 SMHomeAxes.State = HASM_IDLE
@@ -3098,6 +3206,7 @@ Public Class MainWindow
                 CurrentStepTxtBox.Text = ("Joy Stick is Enabled")
                 NextStepTxtBox.Text = ("Spot First Point")
 
+                
             Case TSSM_GET_FIRST
                 If AxesStatus.b_LEDJoyBtnOn = True Then ' get the first XY Point pair
                     WriteLogLine("TwoSpotSM Got First")
@@ -3157,6 +3266,8 @@ Public Class MainWindow
                 AutoVacSquare.Visible = True
                 Vacbtn.Visible = True
                 SetTwoSpotBtn.Text = "SET TWO SPOT"
+
+                
             Case TSSM_IDLE 'do nothing
 
         End Select
@@ -3204,11 +3315,11 @@ Public Class MainWindow
 
         Select Case SMScan.State
             Case SCSM_START_UP 'prep all the scan parameters
+
                 HomeAxesBtn.Visible = False
                 SetTwoSpotBtn.Visible = False
                 SetDiameterBtn.Visible = False
                 RunScanBtn.Text = "STOP"
-
                 'load scan variables
                 'tranlate from Displayed PH coords to moveable Base coords
                 db_MinPerPH = db_C_XPos_RefPH_2_RefB(Convert.ToDouble(RecipeXMinTxt.Text))
@@ -3263,9 +3374,16 @@ Public Class MainWindow
                 WriteLogLine("FirstX: " & SMScan.db_StartXPosition.ToString("F") & " StartY: " & SMScan.db_StartYPosition.ToString("F") & " EndY: " & SMScan.db_EndYPosition.ToString("F"))
                 WriteLogLine("Scan Speed: " & SMScan.db_ScanYSpeed.ToString("F") & " Cycles: " & SMScan.NumCycles.ToString)
 
-                SMScan.State = SCSM_SCAN
-                SMScan.SubState = SCSM_SUB_PARK_Z
-                CurrentStepTxtBox.Text = ("Scanning")
+                If b_HasCollision = True And b_CollisionPassed <> true then 'if we have a laser, we need to perform collision test, once completed we can move into regualar scanning
+                    SMScan.State = SCSM_IDLE
+                    SMScan.SubState = SCSM_SUB_IDLE
+                    SMCollisionPass.State = CPSM_START_UP
+                Else 
+                    SMScan.State = SCSM_SCAN
+                    SMScan.SubState = SCSM_SUB_PARK_Z
+                    CurrentStepTxtBox.Text = ("Scanning")
+                End If
+                
 
             Case SCSM_SCAN
                 If AxesStatus.b_XYZSameState = True And AxesStatus.XState = ASM_IDLE Then 'stage not moving, transition to next move
@@ -3377,6 +3495,7 @@ Public Class MainWindow
                         WriteCommand("$8700%", 6)
                         ResponseLen = ReadResponse(0)
                     End If
+                    b_CollisionPassed = False 'reset the collision flag
 
                     SMHomeAxes.State = HASM_START 'Go to the Load position everytime you finish scanning zm 
                 Else 'recycle the scan
@@ -3420,6 +3539,9 @@ Public Class MainWindow
                         SMScan.SubState = SCSM_SUB_IDLE
                         CurrentStepTxtBox.Text = ("Scanning Manually Stopped")
                         RunScanBtn.Text = "START SCAN"
+                        b_CollisionPassed = False 'reset the collision flag
+                    
+                        
                        
                     End If
                     HomeAxesBtn.Visible = True
@@ -3433,4 +3555,83 @@ Public Class MainWindow
         End Select
     End Sub
 
+    Private Sub RunCollisionPassSM()
+        Dim ResponseLen As Integer
+        Dim st_Command As String
+        Dim LogStr As String
+        Dim db_MinPerPH As Double
+        Dim db_MaxPerPH As Double
+
+        
+         Select Case SMCollisionPass.State
+            Case CPSM_START_UP 'prep all the scan parameters
+
+                'Watch for the Substrate Laser Sensor (ON)
+                CLaser.State = CLSM_ACTIVATE
+                WriteLogLine("-------------Collision Pass Start-Up--------------")            
+                CurrentStepTxtBox.Text = ("Collision Test")
+                SMCollisionPass.State = CPSM_GET_Z_UP
+                
+                If b_plasmaActive = True then
+                    b_ToggleRunRecipe = True
+                End If 
+
+            
+            Case CPSM_GET_Z_UP
+                If AxesStatus.b_XYZSameState = True And AxesStatus.XState >= ASM_IDLE Then
+                    st_Command = "$B402" & Param.db_Z_Max_Speed.ToString("F") & "%"
+                    WriteCommand(st_Command, st_Command.Length) 'SET_SPEED  $B40xss.ss%; resp [!B40xss.ss#] 0x = axis number, ss.ss = mm/sec (float)
+                    ResponseLen = ReadResponse(0)
+                    LogStr = "Move Z at: " & Param.db_Z_Max_Speed.ToString("F") & " /sec "
+                    st_Command = "$B602" & SMScan.db_ZScanPos.ToString("F") & "%"
+                    WriteCommand(st_Command, st_Command.Length) 'ABS_MOVE $B60xaa.aa%; resp [!B60xaa.aa#] 0x = axis num, aa.aa = destination in mm (float)
+                    ResponseLen = ReadResponse(0)
+                    WriteLogLine(LogStr & "to: " & SMScan.db_ZScanPos.ToString("F"))
+                    SMCollisionPass.State = CPSM_SCAN_Y
+                End If 
+            Case CPSM_SCAN_Y
+                If AxesStatus.b_XYZSameState = True And AxesStatus.XState >= ASM_IDLE Then
+                    st_Command = "$B40110%"
+                    WriteCommand(st_Command, st_Command.Length) 'SET_SPEED  $B40xss.ss%; resp [!B40xss.ss#] 0x = axis number, ss.ss = mm/sec (float)
+                    ResponseLen = ReadResponse(0)
+                    LogStr = "Move Y at 10mm/sec "
+                    st_Command = "$B601" & SMScan.db_EndYPosition.ToString("F") & "%"
+                    WriteCommand(st_Command, st_Command.Length) 'ABS_MOVE $B60xaa.aa%; resp [!B60xaa.aa#] 0x = axis num, aa.aa = destination in mm (float)
+                    ResponseLen = ReadResponse(0)
+                    WriteLogLine(LogStr & "to: " & SMScan.db_EndYPosition.ToString("F"))
+                    SMCollisionPass.State = CPSM_GET_Z_DOWN
+                End If 
+            Case CPSM_GET_Z_DOWN
+                If AxesStatus.b_XYZSameState = True And AxesStatus.XState >= ASM_IDLE Then
+                    st_Command = "$B402" & Param.db_Z_Max_Speed.ToString("F") & "%"
+                    WriteCommand(st_Command, st_Command.Length) 'SET_SPEED  $B40xss.ss%; resp [!B40xss.ss#] 0x = axis number, ss.ss = mm/sec (float)
+                    ResponseLen = ReadResponse(0)
+                    LogStr = "Move Z Speed: " & Param.db_Z_Max_Speed.ToString("F") & " /sec "
+                    st_Command = "$B602" & SMScan.db_ZParkPos.ToString("F") & "%"
+                    WriteCommand(st_Command, st_Command.Length) 'ABS_MOVE $B60xaa.aa%; resp [!B60xaa.aa#] 0x = axis num, aa.aa = destination in mm (float)
+                    ResponseLen = ReadResponse(0)
+                    WriteLogLine(LogStr & "to " & SMScan.db_ZParkPos.ToString("F"))
+                    SMCollisionPass.State = CPSM_SHUT_DOWN
+                End If                     
+            Case CPSM_SHUT_DOWN 
+                If AxesStatus.b_XYZSameState = True And AxesStatus.XState >= ASM_IDLE Then
+                    SMCollisionPass.State = CPSM_IDLE                                    
+                    CurrentStepTxtBox.Text = ("Scanning")
+                    CLaser.State = CLSM_DEACTIVATE
+                    b_CollisionPassed = True
+                    'Go here to scan
+                    if b_PlannedAutoStart = True Then
+                        b_ToggleRunRecipe = True 'Turn plasma on
+                        b_PlannedAutoStart = False 
+                    Else 
+                         SMScan.ExternalNewState = SCSM_START_UP
+                         SMScan.b_ExternalStateChange = True
+                    End If
+                    
+                End If 
+
+
+            Case CPSM_IDLE 'do nothing
+         End Select
+    End Sub
 End Class

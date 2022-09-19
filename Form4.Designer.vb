@@ -34,6 +34,8 @@ Partial Class Form4
         Me.Label1 = New System.Windows.Forms.Label()
         Me.Guna2GradientPanel1 = New Guna.UI2.WinForms.Guna2GradientPanel()
         Me.Label2 = New System.Windows.Forms.Label()
+        Me.CollisionTextBox = New Guna.UI2.WinForms.Guna2TextBox()
+        Me.CollisionCheckbox = New Guna.UI2.WinForms.Guna2CustomCheckBox()
         Me.Guna2GradientPanel1.SuspendLayout
         Me.SuspendLayout
         '
@@ -56,11 +58,13 @@ Partial Class Form4
         '
         'AutoScanChkBox
         '
+        Me.AutoScanChkBox.Checked = true
         Me.AutoScanChkBox.CheckedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(201,Byte),Integer), CType(CType(42,Byte),Integer), CType(CType(38,Byte),Integer))
         Me.AutoScanChkBox.CheckedState.BorderRadius = 2
         Me.AutoScanChkBox.CheckedState.BorderThickness = 0
         Me.AutoScanChkBox.CheckedState.FillColor = System.Drawing.Color.FromArgb(CType(CType(201,Byte),Integer), CType(CType(42,Byte),Integer), CType(CType(38,Byte),Integer))
         Me.AutoScanChkBox.CheckedState.Parent = Me.AutoScanChkBox
+        Me.AutoScanChkBox.CheckState = System.Windows.Forms.CheckState.Checked
         Me.AutoScanChkBox.Enabled = false
         Me.AutoScanChkBox.Location = New System.Drawing.Point(46, 152)
         Me.AutoScanChkBox.Name = "AutoScanChkBox"
@@ -237,7 +241,7 @@ Partial Class Form4
         Me.Guna2GradientPanel1.Location = New System.Drawing.Point(31, 139)
         Me.Guna2GradientPanel1.Name = "Guna2GradientPanel1"
         Me.Guna2GradientPanel1.ShadowDecoration.Parent = Me.Guna2GradientPanel1
-        Me.Guna2GradientPanel1.Size = New System.Drawing.Size(391, 62)
+        Me.Guna2GradientPanel1.Size = New System.Drawing.Size(721, 62)
         Me.Guna2GradientPanel1.TabIndex = 76
         '
         'Label2
@@ -252,12 +256,59 @@ Partial Class Form4
         Me.Label2.TabIndex = 77
         Me.Label2.Text = "Engineer "&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&"Only"
         '
+        'CollisionTextBox
+        '
+        Me.CollisionTextBox.Cursor = System.Windows.Forms.Cursors.IBeam
+        Me.CollisionTextBox.DefaultText = "Crash Avoidance System"
+        Me.CollisionTextBox.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208,Byte),Integer), CType(CType(208,Byte),Integer), CType(CType(208,Byte),Integer))
+        Me.CollisionTextBox.DisabledState.FillColor = System.Drawing.Color.FromArgb(CType(CType(226,Byte),Integer), CType(CType(226,Byte),Integer), CType(CType(226,Byte),Integer))
+        Me.CollisionTextBox.DisabledState.ForeColor = System.Drawing.Color.FromArgb(CType(CType(138,Byte),Integer), CType(CType(138,Byte),Integer), CType(CType(138,Byte),Integer))
+        Me.CollisionTextBox.DisabledState.Parent = Me.CollisionTextBox
+        Me.CollisionTextBox.DisabledState.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(138,Byte),Integer), CType(CType(138,Byte),Integer), CType(CType(138,Byte),Integer))
+        Me.CollisionTextBox.FillColor = System.Drawing.SystemColors.Control
+        Me.CollisionTextBox.FocusedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94,Byte),Integer), CType(CType(148,Byte),Integer), CType(CType(255,Byte),Integer))
+        Me.CollisionTextBox.FocusedState.Parent = Me.CollisionTextBox
+        Me.CollisionTextBox.Font = New System.Drawing.Font("Segoe UI", 10.8!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.CollisionTextBox.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94,Byte),Integer), CType(CType(148,Byte),Integer), CType(CType(255,Byte),Integer))
+        Me.CollisionTextBox.HoverState.Parent = Me.CollisionTextBox
+        Me.CollisionTextBox.Location = New System.Drawing.Point(489, 152)
+        Me.CollisionTextBox.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.CollisionTextBox.Name = "CollisionTextBox"
+        Me.CollisionTextBox.PasswordChar = Global.Microsoft.VisualBasic.ChrW(0)
+        Me.CollisionTextBox.PlaceholderText = ""
+        Me.CollisionTextBox.SelectedText = ""
+        Me.CollisionTextBox.SelectionStart = 22
+        Me.CollisionTextBox.ShadowDecoration.Parent = Me.CollisionTextBox
+        Me.CollisionTextBox.Size = New System.Drawing.Size(252, 36)
+        Me.CollisionTextBox.TabIndex = 78
+        '
+        'CollisionCheckbox
+        '
+        Me.CollisionCheckbox.CheckedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(201,Byte),Integer), CType(CType(42,Byte),Integer), CType(CType(38,Byte),Integer))
+        Me.CollisionCheckbox.CheckedState.BorderRadius = 2
+        Me.CollisionCheckbox.CheckedState.BorderThickness = 0
+        Me.CollisionCheckbox.CheckedState.FillColor = System.Drawing.Color.FromArgb(CType(CType(201,Byte),Integer), CType(CType(42,Byte),Integer), CType(CType(38,Byte),Integer))
+        Me.CollisionCheckbox.CheckedState.Parent = Me.CollisionCheckbox
+        Me.CollisionCheckbox.Enabled = false
+        Me.CollisionCheckbox.Location = New System.Drawing.Point(442, 152)
+        Me.CollisionCheckbox.Name = "CollisionCheckbox"
+        Me.CollisionCheckbox.ShadowDecoration.Parent = Me.CollisionCheckbox
+        Me.CollisionCheckbox.Size = New System.Drawing.Size(40, 36)
+        Me.CollisionCheckbox.TabIndex = 77
+        Me.CollisionCheckbox.UncheckedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(125,Byte),Integer), CType(CType(137,Byte),Integer), CType(CType(149,Byte),Integer))
+        Me.CollisionCheckbox.UncheckedState.BorderRadius = 2
+        Me.CollisionCheckbox.UncheckedState.BorderThickness = 0
+        Me.CollisionCheckbox.UncheckedState.FillColor = System.Drawing.Color.FromArgb(CType(CType(125,Byte),Integer), CType(CType(137,Byte),Integer), CType(CType(149,Byte),Integer))
+        Me.CollisionCheckbox.UncheckedState.Parent = Me.CollisionCheckbox
+        '
         'Form4
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8!, 16!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.Control
         Me.ClientSize = New System.Drawing.Size(754, 347)
+        Me.Controls.Add(Me.CollisionTextBox)
+        Me.Controls.Add(Me.CollisionCheckbox)
         Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.ExitBTN)
         Me.Controls.Add(Me.BatchTextBox)
@@ -290,4 +341,6 @@ End Sub
     Friend WithEvents Label1 As Label
     Friend WithEvents Guna2GradientPanel1 As Guna.UI2.WinForms.Guna2GradientPanel
     Friend WithEvents Label2 As Label
+    Friend WithEvents CollisionTextBox As Guna.UI2.WinForms.Guna2TextBox
+    Friend WithEvents CollisionCheckbox As Guna.UI2.WinForms.Guna2CustomCheckBox
 End Class
