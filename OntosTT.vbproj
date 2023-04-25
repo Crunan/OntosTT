@@ -227,6 +227,9 @@
     </None>
     <None Include="App.config" />
     <None Include="packages.config" />
+    <None Include="xinput.lib">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
@@ -250,6 +253,12 @@
     <Content Include="icons8-settings-480.png" />
     <Content Include="OTTS_EXE.ico" />
     <Content Include="OTT_PLUS.ico" />
+    <Content Include="XInput1_4.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="XInput9_1_0.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -4,6 +4,9 @@ Imports System.IO.Ports
 Imports System.ComponentModel
 Imports System.IO
 Imports System.String
+Imports System.Runtime.InteropServices
+
+
 
 
 Public Class MainWindow
@@ -82,6 +85,7 @@ Public Class MainWindow
     Dim LogLineOut As StreamWriter
     Dim st_TimeStamp As System.String
     Dim b_LogOpen As Boolean = False
+    Dim b_SoftJoyBtnOn As Boolean 'is the virtual joystick button depressed?
 
     Dim b_Step_MB_SM_Left As Boolean = False
     Dim b_Step_MB_SM_Right As Boolean = False
@@ -160,7 +164,7 @@ Public Class MainWindow
         Dim LEDStates As Integer
 
         Dim b_DoorsOpen As Boolean 'This checks the 3-Axis PCB during GetAxesStatus() to check an LED state for doors open
-        Dim b_LEDJoyBtnOn As Boolean 'is the joystick button depressed?
+        Dim b_LEDJoyBtnOn As Boolean 'is the joystick button depressed?        
         Dim b_XYZSameState As Boolean 'all three axes Same state?
         Dim b_LEDVacOn As Boolean 'is 3-AXIS PCB Valve 3 (Vacuum) On?
         Dim b_LEDN2PurgeOn As Boolean 'is N2 Substrate Purge On?
@@ -430,12 +434,101 @@ Public Class MainWindow
 
     End Structure
     Dim CoordParam As COORD_SYS
+     
+     ' Define the XInput structures for using a controller
+    Public Const ERROR_SUCCESS As Integer = 0
+    Public Const ERROR_DEVICE_NOT_CONNECTED As Integer = 1167
+    'Constants for Xinput_gamepad
+    Public Const XINPUT_GAMEPAD_A As UShort = &H1000
+    Public Const XINPUT_GAMEPAD_B As UShort = &H2000
+    Public Const XINPUT_GAMEPAD_X As UShort = &H4000
+    Public Const XINPUT_GAMEPAD_Y As UShort = &H8000
+    Public Const XINPUT_GAMEPAD_LEFT_SHOULDER As UShort = &H1
+    Public Const XINPUT_GAMEPAD_RIGHT_SHOULDER As UShort = &H2
+    Public Const XINPUT_GAMEPAD_LEFT_THUMB As UShort = &H400
+    Public Const XINPUT_GAMEPAD_RIGHT_THUMB As UShort = &H800
+    Public Const XINPUT_GAMEPAD_DPAD_UP As UShort = &H8
+    Public Const XINPUT_GAMEPAD_DPAD_DOWN As UShort = &H4
+    Public Const XINPUT_GAMEPAD_DPAD_LEFT As UShort = &H1
+    Public Const XINPUT_GAMEPAD_DPAD_RIGHT As UShort = &H2
+    Public Const XINPUT_GAMEPAD_START As UShort = &H10
+    Public Const XINPUT_GAMEPAD_BACK As UShort = &H20
+    Public Const XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE As UShort = &H2000
+    Public Const XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE As UShort = &H2000
+    Public Const XINPUT_GAMEPAD_TRIGGER_THRESHOLD As UShort = &H30
+    Public Const XINPUT_GAMEPAD_LEFT_TRIGGER As UShort = &H100
+    Public Const XINPUT_GAMEPAD_RIGHT_TRIGGER As UShort = &H200
 
+    
+    <StructLayout(LayoutKind.Sequential)>
+    Public Structure XINPUT_GAMEPAD
+        <MarshalAs(UnmanagedType.I2)>
+        Public wButtons As Short
+        <MarshalAs(UnmanagedType.I1)>
+        Public bLeftTrigger As Byte
+        <MarshalAs(UnmanagedType.I1)>
+        Public bRightTrigger As Byte
+        <MarshalAs(UnmanagedType.I2)>
+        Public sThumbLX As Short
+        <MarshalAs(UnmanagedType.I2)>
+        Public sThumbLY As Short
+        <MarshalAs(UnmanagedType.I2)>
+        Public sThumbRX As Short
+        <MarshalAs(UnmanagedType.I2)>
+        Public sThumbRY As Short
+    End Structure
+
+    <StructLayout(LayoutKind.Sequential)>
+    Public Structure XINPUT_STATE
+        Public dwPacketNumber As UInteger
+        Public Gamepad As XINPUT_GAMEPAD
+    End Structure
+    Dim controllerState As XINPUT_STATE = New XINPUT_STATE()
+    Dim previousLeftJoystickX As Short = controllerState.Gamepad.sThumbLX
+    Dim previousLeftJoystickY As Short = controllerState.Gamepad.sThumbLY
+
+    <StructLayout(LayoutKind.Sequential)>
+    Private Structure XINPUT_VIBRATION
+        Public wLeftMotorSpeed As UShort
+        Public wRightMotorSpeed As UShort
+    End Structure
+    <DllImport("kernel32.dll", SetLastError:=True)>
+    Public Shared Function GetLastError() As Integer
+    End Function    
+    ' Import the XInput functions as external functions from the DLL
+    <DllImport("xinput1_4.dll", EntryPoint:="XInputGetState")>
+    Private Shared Function XInputGetState(dwUserIndex As Integer, ByRef pState As XINPUT_STATE) As Integer
+    End Function
+
+    <DllImport("xinput1_4.dll", EntryPoint:="XInputSetState")>
+    Private Shared Function XInputSetState(dwUserIndex As Integer, ByRef pVibration As XINPUT_VIBRATION) As Integer
+    End Function
+   
     '------------------------- Load the form
     Private Sub Form1_Load(sender As System.Object, e As System.EventArgs) Handles MyBase.Load
         Dim i As Integer
         Dim ar_myPort As String()
         Dim responseLen As Integer
+        ' Retrieve the state of the first controller
+        Dim connectedControllers As List(Of Integer) = New List(Of Integer)()
+        ' Loop through all possible controller numbers (from 0 to 3)
+        For j As Integer = 0 To 3       
+            Dim result As Integer = XInputGetState(j, controllerState)
+            ' Check if the controller is connected
+            If result = ERROR_SUCCESS Then
+                connectedControllers.Add(j)
+                ' Controller state retrieved successfully
+                ' Process the input values in the state structure
+                ' For example, you can check the values of the state.Gamepad buttons and triggers properties                   
+            End If
+
+        Next
+
+        ' Print the list of connected controllers
+        For Each controllerNumber As Integer In connectedControllers
+            Console.WriteLine("Controller {0} is connected.", controllerNumber)
+        Next
+
 
         DateTimeLabel1.text = DateTime.Now.ToString("hh:mm dddd, dd MMMM yyyy")
 
@@ -992,7 +1085,7 @@ Public Class MainWindow
 
             Case POLLING
                 RunCheckInput() 'checks for operator input
-
+              
                 'Check whether we need to go full pumpkin
                 If b_Owned = False Then
                     SM_CinderellaCounter += 1 'increment until Pumpkin check
@@ -1042,6 +1135,20 @@ Public Class MainWindow
                 
         PL_SIM_NOTICE.Visible = False 'just in case
 
+        'First things first, log the CTL & Axis firmware. 
+        WriteCommand("$8F%", 4) 'GET FW VERSION $8F%; resp[!8Fxx#]; xx = hard coded FW rev in Hex
+        ResponseLen = ReadResponse(0)
+        If ResponseLen > 3 Then
+            StrVar = st_RCV.Substring(3,2)
+            WriteLogLine("CTL Firmware Version: " + StrVar)
+        End If
+
+        WriteCommand("$A1%", 4) 'GET FW VERSION $A1% resp[!A1xx#]; xx = hard coded FW rev in Hex
+        ResponseLen = ReadResponse(0)
+        If ResponseLen > 3 Then
+            StrVar = st_RCV.Substring(3,2)
+            WriteLogLine("Axis Firmware Version: " + StrVar)
+        End If
         'How many MFCs?
         WriteCommand("$2A002%", 7) 'GET Number of MFCs (1-4) $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
         ResponseLen = ReadResponse(0)
@@ -1835,7 +1942,27 @@ Public Class MainWindow
 
         End If
 
-        
+        if SMTwoSpot.State > TSSM_IDLE Then            
+            
+
+            Dim result As Integer = XInputGetState(0, controllerState)
+
+            If (controllerState.Gamepad.wButtons And XINPUT_GAMEPAD_A) Then
+                b_SoftJoyBtnOn = true
+            End If
+            
+            If controllerState.Gamepad.sThumbLX <> previousLeftJoystickX OrElse controllerState.Gamepad.sThumbLY <> previousLeftJoystickY Then
+                ' The left joystick is moving
+                ' Do something here
+                Console.WriteLine("Left joystick is moving")
+                
+                ' Update the previous state of the left joystick
+                previousLeftJoystickX = controllerState.Gamepad.sThumbLX
+                previousLeftJoystickY = controllerState.Gamepad.sThumbLY
+            End If
+        End if
+
+
 
     End Sub
 
@@ -3280,7 +3407,7 @@ Public Class MainWindow
                 Vacbtn.Visible = False
                 SetTwoSpotBtn.Text = "STOP"
                 WriteLogLine("TwoSpotSM Start Up")
-                WriteCommand("$BE%", 4) 'ENABLE_JOY  $BE%; resp [!BE#];
+                WriteCommand("$BD%", 4) 'ENABLE_SOFT_JOY //  $BD%; resp [!BD#]; //Mutexed with ENABLE_JOY
                 ResponseLen = ReadResponse(1)
                 SMTwoSpot.State = TSSM_GET_FIRST
                 WriteLogLine("TwoSpotSM Getting First")
