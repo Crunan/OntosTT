@@ -85,7 +85,9 @@ Public Class MainWindow
     Dim LogLineOut As StreamWriter
     Dim st_TimeStamp As System.String
     Dim b_LogOpen As Boolean = False
+    'Controller related variables
     Dim b_SoftJoyBtnOn As Boolean 'is the virtual joystick button depressed?
+    
 
     Dim b_Step_MB_SM_Left As Boolean = False
     Dim b_Step_MB_SM_Right As Boolean = False
@@ -486,6 +488,10 @@ Public Class MainWindow
     Dim controllerState As XINPUT_STATE = New XINPUT_STATE()
     Dim previousLeftJoystickX As Short = controllerState.Gamepad.sThumbLX
     Dim previousLeftJoystickY As Short = controllerState.Gamepad.sThumbLY
+
+    Dim previousButtonPress As Short = controllerState.Gamepad.wButtons
+
+    Dim previousRightJoystickY As Short = controllerState.Gamepad.sThumbRY
 
     <StructLayout(LayoutKind.Sequential)>
     Private Structure XINPUT_VIBRATION
@@ -1095,7 +1101,7 @@ Public Class MainWindow
                     End If
                 End If
 
-                SM_PollCounter += 1 'increment every main tick loop (100 msec period)
+                SM_PollCounter += 2 'increment every main tick loop (100 msec period)
                 If SM_PollCounter >= SM_POLL_PERIOD Then
                     SM_PollCounter = 0
                     RunPolling() 'poll the main PCB
@@ -1568,6 +1574,7 @@ Public Class MainWindow
         Dim IntVal As Integer
         Dim DoubVal As Double
         Dim StrVar As String
+        Dim velocityPercent As String
         Dim ResponseLen As Integer
         Dim db_TempProgressBarValue As Double
         Dim DoubValLeft, DoubValRight As Double
@@ -1778,6 +1785,7 @@ Public Class MainWindow
             b_toggleAutoScan = False
         End If
 
+
         'Get Axes Status
         GetAxesStatus() 'Update AxesStatus Data Structure
         'Manage Axes Status Message
@@ -1942,12 +1950,25 @@ Public Class MainWindow
 
         End If
 
+        'Controller getState
+        Dim result As Integer = XInputGetState(0, controllerState)
+
+        If controllerState.Gamepad.wButtons AND XINPUT_GAMEPAD_START Then     
+            SMInitAxes.State = IASM_START_UP      
+        End If
+
+        If controllerState.Gamepad.wButtons AND XINPUT_GAMEPAD_BACK Then                
+            If SMTwoSpot.State = TSSM_IDLE Then 'IDLE, so must want me to start up
+                SMTwoSpot.State = TSSM_START_UP
+            Else
+                SMTwoSpot.State = TSSM_CLOSE_DOWN
+            End If
+        End If
+
         if SMTwoSpot.State > TSSM_IDLE Then            
-            
+            Dim velocityPercent As String            
 
-            Dim result As Integer = XInputGetState(0, controllerState)
-
-            If (controllerState.Gamepad.wButtons And XINPUT_GAMEPAD_A) Then
+            If controllerState.Gamepad.wButtons And XINPUT_GAMEPAD_A Then
                 b_SoftJoyBtnOn = true
             End If
             
@@ -1955,16 +1976,43 @@ Public Class MainWindow
                 ' The left joystick is moving
                 ' Do something here
                 Console.WriteLine("Left joystick is moving")
-                
                 ' Update the previous state of the left joystick
-                previousLeftJoystickX = controllerState.Gamepad.sThumbLX
+                previousLeftJoystickX = controllerState.Gamepad.sThumbLX 'max -32768:32767     
+                'X axis movement
+                velocityPercent = JoyToSpeedPercentCalculator(previousLeftJoystickX, "X")
+                StrVar = "$AB00" + velocityPercent + "%" 'SET_SOFT_JOY 0xAB  //  $AB0xss.s%; resp [!AB0xss.s#] where 0x = axis number, ss.s is plus/minus percent of max joy speed.
+                WriteCommand(StrVar, StrVar.Length)
+                ReadResponse(0)
+                'Y axis movement
                 previousLeftJoystickY = controllerState.Gamepad.sThumbLY
+                velocityPercent = JoyToSpeedPercentCalculator(previousLeftJoystickY, "Y")
+                StrVar = "$AB01" + velocityPercent + "%" 'SET_SOFT_JOY 0xAB  //  $AB0xss.s%; resp [!AB0xss.s#] where 0x = axis number, ss.s is plus/minus percent of max joy speed.
+                WriteCommand(StrVar, StrVar.Length)
+                ReadResponse(0)                   
             End If
+
+            
+            
         End if
 
 
 
     End Sub
+    Private Function JoyToSpeedPercentCalculator(position As Double, axis As String) As String
+        Dim speed As Double         
+        If position > 20000 Then position = 32767
+        If position < -20000 Then position = -32767
+        If (position >= 0)              
+            speed = position / 32767 * 100     
+            If axis = "Y" Then Return speed.ToString("-#.##")
+            return speed.ToString("##.#;0")
+        Else 
+            speed = position / -32767 * 100
+            If axis = "Y" Then Return speed.ToString("#.##;0")
+            return speed.ToString("-#.##")
+        End If 
+
+    End Function
 
     Private Function DecIntToHexStr(DecInt As Integer, NumChar As Integer)
         Dim HexStr As String
@@ -2594,7 +2642,7 @@ Public Class MainWindow
         b_MB_Big_Step_Active = True
     End Sub
   
-    Private Sub Launch_SMTwoSpot(sender As Object, e As EventArgs) Handles SetTwoSpotBtn.Click
+    Private Sub Launch_SMTwoSpot(sender As Object, e As EventArgs) Handles SetTwoSpotBtn.Click 
         If SMTwoSpot.State = TSSM_IDLE Then 'IDLE, so must want me to start up
             SMTwoSpot.State = TSSM_START_UP
         Else
