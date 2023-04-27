@@ -225,6 +225,8 @@ Partial Class MainWindow
         Me.LaserSenseSquare = New System.Windows.Forms.Label()
         Me.plasmaStable_Label = New System.Windows.Forms.Label()
         Me.errorActive_Label = New System.Windows.Forms.Label()
+        Me.ControllerLabel = New System.Windows.Forms.Label()
+        Me.contollerONSquare = New System.Windows.Forms.Label()
         Me.MenuStrip1.SuspendLayout
         CType(Me.MB_Left_Arrow,System.ComponentModel.ISupportInitialize).BeginInit
         CType(Me.MB_Right_Arrow,System.ComponentModel.ISupportInitialize).BeginInit
@@ -2504,9 +2506,9 @@ Partial Class MainWindow
         Me.LabelLock.Location = New System.Drawing.Point(1551, 474)
         Me.LabelLock.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.LabelLock.Name = "LabelLock"
-        Me.LabelLock.Size = New System.Drawing.Size(83, 25)
+        Me.LabelLock.Size = New System.Drawing.Size(96, 25)
         Me.LabelLock.TabIndex = 176
-        Me.LabelLock.Text = "Joystick"
+        Me.LabelLock.Text = "Controller"
         '
         'RecipeXMaxTxt
         '
@@ -3088,6 +3090,31 @@ Partial Class MainWindow
         Me.errorActive_Label.Text = "ERROR ACTIVE"
         Me.errorActive_Label.Visible = false
         '
+        'ControllerLabel
+        '
+        Me.ControllerLabel.AutoSize = true
+        Me.ControllerLabel.BackColor = System.Drawing.Color.White
+        Me.ControllerLabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.8!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.ControllerLabel.Location = New System.Drawing.Point(1733, 474)
+        Me.ControllerLabel.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.ControllerLabel.Name = "ControllerLabel"
+        Me.ControllerLabel.Size = New System.Drawing.Size(172, 24)
+        Me.ControllerLabel.TabIndex = 229
+        Me.ControllerLabel.Text = "CONTROLLER ON"
+        '
+        'contollerONSquare
+        '
+        Me.contollerONSquare.AutoSize = true
+        Me.contollerONSquare.BackColor = System.Drawing.Color.Gainsboro
+        Me.contollerONSquare.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
+        Me.contollerONSquare.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.contollerONSquare.Location = New System.Drawing.Point(1708, 476)
+        Me.contollerONSquare.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.contollerONSquare.Name = "contollerONSquare"
+        Me.contollerONSquare.Size = New System.Drawing.Size(26, 22)
+        Me.contollerONSquare.TabIndex = 228
+        Me.contollerONSquare.Text = "   "
+        '
         'MainWindow
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8!, 16!)
@@ -3096,6 +3123,8 @@ Partial Class MainWindow
         Me.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
         Me.ClientSize = New System.Drawing.Size(1924, 1055)
         Me.ControlBox = false
+        Me.Controls.Add(Me.ControllerLabel)
+        Me.Controls.Add(Me.contollerONSquare)
         Me.Controls.Add(Me.errorActive_Label)
         Me.Controls.Add(Me.plasmaStable_Label)
         Me.Controls.Add(Me.Label17)
@@ -3515,4 +3544,6 @@ End Sub
     Friend WithEvents plasmaStable_Label As Label
     Friend WithEvents errorActive_Label As Label
     Friend WithEvents SettingsBtn As Guna.UI2.WinForms.Guna2Button
+    Friend WithEvents ControllerLabel As Label
+    Friend WithEvents contollerONSquare As Label
 End Class
