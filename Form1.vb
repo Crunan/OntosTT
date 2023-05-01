@@ -5,9 +5,8 @@ Imports System.ComponentModel
 Imports System.IO
 Imports System.String
 Imports System.Runtime.InteropServices
-
-
-
+Imports System.Drawing
+Imports System.Runtime.Serialization
 
 Public Class MainWindow
 
@@ -27,6 +26,9 @@ Public Class MainWindow
     '
     Public Shared b_HasCollision As Boolean = False 'the tool has a Collision System on 
     
+    
+    'Controller stuff    
+    Dim gamepad As GamepadInput = searchForGamepad()
 
     '    Serial Port Stuff
     Dim CR As String = Chr(13)
@@ -92,11 +94,6 @@ Public Class MainWindow
     Dim b_Step_MB_SM_Right As Boolean = False
     Dim b_SetDefaultRecipe As Boolean = False
 
-    Dim b_controllerHighSpeed As Boolean = true
-    Dim b_controllerButtonSpotFirst As Boolean = False
-    Dim b_controllerButtonSpotSecond As Boolean = false    
-    Dim b_controllerStartup As Boolean = true
-    Dim b_controllerConnected As Boolean = False
     'Comm port stuff
     Dim b_CommPortSelected As Boolean = False
     Dim b_foundKnownComPort As Boolean = False
@@ -187,6 +184,18 @@ Public Class MainWindow
         Dim db_ZPos As Double
     End Structure
     Dim AxesStatus As ASTAT
+    
+    Public Enum Axis
+        <EnumMember(Value:="x")>
+        X
+        <EnumMember(Value:="y")>
+        Y
+        <EnumMember(Value:="z")>
+        Z
+    End Enum
+
+
+
     Dim st_AxesStatusRsp = "" 'Axes Status Response string holder
 
     'Axis state machine states, maintained in the 3-Axis PCB
@@ -440,82 +449,183 @@ Public Class MainWindow
 
     End Structure
     Dim CoordParam As COORD_SYS
-    
-    Structure CONTROLLERSTATEMACHINE
-        Dim State As Integer
-    End Structure
-    Dim ControllerSM As CONTROLLERSTATEMACHINE
-    Dim previousButtonState As Integer = 0
-    Dim currentButtonState As Integer = 0
-    Dim previousLeftJoystickX As Short = controllerState.Gamepad.sThumbLX
-    Dim previousLeftJoystickY As Short = controllerState.Gamepad.sThumbLY    
-    Dim previousRightJoystickY As Short = controllerState.Gamepad.sThumbRY
+    Public function searchForGamepad() As GamepadInput
+        Dim maxPlayers As Integer = 4 ' the maximum number of players to check
+        Dim connectedControllers As New List(Of Integer)()
 
-    Const CSM_IDLE = 0
-    Const CSM_CHECK_CONTROLLERS = 1
-    Const CSM_AWAITING_INPUT = 2 
-    Const CSM_TWOSPOT = 3 
+        For i As Integer = 0 To maxPlayers - 1
+            Dim gamepad As New GamepadInput(i)
+            If gamepad.isConnected() Then
+                Return gamepad
+            End If
+        Next
+    End function
+   Public Class GamepadInput
 
-     ' Define the XInput structures for using a controller
-    Public Const ERROR_SUCCESS As Integer = 0
-    Public Const ERROR_DEVICE_NOT_CONNECTED As Integer = 1167
-    'Constants for Xinput_gamepad
-    Public Const XINPUT_GAMEPAD_A As UShort = &H1000
-    Public Const XINPUT_GAMEPAD_B As UShort = &H2000
-    Public Const XINPUT_GAMEPAD_X As UShort = &H4000
-    Public Const XINPUT_GAMEPAD_Y As UShort = &H8000
-    Public Const XINPUT_GAMEPAD_LEFT_SHOULDER As UShort = &H1
-    Public Const XINPUT_GAMEPAD_RIGHT_SHOULDER As UShort = &H2
-    Public Const XINPUT_GAMEPAD_LEFT_THUMB As UShort = &H400
-    Public Const XINPUT_GAMEPAD_RIGHT_THUMB As UShort = &H800
-    Public Const XINPUT_GAMEPAD_DPAD_UP As UShort = &H8
-    Public Const XINPUT_GAMEPAD_DPAD_DOWN As UShort = &H4
-    Public Const XINPUT_GAMEPAD_DPAD_LEFT As UShort = &H1
-    Public Const XINPUT_GAMEPAD_DPAD_RIGHT As UShort = &H2
-    Public Const XINPUT_GAMEPAD_START As UShort = &H10
-    Public Const XINPUT_GAMEPAD_BACK As UShort = &H20
-    Public Const XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE As UShort = &H2000
-    Public Const XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE As UShort = &H2000
-    Public Const XINPUT_GAMEPAD_TRIGGER_THRESHOLD As UShort = &H30
-    Public Const XINPUT_GAMEPAD_LEFT_TRIGGER As UShort = &H100
-    Public Const XINPUT_GAMEPAD_RIGHT_TRIGGER As UShort = &H200
+        <DllImport("xinput1_4.dll", EntryPoint:="XInputGetState")>
+        Private Shared Function XInputGetState(dwUserIndex As Integer, ByRef pState As XInputState) As Integer
+        End Function
 
-    
-    <StructLayout(LayoutKind.Sequential)>
-    Public Structure XINPUT_GAMEPAD
-        <MarshalAs(UnmanagedType.I2)>
-        Public wButtons As Short
-        <MarshalAs(UnmanagedType.I1)>
-        Public bLeftTrigger As Byte
-        <MarshalAs(UnmanagedType.I1)>
-        Public bRightTrigger As Byte
-        <MarshalAs(UnmanagedType.I2)>
-        Public sThumbLX As Short
-        <MarshalAs(UnmanagedType.I2)>
-        Public sThumbLY As Short
-        <MarshalAs(UnmanagedType.I2)>
-        Public sThumbRX As Short
-        <MarshalAs(UnmanagedType.I2)>
-        Public sThumbRY As Short
-    End Structure
+        Private Const MaxDiagonal As Single = 0.3F 'Set your max diagonal threshold here
+                
+        Public Structure XInputState
+            Public dwPacketNumber As UInteger
+            Public Gamepad As Gamepad            
+        End Structure
+            
+        Public Structure Gamepad
+            Public Buttons As UShort
+            Public LeftTrigger As Byte
+            Public RightTrigger As Byte
+            Public LeftThumbX As Short
+            Public LeftThumbY As Short
+            Public RightThumbX As Short
+            Public RightThumbY As Short
+            
+            Public Function IsPressed(button As GamepadButtonFlags) As Boolean
+                Return (Buttons And CUShort(button)) <> 0
+            End Function
 
-    <StructLayout(LayoutKind.Sequential)>
-    Public Structure XINPUT_STATE
-        Public dwPacketNumber As UInteger
-        Public Gamepad As XINPUT_GAMEPAD
-    End Structure
-    Dim controllerState As XINPUT_STATE = New XINPUT_STATE()
-    ' Import the XInput functions as external functions from the DLL
-    <DllImport("xinput1_4.dll", EntryPoint:="XInputGetState")>
-    Private Shared Function XInputGetState(dwUserIndex As Integer, ByRef pState As XINPUT_STATE) As Integer
+            Public Function LeftThumbMagnitude() As Single
+                Return CSng(Math.Sqrt(Math.Pow(LeftThumbX, 2) + Math.Pow(LeftThumbY, 2)))
+            End Function
+
+            Public Function LeftThumbIsDiagonal() As Boolean
+                Dim leftThumb As New PointF(LeftThumbX, LeftThumbY)
+
+                Dim x As Single = Math.Abs(leftThumb.X)
+                Dim y As Single = Math.Abs(leftThumb.Y)
+                Return (x > MaxDiagonal AndAlso y > MaxDiagonal)
+            End Function
+            
+
+            Public Function LeftThumbNormalized() As PointF
+                Dim leftThumb As New PointF(LeftThumbX, LeftThumbY)
+                Dim length As Single = CSng(Math.Sqrt(Math.Pow(leftThumb.X, 2) + Math.Pow(leftThumb.Y, 2)))
+                If length > 0 Then
+                    If LeftThumbIsDiagonal() Then
+                        leftThumb.X /= length
+                        leftThumb.Y /= length
+                        leftThumb.X *= MaxDiagonal
+                        leftThumb.Y *= MaxDiagonal
+                    Else
+                        leftThumb.X /= length
+                        leftThumb.Y /= length
+                    End If
+                End If
+                Return leftThumb
+            End Function
+        End Structure
+
+        <Flags>
+        Public Enum GamepadButtonFlags As UShort
+            DPadUp = &H1
+            DPadDown = &H2
+            DPadLeft = &H4
+            DPadRight = &H8
+            Start = &H10
+            Back = &H20
+            LeftThumb = &H40
+            RightThumb = &H80
+            LeftShoulder = &H100
+            RightShoulder = &H200
+            Guide = &H400
+            A = &H1000
+            B = &H2000
+            X = &H4000
+            Y = &H8000
+        End Enum
+        
+        
+        Private playerIndex As Integer
+        Private currentState As XInputState
+
+        Public Sub New(playerIndex As Integer)
+            Me.playerIndex = playerIndex
+        End Sub
+
+        Public Function isConnected() As Boolean
+            Dim state As XInputState = New XInputState()
+            Dim result As Integer = XInputGetState(playerIndex, state)
+            Return (result = 0)
+        End Function
+
+        Private previousJoystickLThumbstick As PointF
+        Public Function LeftThumbstickValueChanged() As Boolean
+            Dim currentThumbstick As PointF = currentState.Gamepad.LeftThumbNormalized()
+            If currentThumbstick <> previousJoystickLThumbstick Then
+                previousJoystickLThumbstick = currentThumbstick
+                Return True
+            Else
+                Return False
+            End If
+        End Function
+        Public Function GetLeftThumbstickPercentages() As (xPercent As String, yPercent As String)
+            Dim leftThumbstick As PointF = GetLeftThumbstick()
+            Dim xPercent As Integer = CInt(Math.Round(leftThumbstick.X * 100))
+            Dim yPercent As Integer = CInt(Math.Round(leftThumbstick.Y * 100))
+            Return (xPercent.ToString(), yPercent.ToString())
+        End Function
+
+
+        Public Sub Update()
+            XInputGetState(playerIndex, currentState)
+        End Sub
+      
+        Public Function IsButtonDown(button As GamepadButtonFlags) As Boolean
+            Return currentState.Gamepad.IsPressed(button)
+        End Function
+
+        Public Function WasButtonPressed(button As GamepadButtonFlags) As Boolean
+            Return (IsButtonDown(button) AndAlso Not IsButtonDown(button))
+        End Function
+
+        Public Function GetLeftThumbstick() As PointF
+            Return currentState.Gamepad.LeftThumbNormalized()
+        End Function
+   End Class
+    Public Function isTwoSpotOn() As Boolean
+        If SMTwoSpot.State > TSSM_IDLE Then 
+            Return True
+        Else 
+            Return False
+        End If        
     End Function
+    Public Function EnableJoystickStageControl() As Boolean
+        WriteCommand("$BD%", 4)
+        ReadResponse(0)
+        WriteLogLine("Joystick Stage Control Enabled.")
+    End Function
+    Public Function DisableJoystickStageControl() As Boolean
+        WriteCommand("$BF%", 4)
+        ReadResponse(0)
+        WriteLogLine("Joystick Stage Control disabled.")
+    End Function
+    
+    Public Function VirtualJoyMove(axis As String, speed As String) As String
+        Dim setSoftJoy As String
+        '$AB0xss.s%; resp [!AB0xss.s#] where 0x = axis number, ss.s is plus/minus percent of max joy speed.
+        setSoftJoy = "$AB0" + axis + speed + "%" 
+        WriteCommand(setSoftJoy, setSoftJoy.Length)
+        ReadResponse(0)
+    End Function
+    Public Function flipMySign(valueToFlip As string) As String
+        Return (-1 * CInt(valueToFlip)).ToString()
+    End Function
+    Public Function MoveStage() As PointF
+        Dim result As (xPercent As String, yPercent As String) = gamepad.GetLeftThumbstickPercentages()
 
-   
+        If gamepad.LeftThumbstickValueChanged() Then              
+            VirtualJoyMove(Axis.X, result.xPercent)
+            VirtualJoyMove(Axis.Y, flipMySign(result.yPercent))
+        End If 
+    End Function
     '------------------------- Load the form
     Private Sub Form1_Load(sender As System.Object, e As System.EventArgs) Handles MyBase.Load
         Dim i As Integer
         Dim ar_myPort As String()
         Dim responseLen As Integer
+        
         
         DateTimeLabel1.text = DateTime.Now.ToString("hh:mm dddd, dd MMMM yyyy")
 
@@ -1117,7 +1227,13 @@ Public Class MainWindow
         Dim DblVar As Double
         Dim ResponseLen As Integer
         Dim CMDIndex() As String = {"0", "01%", "02%", "03%", "04%"}
-
+        
+        'Check if controller is connected.
+        if gamepad.isConnected() Then    
+            contollerONSquare.BackColor = Color.Lime
+            WriteLogLine("Controller is connected")
+        End If
+        
         'If GetBoughtorNot() = False Then CinderellaCode()
         PL_SIM_NOTICE.Visible = False 'just in case
 
@@ -1562,7 +1678,13 @@ Public Class MainWindow
         Dim ar_CTL_ParamVals As Array
         Dim b_StatusChanged As Boolean = False
 
-        'Get Controller Status
+        'Get Controller Status        
+        if gamepad.isConnected() = False Then    
+            contollerONSquare.BackColor = Color.Gainsboro
+        End If 
+
+       
+
         WriteCommand("$91%", 4) 'GET_STATUS    $91% ; resp[!91LLRR#] LL = left LEDS, RR = right LEDS
         ResponseLen = ReadResponse(0)
         If ResponseLen < 50 Then Return 'EMMETT.. this happens sometimes FIX IT!
@@ -1810,6 +1932,13 @@ Public Class MainWindow
         Dim ResponseLen As Integer
         Dim CMDIndex() As String = {"0", "01", "02", "03", "04"}
 
+        'controller update
+         If isTwoSpotOn() Then 
+            gamepad.Update()
+            MoveStage()
+        End If
+        
+        
         If (b_Step_MB_SM_Left = True) Then
             WriteCommand(st_MBLeftSpeed, Len(st_MBLeftSpeed))
             ResponseLen = ReadResponse(0)
@@ -1930,42 +2059,8 @@ Public Class MainWindow
 
         End If
 
-       GetController()
-
     End Sub
-    Private Function toggleSpeed() 
-        b_controllerHighSpeed = Not b_controllerHighSpeed
-        If b_controllerHighSpeed = True Then 
-            contollerONSquare.BackColor = Color.DodgerBlue
-        End If
-
-        If b_controllerHighSpeed = False 
-            contollerONSquare.BackColor = Color.Lime
-        End If
-
-    End Function
-    Private Function JoyToSpeedPercentCalculator(position As Double, axis As String) As String
-        Dim speed As Double         
-
-        'If b_controllerHighSpeed = False Then 
-         '   If position > 16000 Then position = 16000
-          '  If position < 16000 Then position = -16000
-        'End If
-        
-        If (position >= 0)              
-            speed = position / 32767 * 100   
-            If b_controllerHighSpeed = False Then speed /= 2
-            If axis = "Y" Then Return speed.ToString("-#.##")            
-            return speed.ToString("##.#;0")
-        Else 
-            speed = position / -32767 * 100
-            If b_controllerHighSpeed = False Then speed /= 2
-            If axis = "Y" Then Return speed.ToString("#.##;0")            
-            return speed.ToString("-#.##")
-        End If 
-
-    End Function
-
+   
     Private Function DecIntToHexStr(DecInt As Integer, NumChar As Integer)
         Dim HexStr As String
 
@@ -3171,105 +3266,7 @@ Public Class MainWindow
         End Select
 
     End Sub
-    Private Sub GetController()
-        Dim velocityPercent As String   
-        Dim result As Integer
-        Dim StrVar As String 
-        
-        Dim connectedControllers As List(Of Integer) = New List(Of Integer)()
-                
-        'Check for any connected controllers.
-        
-        If b_controllerStartup = True then
-            ControllerSM.State = CSM_CHECK_CONTROLLERS
-            b_controllerStartup = false
-        End If
-        
-        if SMTwoSpot.State > TSSM_IDLE Then 
-            ControllerSM.State = CSM_TWOSPOT
-        Elseif SMTwoSpot.State = TSSM_IDLE And ControllerSM.State <> CSM_CHECK_CONTROLLERS then
-            ControllerSM.State = CSM_AWAITING_INPUT
-        End If
-
-        Select Case ControllerSM.State           
-            Case CSM_CHECK_CONTROLLERS     
-                
-                ' Loop through all possible controller numbers (from 0 to 3)
-                For j As Integer = 0 To 3     
-                    result = XInputGetState(j, controllerState) 
-                    ' Check if the controller is connected
-                    If result = ERROR_SUCCESS Then
-                        connectedControllers.Add(j)
-                        ' Controller state retrieved successfully
-                        ' Process the input values in the state structure
-                        ' For example, you can check the values of the state.Gamepad buttons and triggers properties
-                        ControllerSM.State = CSM_AWAITING_INPUT
-                        contollerONSquare.BackColor = Color.DodgerBlue
-                    End If
-                Next
-            
-                ' Print the list of connected controllers
-                For Each controllerNumber As Integer In connectedControllers                    
-                    WriteLogLine("Controller " + controllerNumber.ToString() + " is connected.")
-                Next
-                'If no controller set controllerSM to idle
-                If connectedControllers.Count < 1 Then ControllerSM.State = CSM_IDLE
-
-             Case CSM_AWAITING_INPUT
-                result = XInputGetState(0, controllerState)
-                If controllerState.Gamepad.wButtons AND XINPUT_GAMEPAD_START Then
-                    SMInitAxes.State = IASM_START_UP
-                End if
-                
-            Case CSM_TWOSPOT
-                result = XInputGetState(0, controllerState)
-                Const RIGHT_TRIGGER_THRESHOLD As Byte = 99
-                
-                ' Check if the B button is pressed in the current state
-                currentButtonState = controllerState.Gamepad.wButtons And XINPUT_GAMEPAD_B
-
-                ' If the B button is pressed and was not pressed in the previous state, change the state
-                If currentButtonState = XINPUT_GAMEPAD_B And previousButtonState <> XINPUT_GAMEPAD_B Then
-                    ' Change state here
-                    toggleSpeed()
-                End If
-
-                ' Update the previous button state for the next iteration
-                previousButtonState = currentButtonState
-                                          
-                If controllerState.Gamepad.bRightTrigger > RIGHT_TRIGGER_THRESHOLD Then
-                    If SMTwoSpot.State = TSSM_GET_FIRST then
-                        b_controllerButtonSpotFirst = true
-                    End If 
-                    If SMTwoSpot.State = TSSM_GET_SECOND Then 
-                        b_controllerButtonSpotSecond = true
-                    End If
-                End If
-                                
-                If controllerState.Gamepad.sThumbLX <> previousLeftJoystickX OrElse controllerState.Gamepad.sThumbLY <> previousLeftJoystickY Then
-                    ' The left joystick is moving
-                    ' Do something here
-                    Console.WriteLine("Left joystick is moving")
-                    ' Update the previous state of the left joystick
-                    previousLeftJoystickX = controllerState.Gamepad.sThumbLX 'max -32768:32767     
-                    'X axis movement
-                    velocityPercent = JoyToSpeedPercentCalculator(previousLeftJoystickX, "X")
-                    StrVar = "$AB00" + velocityPercent + "%" 'SET_SOFT_JOY 0xAB  //  $AB0xss.s%; resp [!AB0xss.s#] where 0x = axis number, ss.s is plus/minus percent of max joy speed.
-                    WriteCommand(StrVar, StrVar.Length)
-                    ReadResponse(0)
-                    'Y axis movement
-                    previousLeftJoystickY = controllerState.Gamepad.sThumbLY
-                    velocityPercent = JoyToSpeedPercentCalculator(previousLeftJoystickY, "Y")
-                    StrVar = "$AB01" + velocityPercent + "%" 'SET_SOFT_JOY 0xAB  //  $AB0xss.s%; resp [!AB0xss.s#] where 0x = axis number, ss.s is plus/minus percent of max joy speed.
-                    WriteCommand(StrVar, StrVar.Length)
-                    ReadResponse(0)                   
-                End If 
-            Case CSM_IDLE
-                'DO NOTHING
-        End Select
-
-    End Sub
-     
+         
     Private Sub SetLightTower()
         Dim ResponseLen As Integer
 
@@ -3505,20 +3502,18 @@ Public Class MainWindow
                 Vacbtn.Visible = False
                 SetTwoSpotBtn.Text = "STOP"
                 WriteLogLine("TwoSpotSM Start Up")
-                WriteCommand("$BD%", 4) 'ENABLE_SOFT_JOY //  $BD%; resp [!BD#]; //Mutexed with ENABLE_JOY
-                ResponseLen = ReadResponse(1)                
+                EnableJoystickStageControl()                             
                 WriteLogLine("TwoSpotSM Getting First")
                 CurrentStepTxtBox.Text = ("Use Controller for Stage")
                 NextStepTxtBox.Text = ("Spot First Point")
                 SMTwoSpot.State = TSSM_GET_FIRST
             Case TSSM_GET_FIRST
-                If b_controllerButtonSpotFirst = True then
+                If gamepad.WasButtonPressed(GamepadInput.GamepadButtonFlags.RightShoulder) Then
                     WriteLogLine("TwoSpotSM Got First")
                     NextStepTxtBox.Text = ("Got First Point")
                     SMTwoSpot.db_FirstXPos = db_C_XPos_RefB_2_RefPH(AxesStatus.db_XPos) 'translate into PH coords
                     SMTwoSpot.db_FirstYPos = db_Ys_2_PH(AxesStatus.db_YPos) 'translate into PH coords
                     SMTwoSpot.State = TSSM_WAIT_JOY_BTN_OFF
-                    b_controllerButtonSpotFirst = false
                 End If 
             Case TSSM_WAIT_JOY_BTN_OFF                
                 WriteLogLine("TwoSpotSM Getting Second")
@@ -3526,7 +3521,7 @@ Public Class MainWindow
                 SMTwoSpot.State = TSSM_GET_SECOND
 
             Case TSSM_GET_SECOND   
-                If b_controllerButtonSpotSecond = True then
+               If gamepad.WasButtonPressed(GamepadInput.GamepadButtonFlags.RightShoulder) Then
                     SMTwoSpot.db_SecondXPos = db_C_XPos_RefB_2_RefPH(AxesStatus.db_XPos) 'translate into PH coords
                     SMTwoSpot.db_SecondYPos = db_Ys_2_PH(AxesStatus.db_YPos) 'translate into PH coords
                     'determine box orientation and corners
@@ -3552,12 +3547,9 @@ Public Class MainWindow
                     RecipeYMaxTxt.Text = SMScan.db_YMaxPos.ToString("F") '2 decimal point
                     WriteLogLine("TwoSpotSM Got Second - done")
                     SMTwoSpot.State = TSSM_CLOSE_DOWN
-                    b_controllerButtonSpotSecond = false
-                End If 
-
+               End If 
             Case TSSM_CLOSE_DOWN
-                WriteCommand("$BF%", 4) 'DISABLE_JOY  $BF%; resp [!BF#];
-                ResponseLen = ReadResponse(0)
+                DisableJoystickStageControl() 
                 SMTwoSpot.State = TSSM_IDLE
                 CurrentStepTxtBox.Text = ""
                 NextStepTxtBox.Text = ""
