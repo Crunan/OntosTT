@@ -64,6 +64,10 @@ Partial Class MainWindow
         Me.SetCTLToPLSimModeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MBScanToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.StageTestToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.StartToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.StopToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.DetailedLogToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.TestZToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.EngineerModeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.OperatorModeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MFC_1_Loaded_Flow = New System.Windows.Forms.TextBox()
@@ -637,10 +641,37 @@ Partial Class MainWindow
         '
         'StageTestToolStripMenuItem
         '
+        Me.StageTestToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.StartToolStripMenuItem, Me.StopToolStripMenuItem, Me.DetailedLogToolStripMenuItem, Me.TestZToolStripMenuItem})
         Me.StageTestToolStripMenuItem.Name = "StageTestToolStripMenuItem"
         Me.StageTestToolStripMenuItem.Size = New System.Drawing.Size(509, 54)
         Me.StageTestToolStripMenuItem.Text = "Stage Test"
         Me.StageTestToolStripMenuItem.Visible = false
+        '
+        'StartToolStripMenuItem
+        '
+        Me.StartToolStripMenuItem.Name = "StartToolStripMenuItem"
+        Me.StartToolStripMenuItem.Size = New System.Drawing.Size(325, 54)
+        Me.StartToolStripMenuItem.Text = "Start"
+        '
+        'StopToolStripMenuItem
+        '
+        Me.StopToolStripMenuItem.Name = "StopToolStripMenuItem"
+        Me.StopToolStripMenuItem.Size = New System.Drawing.Size(325, 54)
+        Me.StopToolStripMenuItem.Text = "Stop"
+        '
+        'DetailedLogToolStripMenuItem
+        '
+        Me.DetailedLogToolStripMenuItem.BackColor = System.Drawing.SystemColors.Control
+        Me.DetailedLogToolStripMenuItem.Name = "DetailedLogToolStripMenuItem"
+        Me.DetailedLogToolStripMenuItem.Size = New System.Drawing.Size(407, 54)
+        Me.DetailedLogToolStripMenuItem.Text = "Detailed Log: OFF"
+        '
+        'TestZToolStripMenuItem
+        '
+        Me.TestZToolStripMenuItem.BackColor = System.Drawing.SystemColors.Control
+        Me.TestZToolStripMenuItem.Name = "TestZToolStripMenuItem"
+        Me.TestZToolStripMenuItem.Size = New System.Drawing.Size(407, 54)
+        Me.TestZToolStripMenuItem.Text = "Test Z: OFF"
         '
         'EngineerModeToolStripMenuItem
         '
@@ -3546,4 +3577,8 @@ End Sub
     Friend WithEvents SettingsBtn As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents ControllerLabel As Label
     Friend WithEvents contollerONSquare As Label
+    Friend WithEvents StartToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents StopToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents DetailedLogToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents TestZToolStripMenuItem As ToolStripMenuItem
 End Class

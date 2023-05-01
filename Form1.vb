@@ -108,6 +108,8 @@ Public Class MainWindow
 
         Dim db_X_Max_Pos As Double
         Dim db_Y_Max_Pos As Double
+        Dim db_Z_Max_Pos As Double
+
         Dim db_Z_Head_Pos As Double
 
         Dim db_X_Max_Speed As Double
@@ -222,6 +224,101 @@ Public Class MainWindow
     Const AER_CHG_MODE_ON_MOVE = 5 'tried to change mode while moving
     Const AER_STOP_ON_MOVE = 6 'Stopped while moving
     Const AER_JOY_MOVE = 7 'tried to enable JOYs while moving
+    Structure STAGETEST
+        Private State As Integer
+        Private detailed_log As Boolean
+        Private testZ As Boolean
+        Private Xcounter As integer
+        Private Ycounter As integer
+        Private Zcounter As integer
+
+
+        Public Sub SetState(newState As Integer) '
+            State = newState
+        End Sub
+        Public Function getState() As Integer
+            Return State
+        End Function
+        Public Sub paintStripMenuDetailedLog() 
+            If detailed_log Then 
+                MainWindow.DetailedLogToolStripMenuItem.Text = "Detailed Log: ON"
+                MainWindow.DetailedLogToolStripMenuItem.BackColor = SystemColors.Highlight
+            Else 
+                MainWindow.DetailedLogToolStripMenuItem.Text = "Detailed Log: OFF"
+                MainWindow.DetailedLogToolStripMenuItem.BackColor = SystemColors.Control
+            End If
+        End Sub
+        Public Sub ToggleDetailedLog() '
+            detailed_log = Not detailed_log
+            paintStripMenuDetailedLog()
+        End Sub
+        Public Sub SetDetailedLog(value As boolean) '
+            detailed_log = value  
+            paintStripMenuDetailedLog()
+        End Sub
+        Public Function isDetailLogEnabled() As Boolean
+            Return detailed_log
+        End Function
+        Public Sub paintStripMenuTestZ() 
+            If testZ Then 
+                MainWindow.TestZToolStripMenuItem.Text = "Test Z: ON"
+                MainWindow.TestZToolStripMenuItem.BackColor = SystemColors.Highlight
+            Else 
+                MainWindow.TestZToolStripMenuItem.Text = "Test Z: OFF"
+                MainWindow.TestZToolStripMenuItem.BackColor = SystemColors.Control
+                MainWindow.UpdateNextStageStatus("")
+            End If
+        End Sub
+        Public Sub ToggleTestZ() '
+            testZ = Not testZ
+            paintStripMenuTestZ()
+        End Sub
+        Public Sub SetTestZ(value As boolean) '
+            testZ = value  
+            paintStripMenuTestZ()
+        End Sub
+        Public Function isZEnabled() As Boolean            
+            Return testZ
+        End Function
+        Public Sub SetXCounter(value As integer)
+            Xcounter = value
+        End Sub
+        Public Sub addXCounter()
+            Xcounter = Xcounter  + 1
+        End Sub
+        Public Sub SetYCounter(value As integer)
+            Ycounter = value
+        End Sub
+        Public Sub addYCounter()
+            Ycounter = Ycounter + 1
+        End Sub
+        Public Sub SetZCounter(value As integer)
+            Zcounter = value
+        End Sub
+        Public Sub addZCounter()
+            Zcounter = Zcounter + 1
+        End Sub
+        Public Function getXCounter As String
+            Return "X movements: " + Xcounter.ToString()
+        End Function
+        Public Function getYCounter As String
+            Return "Y movements: " + Ycounter.ToString()
+        End Function
+        Public Function getZCounter As String
+            Return "Z movements: " + Zcounter.ToString()
+        End Function 
+        
+    End Structure
+    Dim StageTestSM As STAGETEST = New STAGETEST()
+    
+
+    Const STSM_IDLE = 0
+    Const STSM_STARTUP = 1
+    Const STSM_MaxX = 2
+    Const STSM_MinX = 3
+    Const STSM_MaxY = 4
+    Const STSM_MinY = 5
+    Const STSM_SHUTDOWN = 6
 
     Structure INITAXESSTATEMACHINE
         Dim State As Integer
@@ -612,7 +709,7 @@ Public Class MainWindow
     Public Function flipMySign(valueToFlip As string) As String
         Return (-1 * CInt(valueToFlip)).ToString()
     End Function
-    Public Function MoveStage() As PointF
+    Public Function MoveStageWithJoy() As PointF
         Dim result As (xPercent As String, yPercent As String) = gamepad.GetLeftThumbstickPercentages()
 
         If gamepad.LeftThumbstickValueChanged() Then              
@@ -777,7 +874,7 @@ Public Class MainWindow
             SerialPort1.StopBits = StopBits.One
             SerialPort1.DataBits = 8
             SerialPort1.BaudRate = "57600"
-            SerialPort1.PortName = com_portBox.Text
+            SerialPort1.PortName = com_portBox.text()
             SerialPort1.ReadTimeout = SERIAL_RESPONSE_TIMEOUT            'serial port timeout default is 500
             SerialPort1.Open()
 
@@ -1200,6 +1297,7 @@ Public Class MainWindow
                     RunInitAxesSM() 'run the Initialize Axes state machine
                     RunTwoSpotSM() 'run the Two Spot state machine                                   
                     RunScanSM() 'run the Scan state machine
+                    RunStageTest() 'run the Stage test state machine
                     RunCollisionPassSM()
                     CollisionLaser() 'run the Collision Laser System state machine
                     RunHomeAxesSM() 'run Home Axes state machine
@@ -1228,10 +1326,16 @@ Public Class MainWindow
         Dim ResponseLen As Integer
         Dim CMDIndex() As String = {"0", "01%", "02%", "03%", "04%"}
         
+        'Set initial stageTest values
+        StageTestSM.SetDetailedLog(True)
+        StageTestSM.SetTestZ(True)
+
         'Check if controller is connected.
-        if gamepad.isConnected() Then    
-            contollerONSquare.BackColor = Color.Lime
-            WriteLogLine("Controller is connected")
+        If gamepad IsNot Nothing Then
+            if gamepad.isConnected() Then    
+                contollerONSquare.BackColor = Color.Lime
+                WriteLogLine("Controller is connected")
+            End if
         End If
         
         'If GetBoughtorNot() = False Then CinderellaCode()
@@ -1382,7 +1486,33 @@ Public Class MainWindow
         EnableServiceMenuToolStripMenuItem.Enabled = True
 
 
+        'Ask the Aux PCB for MAX & MIN values
+        WriteCommand("$DA106%", 7) 'GET_X_MAX_POSITION  X maximum allowed position in MM (float) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+        ResponseLen = ReadResponse(1)
+        If ResponseLen > 7 Then
+            StrVar = st_RCV.Substring(7)
+            StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
+            b_IsStringANumber(StrVar, st_DoubleChars, "$DA106%")
+            Param.db_X_Max_Pos = Convert.ToDouble(StrVar)
+        End If
         'Ask the Aux PCB for MAX & MIN values              
+        WriteCommand("$DA206%", 7) 'GET_Y_MAX_POSITION Y maximum allowed position in MM (float) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+        ResponseLen = ReadResponse(1)
+        If ResponseLen > 7 Then
+            StrVar = st_RCV.Substring(7)
+            StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
+            b_IsStringANumber(StrVar, st_DoubleChars, "$DA206%")
+            Param.db_Y_Max_Pos = Convert.ToDouble(StrVar)
+            'Ask the Aux PCB for MAX & MIN values
+        End If
+        WriteCommand("$DA306%", 7) ''GET_Z_MAX_POSITION  Z maximum allowed position in MM (float) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+        ResponseLen = ReadResponse(1)
+        If ResponseLen > 7 Then
+            StrVar = st_RCV.Substring(7)
+            StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
+            b_IsStringANumber(StrVar, st_DoubleChars, "$DA306%")
+            Param.db_Z_Max_Pos = Convert.ToDouble(StrVar)
+        End If
         WriteCommand("$DA107%", 7) 'GET_X_MAX_SPEED  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
         ResponseLen = ReadResponse(1)
         If ResponseLen > 7 Then
@@ -1679,9 +1809,11 @@ Public Class MainWindow
         Dim b_StatusChanged As Boolean = False
 
         'Get Controller Status        
-        if gamepad.isConnected() = False Then    
-            contollerONSquare.BackColor = Color.Gainsboro
-        End If 
+        If gamepad IsNot Nothing Then
+            if gamepad.isConnected() = False Then    
+                contollerONSquare.BackColor = Color.Gainsboro
+            End If
+        End If
 
        
 
@@ -1933,10 +2065,12 @@ Public Class MainWindow
         Dim CMDIndex() As String = {"0", "01", "02", "03", "04"}
 
         'controller update
-         If isTwoSpotOn() Then 
-            gamepad.Update()
-            MoveStage()
-        End If
+        If gamepad IsNot Nothing Then
+            If isTwoSpotOn() Then 
+                gamepad.Update()
+                MoveStageWithJoy()
+            End If
+        End if
         
         
         If (b_Step_MB_SM_Left = True) Then
@@ -3163,6 +3297,7 @@ Public Class MainWindow
 
          'Cascading Recipes button
         BuildRecipeToolStripMenuItem.Visible = False
+        StageTestToolStripMenuItem.Visible = False
     End Sub
 
     Private Sub Engineer_Mode() 'Default size of Form 1024, 669
@@ -3220,6 +3355,7 @@ Public Class MainWindow
 
         'Cascading Recipes button
         BuildRecipeToolStripMenuItem.Visible = true
+        StageTestToolStripMenuItem.Visible = true
     End Sub
 
     Private Sub CollisionLaser()
@@ -3303,6 +3439,150 @@ Public Class MainWindow
         End Select
 
     End Sub
+    Public Sub DumpMoveData(axis As String)   
+        WriteCommand("$B90" + axis + "%", 6) 'DUMP_MOVE_DATA 
+        ReadResponse(0)        
+        WriteLogLine("RCV: " + st_RCV)
+    End Sub
+    Public Sub CearAxisError(axis As String)        
+        WriteCommand("$B80" + axis + "%", 6) 'CLEAR_ERROR 
+        ReadResponse(0)        
+        WriteLogLine("RCV: " + st_RCV)
+    End Sub
+    Public Sub HideButtonsForStageTest()
+        RunScanBtn.Visible = False
+        SetTwoSpotBtn.Visible = False
+        SetDiameterBtn.Visible = False
+    End Sub
+    Public Sub ShowButtonsForStageTest()
+        RunScanBtn.Visible = True
+        SetTwoSpotBtn.Visible = True
+        SetDiameterBtn.Visible = True
+    End Sub
+    Public Sub UpdateCurrentStageStatus(currentStatus As String)
+        CurrentStepTxtBox.Text = currentStatus
+    End Sub
+    Public Sub UpdateNextStageStatus(nextStatus As String)
+        NextStepTxtBox.Text = nextStatus
+    End Sub
+    Public Sub SetStageSpeed(axis As String, speed As Double)
+        Dim st_command As String
+        st_command = "$B40" + axis + speed.ToString() + "%" 'SET_SPEED  $B40xss.ss%; resp [!B40xss.ss#] 0x = axis number, ss.ss = mm/sec (float)
+        WriteCommand(st_Command, st_Command.Length) 
+        ReadResponse(0)        
+    End Sub
+    Public Sub SetStagePosition(axis As String, position As Double)
+        Dim st_command As String
+        st_command = "$B60" + axis + position.ToString() + "%" 'SET_SPEED  $B40xss.ss%; resp [!B40xss.ss#] 0x = axis number, ss.ss = mm/sec (float)
+        WriteCommand(st_Command, st_Command.Length) 
+        ReadResponse(0)
+        If StageTestSM.isDetailLogEnabled Then             
+            DumpMoveData(axis)
+            CearAxisError(axis)
+        End if
+    End Sub
+   Private Sub TestXMax()                          
+        WriteLogLine("Stage Test - Max X")
+        if StageTestSM.isDetailLogEnabled Then writeLogLine(StageTestSM.getXCounter())
+        UpdateCurrentStageStatus("X axis move to: " + Param.db_X_Max_Pos.ToString() + " at speed: " + Param.db_X_Max_Speed.ToString())
+        SetStageSpeed(axis.X, Param.db_X_Max_Speed)
+        SetStagePosition(axis.X, Param.db_X_Max_Pos)
+        StageTestSM.addXCounter()
+    End Sub
+    Private Sub TestXMin()                  
+        WriteLogLine("Stage Test - Min X")
+        if StageTestSM.isDetailLogEnabled Then writeLogLine(StageTestSM.getXCounter())
+        UpdateCurrentStageStatus("X axis move to: 0 at speed: " + Param.db_X_Max_Speed.ToString())
+        SetStageSpeed(axis.X, Param.db_X_Max_Speed)
+        SetStagePosition(axis.X, 0)
+        StageTestSM.addXCounter()
+    End Sub
+    Private Sub TestYMax()                          
+        WriteLogLine("Stage Test - Max Y")
+        if StageTestSM.isDetailLogEnabled Then writeLogLine(StageTestSM.getYCounter())
+        UpdateCurrentStageStatus("Y axis move to: " + Param.db_Y_Max_Pos.ToString() + " at speed: " + Param.db_Y_Max_Speed.ToString())
+        SetStageSpeed(axis.Y, Param.db_Y_Max_Speed)
+        SetStagePosition(axis.Y, Param.db_Y_Max_Pos)
+        StageTestSM.addYCounter()
+    End Sub
+    Private Sub TestYMin()                  
+        WriteLogLine("Stage Test - Min Y")
+        if StageTestSM.isDetailLogEnabled Then writeLogLine(StageTestSM.getYCounter())
+        UpdateCurrentStageStatus("Y axis move to: 0 at speed: " + Param.db_Y_Max_Speed.ToString())
+        SetStageSpeed(axis.Y, Param.db_Y_Max_Speed)
+        SetStagePosition(axis.Y, 0)
+        StageTestSM.addYCounter()
+    End Sub
+    Private Sub TestZMax()                          
+        WriteLogLine("Stage Test - Max Z")
+        if StageTestSM.isDetailLogEnabled Then writeLogLine(StageTestSM.getZCounter())
+        UpdateNextStageStatus("Z axis move to: " + Param.db_Z_Max_Pos.ToString() + " at speed: " + Param.db_Z_Max_Speed.ToString())
+        SetStageSpeed(axis.Z, Param.db_Z_Max_Speed)
+        SetStagePosition(axis.Z, Param.db_Z_Max_Pos)        
+        StageTestSM.addZCounter()
+    End Sub
+    Private Sub TestZMin()                  
+        WriteLogLine("Stage Test - Min Z")
+        if StageTestSM.isDetailLogEnabled Then writeLogLine(StageTestSM.getZCounter())
+        UpdateNextStageStatus("Z axis move to: 0 at speed: " + Param.db_Z_Max_Speed.ToString() )
+        SetStageSpeed(axis.Z, Param.db_Z_Max_Speed)
+        SetStagePosition(axis.Z, 0)
+        StageTestSM.addZCounter()
+    End Sub
+    Private Sub SetAxisCounters()
+        StageTestSM.SetXCounter(0)
+        StageTestSM.SetYCounter(0)
+        StageTestSM.SetZCounter(0)
+    End Sub
+    Private Sub RunStageTest()
+        Select Case StageTestSM.getState()
+
+            Case STSM_STARTUP
+                WriteLogLine("Stage Test Started")
+                HideButtonsForStageTest()                
+                SetAxisCounters()
+                StageTestSM.setState(STSM_MaxX)
+
+            Case STSM_MaxX
+                If AxesStatus.b_XYZSameState = True And AxesStatus.YState >= ASM_IDLE Then                    
+                    TestXMax()
+                    If StageTestSM.isZEnabled() Then TestZMax()
+                    StageTestSM.setState(STSM_MaxY)
+                End If      
+
+            Case STSM_MaxY
+                If AxesStatus.b_XYZSameState = True And AxesStatus.XState >= ASM_IDLE Then                    
+                    TestYMax()
+                    If StageTestSM.isZEnabled() Then TestZMin()
+                    StageTestSM.setState(STSM_MinX)
+                End If
+
+            Case STSM_MinX
+                If AxesStatus.b_XYZSameState = True And AxesStatus.YState >= ASM_IDLE Then                    
+                    TestXMin()
+                    If StageTestSM.isZEnabled() Then TestZMax()
+                    StageTestSM.setState(STSM_MinY)
+                End If     
+                
+            Case STSM_MinY
+                If AxesStatus.b_XYZSameState = True And AxesStatus.XState >= ASM_IDLE Then                    
+                    TestYMin()
+                    If StageTestSM.isZEnabled() Then TestZMin()
+                    StageTestSM.setState(STSM_MaxX)
+                End If
+
+            Case STSM_SHUTDOWN
+                WriteLogLine("Stage Test Shutting Down")
+                ShowButtonsForStageTest()
+                UpdateCurrentStageStatus("")
+                UpdateNextStageStatus("")
+                StageTestSM.setState(STSM_IDLE)
+
+            Case STSM_IDLE
+                'nothing
+        End Select
+    End Sub
+    
 
     Private Sub RunInitAxesSM()
         Dim ResponseLen As Integer
@@ -3317,7 +3597,7 @@ Public Class MainWindow
 
                 SMScan.State = SCSM_IDLE 'disable other motor moving state machines and buttons
                 SMScan.SubState = SCSM_SUB_IDLE
-
+                StageTestSM.SetState(STSM_IDLE)
                 SMHomeAxes.State = HASM_IDLE
                 SMTwoSpot.State = TSSM_IDLE
                 RunScanBtn.Visible = False
@@ -3948,4 +4228,16 @@ Public Class MainWindow
          End Select
     End Sub
 
+    Private Sub DetailedLogToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles DetailedLogToolStripMenuItem.Click
+        StageTestSM.ToggleDetailedLog()        
+    End Sub    
+    Private Sub TestZToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles TestZToolStripMenuItem.Click
+        StageTestSM.ToggleTestZ()          
+    End Sub
+    Private Sub StartToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles StartToolStripMenuItem.Click
+        StageTestSM.SetState(STSM_STARTUP)
+    End Sub
+    Private Sub StopToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles StopToolStripMenuItem.Click
+        StageTestSM.SetState(STSM_SHUTDOWN)
+    End Sub
 End Class
