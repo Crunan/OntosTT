@@ -563,7 +563,7 @@ Public Class MainWindow
         Private Shared Function XInputGetState(dwUserIndex As Integer, ByRef pState As XInputState) As Integer
         End Function
 
-        Private Const MaxDiagonal As Single = 0.3F 'Set your max diagonal threshold here
+        Private Const MaxDiagonal As Single = 0.6F 'Set your max diagonal threshold here
                 
         Public Structure XInputState
             Public dwPacketNumber As UInteger
@@ -663,7 +663,7 @@ Public Class MainWindow
         Public Function LeftThumbstickValueChanged() As Boolean
             Dim currentThumbstick As PointF = currentState.Gamepad.LeftThumbNormalized()
             If currentThumbstick <> previousJoystickLThumbstick Then
-                previousJoystickLThumbstick = currentThumbstick
+                previousJoystickLThumbstick = currentThumbstick                
                 Return True
             Else
                 Return False
@@ -711,7 +711,7 @@ Public Class MainWindow
         '$AB0xss.s%; resp [!AB0xss.s#] where 0x = axis number, ss.s is plus/minus percent of max joy speed.
         setSoftJoy = "$AB0" + axis + speed + "%" 
         WriteCommand(setSoftJoy, setSoftJoy.Length)
-        ReadResponse(0)
+        ReadResponse(0)       
     End Function
     Public Function flipMySign(valueToFlip As string) As String
         Return (-1 * CInt(valueToFlip)).ToString()
@@ -3795,7 +3795,7 @@ Public Class MainWindow
                 NextStepTxtBox.Text = ("Spot First Point")
                 SMTwoSpot.State = TSSM_GET_FIRST
             Case TSSM_GET_FIRST
-                If gamepad.WasButtonPressed(GamepadInput.GamepadButtonFlags.RightShoulder) Then
+                If gamepad.IsButtonDown(GamepadInput.GamepadButtonFlags.A) Then
                     WriteLogLine("TwoSpotSM Got First")
                     NextStepTxtBox.Text = ("Got First Point")
                     SMTwoSpot.db_FirstXPos = db_C_XPos_RefB_2_RefPH(AxesStatus.db_XPos) 'translate into PH coords
@@ -3808,7 +3808,7 @@ Public Class MainWindow
                 SMTwoSpot.State = TSSM_GET_SECOND
 
             Case TSSM_GET_SECOND   
-               If gamepad.WasButtonPressed(GamepadInput.GamepadButtonFlags.RightShoulder) Then
+               If gamepad.IsButtonDown(GamepadInput.GamepadButtonFlags.A) Then
                     SMTwoSpot.db_SecondXPos = db_C_XPos_RefB_2_RefPH(AxesStatus.db_XPos) 'translate into PH coords
                     SMTwoSpot.db_SecondYPos = db_Ys_2_PH(AxesStatus.db_YPos) 'translate into PH coords
                     'determine box orientation and corners
