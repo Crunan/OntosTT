@@ -231,8 +231,6 @@ Partial Class MainWindow
         Me.errorActive_Label = New System.Windows.Forms.Label()
         Me.ControllerLabel = New System.Windows.Forms.Label()
         Me.contollerONSquare = New System.Windows.Forms.Label()
-        Me.ControllerToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.SetDeadzoneToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuStrip1.SuspendLayout
         CType(Me.MB_Left_Arrow,System.ComponentModel.ISupportInitialize).BeginInit
         CType(Me.MB_Right_Arrow,System.ComponentModel.ISupportInitialize).BeginInit
@@ -613,7 +611,7 @@ Partial Class MainWindow
         '
         'ServiceToolStripMenuItem
         '
-        Me.ServiceToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.RestartAllToolStripMenuItem, Me.SetCTLToPLSimModeToolStripMenuItem, Me.MBScanToolStripMenuItem, Me.StageTestToolStripMenuItem, Me.EngineerModeToolStripMenuItem, Me.OperatorModeToolStripMenuItem, Me.ControllerToolStripMenuItem})
+        Me.ServiceToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.RestartAllToolStripMenuItem, Me.SetCTLToPLSimModeToolStripMenuItem, Me.MBScanToolStripMenuItem, Me.StageTestToolStripMenuItem, Me.EngineerModeToolStripMenuItem, Me.OperatorModeToolStripMenuItem})
         Me.ServiceToolStripMenuItem.Name = "ServiceToolStripMenuItem"
         Me.ServiceToolStripMenuItem.Size = New System.Drawing.Size(151, 54)
         Me.ServiceToolStripMenuItem.Text = "Service"
@@ -3148,20 +3146,6 @@ Partial Class MainWindow
         Me.contollerONSquare.TabIndex = 228
         Me.contollerONSquare.Text = "   "
         '
-        'ControllerToolStripMenuItem
-        '
-        Me.ControllerToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.SetDeadzoneToolStripMenuItem})
-        Me.ControllerToolStripMenuItem.Name = "ControllerToolStripMenuItem"
-        Me.ControllerToolStripMenuItem.Size = New System.Drawing.Size(509, 54)
-        Me.ControllerToolStripMenuItem.Text = "Controller"
-        Me.ControllerToolStripMenuItem.Visible = false
-        '
-        'SetDeadzoneToolStripMenuItem
-        '
-        Me.SetDeadzoneToolStripMenuItem.Name = "SetDeadzoneToolStripMenuItem"
-        Me.SetDeadzoneToolStripMenuItem.Size = New System.Drawing.Size(385, 54)
-        Me.SetDeadzoneToolStripMenuItem.Text = "Set Deadzone %"
-        '
         'MainWindow
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8!, 16!)
@@ -3597,6 +3581,4 @@ End Sub
     Friend WithEvents StopToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents DetailedLogToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents TestZToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents ControllerToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents SetDeadzoneToolStripMenuItem As ToolStripMenuItem
 End Class

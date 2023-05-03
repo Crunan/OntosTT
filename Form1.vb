@@ -578,7 +578,6 @@ Public Class MainWindow
             Public LeftThumbY As Short
             Public RightThumbX As Short
             Public RightThumbY As Short
-            Public deadzone As Short
 
             Public Function IsPressed(button As GamepadButtonFlags) As Boolean
                 Return (Buttons And CUShort(button)) <> 0
@@ -601,31 +600,11 @@ Public Class MainWindow
                 Dim range As Integer = 200       
                 Dim offset As Integer = 0'
 
-                Dim lThumbX As Short = LeftThumbX
-                Dim lThumbY As Short = LeftThumbY
-
-                                          
-                lThumbX = ApplyDeadzone(lThumbX)  
-                lThumbY = ApplyDeadzone(lThumbY)
-               
-
                 Dim lThumbXPercent As Integer = CInt(range / total * LeftThumbX + offset)
                 Dim lThumbYPercent As Integer = CInt(range / total * LeftThumbY + offset)
 
                 Return (lThumbXPercent.ToString(), lThumbYPercent.ToString())
-            End Function
-            Public Function getDeadZoneStringValue() As String
-                return deadzone.ToString
-            End Function     
-            Public Function setDeadZoneValue(value As String)
-                deadzone = Cint(value)
-            End Function
-            Public Function ApplyDeadzone(ByRef input As Short) As Short
-                If input > -deadzone And input < deadzone Then 
-                    input = 0
-                End If
-                Return input 
-            End Function
+            End Function           
 
             Public Function LeftThumbNormalized() As PointF
                 Dim leftThumb As New PointF(LeftThumbX, LeftThumbY)
@@ -692,12 +671,6 @@ Public Class MainWindow
         End Function
         Public Function GetLeftThumbstickPercentages() As (xPercent As String, yPercent As String)          
             Return currentState.Gamepad.CalculateLThumbPercent()
-        End Function
-        Public Function setNewControllerDeadzone() 
-            currentState.Gamepad.setDeadZoneValue(InputBox("Enter a deadzone value 0.xx, current value is " + currentState.Gamepad.getDeadZoneStringValue(), "Set Deadzone %", ""))
-        End Function
-        Public Function getControllerDeadZone() As String
-            currentState.Gamepad.getDeadZoneStringValue()
         End Function
         Public Sub Update()
             XInputGetState(playerIndex, currentState)
@@ -3332,7 +3305,6 @@ Public Class MainWindow
          'Cascading Recipes button
         BuildRecipeToolStripMenuItem.Visible = False
         StageTestToolStripMenuItem.Visible = False
-        ControllerToolStripMenuItem.Visible = False
     End Sub
 
     Private Sub Engineer_Mode() 'Default size of Form 1024, 669
@@ -3391,7 +3363,6 @@ Public Class MainWindow
         'Cascading Recipes button
         BuildRecipeToolStripMenuItem.Visible = true
         StageTestToolStripMenuItem.Visible = true
-        ControllerToolStripMenuItem.Visible = true
     End Sub
 
     Private Sub CollisionLaser()
@@ -4275,10 +4246,5 @@ Public Class MainWindow
     End Sub
     Private Sub StopToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles StopToolStripMenuItem.Click
         StageTestSM.SetState(STSM_SHUTDOWN)
-    End Sub
-
-    Private Sub SetDeadzoneToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SetDeadzoneToolStripMenuItem.Click
-        gamepad.setNewControllerDeadzone()
-        SetDeadzoneToolStripMenuItem.text = "Set Deadzone (value: " + gamepad.getControllerDeadZone + "%"
     End Sub
 End Class
