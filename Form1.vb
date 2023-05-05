@@ -184,6 +184,15 @@ Public Class MainWindow
         Dim ZState As Integer
         Dim ZError As Integer
         Dim db_ZPos As Double
+
+        Public sub setLEDJoyBtnOn(state As Boolean)
+            b_LEDJoyBtnOn = state
+        End sub
+
+        Public function getLEDJoyBtnOn() As Boolean
+            Return b_LEDJoyBtnOn
+        End function
+
     End Structure
     Dim AxesStatus As ASTAT
     
@@ -696,7 +705,13 @@ Public Class MainWindow
         End If        
     End Function
     Public Function EnableJoystickStageControl() As Boolean
-        WriteCommand("$BD%", 4)
+        If gamepad IsNot Nothing Then
+            If gamepad.isConnected() then
+                WriteCommand("$BD%", 4)
+            End If 
+        Else 
+            WriteCommand("$BE%", 4)
+        End If 
         ReadResponse(0)
         WriteLogLine("Joystick Stage Control Enabled.")
     End Function
@@ -1705,7 +1720,7 @@ Public Class MainWindow
 
         'Check the 3-Axis LED states to determine if: doors are open, Joystick button is depressed, Valve 2 is open (Substrate Purge).
         AxesStatus.b_DoorsOpen = b_IsBitSet(AxesStatus.LEDStates, 6) '//VBWord bit 6 (STOP LED)
-        AxesStatus.b_LEDJoyBtnOn = b_IsBitSet(AxesStatus.LEDStates, 14) '//VBWord bit 14 (NO LED) 
+        AxesStatus.setLEDJoyBtnOn(b_IsBitSet(AxesStatus.LEDStates, 14)) '//VBWord bit 14 (NO LED) 
         AxesStatus.b_LEDVacOn = b_IsBitSet(AxesStatus.LEDStates, 12) 'LED_VALVE_3
         AxesStatus.b_LEDN2PurgeOn = b_IsBitSet(AxesStatus.LEDStates, 11) 'LED_VALVE_2
         'if CLaser.State = CLSM_ACTIVATE then AxesStatus.b_CollisionActive = b_IsBitSet(AxesStatus.LEDStates, 8) 'EXT_IN_2
@@ -3774,6 +3789,13 @@ Public Class MainWindow
         End Select
 
     End Sub
+    Public function getInputButtonPress() as boolean 
+        If gamepad IsNot Nothing Then 
+            return gamepad.IsButtonDown(GamepadInput.GamepadButtonFlags.A)
+        Else 
+            return AxesStatus.getLEDJoyBtnOn()
+        End If        
+    End function
     Private Sub RunTwoSpotSM() 'the two spot marker state machine. In polling loop, so can send commands
         Dim ResponseLen As Integer
 
@@ -3795,7 +3817,7 @@ Public Class MainWindow
                 NextStepTxtBox.Text = ("Spot First Point")
                 SMTwoSpot.State = TSSM_GET_FIRST
             Case TSSM_GET_FIRST
-                If gamepad.IsButtonDown(GamepadInput.GamepadButtonFlags.A) Then
+                If getInputButtonPress() Then
                     WriteLogLine("TwoSpotSM Got First")
                     NextStepTxtBox.Text = ("Got First Point")
                     SMTwoSpot.db_FirstXPos = db_C_XPos_RefB_2_RefPH(AxesStatus.db_XPos) 'translate into PH coords
@@ -3808,7 +3830,7 @@ Public Class MainWindow
                 SMTwoSpot.State = TSSM_GET_SECOND
 
             Case TSSM_GET_SECOND   
-               If gamepad.IsButtonDown(GamepadInput.GamepadButtonFlags.A) Then
+               If getInputButtonPress() Then
                     SMTwoSpot.db_SecondXPos = db_C_XPos_RefB_2_RefPH(AxesStatus.db_XPos) 'translate into PH coords
                     SMTwoSpot.db_SecondYPos = db_Ys_2_PH(AxesStatus.db_YPos) 'translate into PH coords
                     'determine box orientation and corners
