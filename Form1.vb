@@ -126,12 +126,41 @@ Public Class MainWindow
     'MFC management
     Dim NumMFC As Integer = 0
     Structure MFController
-        Dim ActualFlow As Integer
         Dim db_ActualFlow As Double
         Dim db_RecipeFlow As Double
         Dim db_LoadedFlow As Double
         Dim db_Range As Double
         Dim b_MFCLoadRecipeFlow As Boolean
+
+        Public Sub SetActualFlow(ByVal flow As Double)
+            db_ActualFlow = flow
+        End Sub
+
+        Public Sub SetActualFlow(ByVal flow As String)
+            Dim convertedFlow As Double
+            If Double.TryParse(flow, convertedFlow) Then
+                db_ActualFlow = convertedFlow
+            Else
+                'Handle the case where the string cannot be converted to double
+                Throw New ArgumentException("Invalid flow value.")
+            End If
+        End Sub
+        Public Function GetActualFlow() As Double
+            Return db_ActualFlow
+        End Function
+
+        Public Function GetActualFlowAsString() As String
+            Dim formattedFlow As String
+
+            If Math.Abs(db_ActualFlow - Math.Round(db_ActualFlow, 2)) >= 0.001 Then
+                formattedFlow = db_ActualFlow.ToString("F3")
+            Else
+                formattedFlow = db_ActualFlow.ToString("F")
+            End If
+
+            Return formattedFlow
+        End Function
+
     End Structure
     Dim MFC(4) As MFController
     'Collision Laser Management
@@ -1822,27 +1851,20 @@ Public Class MainWindow
         Dim IntVal As Integer
         Dim DoubVal As Double
         Dim StrVar As String
-        Dim velocityPercent As String
         Dim ResponseLen As Integer
-        Dim db_TempProgressBarValue As Double
-        Dim DoubValLeft, DoubValRight As Double
-        Dim IntValLeft, IntValRight As Integer
         Dim ar_CTL_ParamVals As Array
         Dim b_StatusChanged As Boolean = False
 
         'Get Controller Status        
         If gamepad IsNot Nothing Then
-            if gamepad.isConnected() = False Then    
+            If gamepad.isConnected() = False Then
                 contollerONSquare.BackColor = Color.Gainsboro
             End If
         End If
 
-       
-
         WriteCommand("$91%", 4) 'GET_STATUS    $91% ; resp[!91LLRR#] LL = left LEDS, RR = right LEDS
         ResponseLen = ReadResponse(0)
         If ResponseLen < 50 Then Return 'EMMETT.. this happens sometimes FIX IT!
-
 
         st_RCV = st_RCV.Substring(3) 'lop off the first three chars
         If st_CTLPCBStatus <> st_RCV Then 'only write log line if status has changed
@@ -1910,49 +1932,39 @@ Public Class MainWindow
 
         'Get MFC FLows
         For Index = 1 To NumMFC
-            StrVar = ar_CTL_ParamVals(Index + 4) 'MFC Flow
-            b_IsStringANumber(StrVar, st_DoubleChars, "MFC Flow")
-            MFC(Index).db_ActualFlow = CDbl(StrVar) 'Convert the string value to a floating point
-            'Fill Operator Progress Bars as well
-            'Convert the string value to a floating point
-            If Index = 3 Or Index = 4 Then
-                MFCActualFlow(Index).Text = MFC(Index).db_ActualFlow.ToString("F3") '2 decimal points
-                db_TempProgressBarValue = CDbl(StrVar) * 100 'this is to resolve progress bar 3 and 4 from being truncated during Cint.
-                MFC(Index).ActualFlow = CInt(db_TempProgressBarValue)
-            Else 'This is for MFC 1 & 2 
-                MFCActualFlow(Index).Text = MFC(Index).db_ActualFlow.ToString("F") '2 decimal points
-                MFC(Index).ActualFlow = CInt(StrVar)
-            End If
-            MFCProgressValue(Index).value = MFC(Index).ActualFlow
+            b_IsStringANumber(ar_CTL_ParamVals(Index + 4), st_DoubleChars, "MFC Flow")
+            MFC(Index).SetActualFlow(ar_CTL_ParamVals(Index + 4))
+            SetGUIFlowBars(Index)
+            SetGUITextFlow(Index)
         Next 'For Index = 1 To NumMFC
 
 
         'Get Plasma Head Temperature
-        WriteCommand("$8c%", 4)  'GET_TEMP  $C5%: resp[!8Cxx.xx#]; xx.xx = head temp degrees C base 10
-        ResponseLen = ReadResponse(0)
-        If ResponseLen > 3 Then
-            StrVar = st_RCV.Substring(3, 4)
-            If b_IsStringANumber(StrVar, st_DoubleChars, st_EmptyChars) = True Then 'st_EmptyChars
-                DoubVal = Convert.ToDouble(StrVar)
-                IntVal = Math.Ceiling(DoubVal)
-                StrVar = IntVal.ToString()
-                Temp_Radial.Value = IntVal 'Set the Temperature Radial for Operator
-                PHTempTxt.Text = StrVar 'Display the val in deg C
-                If Temp_Radial.Value < 50 Then
-                    Temp_Radial.ProgressColor = Color.DodgerBlue
-                    Temp_Radial.ProgressColor2 = Color.DodgerBlue
-                ElseIf Temp_Radial.Value < 60 Then
-                    Temp_Radial.ProgressColor = Color.Yellow
-                    Temp_Radial.ProgressColor2 = Color.Yellow
-                Else
-                    Temp_Radial.ProgressColor = Color.Red
-                    Temp_Radial.ProgressColor2 = Color.Red
-                End If
+        'WriteCommand("$8c%", 4)  'GET_TEMP  $8C%: resp[!8Cxx.xx#]; xx.xx = head temp degrees C base 10
+        'ResponseLen = ReadResponse(0)
+        'If ResponseLen > 3 Then
+        '    StrVar = st_RCV.Substring(3, st_RCV.Length() - 1)
+        '    If b_IsStringANumber(StrVar, st_DoubleChars, st_EmptyChars) = True Then 'st_EmptyChars
+        '        DoubVal = Convert.ToDouble(StrVar)
+        '        IntVal = Math.Ceiling(DoubVal)
+        '        StrVar = IntVal.ToString()
+        '        Temp_Radial.Value = IntVal 'Set the Temperature Radial for Operator
+        '        PHTempTxt.Text = StrVar 'Display the val in deg C
+        '        If Temp_Radial.Value < 50 Then
+        '            Temp_Radial.ProgressColor = Color.DodgerBlue
+        '            Temp_Radial.ProgressColor2 = Color.DodgerBlue
+        '        ElseIf Temp_Radial.Value < 60 Then
+        '            Temp_Radial.ProgressColor = Color.Yellow
+        '            Temp_Radial.ProgressColor2 = Color.Yellow
+        '        Else
+        '            Temp_Radial.ProgressColor = Color.Red
+        '            Temp_Radial.ProgressColor2 = Color.Red
+        '        End If
 
-            Else
-                PHTempTxt.Text = "???" 'allow for disconnected or bad temperature probe
-            End If
-        End If
+        '    Else
+        '        PHTempTxt.Text = "???" 'allow for disconnected or bad temperature probe
+        '    End If
+        'End If
 
         'Check Abort flag and if active, flash Abort Clear button
         If b_ClearAbort Then
@@ -2007,11 +2019,11 @@ Public Class MainWindow
         Else
             RunRcpBtn.FillColor = Color.BlueViolet
             RunRcpBtn.Text = "START PLASMA"
-            
+
         End If
 
         If b_togglebatchIDLogging = True Then 'Settings button
-            b_togglebatchIDLogging = False 
+            b_togglebatchIDLogging = False
 
             If b_batchActive = True Then
                 WriteCommand("$28011;1%", 9) ' $28xxx;vv..vv%, xxxx = any length index number, vv..vv = value; =>resp [!28xxxx;vv..vv#]            
@@ -2019,21 +2031,21 @@ Public Class MainWindow
                 BatchIDTextBox.Visible = True 'show the batch designs
                 BatchLoggingBTN.Visible = True
                 WriteLogLine("Batch ID logging toggled ON")
-            Else 
+            Else
                 WriteCommand("$28011;0%", 9) ' $28xxx;vv..vv%, xxxx = any length index number, vv..vv = value; =>resp [!28xxxx;vv..vv#]
                 ReadResponse(0)
                 BatchIDTextBox.Visible = False 'hide the batch designs
                 BatchLoggingBTN.Visible = False
                 WriteLogLine("Batch ID logging toggled OFF")
-            End If 
+            End If
         End If
 
 
         'This controls the AUTO START SCAN setting 
-        If b_plasmaActive = True And b_autoScanActive = True and b_toggleAutoScan = True then
+        If b_plasmaActive = True And b_autoScanActive = True And b_toggleAutoScan = True Then
             If SMScan.State = SCSM_IDLE Then 'IDLE, so must want me to start up
                 'Are my axis initialized
-                If AxesStatus.XState >= ASM_IDLE AND AxesStatus.YState >= ASM_IDLE AND AxesStatus.ZState >= ASM_IDLE And RunScanBtn.Visible = true Then
+                If AxesStatus.XState >= ASM_IDLE And AxesStatus.YState >= ASM_IDLE And AxesStatus.ZState >= ASM_IDLE And RunScanBtn.Visible = True Then
                     SMScan.ExternalNewState = SCSM_START_UP
                     SMScan.b_ExternalStateChange = True
                 End If
@@ -2076,6 +2088,13 @@ Public Class MainWindow
                 & " Pfwd: " & ActWattsTxt.Text & " Pref: " & RflWattsTxt.Text)
         End If
 
+    End Sub
+
+    Public Sub SetGUIFlowBars(index As Integer)
+        MFCProgressValue(index).value = MFC(index).GetActualFlow()
+    End Sub
+    Public Sub SetGUITextFlow(index As Integer)
+        MFCActualFlow(index).Text = MFC(index).GetActualFlowAsString()
     End Sub
 
     Private Sub RunCheckInput()
@@ -2455,9 +2474,9 @@ Public Class MainWindow
                 Case "MFC_LABEL_4"
                     Exe_Cfg.MFC_LABEL_4 = ExeConfigParamValue
                     MFC_4_Label.Text = Exe_Cfg.MFC_LABEL_4
-                Case "KNOWN_COM_PORT"
-                    Exe_Cfg.KNOWN_COM_PORT = ExeConfigParamValue
-                    st_KnownComPort = Exe_Cfg.KNOWN_COM_PORT                
+                    'Case "KNOWN_COM_PORT"
+                    '    Exe_Cfg.KNOWN_COM_PORT = ExeConfigParamValue
+                    '    st_KnownComPort = Exe_Cfg.KNOWN_COM_PORT                
                 Case Else
             End Select
 
@@ -4269,4 +4288,6 @@ Public Class MainWindow
     Private Sub StopToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles StopToolStripMenuItem.Click
         StageTestSM.SetState(STSM_SHUTDOWN)
     End Sub
+
+
 End Class
