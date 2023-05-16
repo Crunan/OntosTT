@@ -7,6 +7,7 @@ Imports System.String
 Imports System.Runtime.InteropServices
 Imports System.Drawing
 Imports System.Runtime.Serialization
+Imports Guna.UI2.AnimatorNS
 
 Public Class MainWindow
 
@@ -18,15 +19,15 @@ Public Class MainWindow
     Public Shared st_HasHeatSave As String = 0 'For saving the HEATER on/off state
     'Batch ID Logging
     Public Shared b_togglebatchIDLogging As Boolean = False ' This is the flag for batch ID logging
-    Public Shared b_batchActive As Boolean = False   
+    Public Shared b_batchActive As Boolean = False
     'Auto Scan
-    Public Shared b_toggleAutoScan As Boolean = true   
-    Public Shared b_autoScanActive As Boolean = True   
+    Public Shared b_toggleAutoScan As Boolean = True
+    Public Shared b_autoScanActive As Boolean = True
     Public Shared st_AutoScanSave As String = 1 'For saving the AUTO SCAN state   
     '
     Public Shared b_HasCollision As Boolean = False 'the tool has a Collision System on 
-    
-    
+
+
     'Controller stuff    
     Dim gamepad As GamepadInput = searchForGamepad()
 
@@ -59,7 +60,7 @@ Public Class MainWindow
     Dim st_CascadeRecipeParamStrArray As String() 'RecipeLine partitioned into Parameter and Value segments
     Dim st_CascadeRecipeParamName As String 'Parameter name part of a  RecipeLine
     Dim st_CascadeRecipeParamValue As String 'Value part of a RecipeLine
-    
+
 
     'Configuration file management stuff
     Dim ExeConfigPath As String = "C:\OTT_PLUS\ExeConfig\" 'Configuration path without filename
@@ -76,7 +77,28 @@ Public Class MainWindow
         Dim MFC_LABEL_2 As String
         Dim MFC_LABEL_3 As String
         Dim MFC_LABEL_4 As String
-        Dim KNOWN_COM_PORT As String 'stores the last known com port       
+        Dim KNOWN_COM_PORT As String 'stores the last known com port
+
+        Dim LEDS As List(Of String)
+
+        'Dim LED0 As String
+        'Dim LED1 As String
+        'Dim LED2 As String
+        'Dim LED3 As String
+        'Dim LED4 As String
+        'Dim LED5 As String
+        'Dim LED6 As String
+        'Dim LED7 As String
+
+        'Dim LED8 As String
+        'Dim LED9 As String
+        'Dim LED10 As String
+        'Dim LED11 As String
+        'Dim LED12 As String
+        'Dim LED13 As String
+        'Dim LED14 As String
+        'Dim LED15 As String
+
     End Structure
     Dim Exe_Cfg As EXE_CONFIG
 
@@ -88,7 +110,7 @@ Public Class MainWindow
     Dim st_TimeStamp As System.String
     Dim b_LogOpen As Boolean = False
     'Controller related variables
-   
+
 
     Dim b_Step_MB_SM_Left As Boolean = False
     Dim b_Step_MB_SM_Right As Boolean = False
@@ -102,6 +124,182 @@ Public Class MainWindow
     Dim b_Start_Stop_ON_OFF As Boolean
     '    Dim NO_RS485 As Boolean = True
     Dim b_ErrorStateActive As Boolean = False
+
+    Structure ControlBoard
+        Private Enum LEDBits
+            LED8 = &H1
+            LED9 = &H2
+            LED10 = &H4
+            LED11 = &H8
+
+            LED12 = &H10
+            LED13 = &H20
+            LED14 = &H40
+            LED15 = &H80
+
+            LED0 = &H100
+            LED1 = &H200
+            LED2 = &H400
+            LED3 = &H800
+
+            LED4 = &H1000
+            LED5 = &H2000
+            LED6 = &H4000
+            LED7 = &H8000
+
+        End Enum
+        Dim LEDState As Integer
+        Dim LEDStateWas As Integer
+        Dim LedStates As List(Of Boolean)
+
+        Public Sub InitializeLedStates()
+            LedStates = New List(Of Boolean)()
+            For i As Integer = 0 To 15
+                LedStates.Add(False) ' Initialize with default value (e.g., False)
+            Next
+        End Sub
+        Private Function BinaryIntegerToString(Bits16 As Integer) As String
+            Dim st_Rtn
+            Bits16 = Bits16 Or &H10000 'force Bit 16 high
+            st_Rtn = Convert.ToString(Bits16, 2) 'now st_Rtn has 17 chars
+            Return st_Rtn.Substring(1) 'return all to the right of the forced string
+        End Function
+        Public Sub SetLEDState(ByRef StatusBits As Integer)
+            LEDStateWas = LEDState
+            LEDState = StatusBits
+        End Sub
+
+        Public Function GetLEDState() As Integer
+            Return LEDState
+        End Function
+
+        Public Function GetLEDStateWas() As Integer
+            Return LEDStateWas
+        End Function
+        Public Function GetLEDStates() As List(Of Boolean)
+            Return LedStates
+        End Function
+
+        Private Function LEDStateChanged()
+            If LEDState <> LEDStateWas Then
+                Return True
+            Else
+                Return False
+            End If
+        End Function
+        Private Sub SetEachLedFromCurrentBits()
+            For i As Integer = 0 To 15
+                Dim bitPosition As Integer = 1 << i
+                LedStates(i) = (LEDState And bitPosition) > 0
+            Next
+        End Sub
+
+        Public Function isLEDLit(i As Integer) As Boolean
+            Return LedStates(i)
+        End Function
+        Public Sub UpdateCTLGUILeds()
+            For i As Integer = 1 To 16
+                Dim led As Object = MainWindow.CTL_LEDS(i)
+                If isLEDLit(i - 1) Then
+                    led.bordercolor = Color.Lime
+                Else
+                    led.bordercolor = Color.Gainsboro
+                End If
+            Next
+        End Sub
+        Private Sub LogLEDChange()
+            MainWindow.WriteLogLine("Status Bits Change from " & BinaryIntegerToString(LEDStateWas) & " to " & BinaryIntegerToString(LEDState))
+        End Sub
+        'UPdateStatus bit patterns => This changes all the time, now we can edit the Execonfig
+        'LED_GAS_1       0 //VBWord bit 8    &H0100
+        'LED_GAS_2       1 //VBWord bit 9    &H0200
+        'LED_GAS_3       2 //VBWord bit 10   &H0400
+        'LED_GAS_4       3 //VBWord bit 11   &H0800
+        'LED_VLV_5       4 //VBWord bit 12   &H1000 - R12 (not used here)
+        'LED_VLV_6       5 //VBWord bit 13   &H2000 - R12 (not used here)
+        'LED_VLV_7       6 //VBWord bit 14   &H4000
+        'LED_RF_EN       7 //VBWord bit 15   &H8000
+
+        'LED_PL_ON       8  //VBWord bit 0   &H0001
+        'LED_TUNING      9  //VBWord bit 1   &H0002 (not used here)
+        'LED_AUTO        10 //VBWord bit 2   &H0004
+        'LED_EXEC_RCP    11 //VBWord bit 3   &H0008
+        'LED_ESTOP       12 //VBWord bit 4   &H0010 (not used here)
+        'LED_DO_CMD      13 //VBWord bit 5   &H0020 (not used here)
+        'LED_HE_SIG      14 //VBWord bit 6   &H0040- R12 (not used here)
+        'LED_ABORT       15 //VBWord bit 7   &H0080
+
+        Public Sub UpdateStatus()
+
+            If LEDStateChanged() Then ' have a change, log it
+                LogLEDChange()
+            End If
+
+            SetEachLedFromCurrentBits()
+            UpdateCTLGUILeds()
+            'If (LEDState And LEDBits.LED15) > 0 Then
+            '    MainWindow.LED15.BackColor = Color.Red
+            '    If MainWindow.errorActive_Label.Visible = False Then MainWindow.errorActive_Label.Visible = True
+            '    MainWindow.PublishAbortCode() 'ABORT detected, see if can display Abort Code
+            'Else
+            '    If MainWindow.errorActive_Label.Visible = True Then MainWindow.errorActive_Label.Visible = False
+            '    MainWindow.LED15.BackColor = Color.Gainsboro
+            'End If
+
+            'If (LEDState And LEDBits.LED12) > 0 Then 'ESTOP!
+            '    MsgBox("Fatal Error: Plasma System ESTOP => Exit")
+            '    'Exit the App after operator ack
+            '    Application.Exit()
+            'End If
+            'If (LEDState And LEDBits.LED11) > 0 Then
+            '    MainWindow.LED11.BackColor = Color.Lime
+            'Else
+            '    MainWindow.LED11.BackColor = Color.Gainsboro
+            'End If
+            'If (LEDState And LEDBits.LED10) > 0 Then
+            '    MainWindow.LED10.BackColor = Color.Lime
+            'Else
+            '    MainWindow.LED10.BackColor = Color.Gainsboro
+            'End If
+
+            'If (LEDState And LEDBits.LED0) > 0 Then
+            '    MainWindow.LED0.BackColor = Color.Lime
+            'Else
+            '    MainWindow.LED0.BackColor = Color.Gainsboro
+            'End If
+            'If (LEDState And LEDBits.LED1) > 0 Then
+            '    MainWindow.LED1.BackColor = Color.Lime
+            'Else
+            '    MainWindow.LED1.BackColor = Color.Gainsboro
+            'End If
+            'If (LEDState And LEDBits.LED2) > 0 Then
+            '    MainWindow.LED2.BackColor = Color.Lime
+            'Else
+            '    MainWindow.LED2.BackColor = Color.Gainsboro
+            'End If
+            'If (LEDState And LEDBits.LED3) > 0 Then
+            '    MainWindow.LED3.BackColor = Color.Lime
+            'Else
+            '    MainWindow.LED3.BackColor = Color.Gainsboro
+            'End If
+            'If (LEDState And LEDBits.LED7) > 0 Then
+            '    MainWindow.LED7.BackColor = Color.Lime
+            'Else
+            '    MainWindow.LED7.BackColor = Color.Gainsboro
+            'End If
+            'If (LEDState And LEDBits.LED8) > 0 Then
+            '    MainWindow.LED8.BackColor = Color.BlueViolet 'cause that is the actual color of plasma
+            '    If MainWindow.plasmaStable_Label.Visible = False Then MainWindow.plasmaStable_Label.Visible = True
+            '    If MainWindow.b_plasmaActive = False Then MainWindow.b_plasmaActive = True
+            'Else
+            '    MainWindow.LED8.BackColor = Color.Gainsboro
+            '    If MainWindow.plasmaStable_Label.Visible = True Then MainWindow.plasmaStable_Label.Visible = False
+            '    If MainWindow.b_plasmaActive = True Then MainWindow.b_plasmaActive = False
+            'End If
+
+        End Sub
+    End Structure
+    Dim CTL As ControlBoard
 
     'PCB Parameter Storage
     Structure PARAMETERS
@@ -169,7 +367,7 @@ Public Class MainWindow
     End Structure
     Dim CLaser As CLASERSM
 
-    Const CLSM_IDLE = 0 
+    Const CLSM_IDLE = 0
     Const CLSM_TRIPPED = 1 'Laser COLLISION DETECTED
     Const CLSM_ACTIVATE = 2 'Turn Laser Sense ON
     Const CLSM_DEACTIVATE = 3 'Turn Laser Sense OFF
@@ -214,17 +412,17 @@ Public Class MainWindow
         Dim ZError As Integer
         Dim db_ZPos As Double
 
-        Public sub setLEDJoyBtnOn(state As Boolean)
+        Public Sub setLEDJoyBtnOn(state As Boolean)
             b_LEDJoyBtnOn = state
-        End sub
+        End Sub
 
-        Public function getLEDJoyBtnOn() As Boolean
+        Public Function getLEDJoyBtnOn() As Boolean
             Return b_LEDJoyBtnOn
-        End function
+        End Function
 
     End Structure
     Dim AxesStatus As ASTAT
-    
+
     Public Enum Axis
         <EnumMember(Value:="x")>
         X
@@ -266,9 +464,9 @@ Public Class MainWindow
         Private State As Integer
         Private detailed_log As Boolean
         Private testZ As Boolean
-        Private Xcounter As integer
-        Private Ycounter As integer
-        Private Zcounter As integer
+        Private Xcounter As Integer
+        Private Ycounter As Integer
+        Private Zcounter As Integer
 
 
         Public Sub SetState(newState As Integer) '
@@ -277,11 +475,11 @@ Public Class MainWindow
         Public Function getState() As Integer
             Return State
         End Function
-        Public Sub paintStripMenuDetailedLog() 
-            If detailed_log Then 
+        Public Sub paintStripMenuDetailedLog()
+            If detailed_log Then
                 MainWindow.DetailedLogToolStripMenuItem.Text = "Detailed Log: ON"
                 MainWindow.DetailedLogToolStripMenuItem.BackColor = SystemColors.Highlight
-            Else 
+            Else
                 MainWindow.DetailedLogToolStripMenuItem.Text = "Detailed Log: OFF"
                 MainWindow.DetailedLogToolStripMenuItem.BackColor = SystemColors.Control
             End If
@@ -290,18 +488,18 @@ Public Class MainWindow
             detailed_log = Not detailed_log
             paintStripMenuDetailedLog()
         End Sub
-        Public Sub SetDetailedLog(value As boolean) '
-            detailed_log = value  
+        Public Sub SetDetailedLog(value As Boolean) '
+            detailed_log = value
             paintStripMenuDetailedLog()
         End Sub
         Public Function isDetailLogEnabled() As Boolean
             Return detailed_log
         End Function
-        Public Sub paintStripMenuTestZ() 
-            If testZ Then 
+        Public Sub paintStripMenuTestZ()
+            If testZ Then
                 MainWindow.TestZToolStripMenuItem.Text = "Test Z: ON"
                 MainWindow.TestZToolStripMenuItem.BackColor = SystemColors.Highlight
-            Else 
+            Else
                 MainWindow.TestZToolStripMenuItem.Text = "Test Z: OFF"
                 MainWindow.TestZToolStripMenuItem.BackColor = SystemColors.Control
                 MainWindow.UpdateNextStageStatus("")
@@ -311,44 +509,44 @@ Public Class MainWindow
             testZ = Not testZ
             paintStripMenuTestZ()
         End Sub
-        Public Sub SetTestZ(value As boolean) '
-            testZ = value  
+        Public Sub SetTestZ(value As Boolean) '
+            testZ = value
             paintStripMenuTestZ()
         End Sub
-        Public Function isZEnabled() As Boolean            
+        Public Function isZEnabled() As Boolean
             Return testZ
         End Function
-        Public Sub SetXCounter(value As integer)
+        Public Sub SetXCounter(value As Integer)
             Xcounter = value
         End Sub
         Public Sub addXCounter()
-            Xcounter = Xcounter  + 1
+            Xcounter = Xcounter + 1
         End Sub
-        Public Sub SetYCounter(value As integer)
+        Public Sub SetYCounter(value As Integer)
             Ycounter = value
         End Sub
         Public Sub addYCounter()
             Ycounter = Ycounter + 1
         End Sub
-        Public Sub SetZCounter(value As integer)
+        Public Sub SetZCounter(value As Integer)
             Zcounter = value
         End Sub
         Public Sub addZCounter()
             Zcounter = Zcounter + 1
         End Sub
-        Public Function getXCounter As String
+        Public Function getXCounter() As String
             Return "X movements: " + Xcounter.ToString()
         End Function
-        Public Function getYCounter As String
+        Public Function getYCounter() As String
             Return "Y movements: " + Ycounter.ToString()
         End Function
-        Public Function getZCounter As String
+        Public Function getZCounter() As String
             Return "Z movements: " + Zcounter.ToString()
-        End Function 
-        
+        End Function
+
     End Structure
     Dim StageTestSM As STAGETEST = New STAGETEST()
-    
+
 
     Const STSM_IDLE = 0
     Const STSM_STARTUP = 1
@@ -379,7 +577,7 @@ Public Class MainWindow
     Const HASM_HOME_Z = 5
     Const HASM_WAIT_HOME_Z = 6
     Const HASM_SHUT_DOWN = 7
-    
+
     Structure TWOSPOTSTATEMACHINE
         Dim State As Integer
 
@@ -495,7 +693,7 @@ Public Class MainWindow
     Dim b_plasmaActive As Boolean = False 'For determining when Plasma is ACTIVE    
     Dim b_CollisionPassed As Boolean = False 'the tool has performed a collision test with NO collision.
     Dim b_PlannedAutoStart As Boolean = False 'This is strictly for Auto Start PLasma, to prevent RUN SCAN from starting plasma.
-    
+
 
     Dim b_LightTowerError As Boolean = False 'Flag for light tower (might not need)
     Dim b_toggleDoorsOpen As Boolean = False 'Just for flashing the doors open 
@@ -504,19 +702,20 @@ Public Class MainWindow
 
     Dim b_ClearAbort As Boolean = False ' This is the flag for Abort Button flash
     Dim b_toggleClearAbort As Boolean = False ' This is for making the Clear Abort button flash
-    
-    
+
+
     Dim b_ToggleAutoMode As Boolean = False
     Dim b_RunRecipeOn As Boolean = False 'the Light tower will check this value
     Dim b_ToggleRunRecipe As Boolean = False
     Dim b_RunRcpBtnColor As Boolean = False
     Dim b_LoadRcpBtnColor As Boolean = False
     Dim b_HasHeater As Boolean = False
-    
-    
+
+
     Dim b_CreateRecipe As Boolean = False
 
     'Collections to allow indexing into certain controls
+    Dim CTL_LEDS As New Collection
     Dim RecipeValues As New Collection
     Dim EnterButtons As New Collection
     Dim StageButtons As New Collection
@@ -584,7 +783,7 @@ Public Class MainWindow
 
     End Structure
     Dim CoordParam As COORD_SYS
-    Public function searchForGamepad() As GamepadInput
+    Public Function searchForGamepad() As GamepadInput
         Dim maxPlayers As Integer = 4 ' the maximum number of players to check
         Dim connectedControllers As New List(Of Integer)()
 
@@ -594,20 +793,20 @@ Public Class MainWindow
                 Return gamepad
             End If
         Next
-    End function
-   Public Class GamepadInput
+    End Function
+    Public Class GamepadInput
 
         <DllImport("xinput1_4.dll", EntryPoint:="XInputGetState")>
         Private Shared Function XInputGetState(dwUserIndex As Integer, ByRef pState As XInputState) As Integer
         End Function
 
         Private Const MaxDiagonal As Single = 0.6F 'Set your max diagonal threshold here
-                
+
         Public Structure XInputState
             Public dwPacketNumber As UInteger
-            Public Gamepad As Gamepad            
+            Public Gamepad As Gamepad
         End Structure
-            
+
         Public Structure Gamepad
             Public Buttons As UShort
             Public LeftTrigger As Byte
@@ -624,7 +823,7 @@ Public Class MainWindow
             Public Function LeftThumbMagnitude() As Single
                 Return CSng(Math.Sqrt(Math.Pow(LeftThumbX, 2) + Math.Pow(LeftThumbY, 2)))
             End Function
-            
+
             Public Function LeftThumbIsDiagonal() As Boolean
                 Dim leftThumb As New PointF(LeftThumbX, LeftThumbY)
 
@@ -635,14 +834,14 @@ Public Class MainWindow
 
             Public Function CalculateLThumbPercent() As (String, String)
                 Dim total As Integer = 65535
-                Dim range As Integer = 200       
-                Dim offset As Integer = 0'
+                Dim range As Integer = 200
+                Dim offset As Integer = 0 '
 
                 Dim lThumbXPercent As Integer = CInt(range / total * LeftThumbX + offset)
                 Dim lThumbYPercent As Integer = CInt(range / total * LeftThumbY + offset)
 
                 Return (lThumbXPercent.ToString(), lThumbYPercent.ToString())
-            End Function           
+            End Function
 
             Public Function LeftThumbNormalized() As PointF
                 Dim leftThumb As New PointF(LeftThumbX, LeftThumbY)
@@ -680,8 +879,8 @@ Public Class MainWindow
             X = &H4000
             Y = &H8000
         End Enum
-        
-        
+
+
         Private playerIndex As Integer
         Private currentState As XInputState
 
@@ -696,24 +895,24 @@ Public Class MainWindow
         End Function
 
         Private previousJoystickLThumbstick As PointF
-        
-        
+
+
         Public Function LeftThumbstickValueChanged() As Boolean
             Dim currentThumbstick As PointF = currentState.Gamepad.LeftThumbNormalized()
             If currentThumbstick <> previousJoystickLThumbstick Then
-                previousJoystickLThumbstick = currentThumbstick                
+                previousJoystickLThumbstick = currentThumbstick
                 Return True
             Else
                 Return False
             End If
         End Function
-        Public Function GetLeftThumbstickPercentages() As (xPercent As String, yPercent As String)          
+        Public Function GetLeftThumbstickPercentages() As (xPercent As String, yPercent As String)
             Return currentState.Gamepad.CalculateLThumbPercent()
         End Function
         Public Sub Update()
             XInputGetState(playerIndex, currentState)
         End Sub
-      
+
         Public Function IsButtonDown(button As GamepadButtonFlags) As Boolean
             Return currentState.Gamepad.IsPressed(button)
         End Function
@@ -725,22 +924,22 @@ Public Class MainWindow
         Public Function GetLeftThumbstick() As PointF
             Return currentState.Gamepad.LeftThumbNormalized()
         End Function
-   End Class
+    End Class
     Public Function isTwoSpotOn() As Boolean
-        If SMTwoSpot.State > TSSM_IDLE Then 
+        If SMTwoSpot.State > TSSM_IDLE Then
             Return True
-        Else 
+        Else
             Return False
-        End If        
+        End If
     End Function
     Public Function EnableJoystickStageControl() As Boolean
         If gamepad IsNot Nothing Then
-            If gamepad.isConnected() then
+            If gamepad.isConnected() Then
                 WriteCommand("$BD%", 4)
-            End If 
-        Else 
+            End If
+        Else
             WriteCommand("$BE%", 4)
-        End If 
+        End If
         ReadResponse(0)
         WriteLogLine("Joystick Stage Control Enabled.")
     End Function
@@ -749,33 +948,33 @@ Public Class MainWindow
         ReadResponse(0)
         WriteLogLine("Joystick Stage Control disabled.")
     End Function
-    
+
     Public Function VirtualJoyMove(axis As String, speed As String) As String
         Dim setSoftJoy As String
         '$AB0xss.s%; resp [!AB0xss.s#] where 0x = axis number, ss.s is plus/minus percent of max joy speed.
-        setSoftJoy = "$AB0" + axis + speed + "%" 
+        setSoftJoy = "$AB0" + axis + speed + "%"
         WriteCommand(setSoftJoy, setSoftJoy.Length)
-        ReadResponse(0)       
+        ReadResponse(0)
     End Function
-    Public Function flipMySign(valueToFlip As string) As String
+    Public Function flipMySign(valueToFlip As String) As String
         Return (-1 * CInt(valueToFlip)).ToString()
     End Function
     Public Function MoveStageWithJoy() As PointF
         Dim result As (xPercent As String, yPercent As String) = gamepad.GetLeftThumbstickPercentages()
 
-        If gamepad.LeftThumbstickValueChanged() Then              
+        If gamepad.LeftThumbstickValueChanged() Then
             VirtualJoyMove(Axis.X, result.xPercent)
             VirtualJoyMove(Axis.Y, flipMySign(result.yPercent))
-        End If 
+        End If
     End Function
     '------------------------- Load the form
     Private Sub Form1_Load(sender As System.Object, e As System.EventArgs) Handles MyBase.Load
         Dim i As Integer
         Dim ar_myPort As String()
         Dim responseLen As Integer
-        
-        
-        DateTimeLabel1.text = DateTime.Now.ToString("hh:mm dddd, dd MMMM yyyy")
+
+
+        DateTimeLabel1.Text = DateTime.Now.ToString("hh:mm dddd, dd MMMM yyyy")
 
         'Make sure we check the Configuration for a known Port
         GetExeCfg()  ' get the exe config parameters
@@ -810,7 +1009,7 @@ Public Class MainWindow
 
             'Reset the controller PCB and give it time to do so
             WriteCommand("$A9%", 4)  'SOFT_RESET   $A9%; resp[!A9#]; causes Aux PCB Soft Reset
-            ResponseLen = ReadResponse(0)
+            responseLen = ReadResponse(0)
             AUXResetTimeOut = 2500 / Timer1.Interval  'interval in milliseconds, so get close to 2.5 second wait
 
 
@@ -909,6 +1108,23 @@ Public Class MainWindow
         RecipeValues.Add(RecipeXMaxTxt)
         RecipeValues.Add(RecipeYMinTxt)
         RecipeValues.Add(RecipeYMaxTxt)
+
+        CTL_LEDS.Add(Guna2TextBox1)
+        CTL_LEDS.Add(Guna2TextBox2)
+        CTL_LEDS.Add(Guna2TextBox3)
+        CTL_LEDS.Add(Guna2TextBox4)
+        CTL_LEDS.Add(Guna2TextBox5)
+        CTL_LEDS.Add(Guna2TextBox6)
+        CTL_LEDS.Add(Guna2TextBox7)
+        CTL_LEDS.Add(Guna2TextBox8)
+        CTL_LEDS.Add(Guna2TextBox9)
+        CTL_LEDS.Add(Guna2TextBox10)
+        CTL_LEDS.Add(Guna2TextBox11)
+        CTL_LEDS.Add(Guna2TextBox12)
+        CTL_LEDS.Add(Guna2TextBox13)
+        CTL_LEDS.Add(Guna2TextBox14)
+        CTL_LEDS.Add(Guna2TextBox15)
+        CTL_LEDS.Add(Guna2TextBox16)
     End Sub
     '------------------------ comm port selection makes the Start-Stop toggle button visible
     Private Sub com_portBox_SelectionChangeCommitted(sender As Object, e As EventArgs) Handles com_portBox.SelectionChangeCommitted
@@ -925,7 +1141,7 @@ Public Class MainWindow
             SerialPort1.StopBits = StopBits.One
             SerialPort1.DataBits = 8
             SerialPort1.BaudRate = "57600"
-            SerialPort1.PortName = com_portBox.text()
+            SerialPort1.PortName = com_portBox.Text()
             SerialPort1.ReadTimeout = SERIAL_RESPONSE_TIMEOUT            'serial port timeout default is 500
             SerialPort1.Open()
 
@@ -1295,42 +1511,42 @@ Public Class MainWindow
 
     End Sub
 
-    
-    Private Sub AutoManBtn_Click(sender As Object, e As EventArgs) Handles AutoManBtn.Click, AUTO_MODE.Click
+
+    Private Sub AutoManBtn_Click(sender As Object, e As EventArgs) Handles AutoManBtn.Click, LED.Click
         b_ToggleAutoMode = True
     End Sub
     Private Sub RunRcpBtn_Click(sender As Object, e As EventArgs) Handles RunRcpBtn.Click
-        If b_HasCollision = True and b_autoScanActive and b_plasmaActive = False Then
+        If b_HasCollision = True And b_autoScanActive And b_plasmaActive = False Then
             b_PlannedAutoStart = True 'this will make sure we dont accidently start plasma when just clicking RUN SCAN button
-            if SMScan.State = SCSM_IDLE then
+            If SMScan.State = SCSM_IDLE Then
                 SMScan.ExternalNewState = SCSM_START_UP
                 SMScan.b_ExternalStateChange = True  'Start Collision test while auto scan is ON
-            End If 
-        Else 
+            End If
+        Else
             b_ToggleRunRecipe = True
         End If
-        
+
     End Sub
-   
-   
+
+
     Private Sub StateMachine()
 
         Select Case SM_State
             Case STARTUP
                 If CTLResetTimeOut > 0 Then
                     CTLResetTimeOut -= 1
-                ElseIf AUXResetTimeOut > 0 then 
+                ElseIf AUXResetTimeOut > 0 Then
                     AUXResetTimeOut -= 1
                 Else
                     WriteLogLine("Main State Machine Start Up")
                     RunStartUp()
                     SM_State = POLLING
-                    UpdateStatus(0)
+                    CTL.UpdateStatus()
                 End If
 
             Case POLLING
                 RunCheckInput() 'checks for operator input
-              
+
                 'Check whether we need to go full pumpkin
                 If b_Owned = False Then
                     SM_CinderellaCounter += 1 'increment until Pumpkin check
@@ -1353,14 +1569,14 @@ Public Class MainWindow
                     CollisionLaser() 'run the Collision Laser System state machine
                     RunHomeAxesSM() 'run Home Axes state machine
                     SetLightTower() 'run the Light Tower state machine
-                    UpdateStatus(StatusBits)
+                    CTL.UpdateStatus()
                 End If
 
             Case SHUTDOWN
                 WriteLogLine("Main State Machine Shut Down")
                 RunShutDown()
                 SM_State = IDLE
-                UpdateStatus(0)
+                CTL.UpdateStatus()
 
             Case IDLE
 
@@ -1376,19 +1592,23 @@ Public Class MainWindow
         Dim DblVar As Double
         Dim ResponseLen As Integer
         Dim CMDIndex() As String = {"0", "01%", "02%", "03%", "04%"}
-        
+
         'Set initial stageTest values
         StageTestSM.SetDetailedLog(True)
         StageTestSM.SetTestZ(True)
 
+        'Initialize LED for CTL
+        CTL.InitializeLedStates()
+
+
         'Check if controller is connected.
         If gamepad IsNot Nothing Then
-            if gamepad.isConnected() Then    
+            If gamepad.isConnected() Then
                 contollerONSquare.BackColor = Color.Lime
                 WriteLogLine("Controller is connected")
-            End if
+            End If
         End If
-        
+
         'If GetBoughtorNot() = False Then CinderellaCode()
         PL_SIM_NOTICE.Visible = False 'just in case
 
@@ -1396,14 +1616,14 @@ Public Class MainWindow
         WriteCommand("$8F%", 4) 'GET FW VERSION $8F%; resp[!8Fxx#]; xx = hard coded FW rev in Hex
         ResponseLen = ReadResponse(0)
         If ResponseLen > 3 Then
-            StrVar = st_RCV.Substring(3,2)
+            StrVar = st_RCV.Substring(3, 2)
             WriteLogLine("CTL Firmware Version: " + StrVar)
         End If
 
         WriteCommand("$A1%", 4) 'GET FW VERSION $A1% resp[!A1xx#]; xx = hard coded FW rev in Hex
         ResponseLen = ReadResponse(0)
         If ResponseLen > 3 Then
-            StrVar = st_RCV.Substring(3,2)
+            StrVar = st_RCV.Substring(3, 2)
             WriteLogLine("Axis Firmware Version: " + StrVar)
         End If
         'How many MFCs?
@@ -1429,19 +1649,19 @@ Public Class MainWindow
         'WriteCommand("$CF%", 4) '$CF% resp [!CFtt.t#] where tt.t Is the target temperature
         'ResponseLen = ReadResponse(0)
         'CurrentStepTxtBox.Text = st_RCV.Substring(3,4)
-        
+
         'This is for Batch Logging systems only
         WriteCommand("$2A011%", 7) 'GET BatchIDLogging $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
         ResponseLen = ReadResponse(0)
         If ResponseLen > 7 Then
-            StrVar = st_RCV.Substring(7,1)
+            StrVar = st_RCV.Substring(7, 1)
             If StrVar = "1" Then b_batchActive = True
             If b_batchActive = True Then
                 BatchIDTextBox.Visible = True
                 BatchLoggingBTN.Visible = True
                 Form4.BatchChkBox.Checked = True
                 b_togglebatchIDLogging = True 'this is the flag to set Batch ID on/off 
-            end if
+            End If
         End If
 
         WriteCommand("$2A606%", 7) 'GET RECIPE MB Start Position () $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
@@ -1455,7 +1675,7 @@ Public Class MainWindow
             LoadedTunerTxt.Text = TUNER.db_LoadedSetPointPct.ToString("F") '2 decimal points
             RecipeTunerTxt.Text = TUNER.db_LoadedSetPointPct.ToString("F")
             'WriteLogLine("Initial Tuner SetPoint: " & LoadedTunerTxt.Text)
-        End If    
+        End If
         WriteCommand("$2A605%", 7) 'GET RECIPE RF PWR Setpoint (Watts) $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value        
         ResponseLen = ReadResponse(0)
         If ResponseLen > 7 Then
@@ -1468,32 +1688,32 @@ Public Class MainWindow
         WriteCommand("$2A604%", 7) 'GET RECIPE MFC4 Flow (SLPM) $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
         ResponseLen = ReadResponse(0)
         If ResponseLen > 7 Then
-            MFC(4).db_LoadedFlow = CDbl(st_RCV.Substring(7, ResponseLen - 8))            
+            MFC(4).db_LoadedFlow = CDbl(st_RCV.Substring(7, ResponseLen - 8))
             MFCLoadedFlow(4).Text = MFC(4).db_LoadedFlow.ToString("F3")
             MFCRecipeFlow(4).Text = MFC(4).db_LoadedFlow.ToString("F3") 'this is for the New GUI to view Loaded values        
         End If
         WriteCommand("$2A603%", 7) 'GET RECIPE MFC3 Flow (SLPM) $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
         ResponseLen = ReadResponse(0)
         If ResponseLen > 7 Then
-            MFC(3).db_LoadedFlow = CDbl(st_RCV.Substring(7, ResponseLen - 8))            
+            MFC(3).db_LoadedFlow = CDbl(st_RCV.Substring(7, ResponseLen - 8))
             MFCLoadedFlow(3).Text = MFC(3).db_LoadedFlow.ToString("F3")
             MFCRecipeFlow(3).Text = MFC(3).db_LoadedFlow.ToString("F3") 'this is for the New GUI to view Loaded values        
         End If
         WriteCommand("$2A602%", 7) 'GET RECIPE MFC2 Flow (SLPM) $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
         ResponseLen = ReadResponse(0)
         If ResponseLen > 7 Then
-            MFC(2).db_LoadedFlow = CDbl(st_RCV.Substring(7, ResponseLen - 8))            
+            MFC(2).db_LoadedFlow = CDbl(st_RCV.Substring(7, ResponseLen - 8))
             MFCLoadedFlow(2).Text = MFC(2).db_LoadedFlow.ToString("F")
-            MFCRecipeFlow(2).Text = MFC(2).db_LoadedFlow.ToString("F")      
+            MFCRecipeFlow(2).Text = MFC(2).db_LoadedFlow.ToString("F")
         End If
         WriteCommand("$2A601%", 7) 'GET RECIPE MFC1 Flow (SLPM) $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
         ResponseLen = ReadResponse(0)
         If ResponseLen > 7 Then
-            MFC(1).db_LoadedFlow = CDbl(st_RCV.Substring(7, ResponseLen - 8))            
+            MFC(1).db_LoadedFlow = CDbl(st_RCV.Substring(7, ResponseLen - 8))
             MFCLoadedFlow(1).Text = MFC(1).db_LoadedFlow.ToString("F")
-            MFCRecipeFlow(1).Text = MFC(1).db_LoadedFlow.ToString("F")  
+            MFCRecipeFlow(1).Text = MFC(1).db_LoadedFlow.ToString("F")
         End If
-        
+
         For Index = 1 To NumMFC
             WriteCommand("$85" & CMDIndex(Index), 6) 'GET_MFC_RANGE $850m% 1<=m<=4; resp[!850xxx.yy#]
             ResponseLen = ReadResponse(0)
@@ -1507,8 +1727,8 @@ Public Class MainWindow
                 Else
                     MFCRange(Index).Text = "NO RS485"
                 End If
-            End If          
-        Next        
+            End If
+        Next
 
         WriteCommand("$2A705%", 7)  'Get Max RF power forward  $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
         ResponseLen = ReadResponse(0)
@@ -1531,7 +1751,7 @@ Public Class MainWindow
         'turn off Exec Recipe
         WriteCommand("$8700%", 6) 'SET_EXEC_RECIPE  $870p% p=1 Execute Recipe, p=0 RF off, Recipe off
         ResponseLen = ReadResponse(0)
-        b_RunRecipeOn = False       
+        b_RunRecipeOn = False
 
         'enable service menu
         EnableServiceMenuToolStripMenuItem.Enabled = True
@@ -1623,7 +1843,7 @@ Public Class MainWindow
             b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
             CoordParam.db_Xs_2_PH = Convert.ToDouble(StrVar)
         End If
-       WriteCommand("$DA521%", 7) 'GET db_Ys_2_PH  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+        WriteCommand("$DA521%", 7) 'GET db_Ys_2_PH  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
         ResponseLen = ReadResponse(0)
         If ResponseLen > 7 Then
             StrVar = st_RCV.Substring(7)
@@ -1638,7 +1858,7 @@ Public Class MainWindow
             StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
             b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
             CoordParam.db_PlasmaHeadSlitLength = Convert.ToDouble(StrVar)
-        End If       
+        End If
         WriteCommand("$DA541%", 7) 'GET Plasma Head Slit Width (mm) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
         ResponseLen = ReadResponse(0)
         If ResponseLen > 7 Then
@@ -1646,7 +1866,7 @@ Public Class MainWindow
             StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
             b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
             CoordParam.db_PlasmaHeadSlitWidth = Convert.ToDouble(StrVar)
-        End If        
+        End If
         WriteCommand("$DA542%", 7) 'GET Chuck to Plasma Head safety gap (mm) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
         ResponseLen = ReadResponse(0)
         If ResponseLen > 7 Then
@@ -1654,7 +1874,7 @@ Public Class MainWindow
             StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
             b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
             CoordParam.db_ChuckToPlasmaHeadSafetyGap = Convert.ToDouble(StrVar)
-        End If        
+        End If
         WriteCommand("$DA543%", 7) 'GET Z Pins Buried Pos (mm) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
         ResponseLen = ReadResponse(0)
         If ResponseLen > 7 Then
@@ -1670,7 +1890,7 @@ Public Class MainWindow
             StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
             b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
             CoordParam.db_ZPinsExposedPos = Convert.ToDouble(StrVar)
-        End If     
+        End If
         'Get the Home Position Parameters
         WriteCommand("$DA512%", 7) 'GET db_LoadPos_X_Base $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
         ResponseLen = ReadResponse(0)
@@ -1680,7 +1900,7 @@ Public Class MainWindow
             b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
             Param.db_X_Home_Pos = Convert.ToDouble(StrVar)
         End If
-         WriteCommand("$DA522%", 7) 'GET db_LoadPos_Y_Base $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+        WriteCommand("$DA522%", 7) 'GET db_LoadPos_Y_Base $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
         ResponseLen = ReadResponse(0)
         If ResponseLen > 7 Then
             StrVar = st_RCV.Substring(7)
@@ -1688,7 +1908,7 @@ Public Class MainWindow
             b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
             Param.db_Y_Home_Pos = Convert.ToDouble(StrVar)
         End If
-         WriteCommand("$DA532%", 7) 'GET db_LoadPos_Z_Base $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+        WriteCommand("$DA532%", 7) 'GET db_LoadPos_Z_Base $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
         ResponseLen = ReadResponse(0)
         If ResponseLen > 7 Then
             StrVar = st_RCV.Substring(7)
@@ -1823,7 +2043,7 @@ Public Class MainWindow
         Else
             AxesStatus.b_XYZSameState = False
         End If
-                
+
         If b_StatusChanged = True Then
             WriteLogLine(LogStr)
         End If
@@ -1842,7 +2062,7 @@ Public Class MainWindow
         SetRecipeTunerBtn.Visible = False
 
         'SetHeaterButton.Visible = False
-        
+
         CloseLogFile() 'done logging
     End Sub
 
@@ -1876,7 +2096,7 @@ Public Class MainWindow
         StrVar = ar_CTL_ParamVals(0)
         b_IsStringANumber(StrVar, st_HexChars, "CTL Status Bits") 'restarts if = False
         StatusBits = Convert.ToInt32(StrVar, 16)
-        UpdateStatus(StatusBits) 'parse status bits to boolean
+        CTL.SetLEDState(StatusBits) 'parse status bits to boolean
 
         StrVar = ar_CTL_ParamVals(1) 'MB Motor Position (to update slider bar)
         b_IsStringANumber(StrVar, st_DoubleChars, "MB Motor Pos")
@@ -2107,13 +2327,13 @@ Public Class MainWindow
 
         'controller update
         If gamepad IsNot Nothing Then
-            If isTwoSpotOn() Then 
+            If isTwoSpotOn() Then
                 gamepad.Update()
                 MoveStageWithJoy()
             End If
-        End if
-        
-        
+        End If
+
+
         If (b_Step_MB_SM_Left = True) Then
             WriteCommand(st_MBLeftSpeed, Len(st_MBLeftSpeed))
             ResponseLen = ReadResponse(0)
@@ -2196,11 +2416,11 @@ Public Class MainWindow
             ResponseLen = ReadResponse(0)
             b_ToggleAutoMode = False
         End If
-        
+
         If b_ToggleRunRecipe = True Then
             b_RunRecipeOn = Not b_RunRecipeOn
-                    
-            If b_RunRecipeOn = True Then                  
+
+            If b_RunRecipeOn = True Then
                 WriteCommand("$8701%", 6) 'SET_EXEC_RECIPE  $870p% p=1 Execute Recipe, p=0 RF off, Recipe off
                 'This resets the flag for AUTO SCAN 
                 If b_autoScanActive = True Then b_toggleAutoScan = True                                           '
@@ -2216,10 +2436,10 @@ Public Class MainWindow
             ReadResponse(0) 'clear the response buffer
             b_SetDefaultRecipe = False
         End If
-                
+
         If b_toggleHeater = True Then 'heater button is pushed           
             b_toggleHeater = False
-            
+
             If b_heaterActive Then
                 WriteCommand("$CE35.0%", 8) '$CEtt.t% resp [!CEtt.t#] where tt.t is target temp in 'C. t=0 is off
                 ReadResponse(0)
@@ -2230,12 +2450,12 @@ Public Class MainWindow
                 ReadResponse(0)
                 HeatLabel.BackColor = Color.Gainsboro
                 WriteLogLine("Preheat Plasma Recipe OFF")
-            End If           
+            End If
 
         End If
 
     End Sub
-   
+
     Private Function DecIntToHexStr(DecInt As Integer, NumChar As Integer)
         Dim HexStr As String
 
@@ -2257,88 +2477,12 @@ Public Class MainWindow
 
         Return DecStr
     End Function
-    'UPdateStatus bit patterns =>
-    'LED_GAS_1       0 //VBWord bit 8    &H0100
-    'LED_GAS_2       1 //VBWord bit 9    &H0200
-    'LED_GAS_3       2 //VBWord bit 10   &H0400
-    'LED_GAS_4       3 //VBWord bit 11   &H0800
-    'LED_VLV_5       4 //VBWord bit 12   &H1000 - R12 (not used here)
-    'LED_TUNING      5 //VBWord bit 13   &H2000 - R12 (not used here)
-    'LED_ESTOP_ON    6 //VBWord bit 14   &H4000
-    'LED_RF_EN       7 //VBWord bit 15   &H8000
-
-    'LED_PL_ON       8  //VBWord bit 0   &H0001
-    'LED_RS485       9  //VBWord bit 1   &H0002 (not used here)
-    'LED_AUTO        10 //VBWord bit 2   &H0004
-    'LED_EXEC_RCP    11 //VBWord bit 3   &H0008
-    'LED_USB_CONN    12 //VBWord bit 4   &H0010 (not used here)
-    'LED_CMD_ACTIVE  13 //VBWord bit 5   &H0020 (not used here)
-    'LED_HE_SIG      14 //VBWord bit 6   &H0040- R12 (not used here)
-    'LED_ABORT       15 //VBWord bit 7   &H0080
-
-    Private Sub UpdateStatus(myStatusBits As Integer)
-        GlobalmyStatusBits = myStatusBits
-        If myStatusBits <> StatusBitsWas Then ' have a change, log it
-            WriteLogLine("Status Bits Change from " & st_BinInt2String(StatusBitsWas) & " to " & st_BinInt2String(myStatusBits))
-            StatusBitsWas = myStatusBits 'for next time
-        End If
-        If (myStatusBits And &H4000) > 0 Then 'ESTOP!
-            MsgBox("Fatal Error: Plasma System ESTOP => Exit")
-            'Exit the App after operator ack
-            Application.Exit()
-        End If
-        If (myStatusBits And &H4) > 0 Then
-            AUTO_MODE.BackColor = Color.Lime
-        Else
-            AUTO_MODE.BackColor = Color.Gainsboro
-        End If
-        If (myStatusBits And &H8) > 0 Then
-            EXECUTE_RECIPE.BackColor = Color.Lime
-        Else
-            EXECUTE_RECIPE.BackColor = Color.Gainsboro
-        End If
-        If (myStatusBits And &H80) > 0 Then
-            PROCESS_ABORT.BackColor = Color.Red
-            if errorActive_Label.Visible = false then errorActive_Label.Visible = true
-            PublishAbortCode() 'ABORT detected, see if can display Abort Code
-        Else
-            if errorActive_Label.Visible = true then errorActive_Label.Visible = False
-            PROCESS_ABORT.BackColor = Color.Gainsboro
-        End If
-        If (myStatusBits And &H100) > 0 Then
-            GAS_1.BackColor = Color.Lime
-        Else
-            GAS_1.BackColor = Color.Gainsboro
-        End If
-        If (myStatusBits And &H200) > 0 Then
-            GAS_2.BackColor = Color.Lime
-        Else
-            GAS_2.BackColor = Color.Gainsboro
-        End If
-        If (myStatusBits And &H400) > 0 Then
-            GAS_3.BackColor = Color.Lime
-        Else
-            GAS_3.BackColor = Color.Gainsboro
-        End If
-        If (myStatusBits And &H800) > 0 Then
-            GAS_4.BackColor = Color.Lime
-        Else
-            GAS_4.BackColor = Color.Gainsboro
-        End If
-        If (myStatusBits And &H8000) > 0 Then
-            RF_ENABLED.BackColor = Color.Lime
-        Else
-            RF_ENABLED.BackColor = Color.Gainsboro
-        End If
-        If (myStatusBits And &H1) > 0 Then
-            PLASMA_ON.BackColor = Color.BlueViolet 'cause that is the actual color of plasma
-            if plasmaStable_Label.Visible = false Then plasmaStable_Label.Visible = true
-            if b_plasmaActive = False Then b_plasmaActive = true
-        Else
-            PLASMA_ON.BackColor = Color.Gainsboro
-            if plasmaStable_Label.Visible = true then plasmaStable_Label.Visible = False
-            if b_plasmaActive = true Then b_plasmaActive = False
-        End If
+    Private Sub UpdateGUILeds()
+        Dim i As Integer = 0
+        For Each button In CTL_LEDS
+            button.text = Exe_Cfg.LEDS(i)
+            i += 1
+        Next
     End Sub
 
     Private Sub PublishAbortCode()
@@ -2448,6 +2592,8 @@ Public Class MainWindow
         LogLineOut.Close()
     End Sub
     Private Sub GetExeCfg()
+        'Initialize list for reading from config file
+        Exe_Cfg.LEDS = New List(Of String)()
 
         ExeConfigPathFileName = ExeConfigPath + ExeConfigFileName + ".cfg"
         ' Open the file using a stream reader.
@@ -2474,15 +2620,65 @@ Public Class MainWindow
                 Case "MFC_LABEL_4"
                     Exe_Cfg.MFC_LABEL_4 = ExeConfigParamValue
                     MFC_4_Label.Text = Exe_Cfg.MFC_LABEL_4
-                    'Case "KNOWN_COM_PORT"
-                    '    Exe_Cfg.KNOWN_COM_PORT = ExeConfigParamValue
-                    '    st_KnownComPort = Exe_Cfg.KNOWN_COM_PORT                
+                Case "KNOWN_COM_PORT"
+                    Exe_Cfg.KNOWN_COM_PORT = ExeConfigParamValue
+                    st_KnownComPort = Exe_Cfg.KNOWN_COM_PORT
+
+                Case "LED0"
+                    Exe_Cfg.LEDS.Add(ExeConfigParamValue)
+                    Guna2TextBox1.Text = Exe_Cfg.LEDS(0)
+                Case "LED1"
+                    Exe_Cfg.LEDS.Add(ExeConfigParamValue)
+                    Guna2TextBox2.Text = Exe_Cfg.LEDS(1)
+                Case "LED2"
+                    Exe_Cfg.LEDS.Add(ExeConfigParamValue)
+                    Guna2TextBox3.Text = Exe_Cfg.LEDS(2)
+                Case "LED3"
+                    Exe_Cfg.LEDS.Add(ExeConfigParamValue)
+                    Guna2TextBox4.Text = Exe_Cfg.LEDS(3)
+                Case "LED4"
+                    Exe_Cfg.LEDS.Add(ExeConfigParamValue)
+                    Guna2TextBox5.Text = Exe_Cfg.LEDS(4)
+                Case "LED5"
+                    Exe_Cfg.LEDS.Add(ExeConfigParamValue)
+                    Guna2TextBox6.Text = Exe_Cfg.LEDS(5)
+                Case "LED6"
+                    Exe_Cfg.LEDS.Add(ExeConfigParamValue)
+                    Guna2TextBox7.Text = Exe_Cfg.LEDS(6)
+                Case "LED7"
+                    Exe_Cfg.LEDS.Add(ExeConfigParamValue)
+                    Guna2TextBox8.Text = Exe_Cfg.LEDS(7)
+                Case "LED8"
+                    Exe_Cfg.LEDS.Add(ExeConfigParamValue)
+                    Guna2TextBox9.Text = Exe_Cfg.LEDS(8)
+                Case "LED9"
+                    Exe_Cfg.LEDS.Add(ExeConfigParamValue)
+                    Guna2TextBox10.Text = Exe_Cfg.LEDS(9)
+                Case "LED10"
+                    Exe_Cfg.LEDS.Add(ExeConfigParamValue)
+                    Guna2TextBox11.Text = Exe_Cfg.LEDS(10)
+                Case "LED11"
+                    Exe_Cfg.LEDS.Add(ExeConfigParamValue)
+                    Guna2TextBox12.Text = Exe_Cfg.LEDS(11)
+                Case "LED12"
+                    Exe_Cfg.LEDS.Add(ExeConfigParamValue)
+                    Guna2TextBox13.Text = Exe_Cfg.LEDS(12)
+                Case "LED13"
+                    Exe_Cfg.LEDS.Add(ExeConfigParamValue)
+                    Guna2TextBox14.Text = Exe_Cfg.LEDS(13)
+                Case "LED14"
+                    Exe_Cfg.LEDS.Add(ExeConfigParamValue)
+                    Guna2TextBox15.Text = Exe_Cfg.LEDS(14)
+                Case "LED15"
+                    Exe_Cfg.LEDS.Add(ExeConfigParamValue)
+                    Guna2TextBox16.Text = Exe_Cfg.LEDS(15)
                 Case Else
             End Select
 
         Next
 
     End Sub
+
     'Private Sub WriteExeConfig()
     '    Dim st_ConfigurationString As String
 
@@ -2531,19 +2727,19 @@ Public Class MainWindow
         ClearAbortbtn.Visible = False
         b_ClearAbort = False
         RunRcpBtn.Enabled = True 're-enable the Start Plasma button
-        
-        if CLaser.State = CLSM_TRIPPED Then 
+
+        If CLaser.State = CLSM_TRIPPED Then
             RunScanBtn.Text = "RUN SCAN"
             CLaser.State = CLSM_DEACTIVATE
-            WriteCommand("$B800%", 6) 
+            WriteCommand("$B800%", 6)
             ReadResponse(0)
-            WriteCommand("$B801%", 6) 
+            WriteCommand("$B801%", 6)
             ReadResponse(0)
-            WriteCommand("$B802%", 6) 
+            WriteCommand("$B802%", 6)
             ReadResponse(0)
             SMHomeAxes.State = HASM_START
         End If
-                
+
     End Sub
     Private Sub BuildRecipeToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles BuildRecipeToolStripMenuItem.Click
         'All recipe settings, except for Batchlogging which is set on the tool.
@@ -2562,13 +2758,13 @@ Public Class MainWindow
         ' a .crcp file was selected, open it.
         If openCascadeRecipeFileDialog1.ShowDialog() = DialogResult.OK Then
             'New cascade recipe loaded, clear recipes in box if any exist and reset casrecipenumber.
-            CascadingRecipesDialog.CascadeRecipeListBox.Items.Clear
+            CascadingRecipesDialog.CascadeRecipeListBox.Items.Clear()
             CasRecipeNumber = 0
             'Get selected recipe and store info
             st_CascadeRecipeFileName = openCascadeRecipeFileDialog1.SafeFileName
             st_CascadeRecipeFileName = st_CascadeRecipeFileName.Substring(0, st_CascadeRecipeFileName.Length - 5) 'strip off '.crcp'            
-            st_CascadeRecipePathFileName = openCascadeRecipeFileDialog1.FileName  
-            
+            st_CascadeRecipePathFileName = openCascadeRecipeFileDialog1.FileName
+
 
             'Fill the Cascade list
             ' Open the file using a stream reader.
@@ -2577,16 +2773,16 @@ Public Class MainWindow
                 'the file Is reached.
                 line = sr.ReadLine
 
-                While line <> ""                 
+                While line <> ""
                     CascadingRecipesDialog.CascadeRecipeListBox.Items.Add(line)
                     line = sr.ReadLine
-                End While 
+                End While
                 sr.Close()
             End Using
 
             LoadRecipeValues()
         End If
-        
+
     End Sub
     Private Sub OpenToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles OpenToolStripMenuItem.Click
         ' Displays an OpenFileDialog so the user can select a Recipe       
@@ -2595,148 +2791,148 @@ Public Class MainWindow
         openFileDialog1.InitialDirectory = st_RecipePath 'hard coded st_RecipePath as initialized at startup above
         openFileDialog1.Filter = "Recipe|*.rcp"
         openFileDialog1.Title = "Select a Recipe File"
-                
+
         ' Show the Dialog.
         ' If the user clicked OK in the dialog and 
         ' a .rcp file was selected, open it.
         If openFileDialog1.ShowDialog() = DialogResult.OK Then
 
             'Clear the Cascade list because we assume user doesnt want cascade recipe now
-            CascadingRecipesDialog.CascadeRecipeListBox.Items.Clear
+            CascadingRecipesDialog.CascadeRecipeListBox.Items.Clear()
             CasRecipeNumber = 0
             st_RecipeFileName = openFileDialog1.SafeFileName
             st_RecipeFileName = st_RecipeFileName.Substring(0, st_RecipeFileName.Length - 4) 'strip off '.rcp'            
-            st_RecipePathFileName = openFileDialog1.FileName        
+            st_RecipePathFileName = openFileDialog1.FileName
             'Load the recipe values
             LoadRecipeValues()
         End If
-        
-        
+
+
     End Sub
 
-    Public Sub LoadRecipeValues() 
+    Public Sub LoadRecipeValues()
         Dim intval As Integer
-        
-            'If we have a value in the cascade list, then we are RUNNING CASCADED RECIPES
-            If CascadingRecipesDialog.CascadeRecipeListBox.Items.Count > 1 Then
-                st_RecipeFileName = CascadingRecipesDialog.CascadeRecipeListBox.Items(CasRecipeNumber)
-                st_RecipePathFileName = st_RecipePath & CascadingRecipesDialog.CascadeRecipeListBox.Items(CasRecipeNumber) & ".rcp"
-            End If
 
-            ' Open the file using a stream reader.
-            Using sr As New StreamReader(st_RecipePathFileName)
-                st_RecipeString = sr.ReadToEnd()
-                sr.Close()
-            End Using
-            
-            'Set Active Field and write in log file
-            ActiveRecipeName.Text = st_RecipeFileName
-            WriteLogLine("Loaded " + st_RecipeFileName + " : " + st_RecipeString.Replace(vbCr, "").Replace(vbLf, "")) 'Log this recipe entry
+        'If we have a value in the cascade list, then we are RUNNING CASCADED RECIPES
+        If CascadingRecipesDialog.CascadeRecipeListBox.Items.Count > 1 Then
+            st_RecipeFileName = CascadingRecipesDialog.CascadeRecipeListBox.Items(CasRecipeNumber)
+            st_RecipePathFileName = st_RecipePath & CascadingRecipesDialog.CascadeRecipeListBox.Items(CasRecipeNumber) & ".rcp"
+        End If
 
-            st_RecipeLines = st_RecipeString.Split(New Char() {"<"c})
-            'Read and parse each parameter of the recipe string
-            For Ctr As Integer = 1 To st_RecipeLines.Length - 1
-                st_RecipeParamStrArray = st_RecipeLines(Ctr).Split(New Char() {">"c})
-                st_RecipeParamName = st_RecipeParamStrArray(0).Trim()
-                st_RecipeParamValue = st_RecipeParamStrArray(1).Trim()
+        ' Open the file using a stream reader.
+        Using sr As New StreamReader(st_RecipePathFileName)
+            st_RecipeString = sr.ReadToEnd()
+            sr.Close()
+        End Using
 
-                Select Case st_RecipeParamName 'load up the recipe values
-                    Case "MFC1"
-                        MFC_1_Recipe_Flow.Text = st_RecipeParamValue
-                    Case "MFC2"
-                        MFC_2_Recipe_Flow.Text = st_RecipeParamValue
-                    Case "MFC3"
-                        MFC_3_Recipe_Flow.Text = st_RecipeParamValue
-                    Case "MFC4"
-                        MFC_4_Recipe_Flow.Text = st_RecipeParamValue
-                    Case "PWR"
-                        RecipeWattsTxt.Text = st_RecipeParamValue
-                    Case "TUNER"
-                        RecipeTunerTxt.Text = st_RecipeParamValue
-                    Case "THICKNESS"
-                        RecipeThicknessTxt.Text = st_RecipeParamValue
-                    Case "GAP"
-                        RecipeGapTxt.Text = st_RecipeParamValue
-                    Case "OVERLAP"
-                        RecipeOverLapTxt.Text = st_RecipeParamValue
-                    Case "SPEED"
-                        RecipeSpeedTxt.Text = st_RecipeParamValue
-                    Case "CYCLES"
-                        RecipeCyclesTxt.Text = st_RecipeParamValue
-                    Case "XMIN"
-                        RecipeXMinTxt.Text = st_RecipeParamValue
-                    Case "YMIN"
-                        RecipeYMinTxt.Text = st_RecipeParamValue
-                    Case "XMAX"
-                        RecipeXMaxTxt.Text = st_RecipeParamValue
-                    Case "YMAX"
-                        RecipeYMaxTxt.Text = st_RecipeParamValue
-                    Case "PURGE"
-                        intVal = CInt(st_RecipeParamValue)
-                        If intVal > 0 Then
-                            st_HasPurgeSave = "1"
-                            b_N2PurgeRecipe = True
-                            N2Purgelabel.BackColor = Color.Lime
-                        Else
-                            st_HasPurgeSave = "0"
-                            b_N2PurgeRecipe = False
-                            N2Purgelabel.BackColor = Color.Gainsboro
-                        End If                    
-                    Case "AUTOSCAN"
-                        st_AutoScanSave = st_RecipeParamValue
-                        If st_AutoScanSave = "1" Then
-                            b_autoScanActive = True
-                            Form4.AutoScanChkBox.Checked = true
-                            b_toggleAutoScan = true
-                        Else
-                            b_autoScanActive = false
-                            Form4.AutoScanChkBox.Checked = False
-                        End If
-                    Case "HEATER"
-                        st_HasHeatSave = st_RecipeParamValue
-                        If st_HasHeatSave = "1" Then
-                            b_heaterActive = True
-                            b_toggleHeater = True
-                            Form4.PreheatChkBox.Checked = true
-                        Else
-                            Form4.PreheatChkBox.Checked = False
-                        End If
-                    Case Else
+        'Set Active Field and write in log file
+        ActiveRecipeName.Text = st_RecipeFileName
+        WriteLogLine("Loaded " + st_RecipeFileName + " : " + st_RecipeString.Replace(vbCr, "").Replace(vbLf, "")) 'Log this recipe entry
 
-                End Select
-            Next
-            b_RecipeOpened = True 'We have a recipe
+        st_RecipeLines = st_RecipeString.Split(New Char() {"<"c})
+        'Read and parse each parameter of the recipe string
+        For Ctr As Integer = 1 To st_RecipeLines.Length - 1
+            st_RecipeParamStrArray = st_RecipeLines(Ctr).Split(New Char() {">"c})
+            st_RecipeParamName = st_RecipeParamStrArray(0).Trim()
+            st_RecipeParamValue = st_RecipeParamStrArray(1).Trim()
 
-            'We want to act like we pushed the Green Arrow for loading to the controller because we are in Operator Mode.
-            MFC(1).b_MFCLoadRecipeFlow = True 'signal main loop to load the new flow
-            MFC(2).b_MFCLoadRecipeFlow = True
-            MFC(3).b_MFCLoadRecipeFlow = True
-            MFC(4).b_MFCLoadRecipeFlow = True
-            RF.b_LoadRecipePower = True 'signal main loop to load the new RF Power
-            TUNER.b_LoadTunerPos = True 'signal main loop to load the new Tuner Start Position
-            'Also need to adjust the progress bars to display the recipe setpoint
-            Loaded_Progress_1.Value = CInt(MFC_1_Recipe_Flow.Text * 100) 'This value is coming from a double, multiple by 100 to get a integer that will be appropriate.
-            Loaded_Progress_2.Value = CInt(MFC_2_Recipe_Flow.Text * 100)
-            Loaded_Progress_3.Value = CInt(MFC_3_Recipe_Flow.Text * 100)
-            Loaded_Progress_4.Value = CInt(MFC_4_Recipe_Flow.Text * 100)
-            'Enable the Plasma button since we HAVE A RECIPE NOW
-            If b_ENG_mode = True Then
-                SaveToolStripMenuItem.Enabled = True 'Enable 'Save'
-            Else
-                RunRcpBtn.Enabled = True
-                RunRcpBtn.FillColor = Color.BlueViolet
-            End If
+            Select Case st_RecipeParamName 'load up the recipe values
+                Case "MFC1"
+                    MFC_1_Recipe_Flow.Text = st_RecipeParamValue
+                Case "MFC2"
+                    MFC_2_Recipe_Flow.Text = st_RecipeParamValue
+                Case "MFC3"
+                    MFC_3_Recipe_Flow.Text = st_RecipeParamValue
+                Case "MFC4"
+                    MFC_4_Recipe_Flow.Text = st_RecipeParamValue
+                Case "PWR"
+                    RecipeWattsTxt.Text = st_RecipeParamValue
+                Case "TUNER"
+                    RecipeTunerTxt.Text = st_RecipeParamValue
+                Case "THICKNESS"
+                    RecipeThicknessTxt.Text = st_RecipeParamValue
+                Case "GAP"
+                    RecipeGapTxt.Text = st_RecipeParamValue
+                Case "OVERLAP"
+                    RecipeOverLapTxt.Text = st_RecipeParamValue
+                Case "SPEED"
+                    RecipeSpeedTxt.Text = st_RecipeParamValue
+                Case "CYCLES"
+                    RecipeCyclesTxt.Text = st_RecipeParamValue
+                Case "XMIN"
+                    RecipeXMinTxt.Text = st_RecipeParamValue
+                Case "YMIN"
+                    RecipeYMinTxt.Text = st_RecipeParamValue
+                Case "XMAX"
+                    RecipeXMaxTxt.Text = st_RecipeParamValue
+                Case "YMAX"
+                    RecipeYMaxTxt.Text = st_RecipeParamValue
+                Case "PURGE"
+                    intval = CInt(st_RecipeParamValue)
+                    If intval > 0 Then
+                        st_HasPurgeSave = "1"
+                        b_N2PurgeRecipe = True
+                        N2Purgelabel.BackColor = Color.Lime
+                    Else
+                        st_HasPurgeSave = "0"
+                        b_N2PurgeRecipe = False
+                        N2Purgelabel.BackColor = Color.Gainsboro
+                    End If
+                Case "AUTOSCAN"
+                    st_AutoScanSave = st_RecipeParamValue
+                    If st_AutoScanSave = "1" Then
+                        b_autoScanActive = True
+                        Form4.AutoScanChkBox.Checked = True
+                        b_toggleAutoScan = True
+                    Else
+                        b_autoScanActive = False
+                        Form4.AutoScanChkBox.Checked = False
+                    End If
+                Case "HEATER"
+                    st_HasHeatSave = st_RecipeParamValue
+                    If st_HasHeatSave = "1" Then
+                        b_heaterActive = True
+                        b_toggleHeater = True
+                        Form4.PreheatChkBox.Checked = True
+                    Else
+                        Form4.PreheatChkBox.Checked = False
+                    End If
+                Case Else
+
+            End Select
+        Next
+        b_RecipeOpened = True 'We have a recipe
+
+        'We want to act like we pushed the Green Arrow for loading to the controller because we are in Operator Mode.
+        MFC(1).b_MFCLoadRecipeFlow = True 'signal main loop to load the new flow
+        MFC(2).b_MFCLoadRecipeFlow = True
+        MFC(3).b_MFCLoadRecipeFlow = True
+        MFC(4).b_MFCLoadRecipeFlow = True
+        RF.b_LoadRecipePower = True 'signal main loop to load the new RF Power
+        TUNER.b_LoadTunerPos = True 'signal main loop to load the new Tuner Start Position
+        'Also need to adjust the progress bars to display the recipe setpoint
+        Loaded_Progress_1.Value = CInt(MFC_1_Recipe_Flow.Text * 100) 'This value is coming from a double, multiple by 100 to get a integer that will be appropriate.
+        Loaded_Progress_2.Value = CInt(MFC_2_Recipe_Flow.Text * 100)
+        Loaded_Progress_3.Value = CInt(MFC_3_Recipe_Flow.Text * 100)
+        Loaded_Progress_4.Value = CInt(MFC_4_Recipe_Flow.Text * 100)
+        'Enable the Plasma button since we HAVE A RECIPE NOW
+        If b_ENG_mode = True Then
+            SaveToolStripMenuItem.Enabled = True 'Enable 'Save'
+        Else
+            RunRcpBtn.Enabled = True
+            RunRcpBtn.FillColor = Color.BlueViolet
+        End If
     End Sub
     Private Sub btnExit_Click(sender As Object, e As EventArgs) Handles ExitToolStripMenuItem.Click
         Dim Response As Integer
-              
-                
+
+
         Response = MessageBox.Show("Do you really want to exit?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
         If Response = vbYes Then
             'Reset the Auxiliary PCB before exit
             WriteCommand("$A9%", 4)  'SOFT_RESET   $A9%; resp[!A9#]; causes Aux PCB Soft Reset
             ReadResponse(0)
-        
+
             'Reset the controller PCB before exit
             WriteCommand("$90%", 4)  'SOFT_RESET   $90% ; resp[!90#] Resets CTL PCB and AUX PCB
             ReadResponse(0)
@@ -2747,7 +2943,7 @@ Public Class MainWindow
             End
         End If
     End Sub
-   
+
     Private Sub SaveToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SaveToolStripMenuItem.Click
         st_RecipePathFileName = st_RecipePath + st_RecipeFileName + ".rcp"
         'build the Recipe from current data
@@ -2781,7 +2977,7 @@ Public Class MainWindow
                        "<OVERLAP>" + RecipeOverLapTxt.Text + vbCrLf + "<SPEED>" + RecipeSpeedTxt.Text + vbCrLf +
                        "<CYCLES>" + RecipeCyclesTxt.Text + vbCrLf + "<XMIN>" + RecipeXMinTxt.Text + vbCrLf +
                        "<YMIN>" + RecipeYMinTxt.Text + vbCrLf + "<XMAX>" + RecipeXMaxTxt.Text + vbCrLf +
-                       "<YMAX>" + RecipeYMaxTxt.Text + vbCrLf + "<PURGE>" + st_HasPurgeSave + vbCrLf + 
+                       "<YMAX>" + RecipeYMaxTxt.Text + vbCrLf + "<PURGE>" + st_HasPurgeSave + vbCrLf +
                        "<AUTOSCAN>" + st_AutoScanSave + vbCrLf + "<HEATER>" + st_HasHeatSave + vbCrLf
 
         Using RecipeOut As New StreamWriter(st_RecipePathFileName)
@@ -2823,20 +3019,20 @@ Public Class MainWindow
         WriteLogLine("Plasma Simulation Mode ON")
 
     End Sub
-    
+
     Private Sub EngineerModeToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles EngineerModeToolStripMenuItem.Click
         Dim StrVar As String
         Dim st_password As String = "9820"
 
-        StrVar = InputBox("Enter the Password:", "Password", "")  
-        if StrVar = st_Password Then
+        StrVar = InputBox("Enter the Password:", "Password", "")
+        If StrVar = st_password Then
             Engineer_Mode() 'loads the Engineer Interface
             WriteLogLine("Engineer Mode enabled")
         Else
             MsgBox("Incorrect password")
             Return
-        End If     
-        
+        End If
+
     End Sub
     Private Sub OperatorModeToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles OperatorModeToolStripMenuItem.Click
         Operator_Mode() 'loads the Operator Interface
@@ -2863,8 +3059,8 @@ Public Class MainWindow
         MB_Big_Step_Button.Visible = True
         b_MB_Big_Step_Active = True
     End Sub
-  
-    Private Sub Launch_SMTwoSpot(sender As Object, e As EventArgs) Handles SetTwoSpotBtn.Click 
+
+    Private Sub Launch_SMTwoSpot(sender As Object, e As EventArgs) Handles SetTwoSpotBtn.Click
         If SMTwoSpot.State = TSSM_IDLE Then 'IDLE, so must want me to start up
             SMTwoSpot.State = TSSM_START_UP
         Else
@@ -2872,7 +3068,7 @@ Public Class MainWindow
         End If
     End Sub
 
-    Private Sub Launch_SMScan(sender As Object, e As EventArgs) Handles RunScanBtn.Click        
+    Private Sub Launch_SMScan(sender As Object, e As EventArgs) Handles RunScanBtn.Click
         If SMScan.State = SCSM_IDLE Then 'IDLE, so must want me to start up
             SMScan.ExternalNewState = SCSM_START_UP
             SMScan.b_ExternalStateChange = True
@@ -2881,7 +3077,7 @@ Public Class MainWindow
             SMScan.b_ExternalStateChange = True
         End If
     End Sub
-    
+
     Private Sub InitAxesBtn_Click(sender As Object, e As EventArgs) Handles InitAxesBtn.Click
         SMInitAxes.State = IASM_START_UP
     End Sub
@@ -2892,8 +3088,8 @@ Public Class MainWindow
         Else
             SMHomeAxes.State = HASM_SHUT_DOWN
         End If
-    End Sub  
-    
+    End Sub
+
     Private Sub Launch_SMDiameter(sender As Object, e As EventArgs) Handles SetDiameterBtn.Click
         Dim bp As Integer
 
@@ -2907,7 +3103,7 @@ Public Class MainWindow
 
     Private Sub Launch_Settings(sender As Object, e As EventArgs) Handles SettingsBtn.Click
         'All recipe settings, except for Batchlogging which is set on the tool.
-        Form4.ShowDialog()       
+        Form4.ShowDialog()
     End Sub
 
     Private Function b_IsBitSet(TestInt As Integer, BitPos As Integer) As Boolean
@@ -2954,14 +3150,6 @@ Public Class MainWindow
 
     Function st_BinInt2String(Bits16 As Integer) As String
         Dim st_Rtn As String    'Function FixString(st_Number As String, st_OKChars As String, st_Cmd As String)
-        '    Dim b_StrOK As Boolean = True
-
-        '    For Each c As Char In st_Number 'any bad char in st_Number sets b_StrOK = False
-        '        'if this does not find OK characters, it will set b_StrOK to false 
-        '        If (st_OKChars.IndexOf(c) = -1) Then b_StrOK = False
-        '    Next
-        '    Return st_Number
-        'End Function
         Bits16 = Bits16 Or &H10000 'force Bit 16 high
         st_Rtn = Convert.ToString(Bits16, 2) 'now st_Rtn has 17 chars
         Return st_Rtn.Substring(1) 'return all to the right of the forced string
@@ -3051,14 +3239,14 @@ Public Class MainWindow
     Private Sub BatchLoggingBTN_Click(sender As Object, e As EventArgs) Handles BatchLoggingBTN.Click
         Dim StrVar As String
 
-        StrVar = InputBox("Enter the Batch ID #", "Batch ID #", "")        
-            If StrVar = "" Or StrVar.Length > 45 Then Return            
-            WriteLogLine("----------------------------BATCH ID # ---------------------------------")
-            WriteLogLine("Logging Batch ID #: " & StrVar)
-            BatchIDTextBox.Text = StrVar
-       
-    End Sub    
-  
+        StrVar = InputBox("Enter the Batch ID #", "Batch ID #", "")
+        If StrVar = "" Or StrVar.Length > 45 Then Return
+        WriteLogLine("----------------------------BATCH ID # ---------------------------------")
+        WriteLogLine("Logging Batch ID #: " & StrVar)
+        BatchIDTextBox.Text = StrVar
+
+    End Sub
+
     Private Sub CodeToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CodeToolStripMenuItem.Click
         AuthorizeCode(1)
     End Sub
@@ -3104,7 +3292,7 @@ Public Class MainWindow
             Return False
         End If
     End Function
-    Private Sub AuthorizeCode(EnterCodeOrTimerUp as Integer)
+    Private Sub AuthorizeCode(EnterCodeOrTimerUp As Integer)
         Dim StrVar As String
         Dim responseLen As Integer
         Dim CodeB As String
@@ -3129,47 +3317,47 @@ Public Class MainWindow
         'gather pumpkins 
         If EnterCodeOrTimerUp = 1 Then '1 is Enter Code was selected, as opposed to time expiring
             StrVar = InputBox("ENTER CODE" & vbCrLf & vbCrLf & "CONTACT SERVICE@SET-NA.COM FOR CODE", "ENTER CODE", "")
-        Else 
+        Else
             StrVar = InputBox("TEMPORARY CODE HAS EXPIRED" & vbCrLf & vbCrLf & "PLEASE CONTACT SERVICE@SET-NA.COM FOR PAYMENT AND CODE", "TERM EXPIRATION", "")
         End If
-        
 
-            Select Case StrVar
-                Case CodeB
-                        WriteCommand("$20007F1%", 9) 'SET_PARAM_DESC
-                        responseLen = ReadResponse(0)
-                        MsgBox("Congratulations! Payment has been authorized. Please restart the software")
-                Case CodeE1
-                        WriteCommand("$20007E1%", 9)
-                        responseLen = ReadResponse(0)
-                        WriteCommand("$21007E;0000000000%", 19) 'Need a new password 
-                        responseLen = ReadResponse(0)
-                        StrVar = "$21007B" & st_Today & "%"
-                        WriteCommand(StrVar, StrVar.Length)
-                        responseLen = ReadResponse(0)
-                    MsgBox("Temporary Code Extension authorized. Please restart the software to configure")
-                Case CodeE2
-                        WriteCommand("$20007D1%", 9)
-                        responseLen = ReadResponse(0)
-                        WriteCommand("$21007D;0000000000%", 19)
-                        responseLen = ReadResponse(0)
-                        StrVar = "$21007A" & st_Today & "%"
-                        WriteCommand(StrVar, StrVar.Length)
-                        responseLen = ReadResponse(0)
-                    MsgBox("Temporary Code Extension authorized. Please restart the software to configure")
-                Case Else
-                    MsgBox("Incorrect Code")
-                   
+
+        Select Case StrVar
+            Case CodeB
+                WriteCommand("$20007F1%", 9) 'SET_PARAM_DESC
+                responseLen = ReadResponse(0)
+                MsgBox("Congratulations! Payment has been authorized. Please restart the software")
+            Case CodeE1
+                WriteCommand("$20007E1%", 9)
+                responseLen = ReadResponse(0)
+                WriteCommand("$21007E;0000000000%", 19) 'Need a new password 
+                responseLen = ReadResponse(0)
+                StrVar = "$21007B" & st_Today & "%"
+                WriteCommand(StrVar, StrVar.Length)
+                responseLen = ReadResponse(0)
+                MsgBox("Temporary Code Extension authorized. Please restart the software to configure")
+            Case CodeE2
+                WriteCommand("$20007D1%", 9)
+                responseLen = ReadResponse(0)
+                WriteCommand("$21007D;0000000000%", 19)
+                responseLen = ReadResponse(0)
+                StrVar = "$21007A" & st_Today & "%"
+                WriteCommand(StrVar, StrVar.Length)
+                responseLen = ReadResponse(0)
+                MsgBox("Temporary Code Extension authorized. Please restart the software to configure")
+            Case Else
+                MsgBox("Incorrect Code")
+
         End Select
 
         If EnterCodeOrTimerUp = 1 Then
             'do nothing
-        Else 
+        Else
             b_ShutDownComms = True
             Me.Close()
             Application.Exit()
         End If
-        
+
 
     End Sub
     Function GetToolDate(ToolDate As Integer) As String
@@ -3184,21 +3372,21 @@ Public Class MainWindow
             Case 1  'Ship date 
                 WriteCommand("$23007C%", 8)
                 responseLen = ReadResponse(0)
-                strVar = st_RCV.Substring(7,8)                
-                try 
+                strVar = st_RCV.Substring(7, 8)
+                Try
                     dt_shipDate = DateTime.ParseExact(strVar, "ddMMyyyy",
                       System.Globalization.DateTimeFormatInfo.InvariantInfo)
                 Catch ex As Exception
                     dt_shipDate = st_Today
                 End Try
-                
-                
+
+
                 Return dt_shipDate
 
             Case 2  'temp code 1 date
                 WriteCommand("$23007B%", 8)
                 responseLen = ReadResponse(0)
-                strVar = st_RCV.Substring(7,8)
+                strVar = st_RCV.Substring(7, 8)
                 dt_ExtensionDate = DateTime.ParseExact(strVar, "ddMMyyyy",
                       System.Globalization.DateTimeFormatInfo.InvariantInfo)
                 dt_ExtensionDate = dt_ExtensionDate.AddDays(28)
@@ -3206,7 +3394,7 @@ Public Class MainWindow
             Case 3  'temp code 2 date
                 WriteCommand("$23007A%", 8)
                 responseLen = ReadResponse(0)
-                strVar = st_RCV.Substring(7,8)
+                strVar = st_RCV.Substring(7, 8)
                 dt_ExtensionDate = DateTime.ParseExact(strVar, "ddMMyyyy",
                 System.Globalization.DateTimeFormatInfo.InvariantInfo)
                 dt_ExtensionDate = dt_ExtensionDate.AddDays(89)
@@ -3216,7 +3404,7 @@ Public Class MainWindow
         End Select
 
     End Function
-  
+
     Private Sub CinderellaCode()
         Dim dt_todayDate As DateTime
         Dim dt_ShipDate As DateTime
@@ -3224,12 +3412,12 @@ Public Class MainWindow
         Dim dt_fullpumpkinDate As DateTime
         Dim dt_Extension1Date As DateTime
         Dim dt_Extension2Date As DateTime
-        Dim DaysRemaining As Long        
-             
+        Dim DaysRemaining As Long
+
         'Retreive Status from tool
         dt_ShipDate = GetToolDate(1)
         dt_todayDate = DateTime.Now
-        dt_halfpumpkinDate = dt_ShipDate.AddDays(34) 
+        dt_halfpumpkinDate = dt_ShipDate.AddDays(34)
         dt_fullpumpkinDate = dt_ShipDate.AddDays(68) ' expiry date
 
         'Tool Due Dates: 
@@ -3295,7 +3483,7 @@ Public Class MainWindow
         If b_RecipeOpened = False Then 'if a recipe is open, dont disable the button
             RunRcpBtn.Enabled = False
         End If
-               
+
 
         'Hide Engineer mode label
         EngLabel.Visible = False
@@ -3323,20 +3511,20 @@ Public Class MainWindow
         'RecipeButtonPurge.Visible = False
         'N2PurgeSquare.Visible = False
         AutoManBtn.Visible = False
-        AUTO_MODE.Visible = False
+        LED.Visible = False
         N2Purgelabel.Visible = False
         N2Purgebtn.Visible = False
 
-         'Recipe Settings TURN OFF 
-        form4.AutoScanChkBox.enabled = False
-        form4.CollisionCheckBox.enabled = False
-        
+        'Recipe Settings TURN OFF 
+        Form4.AutoScanChkBox.Enabled = False
+        Form4.CollisionCheckbox.Enabled = False
+
         'Com Port
         Com_Port_Label.Visible = False
         com_portBox.Visible = False
         Start_Stop_Toggle.Visible = False
 
-         'Cascading Recipes button
+        'Cascading Recipes button
         BuildRecipeToolStripMenuItem.Visible = False
         StageTestToolStripMenuItem.Visible = False
     End Sub
@@ -3348,14 +3536,14 @@ Public Class MainWindow
         'The indicator label for Engineer mode
         EngLabel.Visible = True
 
-        RunRcpBtn.Enabled = True        
+        RunRcpBtn.Enabled = True
 
         'Engineers can turn on plasma without constraints
         RunRcpBtn.FillColor = Color.BlueViolet
 
         'Remove Save functionality 
         If b_RecipeOpened Then
-             SaveToolStripMenuItem.Enabled = True
+            SaveToolStripMenuItem.Enabled = True
         End If
         SaveAsToolStripMenuItem.Enabled = True 'Disable 'Save As'
         LoadToolStripMenuItem.Enabled = True 'Disable 'Load To Controller'
@@ -3380,31 +3568,31 @@ Public Class MainWindow
 
         'Stage Controls Buttons
         AutoManBtn.Visible = True
-        AUTO_MODE.Visible = True
+        LED.Visible = True
 
         N2Purgelabel.Visible = True
         N2Purgebtn.Visible = True
 
         'Recipe Settings TURN ON 
-        form4.AutoScanChkBox.enabled = true
+        Form4.AutoScanChkBox.Enabled = True
         'form4.CollisionCheckBox.enabled = true 'disabled for amazon shipment 
-        
+
         'Com Port
         Com_Port_Label.Visible = True
         com_portBox.Visible = True
         Start_Stop_Toggle.Visible = True
 
         'Cascading Recipes button
-        BuildRecipeToolStripMenuItem.Visible = true
-        StageTestToolStripMenuItem.Visible = true
+        BuildRecipeToolStripMenuItem.Visible = True
+        StageTestToolStripMenuItem.Visible = True
     End Sub
 
     Private Sub CollisionLaser()
         Dim ResponseLen As Integer
 
-          if AxesStatus.XError = &H08 or AxesStatus.YError = &H08 or AxesStatus.ZError = &H08 Then 
-            CLaser.State = CLSM_TRIPPED            
-          End If
+        If AxesStatus.XError = &H8 Or AxesStatus.YError = &H8 Or AxesStatus.ZError = &H8 Then
+            CLaser.State = CLSM_TRIPPED
+        End If
 
         Select Case CLaser.State
 
@@ -3413,20 +3601,20 @@ Public Class MainWindow
                 AC_CODE.Text = "LASER TRIPPED"
                 WriteLogLine("Laser Sensor Tripped")
                 b_ClearAbort = True
-                
+
                 ClearAbortbtn.Visible = True
                 b_CollisionPassed = False 'reset the collision flag
-                    
+
                 SMScan.State = SCSM_IDLE 'disable other motor moving state machines and buttons
                 SMScan.SubState = SCSM_SUB_IDLE
                 SMTwoSpot.State = TSSM_IDLE
-                SMCollisionPass.State = CPSM_IDLE                
+                SMCollisionPass.State = CPSM_IDLE
                 LaserSenseSquare.BackColor = Color.Red
-                                
-                
+
+
             Case CLSM_ACTIVATE 'Turn ON Laser Sense
                 WriteCommand("$BA01%", 6) '//  'WATCH_SUBST_SENSE $BA0p%; resp[!BA0p#] p = 0, 1 turn watch (OFF, ON)
-                ResponseLen = ReadResponse(0)    
+                ResponseLen = ReadResponse(0)
                 WriteLogLine("Laser Sensor Active")
                 LaserSenseSquare.BackColor = Color.Lime
 
@@ -3443,7 +3631,7 @@ Public Class MainWindow
         End Select
 
     End Sub
-         
+
     Private Sub SetLightTower()
         Dim ResponseLen As Integer
 
@@ -3451,7 +3639,7 @@ Public Class MainWindow
         If (GlobalmyStatusBits And &H80) > 0 Then 'For setting the light tower red during PublishAbortCode() 
             LightTwr.State = LTSM_ERROR
         ElseIf AxesStatus.b_DoorsOpen Then 'Light Tower Red for doors open
-            LightTwr.State = LTSM_ERROR        
+            LightTwr.State = LTSM_ERROR
         ElseIf b_RunRecipeOn And AxesStatus.b_DoorsOpen = False Then 'Light Tower Green for PLASMA 
             LightTwr.State = LTSM_ACTIVE
         Else 'set the tower to Yellow if its not already in yellow mode
@@ -3480,14 +3668,14 @@ Public Class MainWindow
         End Select
 
     End Sub
-    Public Sub DumpMoveData(axis As String)   
+    Public Sub DumpMoveData(axis As String)
         WriteCommand("$B90" + axis + "%", 6) 'DUMP_MOVE_DATA 
-        ReadResponse(0)        
+        ReadResponse(0)
         WriteLogLine("RCV: " + st_RCV)
     End Sub
-    Public Sub CearAxisError(axis As String)        
+    Public Sub CearAxisError(axis As String)
         WriteCommand("$B80" + axis + "%", 6) 'CLEAR_ERROR 
-        ReadResponse(0)        
+        ReadResponse(0)
         WriteLogLine("RCV: " + st_RCV)
     End Sub
     Public Sub HideButtonsForStageTest()
@@ -3509,65 +3697,65 @@ Public Class MainWindow
     Public Sub SetStageSpeed(axis As String, speed As Double)
         Dim st_command As String
         st_command = "$B40" + axis + speed.ToString() + "%" 'SET_SPEED  $B40xss.ss%; resp [!B40xss.ss#] 0x = axis number, ss.ss = mm/sec (float)
-        WriteCommand(st_Command, st_Command.Length) 
-        ReadResponse(0)        
+        WriteCommand(st_command, st_command.Length)
+        ReadResponse(0)
     End Sub
     Public Sub SetStagePosition(axis As String, position As Double)
         Dim st_command As String
         st_command = "$B60" + axis + position.ToString() + "%" 'SET_SPEED  $B40xss.ss%; resp [!B40xss.ss#] 0x = axis number, ss.ss = mm/sec (float)
-        WriteCommand(st_Command, st_Command.Length) 
+        WriteCommand(st_command, st_command.Length)
         ReadResponse(0)
-        If StageTestSM.isDetailLogEnabled Then             
+        If StageTestSM.isDetailLogEnabled Then
             DumpMoveData(axis)
             CearAxisError(axis)
-        End if
+        End If
     End Sub
-   Private Sub TestXMax()                          
+    Private Sub TestXMax()
         WriteLogLine("Stage Test - Max X")
-        if StageTestSM.isDetailLogEnabled Then writeLogLine(StageTestSM.getXCounter())
+        If StageTestSM.isDetailLogEnabled Then WriteLogLine(StageTestSM.getXCounter())
         UpdateCurrentStageStatus("X axis move to: " + Param.db_X_Max_Pos.ToString() + " at speed: " + Param.db_X_Max_Speed.ToString())
-        SetStageSpeed(axis.X, Param.db_X_Max_Speed)
-        SetStagePosition(axis.X, Param.db_X_Max_Pos)
+        SetStageSpeed(Axis.X, Param.db_X_Max_Speed)
+        SetStagePosition(Axis.X, Param.db_X_Max_Pos)
         StageTestSM.addXCounter()
     End Sub
-    Private Sub TestXMin()                  
+    Private Sub TestXMin()
         WriteLogLine("Stage Test - Min X")
-        if StageTestSM.isDetailLogEnabled Then writeLogLine(StageTestSM.getXCounter())
+        If StageTestSM.isDetailLogEnabled Then WriteLogLine(StageTestSM.getXCounter())
         UpdateCurrentStageStatus("X axis move to: 0 at speed: " + Param.db_X_Max_Speed.ToString())
-        SetStageSpeed(axis.X, Param.db_X_Max_Speed)
-        SetStagePosition(axis.X, 0)
+        SetStageSpeed(Axis.X, Param.db_X_Max_Speed)
+        SetStagePosition(Axis.X, 0)
         StageTestSM.addXCounter()
     End Sub
-    Private Sub TestYMax()                          
+    Private Sub TestYMax()
         WriteLogLine("Stage Test - Max Y")
-        if StageTestSM.isDetailLogEnabled Then writeLogLine(StageTestSM.getYCounter())
+        If StageTestSM.isDetailLogEnabled Then WriteLogLine(StageTestSM.getYCounter())
         UpdateCurrentStageStatus("Y axis move to: " + Param.db_Y_Max_Pos.ToString() + " at speed: " + Param.db_Y_Max_Speed.ToString())
-        SetStageSpeed(axis.Y, Param.db_Y_Max_Speed)
-        SetStagePosition(axis.Y, Param.db_Y_Max_Pos)
+        SetStageSpeed(Axis.Y, Param.db_Y_Max_Speed)
+        SetStagePosition(Axis.Y, Param.db_Y_Max_Pos)
         StageTestSM.addYCounter()
     End Sub
-    Private Sub TestYMin()                  
+    Private Sub TestYMin()
         WriteLogLine("Stage Test - Min Y")
-        if StageTestSM.isDetailLogEnabled Then writeLogLine(StageTestSM.getYCounter())
+        If StageTestSM.isDetailLogEnabled Then WriteLogLine(StageTestSM.getYCounter())
         UpdateCurrentStageStatus("Y axis move to: 0 at speed: " + Param.db_Y_Max_Speed.ToString())
-        SetStageSpeed(axis.Y, Param.db_Y_Max_Speed)
-        SetStagePosition(axis.Y, 0)
+        SetStageSpeed(Axis.Y, Param.db_Y_Max_Speed)
+        SetStagePosition(Axis.Y, 0)
         StageTestSM.addYCounter()
     End Sub
-    Private Sub TestZMax()                          
+    Private Sub TestZMax()
         WriteLogLine("Stage Test - Max Z")
-        if StageTestSM.isDetailLogEnabled Then writeLogLine(StageTestSM.getZCounter())
+        If StageTestSM.isDetailLogEnabled Then WriteLogLine(StageTestSM.getZCounter())
         UpdateNextStageStatus("Z axis move to: " + Param.db_Z_Max_Pos.ToString() + " at speed: " + Param.db_Z_Max_Speed.ToString())
-        SetStageSpeed(axis.Z, Param.db_Z_Max_Speed)
-        SetStagePosition(axis.Z, Param.db_Z_Max_Pos)        
+        SetStageSpeed(Axis.Z, Param.db_Z_Max_Speed)
+        SetStagePosition(Axis.Z, Param.db_Z_Max_Pos)
         StageTestSM.addZCounter()
     End Sub
-    Private Sub TestZMin()                  
+    Private Sub TestZMin()
         WriteLogLine("Stage Test - Min Z")
-        if StageTestSM.isDetailLogEnabled Then writeLogLine(StageTestSM.getZCounter())
-        UpdateNextStageStatus("Z axis move to: 0 at speed: " + Param.db_Z_Max_Speed.ToString() )
-        SetStageSpeed(axis.Z, Param.db_Z_Max_Speed)
-        SetStagePosition(axis.Z, 0)
+        If StageTestSM.isDetailLogEnabled Then WriteLogLine(StageTestSM.getZCounter())
+        UpdateNextStageStatus("Z axis move to: 0 at speed: " + Param.db_Z_Max_Speed.ToString())
+        SetStageSpeed(Axis.Z, Param.db_Z_Max_Speed)
+        SetStagePosition(Axis.Z, 0)
         StageTestSM.addZCounter()
     End Sub
     Private Sub SetAxisCounters()
@@ -3580,36 +3768,36 @@ Public Class MainWindow
 
             Case STSM_STARTUP
                 WriteLogLine("Stage Test Started")
-                HideButtonsForStageTest()                
+                HideButtonsForStageTest()
                 SetAxisCounters()
-                StageTestSM.setState(STSM_MaxX)
+                StageTestSM.SetState(STSM_MaxX)
 
             Case STSM_MaxX
-                If AxesStatus.b_XYZSameState = True And AxesStatus.YState >= ASM_IDLE Then                    
+                If AxesStatus.b_XYZSameState = True And AxesStatus.YState >= ASM_IDLE Then
                     TestXMax()
                     If StageTestSM.isZEnabled() Then TestZMax()
-                    StageTestSM.setState(STSM_MaxY)
-                End If      
+                    StageTestSM.SetState(STSM_MaxY)
+                End If
 
             Case STSM_MaxY
-                If AxesStatus.b_XYZSameState = True And AxesStatus.XState >= ASM_IDLE Then                    
+                If AxesStatus.b_XYZSameState = True And AxesStatus.XState >= ASM_IDLE Then
                     TestYMax()
                     If StageTestSM.isZEnabled() Then TestZMin()
-                    StageTestSM.setState(STSM_MinX)
+                    StageTestSM.SetState(STSM_MinX)
                 End If
 
             Case STSM_MinX
-                If AxesStatus.b_XYZSameState = True And AxesStatus.YState >= ASM_IDLE Then                    
+                If AxesStatus.b_XYZSameState = True And AxesStatus.YState >= ASM_IDLE Then
                     TestXMin()
                     If StageTestSM.isZEnabled() Then TestZMax()
-                    StageTestSM.setState(STSM_MinY)
-                End If     
-                
+                    StageTestSM.SetState(STSM_MinY)
+                End If
+
             Case STSM_MinY
-                If AxesStatus.b_XYZSameState = True And AxesStatus.XState >= ASM_IDLE Then                    
+                If AxesStatus.b_XYZSameState = True And AxesStatus.XState >= ASM_IDLE Then
                     TestYMin()
                     If StageTestSM.isZEnabled() Then TestZMin()
-                    StageTestSM.setState(STSM_MaxX)
+                    StageTestSM.SetState(STSM_MaxX)
                 End If
 
             Case STSM_SHUTDOWN
@@ -3617,13 +3805,13 @@ Public Class MainWindow
                 ShowButtonsForStageTest()
                 UpdateCurrentStageStatus("")
                 UpdateNextStageStatus("")
-                StageTestSM.setState(STSM_IDLE)
+                StageTestSM.SetState(STSM_IDLE)
 
             Case STSM_IDLE
                 'nothing
         End Select
     End Sub
-    
+
 
     Private Sub RunInitAxesSM()
         Dim ResponseLen As Integer
@@ -3677,7 +3865,7 @@ Public Class MainWindow
                     RecipeButtonPins.Visible = True
                     AutoVacSquare.Visible = True
                     PinsSquare.Visible = True
-                    PinsSquare.BackColor = Color.Lime                   
+                    PinsSquare.BackColor = Color.Lime
                     b_HasPins = True 'This is so the first time the button is hit, the button will bury the pins
                     If b_ENG_mode Then
                         SetTwoSpotBtn.Visible = True
@@ -3690,7 +3878,7 @@ Public Class MainWindow
                 'do nothing
         End Select
     End Sub
-        
+
     Private Sub RunHomeAxesSM()
         Dim ResponseLen As Integer
         Dim st_Command As String
@@ -3703,7 +3891,7 @@ Public Class MainWindow
                 SetTwoSpotBtn.Visible = False
                 SetDiameterBtn.Visible = False
                 HomeAxesBtn.Text = "STOP"
-                               
+
 
                 WriteLogLine("Homing Start")
                 CurrentStepTxtBox.Text = "Homing Start"
@@ -3715,7 +3903,7 @@ Public Class MainWindow
                 WriteCommand(st_Command, st_Command.Length) 'ABS_MOVE $B60xaa.aa%; resp [!B60xaa.aa#] 0x = axis num, aa.aa = destination in mm (float)
                 ResponseLen = ReadResponse(0)
                 WriteLogLine("Move Z Speed: " & Param.db_Z_Max_Speed.ToString("F") & " /sec " & "to " & db_ZParkPos.ToString("F"))
-                               
+
 
                 SMHomeAxes.State = HASM_WAIT_PARK_Z
 
@@ -3778,7 +3966,7 @@ Public Class MainWindow
                         SetTwoSpotBtn.Visible = True
                         SetDiameterBtn.Visible = True
                     End If
-                   
+
                 End If
             Case HASM_SHUT_DOWN
                 WriteCommand("$B3%", 4) 'stop any motors in motion
@@ -3799,7 +3987,7 @@ Public Class MainWindow
                     SetTwoSpotBtn.Visible = True
                     SetDiameterBtn.Visible = True
                 End If
-                
+
                 HomeAxesBtn.Text = "LOAD POSITION"
                 CurrentStepTxtBox.Text = ""
                 SMHomeAxes.State = HASM_IDLE
@@ -3808,13 +3996,13 @@ Public Class MainWindow
         End Select
 
     End Sub
-    Public function getInputButtonPress() as boolean 
-        If gamepad IsNot Nothing Then 
-            return gamepad.IsButtonDown(GamepadInput.GamepadButtonFlags.A)
-        Else 
-            return AxesStatus.getLEDJoyBtnOn()
-        End If        
-    End function
+    Public Function getInputButtonPress() As Boolean
+        If gamepad IsNot Nothing Then
+            Return gamepad.IsButtonDown(GamepadInput.GamepadButtonFlags.A)
+        Else
+            Return AxesStatus.getLEDJoyBtnOn()
+        End If
+    End Function
     Private Sub RunTwoSpotSM() 'the two spot marker state machine. In polling loop, so can send commands
         Dim ResponseLen As Integer
 
@@ -3830,7 +4018,7 @@ Public Class MainWindow
                 Vacbtn.Visible = False
                 SetTwoSpotBtn.Text = "STOP"
                 WriteLogLine("TwoSpotSM Start Up")
-                EnableJoystickStageControl()                             
+                EnableJoystickStageControl()
                 WriteLogLine("TwoSpotSM Getting First")
                 CurrentStepTxtBox.Text = ("Use Controller for Stage")
                 NextStepTxtBox.Text = ("Spot First Point")
@@ -3842,14 +4030,14 @@ Public Class MainWindow
                     SMTwoSpot.db_FirstXPos = db_C_XPos_RefB_2_RefPH(AxesStatus.db_XPos) 'translate into PH coords
                     SMTwoSpot.db_FirstYPos = db_Ys_2_PH(AxesStatus.db_YPos) 'translate into PH coords
                     SMTwoSpot.State = TSSM_WAIT_JOY_BTN_OFF
-                End If 
-            Case TSSM_WAIT_JOY_BTN_OFF                
+                End If
+            Case TSSM_WAIT_JOY_BTN_OFF
                 WriteLogLine("TwoSpotSM Getting Second")
                 NextStepTxtBox.Text = ("Spot Second Point")
                 SMTwoSpot.State = TSSM_GET_SECOND
 
-            Case TSSM_GET_SECOND   
-               If getInputButtonPress() Then
+            Case TSSM_GET_SECOND
+                If getInputButtonPress() Then
                     SMTwoSpot.db_SecondXPos = db_C_XPos_RefB_2_RefPH(AxesStatus.db_XPos) 'translate into PH coords
                     SMTwoSpot.db_SecondYPos = db_Ys_2_PH(AxesStatus.db_YPos) 'translate into PH coords
                     'determine box orientation and corners
@@ -3875,9 +4063,9 @@ Public Class MainWindow
                     RecipeYMaxTxt.Text = SMScan.db_YMaxPos.ToString("F") '2 decimal point
                     WriteLogLine("TwoSpotSM Got Second - done")
                     SMTwoSpot.State = TSSM_CLOSE_DOWN
-               End If 
+                End If
             Case TSSM_CLOSE_DOWN
-                DisableJoystickStageControl() 
+                DisableJoystickStageControl()
                 SMTwoSpot.State = TSSM_IDLE
                 CurrentStepTxtBox.Text = ""
                 NextStepTxtBox.Text = ""
@@ -3889,8 +4077,8 @@ Public Class MainWindow
                 AutoVacSquare.Visible = True
                 Vacbtn.Visible = True
                 SetTwoSpotBtn.Text = "SET TWO SPOT"
-                
-                
+
+
             Case TSSM_IDLE 'do nothing
 
         End Select
@@ -3997,16 +4185,16 @@ Public Class MainWindow
                 WriteLogLine("FirstX: " & SMScan.db_StartXPosition.ToString("F") & " StartY: " & SMScan.db_StartYPosition.ToString("F") & " EndY: " & SMScan.db_EndYPosition.ToString("F"))
                 WriteLogLine("Scan Speed: " & SMScan.db_ScanYSpeed.ToString("F") & " Cycles: " & SMScan.NumCycles.ToString)
 
-                If b_HasCollision = True And b_CollisionPassed <> true then 'if we have a laser, we need to perform collision test, once completed we can move into regualar scanning
+                If b_HasCollision = True And b_CollisionPassed <> True Then 'if we have a laser, we need to perform collision test, once completed we can move into regualar scanning
                     SMScan.State = SCSM_IDLE
                     SMScan.SubState = SCSM_SUB_IDLE
                     SMCollisionPass.State = CPSM_START_UP
-                Else 
+                Else
                     SMScan.State = SCSM_SCAN
                     SMScan.SubState = SCSM_SUB_PARK_Z
                     CurrentStepTxtBox.Text = ("Scanning")
                 End If
-                
+
 
             Case SCSM_SCAN
                 If AxesStatus.b_XYZSameState = True And AxesStatus.XState = ASM_IDLE Then 'stage not moving, transition to next move
@@ -4078,7 +4266,7 @@ Public Class MainWindow
                             WriteCommand(st_Command, st_Command.Length) 'SET_SPEED  $B40xss.ss%; resp [!B40xss.ss#] 0x = axis number, ss.ss = mm/sec (float)
                             ResponseLen = ReadResponse(0)
                             LogStr = "Move Z at: " & Param.db_Z_Max_Speed.ToString("F") & " /sec "
-                            st_Command = "$B602" & SMScan.db_ZScanPos.ToString("F") & "%" 
+                            st_Command = "$B602" & SMScan.db_ZScanPos.ToString("F") & "%"
                             WriteCommand(st_Command, st_Command.Length) 'ABS_MOVE $B60xaa.aa%; resp [!B60xaa.aa#] 0x = axis num, aa.aa = destination in mm (float)
                             ResponseLen = ReadResponse(0)
                             WriteLogLine(LogStr & "to: " & SMScan.db_ZScanPos.ToString("F"))
@@ -4108,19 +4296,19 @@ Public Class MainWindow
                     SMScan.State = SCSM_IDLE
                     CurrentStepTxtBox.Text = ("Scanning Completed")
                     HomeAxesBtn.Visible = True
-                    
+
                     'Engineer buttons become visible in ENG mode
                     If b_ENG_mode Then
                         SetTwoSpotBtn.Visible = True
                         SetDiameterBtn.Visible = True
                     End If
-                    
-                                        
+
+
                     'Reset the collision flag if using a collision system
-                    if b_CollisionPassed = true Then
+                    If b_CollisionPassed = True Then
                         b_CollisionPassed = False 'reset the collision flag
                     End If
-                    
+
                     'If a cascaded recipe was used then run the next recipe
                     If CascadingRecipesDialog.CascadeRecipeListBox.Items.Count - 1 > CasRecipeNumber Then
                         'This increments in order to keep track of which recipe we are on in the cascade recipe.
@@ -4129,34 +4317,34 @@ Public Class MainWindow
                         b_toggleAutoScan = True
                         'Now load the recipe
                         LoadRecipeValues()
-                    Else 
+                    Else
                         SMHomeAxes.State = HASM_START 'Go to the Load position everytime you finish scanning
-                                                      ''Auto off will turn the recipe off and PLASMA.
-                    If b_autoScanActive = true Then
-                        WriteLogLine("Plasma turned off (Auto-Off is active)")
-                        WriteCommand("$8700%", 6)
-                        ResponseLen = ReadResponse(0)
+                        ''Auto off will turn the recipe off and PLASMA.
+                        If b_autoScanActive = True Then
+                            WriteLogLine("Plasma turned off (Auto-Off is active)")
+                            WriteCommand("$8700%", 6)
+                            ResponseLen = ReadResponse(0)
+                        End If
                     End If
-                    End If
-                    
+
                 Else 'recycle the scan
                     SMScan.ThisCycleNum += 1
-                        SMScan.ThisXRow = 1
+                    SMScan.ThisXRow = 1
 
-                        If SMScan.NumXRows = 1 Then 'have small substrate case, center the head over the center of the Box X
-                            SMScan.db_StartXPosition = (SMScan.db_XMaxPos + SMScan.db_XMinPos) / 2
-                        Else 'multiple passes, so bias first pass to maximum edge
-                            SMScan.db_StartXPosition = SMScan.db_XMaxPos - (SMScan.db_RowXWidth / 2) 'start position offset to center of slit
-                        End If
+                    If SMScan.NumXRows = 1 Then 'have small substrate case, center the head over the center of the Box X
+                        SMScan.db_StartXPosition = (SMScan.db_XMaxPos + SMScan.db_XMinPos) / 2
+                    Else 'multiple passes, so bias first pass to maximum edge
+                        SMScan.db_StartXPosition = SMScan.db_XMaxPos - (SMScan.db_RowXWidth / 2) 'start position offset to center of slit
+                    End If
 
-                        WriteLogLine("-------------Scan Recycle Start-Up--------------" & "This Cycle: " & SMScan.ThisCycleNum.ToString)
-                        WriteLogLine("Display MIN:(" & RecipeXMinTxt.Text & " , " & RecipeYMinTxt.Text & ") MAX:(" & RecipeXMaxTxt.Text & " , " & RecipeYMaxTxt.Text & ")")
-                        WriteLogLine("Num Rows: " & SMScan.NumXRows.ToString & " Row Width: " & SMScan.db_RowXWidth.ToString("F"))
-                        WriteLogLine("FirstX: " & SMScan.db_StartXPosition.ToString("F") & " StartY: " & SMScan.db_StartYPosition.ToString("F") & " EndY: " & SMScan.db_EndYPosition.ToString("F"))
-                        WriteLogLine("Scan Speed: " & SMScan.db_ScanYSpeed.ToString("F") & " Cycles: " & SMScan.NumCycles.ToString)
+                    WriteLogLine("-------------Scan Recycle Start-Up--------------" & "This Cycle: " & SMScan.ThisCycleNum.ToString)
+                    WriteLogLine("Display MIN:(" & RecipeXMinTxt.Text & " , " & RecipeYMinTxt.Text & ") MAX:(" & RecipeXMaxTxt.Text & " , " & RecipeYMaxTxt.Text & ")")
+                    WriteLogLine("Num Rows: " & SMScan.NumXRows.ToString & " Row Width: " & SMScan.db_RowXWidth.ToString("F"))
+                    WriteLogLine("FirstX: " & SMScan.db_StartXPosition.ToString("F") & " StartY: " & SMScan.db_StartYPosition.ToString("F") & " EndY: " & SMScan.db_EndYPosition.ToString("F"))
+                    WriteLogLine("Scan Speed: " & SMScan.db_ScanYSpeed.ToString("F") & " Cycles: " & SMScan.NumCycles.ToString)
 
-                        SMScan.State = SCSM_SCAN
-                        SMScan.SubState = SCSM_SUB_GO_XY_START 'reenter here because already Parked Z
+                    SMScan.State = SCSM_SCAN
+                    SMScan.SubState = SCSM_SUB_GO_XY_START 'reenter here because already Parked Z
                 End If
 
             Case SCSM_SHUT_DOWN
@@ -4182,7 +4370,7 @@ Public Class MainWindow
                     CurrentStepTxtBox.Text = ("Scanning Manually Stopped")
                     RunScanBtn.Text = "START SCAN"
                     b_CollisionPassed = False 'reset the collision flag
-                                                                   
+
                 End If
                 HomeAxesBtn.Visible = True
                 If b_ENG_mode Then
@@ -4203,21 +4391,21 @@ Public Class MainWindow
         Dim db_MinPerPH As Double
         Dim db_MaxPerPH As Double
 
-        
-         Select Case SMCollisionPass.State
+
+        Select Case SMCollisionPass.State
             Case CPSM_START_UP 'prep all the scan parameters
 
                 'Watch for the Substrate Laser Sensor (ON)
                 CLaser.State = CLSM_ACTIVATE
-                WriteLogLine("-------------Collision Pass Start-Up--------------")            
+                WriteLogLine("-------------Collision Pass Start-Up--------------")
                 CurrentStepTxtBox.Text = ("Collision Test")
                 SMCollisionPass.State = CPSM_GET_Z_UP
-                
-                If b_plasmaActive = True then
-                    b_ToggleRunRecipe = True
-                End If 
 
-            
+                If b_plasmaActive = True Then
+                    b_ToggleRunRecipe = True
+                End If
+
+
             Case CPSM_GET_Z_UP
                 If AxesStatus.b_XYZSameState = True And AxesStatus.XState >= ASM_IDLE Then
                     st_Command = "$B402" & Param.db_Z_Max_Speed.ToString("F") & "%"
@@ -4229,7 +4417,7 @@ Public Class MainWindow
                     ResponseLen = ReadResponse(0)
                     WriteLogLine(LogStr & "to: " & SMScan.db_ZScanPos.ToString("F"))
                     SMCollisionPass.State = CPSM_SCAN_Y
-                End If 
+                End If
             Case CPSM_SCAN_Y
                 If AxesStatus.b_XYZSameState = True And AxesStatus.XState >= ASM_IDLE Then
                     st_Command = "$B40110%"
@@ -4241,7 +4429,7 @@ Public Class MainWindow
                     ResponseLen = ReadResponse(0)
                     WriteLogLine(LogStr & "to: " & SMScan.db_EndYPosition.ToString("F"))
                     SMCollisionPass.State = CPSM_GET_Z_DOWN
-                End If 
+                End If
             Case CPSM_GET_Z_DOWN
                 If AxesStatus.b_XYZSameState = True And AxesStatus.XState >= ASM_IDLE Then
                     st_Command = "$B402" & Param.db_Z_Max_Speed.ToString("F") & "%"
@@ -4253,34 +4441,34 @@ Public Class MainWindow
                     ResponseLen = ReadResponse(0)
                     WriteLogLine(LogStr & "to " & SMScan.db_ZParkPos.ToString("F"))
                     SMCollisionPass.State = CPSM_SHUT_DOWN
-                End If                     
-            Case CPSM_SHUT_DOWN 
+                End If
+            Case CPSM_SHUT_DOWN
                 If AxesStatus.b_XYZSameState = True And AxesStatus.XState >= ASM_IDLE Then
-                    SMCollisionPass.State = CPSM_IDLE                                    
+                    SMCollisionPass.State = CPSM_IDLE
                     CurrentStepTxtBox.Text = ("Scanning")
                     CLaser.State = CLSM_DEACTIVATE
                     b_CollisionPassed = True
                     'Go here to scan
-                    if b_PlannedAutoStart = True Then
+                    If b_PlannedAutoStart = True Then
                         b_ToggleRunRecipe = True 'Turn plasma on
-                        b_PlannedAutoStart = False 
-                    Else 
-                         SMScan.ExternalNewState = SCSM_START_UP
-                         SMScan.b_ExternalStateChange = True
+                        b_PlannedAutoStart = False
+                    Else
+                        SMScan.ExternalNewState = SCSM_START_UP
+                        SMScan.b_ExternalStateChange = True
                     End If
-                    
-                End If 
-                
+
+                End If
+
 
             Case CPSM_IDLE 'do nothing
-         End Select
+        End Select
     End Sub
 
     Private Sub DetailedLogToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles DetailedLogToolStripMenuItem.Click
-        StageTestSM.ToggleDetailedLog()        
-    End Sub    
+        StageTestSM.ToggleDetailedLog()
+    End Sub
     Private Sub TestZToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles TestZToolStripMenuItem.Click
-        StageTestSM.ToggleTestZ()          
+        StageTestSM.ToggleTestZ()
     End Sub
     Private Sub StartToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles StartToolStripMenuItem.Click
         StageTestSM.SetState(STSM_STARTUP)
@@ -4288,6 +4476,5 @@ Public Class MainWindow
     Private Sub StopToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles StopToolStripMenuItem.Click
         StageTestSM.SetState(STSM_SHUTDOWN)
     End Sub
-
 
 End Class
