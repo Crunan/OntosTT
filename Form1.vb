@@ -81,24 +81,30 @@ Public Class MainWindow
 
         Dim LEDS As List(Of String)
 
-        'Dim LED0 As String
-        'Dim LED1 As String
-        'Dim LED2 As String
-        'Dim LED3 As String
-        'Dim LED4 As String
-        'Dim LED5 As String
-        'Dim LED6 As String
-        'Dim LED7 As String
-
-        'Dim LED8 As String
-        'Dim LED9 As String
-        'Dim LED10 As String
-        'Dim LED11 As String
-        'Dim LED12 As String
-        'Dim LED13 As String
-        'Dim LED14 As String
-        'Dim LED15 As String
-
+        Public Function findAbortLED() As Integer
+            Dim index As Integer = LEDS.FindIndex(Function(item) item = "ABORT")
+            If index <> -1 Then
+                Return index
+            Else
+                Return -1
+            End If
+        End Function
+        Public Function findESTOPLED() As Integer
+            Dim index As Integer = LEDS.FindIndex(Function(item) item = "ESTOP")
+            If index <> -1 Then
+                Return index
+            Else
+                Return -1
+            End If
+        End Function
+        Public Function findPlasmaLED() As Integer
+            Dim index As Integer = LEDS.FindIndex(Function(item) item = "PL_ON")
+            If index <> -1 Then
+                Return index
+            Else
+                Return -1
+            End If
+        End Function
     End Structure
     Dim Exe_Cfg As EXE_CONFIG
 
@@ -126,31 +132,43 @@ Public Class MainWindow
     Dim b_ErrorStateActive As Boolean = False
 
     Structure ControlBoard
-        Private Enum LEDBits
-            LED8 = &H1
-            LED9 = &H2
-            LED10 = &H4
-            LED11 = &H8
-
-            LED12 = &H10
-            LED13 = &H20
-            LED14 = &H40
-            LED15 = &H80
-
-            LED0 = &H100
-            LED1 = &H200
-            LED2 = &H400
-            LED3 = &H800
-
-            LED4 = &H1000
-            LED5 = &H2000
-            LED6 = &H4000
-            LED7 = &H8000
-
-        End Enum
-        Dim LEDState As Integer
-        Dim LEDStateWas As Integer
+        Dim StatusBits As Integer
+        Dim StatusBitsWas As Integer
         Dim LedStates As List(Of Boolean)
+        Dim AbortLEDIndex As Integer
+        Dim AbortEvent As Boolean
+        Dim ESTOP As Boolean
+        Dim ESTOPLEDIndex As Integer
+        Dim PlasmaActive As Boolean
+        Dim PlasmaLEDIndex As Integer
+
+        Public Sub setAbortLED()
+            Dim index As Integer = MainWindow.Exe_Cfg.findAbortLED()
+            If index <> -1 Then
+                AbortLEDIndex = index
+            Else
+                MsgBox("Unable to find an LED associated with ABORT.")
+                MainWindow.WriteLogLine("Unable to find an LED associated with ABORT.")
+            End If
+        End Sub
+        Public Sub setESTOPLED()
+            Dim index As Integer = MainWindow.Exe_Cfg.findESTOPLED()
+            If index <> -1 Then
+                PlasmaLEDIndex = index
+            Else
+                MsgBox("WARNING: Unable to find an LED associated with ESTOP, (check the EXE_CFG file).")
+                MainWindow.WriteLogLine("Unable to find an LED associated with ESTOP.")
+            End If
+        End Sub
+        Public Sub setPlasmaLED()
+            Dim index As Integer = MainWindow.Exe_Cfg.findPlasmaLED()
+            If index <> -1 Then
+                ESTOPLEDIndex = index
+            Else
+                MsgBox("Unable to find an LED associated with PLASMA ON.")
+                MainWindow.WriteLogLine("Unable to find an LED associated with PLASMA ON.")
+            End If
+        End Sub
 
         Public Sub InitializeLedStates()
             LedStates = New List(Of Boolean)()
@@ -158,30 +176,65 @@ Public Class MainWindow
                 LedStates.Add(False) ' Initialize with default value (e.g., False)
             Next
         End Sub
+        Public Sub ActivateAbort()
+            AbortEvent = True
+        End Sub
+        Public Sub AcknowledgedAbort()
+            AbortEvent = False
+        End Sub
+        Public Function AbortAlreadyActive()
+            Return AbortEvent
+        End Function
+        Public Sub ActivateESTOP()
+            ESTOP = True
+        End Sub
+        Public Function ESTOPAlreadyActive()
+            Return ESTOP
+        End Function
+        Public Sub setPlasmaActive(state As Boolean)
+            If state Then
+                PlasmaActive = True
+            Else
+                PlasmaActive = False
+            End If
+        End Sub
+
+        Public Function PlasmaAlreadyActive() As Boolean
+            Return PlasmaActive
+        End Function
+        Private Function LEDMatchesAbortLED(led As Integer) As Boolean
+            Return led = AbortLEDIndex
+        End Function
+        Private Function LEDMatchesESTOPLED(led As Integer) As Boolean
+            Return led = ESTOPLEDIndex
+        End Function
+        Private Function LEDMatchesPlasmaLED(led As Integer) As Boolean
+            Return led = PlasmaLEDIndex
+        End Function
         Private Function BinaryIntegerToString(Bits16 As Integer) As String
             Dim st_Rtn
             Bits16 = Bits16 Or &H10000 'force Bit 16 high
             st_Rtn = Convert.ToString(Bits16, 2) 'now st_Rtn has 17 chars
             Return st_Rtn.Substring(1) 'return all to the right of the forced string
         End Function
-        Public Sub SetLEDState(ByRef StatusBits As Integer)
-            LEDStateWas = LEDState
-            LEDState = StatusBits
+        Public Sub setStatusBits(ByRef status As Integer)
+            StatusBitsWas = Me.StatusBits
+            Me.StatusBits = status
         End Sub
 
         Public Function GetLEDState() As Integer
-            Return LEDState
+            Return StatusBits
         End Function
 
         Public Function GetLEDStateWas() As Integer
-            Return LEDStateWas
+            Return StatusBitsWas
         End Function
         Public Function GetLEDStates() As List(Of Boolean)
             Return LedStates
         End Function
 
         Private Function LEDStateChanged()
-            If LEDState <> LEDStateWas Then
+            If StatusBits <> StatusBitsWas Then
                 Return True
             Else
                 Return False
@@ -190,10 +243,38 @@ Public Class MainWindow
         Private Sub SetEachLedFromCurrentBits()
             For i As Integer = 0 To 15
                 Dim bitPosition As Integer = 1 << i
-                LedStates(i) = (LEDState And bitPosition) > 0
+                LedStates(i) = (StatusBits And bitPosition) > 0
             Next
         End Sub
-
+        Private Sub handleAbortLED(ledIndex As Integer)
+            'because LEDs can be customized in exe_config, any LED can be the ABORT led
+            If LEDMatchesAbortLED(ledIndex) And Not AbortAlreadyActive() Then
+                ActivateAbort()
+                MainWindow.PublishAbortCode()
+            End If
+        End Sub
+        Private Sub handleESTOPLED(ledIndex As Integer)
+            'because LEDs can be customized in exe_config, any LED can be the ESTOP led
+            If LEDMatchesESTOPLED(ledIndex) And Not ESTOPAlreadyActive() Then
+                ActivateESTOP()
+                MainWindow.WriteLogLine("ESTOP activated, shutting down.")
+                MsgBox("CRITICAL: Plasma System ESTOP => Exit")
+                'Exit the App after operator ack
+                Application.Exit()
+            End If
+        End Sub
+        Private Sub handlePlasmaLEDOn(ledIndex As Integer)
+            'because LEDs can be customized in exe_config, any LED can be the ESTOP led
+            If LEDMatchesPlasmaLED(ledIndex) And Not PlasmaAlreadyActive() Then
+                setPlasmaActive(True)
+            End If
+        End Sub
+        Private Sub handlePlasmaLEDOff(ledIndex As Integer)
+            'because LEDs can be customized in exe_config, any LED can be the ESTOP led
+            If LEDMatchesPlasmaLED(ledIndex) And PlasmaAlreadyActive() Then
+                setPlasmaActive(False)
+            End If
+        End Sub
         Public Function isLEDLit(i As Integer) As Boolean
             Return LedStates(i)
         End Function
@@ -201,14 +282,18 @@ Public Class MainWindow
             For i As Integer = 1 To 16
                 Dim led As Object = MainWindow.CTL_LEDS(i)
                 If isLEDLit(i - 1) Then
+                    handleAbortLED(i)
+                    handleESTOPLED(i)
+                    handlePlasmaLEDOn(i)
                     led.bordercolor = Color.Lime
                 Else
+                    handlePlasmaLEDOff(i)
                     led.bordercolor = Color.Gainsboro
                 End If
             Next
         End Sub
         Private Sub LogLEDChange()
-            MainWindow.WriteLogLine("Status Bits Change from " & BinaryIntegerToString(LEDStateWas) & " to " & BinaryIntegerToString(LEDState))
+            MainWindow.WriteLogLine("Status Bits Change from " & BinaryIntegerToString(StatusBitsWas) & " to " & BinaryIntegerToString(StatusBits))
         End Sub
         'UPdateStatus bit patterns => This changes all the time, now we can edit the Execonfig
         'LED_GAS_1       0 //VBWord bit 8    &H0100
@@ -230,73 +315,11 @@ Public Class MainWindow
         'LED_ABORT       15 //VBWord bit 7   &H0080
 
         Public Sub UpdateStatus()
-
             If LEDStateChanged() Then ' have a change, log it
                 LogLEDChange()
             End If
-
             SetEachLedFromCurrentBits()
             UpdateCTLGUILeds()
-            'If (LEDState And LEDBits.LED15) > 0 Then
-            '    MainWindow.LED15.BackColor = Color.Red
-            '    If MainWindow.errorActive_Label.Visible = False Then MainWindow.errorActive_Label.Visible = True
-            '    MainWindow.PublishAbortCode() 'ABORT detected, see if can display Abort Code
-            'Else
-            '    If MainWindow.errorActive_Label.Visible = True Then MainWindow.errorActive_Label.Visible = False
-            '    MainWindow.LED15.BackColor = Color.Gainsboro
-            'End If
-
-            'If (LEDState And LEDBits.LED12) > 0 Then 'ESTOP!
-            '    MsgBox("Fatal Error: Plasma System ESTOP => Exit")
-            '    'Exit the App after operator ack
-            '    Application.Exit()
-            'End If
-            'If (LEDState And LEDBits.LED11) > 0 Then
-            '    MainWindow.LED11.BackColor = Color.Lime
-            'Else
-            '    MainWindow.LED11.BackColor = Color.Gainsboro
-            'End If
-            'If (LEDState And LEDBits.LED10) > 0 Then
-            '    MainWindow.LED10.BackColor = Color.Lime
-            'Else
-            '    MainWindow.LED10.BackColor = Color.Gainsboro
-            'End If
-
-            'If (LEDState And LEDBits.LED0) > 0 Then
-            '    MainWindow.LED0.BackColor = Color.Lime
-            'Else
-            '    MainWindow.LED0.BackColor = Color.Gainsboro
-            'End If
-            'If (LEDState And LEDBits.LED1) > 0 Then
-            '    MainWindow.LED1.BackColor = Color.Lime
-            'Else
-            '    MainWindow.LED1.BackColor = Color.Gainsboro
-            'End If
-            'If (LEDState And LEDBits.LED2) > 0 Then
-            '    MainWindow.LED2.BackColor = Color.Lime
-            'Else
-            '    MainWindow.LED2.BackColor = Color.Gainsboro
-            'End If
-            'If (LEDState And LEDBits.LED3) > 0 Then
-            '    MainWindow.LED3.BackColor = Color.Lime
-            'Else
-            '    MainWindow.LED3.BackColor = Color.Gainsboro
-            'End If
-            'If (LEDState And LEDBits.LED7) > 0 Then
-            '    MainWindow.LED7.BackColor = Color.Lime
-            'Else
-            '    MainWindow.LED7.BackColor = Color.Gainsboro
-            'End If
-            'If (LEDState And LEDBits.LED8) > 0 Then
-            '    MainWindow.LED8.BackColor = Color.BlueViolet 'cause that is the actual color of plasma
-            '    If MainWindow.plasmaStable_Label.Visible = False Then MainWindow.plasmaStable_Label.Visible = True
-            '    If MainWindow.b_plasmaActive = False Then MainWindow.b_plasmaActive = True
-            'Else
-            '    MainWindow.LED8.BackColor = Color.Gainsboro
-            '    If MainWindow.plasmaStable_Label.Visible = True Then MainWindow.plasmaStable_Label.Visible = False
-            '    If MainWindow.b_plasmaActive = True Then MainWindow.b_plasmaActive = False
-            'End If
-
         End Sub
     End Structure
     Dim CTL As ControlBoard
@@ -689,8 +712,7 @@ Public Class MainWindow
     Dim st_HasPurgeSave As String = 0 'For saving the substrate purge state
     Dim b_HasPins As Boolean 'For setting the Pins as exposed or buried 
     Dim b_HasHeat As Boolean 'For setting the Heater On/Off
-    Dim b_HasVac As Boolean = False 'For setting the chuck vacuum on/Off
-    Dim b_plasmaActive As Boolean = False 'For determining when Plasma is ACTIVE    
+    Dim b_HasVac As Boolean = False 'For setting the chuck vacuum on/Off 
     Dim b_CollisionPassed As Boolean = False 'the tool has performed a collision test with NO collision.
     Dim b_PlannedAutoStart As Boolean = False 'This is strictly for Auto Start PLasma, to prevent RUN SCAN from starting plasma.
 
@@ -1516,7 +1538,7 @@ Public Class MainWindow
         b_ToggleAutoMode = True
     End Sub
     Private Sub RunRcpBtn_Click(sender As Object, e As EventArgs) Handles RunRcpBtn.Click
-        If b_HasCollision = True And b_autoScanActive And b_plasmaActive = False Then
+        If b_HasCollision = True And b_autoScanActive And Not CTL.PlasmaAlreadyActive() Then
             b_PlannedAutoStart = True 'this will make sure we dont accidently start plasma when just clicking RUN SCAN button
             If SMScan.State = SCSM_IDLE Then
                 SMScan.ExternalNewState = SCSM_START_UP
@@ -2096,7 +2118,7 @@ Public Class MainWindow
         StrVar = ar_CTL_ParamVals(0)
         b_IsStringANumber(StrVar, st_HexChars, "CTL Status Bits") 'restarts if = False
         StatusBits = Convert.ToInt32(StrVar, 16)
-        CTL.SetLEDState(StatusBits) 'parse status bits to boolean
+        CTL.setStatusBits(StatusBits) 'parse status bits to boolean
 
         StrVar = ar_CTL_ParamVals(1) 'MB Motor Position (to update slider bar)
         b_IsStringANumber(StrVar, st_DoubleChars, "MB Motor Pos")
@@ -2262,7 +2284,7 @@ Public Class MainWindow
 
 
         'This controls the AUTO START SCAN setting 
-        If b_plasmaActive = True And b_autoScanActive = True And b_toggleAutoScan = True Then
+        If CTL.PlasmaAlreadyActive() And b_autoScanActive = True And b_toggleAutoScan = True Then
             If SMScan.State = SCSM_IDLE Then 'IDLE, so must want me to start up
                 'Are my axis initialized
                 If AxesStatus.XState >= ASM_IDLE And AxesStatus.YState >= ASM_IDLE And AxesStatus.ZState >= ASM_IDLE And RunScanBtn.Visible = True Then
@@ -2676,42 +2698,12 @@ Public Class MainWindow
             End Select
 
         Next
-
+        'After custom LEDS are loaded, find which are abort, plasma and ESTOP.
+        CTL.setAbortLED()
+        CTL.setESTOPLED()
+        CTL.setPlasmaLED()
     End Sub
 
-    'Private Sub WriteExeConfig()
-    '    Dim st_ConfigurationString As String
-
-    '    ExeConfigPathFileName = ExeConfigPath + ExeConfigFileName + ".cfg"
-    '    ' Open the file using a stream reader.
-    '    Using sr As New StreamReader(ExeConfigPathFileName)
-    '        ExeConfigString = sr.ReadToEnd()
-    '        sr.Close()
-    '    End Using
-    '    ExeConfigLines = ExeConfigString.Split(New Char() {"<"c})
-    '    'Read and parse each parameter of the Config string
-    '    For Ctr As Integer = 1 To ExeConfigLines.Length - 1
-    '        ExeConfigParamStrArray = ExeConfigLines(Ctr).Split(New Char() {">"c})
-    '        ExeConfigParamName = ExeConfigParamStrArray(0).Trim()
-    '        ExeConfigParamValue = ExeConfigParamStrArray(1).Trim()
-    '        Select Case ExeConfigParamName 'load up the Config values
-    '            Case "KNOWN_COM_PORT"
-    '                Exe_Cfg.KNOWN_COM_PORT = ExeConfigParamValue
-    '            Case Else
-    '        End Select
-    '    Next
-
-    '    ExeConfigPathFileName = ExeConfigPath + ExeConfigFileName + ".cfg"
-    '    'build the Configuration from current data
-    '    st_ConfigurationString = "<KNOWN_COM_PORT>" + com_portBox.Text
-
-    '    ' Open the file using a stream reader.
-    '    Using ExeConfigOut As New StreamWriter(ExeConfigPathFileName)
-    '        ExeConfigOut.Write(st_ConfigurationString)
-    '        ExeConfigOut.Close()
-    '    End Using
-
-    'End Sub
     Private Sub LoadToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles LoadToolStripMenuItem.Click
         MFC(1).b_MFCLoadRecipeFlow = True 'signal main loop to load the new flow
         MFC(2).b_MFCLoadRecipeFlow = True
@@ -2725,6 +2717,7 @@ Public Class MainWindow
         AC_CODE.Text = ""
         AC_CODE.Visible = False
         ClearAbortbtn.Visible = False
+        CTL.AcknowledgedAbort()
         b_ClearAbort = False
         RunRcpBtn.Enabled = True 're-enable the Start Plasma button
 
@@ -3154,11 +3147,7 @@ Public Class MainWindow
         st_Rtn = Convert.ToString(Bits16, 2) 'now st_Rtn has 17 chars
         Return st_Rtn.Substring(1) 'return all to the right of the forced string
     End Function
-    'Functions for calculating RunTwoSpotSM() that are used specifically with the laser to chuck locations
-    'Function db_Xs_2_PH(db_C_Xs_2_PH As Double) As Double
-    '    Return CoordParam.db_Xs_2_PH - db_C_Xs_2_PH
-    'End Function
-    'CoordParam.db_Ys_2_PH is the spot laser, so when the 3 axis board takes a reading, it accomodates the 10mm difference 
+
     Function db_Ys_2_PH(db_C_Ys_2_PH As Double) As Double
         Return CoordParam.db_Ys_2_PH - db_C_Ys_2_PH
     End Function
@@ -4401,7 +4390,7 @@ Public Class MainWindow
                 CurrentStepTxtBox.Text = ("Collision Test")
                 SMCollisionPass.State = CPSM_GET_Z_UP
 
-                If b_plasmaActive = True Then
+                If CTL.PlasmaAlreadyActive() Then
                     b_ToggleRunRecipe = True
                 End If
 
