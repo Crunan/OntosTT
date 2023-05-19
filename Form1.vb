@@ -81,30 +81,10 @@ Public Class MainWindow
 
         Dim LEDS As List(Of String)
 
-        Public Function findAbortLED() As Integer
-            Dim index As Integer = LEDS.FindIndex(Function(item) item = "ABORT")
-            If index <> -1 Then
-                Return index
-            Else
-                Return -1
-            End If
+        Public Function FindLEDType(type As String) As Integer
+            Return LEDS.FindIndex(Function(item) item = type)
         End Function
-        Public Function findESTOPLED() As Integer
-            Dim index As Integer = LEDS.FindIndex(Function(item) item = "ESTOP")
-            If index <> -1 Then
-                Return index
-            Else
-                Return -1
-            End If
-        End Function
-        Public Function findPlasmaLED() As Integer
-            Dim index As Integer = LEDS.FindIndex(Function(item) item = "PL_ON")
-            If index <> -1 Then
-                Return index
-            Else
-                Return -1
-            End If
-        End Function
+
     End Structure
     Dim Exe_Cfg As EXE_CONFIG
 
@@ -131,44 +111,96 @@ Public Class MainWindow
     '    Dim NO_RS485 As Boolean = True
     Dim b_ErrorStateActive As Boolean = False
 
+    Public Class LED
+        Enum LEDType
+            Normal
+            Abort
+            EStop
+            PlasmaOn
+        End Enum
+
+        Private _name As String
+        Private _index As Integer
+        Private _type As LEDType
+        Private _state As Boolean
+
+        Public Property Name() As String
+            Get
+                Return _name
+            End Get
+            Set(ByVal value As String)
+                _name = value
+            End Set
+        End Property
+
+        Public Property Index() As Integer
+            Get
+                Return _index
+            End Get
+            Set(ByVal value As Integer)
+                _index = value
+            End Set
+        End Property
+
+        Public Property Type() As LEDType
+            Get
+                Return _type
+            End Get
+            Set(ByVal value As LEDType)
+                _type = value
+            End Set
+        End Property
+
+        Public Property State() As Boolean
+            Get
+                Return _state
+            End Get
+            Set(ByVal value As Boolean)
+                _state = value
+            End Set
+        End Property
+        Public Sub New(ByVal name As String, ByVal index As Integer, ByVal type As LEDType, ByVal state As Boolean)
+            Me.Name = name
+            Me.Index = index
+            Me.Type = type
+            Me.State = state
+        End Sub
+        Public Sub TurnOn()
+            State = True
+        End Sub
+
+        Public Sub TurnOff()
+            State = False
+        End Sub
+
+        Public Function IsOn() As Boolean
+            Return State
+        End Function
+        Public Sub SetIndexByLEDType(type As LEDType)
+            Dim typeString As String = type.ToString()
+            Dim index As Integer = MainWindow.Exe_Cfg.FindLEDIndex(typeString)
+
+            If index <> -1 Then
+                Me.Index = index
+            Else
+                Dim errorMessage As String = "Unable to find an LED associated with " & typeString & "."
+                MsgBox(errorMessage)
+                MainWindow.WriteLogLine(errorMessage)
+            End If
+        End Sub
+
+
+
+    End Class
+
+
     Structure ControlBoard
         Dim StatusBits As Integer
         Dim StatusBitsWas As Integer
         Dim LedStates As List(Of Boolean)
-        Dim AbortLEDIndex As Integer
-        Dim AbortEvent As Boolean
-        Dim ESTOP As Boolean
-        Dim ESTOPLEDIndex As Integer
+        Dim AbortActive As Boolean
+        Dim EstopActive As Boolean
         Dim PlasmaActive As Boolean
-        Dim PlasmaLEDIndex As Integer
-
-        Public Sub setAbortLED()
-            Dim index As Integer = MainWindow.Exe_Cfg.findAbortLED()
-            If index <> -1 Then
-                AbortLEDIndex = index
-            Else
-                MsgBox("Unable to find an LED associated with ABORT.")
-                MainWindow.WriteLogLine("Unable to find an LED associated with ABORT.")
-            End If
-        End Sub
-        Public Sub setESTOPLED()
-            Dim index As Integer = MainWindow.Exe_Cfg.findESTOPLED()
-            If index <> -1 Then
-                PlasmaLEDIndex = index
-            Else
-                MsgBox("WARNING: Unable to find an LED associated with ESTOP, (check the EXE_CFG file).")
-                MainWindow.WriteLogLine("Unable to find an LED associated with ESTOP.")
-            End If
-        End Sub
-        Public Sub setPlasmaLED()
-            Dim index As Integer = MainWindow.Exe_Cfg.findPlasmaLED()
-            If index <> -1 Then
-                ESTOPLEDIndex = index
-            Else
-                MsgBox("Unable to find an LED associated with PLASMA ON.")
-                MainWindow.WriteLogLine("Unable to find an LED associated with PLASMA ON.")
-            End If
-        End Sub
 
         Public Sub InitializeLedStates()
             LedStates = New List(Of Boolean)()
@@ -177,40 +209,48 @@ Public Class MainWindow
             Next
         End Sub
         Public Sub ActivateAbort()
-            AbortEvent = True
+            AbortActive = True
         End Sub
         Public Sub AcknowledgedAbort()
-            AbortEvent = False
+            AbortActive = False
         End Sub
         Public Function AbortAlreadyActive()
-            Return AbortEvent
+            Return AbortActive
         End Function
         Public Sub ActivateESTOP()
-            ESTOP = True
+            EstopActive = True
         End Sub
         Public Function ESTOPAlreadyActive()
-            Return ESTOP
+            Return EstopActive
         End Function
-        Public Sub setPlasmaActive(state As Boolean)
-            If state Then
+
+        Private Sub handleAbortLED(ledIndex As Integer)
+            'because LEDs can be customized in exe_config, any LED can be the ABORT led
+            If ledIndex = AbortLEDIndex And Not AbortAlreadyActive() Then
+                ActivateAbort()
+                MainWindow.PublishAbortCode()
+            End If
+        End Sub
+        Private Sub handleESTOPLED(ledIndex As Integer)
+            'because LEDs can be customized in exe_config, any LED can be the ESTOP led
+            If LEDMatchesESTOPLED(ledIndex) And Not ESTOPAlreadyActive() Then
+                ActivateESTOP()
+                MainWindow.WriteLogLine("ESTOP activated, shutting down.")
+                MsgBox("CRITICAL: Plasma System ESTOP => Exit")
+                'Exit the App after operator ack
+                Application.Exit()
+            End If
+        End Sub
+        Private Sub handlePlasmaLEDOn(ledIndex As Integer)
+            If LEDMatchesPlasmaLED(ledIndex) Then
                 PlasmaActive = True
-            Else
+            End If
+        End Sub
+        Private Sub handlePlasmaLEDOff(ledIndex As Integer)
+            If LEDMatchesPlasmaLED(ledIndex) And Not isPlasmaActive() Then
                 PlasmaActive = False
             End If
         End Sub
-
-        Public Function PlasmaAlreadyActive() As Boolean
-            Return PlasmaActive
-        End Function
-        Private Function LEDMatchesAbortLED(led As Integer) As Boolean
-            Return led = AbortLEDIndex
-        End Function
-        Private Function LEDMatchesESTOPLED(led As Integer) As Boolean
-            Return led = ESTOPLEDIndex
-        End Function
-        Private Function LEDMatchesPlasmaLED(led As Integer) As Boolean
-            Return led = PlasmaLEDIndex
-        End Function
         Private Function BinaryIntegerToString(Bits16 As Integer) As String
             Dim st_Rtn
             Bits16 = Bits16 Or &H10000 'force Bit 16 high
@@ -232,6 +272,9 @@ Public Class MainWindow
         Public Function GetLEDStates() As List(Of Boolean)
             Return LedStates
         End Function
+        Public Function isPlasmaActive() As Boolean
+            Return PlasmaActive
+        End Function
 
         Private Function LEDStateChanged()
             If StatusBits <> StatusBitsWas Then
@@ -241,53 +284,22 @@ Public Class MainWindow
             End If
         End Function
         Private Sub SetEachLedFromCurrentBits()
+            'This is the function that determine which bits are actually set.
             For i As Integer = 0 To 15
                 Dim bitPosition As Integer = 1 << i
                 LedStates(i) = (StatusBits And bitPosition) > 0
             Next
         End Sub
-        Private Sub handleAbortLED(ledIndex As Integer)
-            'because LEDs can be customized in exe_config, any LED can be the ABORT led
-            If LEDMatchesAbortLED(ledIndex) And Not AbortAlreadyActive() Then
-                ActivateAbort()
-                MainWindow.PublishAbortCode()
-            End If
-        End Sub
-        Private Sub handleESTOPLED(ledIndex As Integer)
-            'because LEDs can be customized in exe_config, any LED can be the ESTOP led
-            If LEDMatchesESTOPLED(ledIndex) And Not ESTOPAlreadyActive() Then
-                ActivateESTOP()
-                MainWindow.WriteLogLine("ESTOP activated, shutting down.")
-                MsgBox("CRITICAL: Plasma System ESTOP => Exit")
-                'Exit the App after operator ack
-                Application.Exit()
-            End If
-        End Sub
-        Private Sub handlePlasmaLEDOn(ledIndex As Integer)
-            'because LEDs can be customized in exe_config, any LED can be the ESTOP led
-            If LEDMatchesPlasmaLED(ledIndex) And Not PlasmaAlreadyActive() Then
-                setPlasmaActive(True)
-            End If
-        End Sub
-        Private Sub handlePlasmaLEDOff(ledIndex As Integer)
-            'because LEDs can be customized in exe_config, any LED can be the ESTOP led
-            If LEDMatchesPlasmaLED(ledIndex) And PlasmaAlreadyActive() Then
-                setPlasmaActive(False)
-            End If
-        End Sub
-        Public Function isLEDLit(i As Integer) As Boolean
+
+        Public Function isLEDOn(i As Integer) As Boolean
             Return LedStates(i)
         End Function
-        Public Sub UpdateCTLGUILeds()
+        Public Sub UpdateCTLGUILedsStatus()
             For i As Integer = 1 To 16
                 Dim led As Object = MainWindow.CTL_LEDS(i)
-                If isLEDLit(i - 1) Then
-                    handleAbortLED(i)
-                    handleESTOPLED(i)
-                    handlePlasmaLEDOn(i)
-                    led.bordercolor = Color.Lime
+                If isLEDOn(i - 1) Then
+                    led
                 Else
-                    handlePlasmaLEDOff(i)
                     led.bordercolor = Color.Gainsboro
                 End If
             Next
@@ -319,7 +331,7 @@ Public Class MainWindow
                 LogLEDChange()
             End If
             SetEachLedFromCurrentBits()
-            UpdateCTLGUILeds()
+            UpdateCTLGUILedsStatus()
         End Sub
     End Structure
     Dim CTL As ControlBoard
@@ -357,7 +369,7 @@ Public Class MainWindow
             db_ActualFlow = flow
         End Sub
 
-        Public Sub SetActualFlow(ByVal flow As String)
+        Public Sub f(ByVal flow As String)
             Dim convertedFlow As Double
             If Double.TryParse(flow, convertedFlow) Then
                 db_ActualFlow = convertedFlow
@@ -369,7 +381,9 @@ Public Class MainWindow
         Public Function GetActualFlow() As Double
             Return db_ActualFlow
         End Function
-
+        Public Function GetRange() As Double
+            Return db_Range
+        End Function
         Public Function GetActualFlowAsString() As String
             Dim formattedFlow As String
 
@@ -1131,14 +1145,6 @@ Public Class MainWindow
         RecipeValues.Add(RecipeYMinTxt)
         RecipeValues.Add(RecipeYMaxTxt)
 
-        CTL_LEDS.Add(Guna2TextBox1)
-        CTL_LEDS.Add(Guna2TextBox2)
-        CTL_LEDS.Add(Guna2TextBox3)
-        CTL_LEDS.Add(Guna2TextBox4)
-        CTL_LEDS.Add(Guna2TextBox5)
-        CTL_LEDS.Add(Guna2TextBox6)
-        CTL_LEDS.Add(Guna2TextBox7)
-        CTL_LEDS.Add(Guna2TextBox8)
         CTL_LEDS.Add(Guna2TextBox9)
         CTL_LEDS.Add(Guna2TextBox10)
         CTL_LEDS.Add(Guna2TextBox11)
@@ -1147,6 +1153,15 @@ Public Class MainWindow
         CTL_LEDS.Add(Guna2TextBox14)
         CTL_LEDS.Add(Guna2TextBox15)
         CTL_LEDS.Add(Guna2TextBox16)
+        CTL_LEDS.Add(Guna2TextBox1)
+        CTL_LEDS.Add(Guna2TextBox2)
+        CTL_LEDS.Add(Guna2TextBox3)
+        CTL_LEDS.Add(Guna2TextBox4)
+        CTL_LEDS.Add(Guna2TextBox5)
+        CTL_LEDS.Add(Guna2TextBox6)
+        CTL_LEDS.Add(Guna2TextBox7)
+        CTL_LEDS.Add(Guna2TextBox8)
+
     End Sub
     '------------------------ comm port selection makes the Start-Stop toggle button visible
     Private Sub com_portBox_SelectionChangeCommitted(sender As Object, e As EventArgs) Handles com_portBox.SelectionChangeCommitted
@@ -1293,9 +1308,10 @@ Public Class MainWindow
     Private Sub MFC_1_Text_In_Button_Click(sender As Object, e As EventArgs) Handles Set_MFC_1_Recipe_Button.Click
         Dim StrVar As String
         Dim DoubVal As Double
+        Dim range As Double = MFC(1).GetRange()
 
         'st_Was = MFCRecipeFlow(1).Text
-        StrVar = InputBox("Format xx.yy (max value: " & MFC(1).db_Range & ")", "MFC_1 Enter Flow Value", "")
+        StrVar = InputBox("Format xx.yy (max value: " & range & ")", "MFC_1 Enter Flow Value", "")
         If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
             If StrVar = "" Or StrVar.Length > 6 Then Return
             DoubVal = Convert.ToDouble(StrVar) 'Convert the string value to a floating point
@@ -1311,8 +1327,9 @@ Public Class MainWindow
     Private Sub MFC_2_Text_In_Button_Click(sender As Object, e As EventArgs) Handles Set_MFC_2_Recipe_Button.Click
         Dim StrVar As String
         Dim DoubVal As Double
+        Dim range As Double = MFC(2).GetRange()
 
-        StrVar = InputBox("Format xx.yy (max value: " & MFC(2).db_Range & ")", "MFC_2 Enter Flow Value", "")
+        StrVar = InputBox("Format xx.yy (max value: " & range & ")", "MFC_2 Enter Flow Value", "")
         If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
             If StrVar = "" Or StrVar.Length > 6 Then Return
             DoubVal = Convert.ToDouble(StrVar) 'Convert the string value to a floating point
@@ -1328,8 +1345,9 @@ Public Class MainWindow
     Private Sub MFC_3_Text_In_Button_Click(sender As Object, e As EventArgs) Handles Set_MFC_3_Recipe_Button.Click
         Dim StrVar As String
         Dim DoubVal As Double
+        Dim range As Double = MFC(3).GetRange()
 
-        StrVar = InputBox("Format 0.xxx (max value: " & MFC(3).db_Range & ")", "MFC_3 Enter Flow Value", "")
+        StrVar = InputBox("Format x.xxx (max value: " & range & ")", "MFC_3 Enter Flow Value", "")
         If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
             If StrVar = "" Or StrVar.Length > 5 Then Return
             DoubVal = Convert.ToDouble(StrVar) 'Convert the string value to a floating point
@@ -1345,8 +1363,9 @@ Public Class MainWindow
     Private Sub MFC_4_Text_In_Button_Click(sender As Object, e As EventArgs) Handles Set_MFC_4_Recipe_Button.Click
         Dim StrVar As String
         Dim DoubVal As Double
+        Dim range As Double = MFC(4).GetRange()
 
-        StrVar = InputBox("Format 0.xxx (max value: " & MFC(4).db_Range & ")", "MFC_4 Enter Flow Value", "")
+        StrVar = InputBox("Format x.xxx (max value: " & range & ")", "MFC_4 Enter Flow Value", "")
         If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
             If StrVar = "" Or StrVar.Length > 5 Then Return
             DoubVal = Convert.ToDouble(StrVar) 'Convert the string value to a floating point
@@ -1534,11 +1553,11 @@ Public Class MainWindow
     End Sub
 
 
-    Private Sub AutoManBtn_Click(sender As Object, e As EventArgs) Handles AutoManBtn.Click, LED.Click
+    Private Sub AutoManBtn_Click(sender As Object, e As EventArgs) Handles AutoManBtn.Click
         b_ToggleAutoMode = True
     End Sub
     Private Sub RunRcpBtn_Click(sender As Object, e As EventArgs) Handles RunRcpBtn.Click
-        If b_HasCollision = True And b_autoScanActive And Not CTL.PlasmaAlreadyActive() Then
+        If b_HasCollision = True And b_autoScanActive And Not CTL.isPlasmaActive() Then
             b_PlannedAutoStart = True 'this will make sure we dont accidently start plasma when just clicking RUN SCAN button
             If SMScan.State = SCSM_IDLE Then
                 SMScan.ExternalNewState = SCSM_START_UP
@@ -2174,39 +2193,43 @@ Public Class MainWindow
 
         'Get MFC FLows
         For Index = 1 To NumMFC
-            b_IsStringANumber(ar_CTL_ParamVals(Index + 4), st_DoubleChars, "MFC Flow")
-            MFC(Index).SetActualFlow(ar_CTL_ParamVals(Index + 4))
-            SetGUIFlowBars(Index)
-            SetGUITextFlow(Index)
+            StrVar = ar_CTL_ParamVals(Index + 4)
+            If b_IsStringANumber(StrVar, st_DoubleChars, "MFC Flow") Then
+                MFC(Index).SetActualFlow(StrVar)
+                SetGUIFlowBars(Index)
+                SetGUITextFlow(Index)
+            Else
+                WriteLogLine("Unable to retrieve poll of MFC" + Index + " actual flow.")
+            End If
         Next 'For Index = 1 To NumMFC
 
 
         'Get Plasma Head Temperature
-        'WriteCommand("$8c%", 4)  'GET_TEMP  $8C%: resp[!8Cxx.xx#]; xx.xx = head temp degrees C base 10
-        'ResponseLen = ReadResponse(0)
-        'If ResponseLen > 3 Then
-        '    StrVar = st_RCV.Substring(3, st_RCV.Length() - 1)
-        '    If b_IsStringANumber(StrVar, st_DoubleChars, st_EmptyChars) = True Then 'st_EmptyChars
-        '        DoubVal = Convert.ToDouble(StrVar)
-        '        IntVal = Math.Ceiling(DoubVal)
-        '        StrVar = IntVal.ToString()
-        '        Temp_Radial.Value = IntVal 'Set the Temperature Radial for Operator
-        '        PHTempTxt.Text = StrVar 'Display the val in deg C
-        '        If Temp_Radial.Value < 50 Then
-        '            Temp_Radial.ProgressColor = Color.DodgerBlue
-        '            Temp_Radial.ProgressColor2 = Color.DodgerBlue
-        '        ElseIf Temp_Radial.Value < 60 Then
-        '            Temp_Radial.ProgressColor = Color.Yellow
-        '            Temp_Radial.ProgressColor2 = Color.Yellow
-        '        Else
-        '            Temp_Radial.ProgressColor = Color.Red
-        '            Temp_Radial.ProgressColor2 = Color.Red
-        '        End If
+        WriteCommand("$8c%", 4)  'GET_TEMP  $8C%: resp[!8Cxx.xx#]; xx.xx = head temp degrees C base 10
+        ResponseLen = ReadResponse(0)
+        If ResponseLen > 3 Then
+            StrVar = st_RCV.Substring(3, 7)
+            If b_IsStringANumber(StrVar, st_DoubleChars, st_EmptyChars) = True Then 'st_EmptyChars
+                DoubVal = Convert.ToDouble(StrVar)
+                IntVal = Math.Ceiling(DoubVal)
+                StrVar = IntVal.ToString()
+                Temp_Radial.Value = IntVal 'Set the Temperature Radial for Operator
+                PHTempTxt.Text = StrVar 'Display the val in deg C
+                If Temp_Radial.Value < 50 Then
+                    Temp_Radial.ProgressColor = Color.DodgerBlue
+                    Temp_Radial.ProgressColor2 = Color.DodgerBlue
+                ElseIf Temp_Radial.Value < 60 Then
+                    Temp_Radial.ProgressColor = Color.Yellow
+                    Temp_Radial.ProgressColor2 = Color.Yellow
+                Else
+                    Temp_Radial.ProgressColor = Color.Red
+                    Temp_Radial.ProgressColor2 = Color.Red
+                End If
 
-        '    Else
-        '        PHTempTxt.Text = "???" 'allow for disconnected or bad temperature probe
-        '    End If
-        'End If
+            Else
+                PHTempTxt.Text = "???" 'allow for disconnected or bad temperature probe
+            End If
+        End If
 
         'Check Abort flag and if active, flash Abort Clear button
         If b_ClearAbort Then
@@ -2284,7 +2307,7 @@ Public Class MainWindow
 
 
         'This controls the AUTO START SCAN setting 
-        If CTL.PlasmaAlreadyActive() And b_autoScanActive = True And b_toggleAutoScan = True Then
+        If CTL.isPlasmaActive() And b_autoScanActive = True And b_toggleAutoScan = True Then
             If SMScan.State = SCSM_IDLE Then 'IDLE, so must want me to start up
                 'Are my axis initialized
                 If AxesStatus.XState >= ASM_IDLE And AxesStatus.YState >= ASM_IDLE And AxesStatus.ZState >= ASM_IDLE And RunScanBtn.Visible = True Then
@@ -2331,10 +2354,14 @@ Public Class MainWindow
         End If
 
     End Sub
-
     Public Sub SetGUIFlowBars(index As Integer)
-        MFCProgressValue(index).value = MFC(index).GetActualFlow()
+        Dim actualFlow As Double = MFC(index).GetActualFlow()
+        Dim range As Double = MFC(index).GetRange()
+        Dim percent As Integer = CInt(actualFlow / range * 100)
+
+        MFCProgressValue(index).Value = percent
     End Sub
+
     Public Sub SetGUITextFlow(index As Integer)
         MFCActualFlow(index).Text = MFC(index).GetActualFlowAsString()
     End Sub
@@ -2499,7 +2526,7 @@ Public Class MainWindow
 
         Return DecStr
     End Function
-    Private Sub UpdateGUILeds()
+    Private Sub UpdateGUILedNames()
         Dim i As Integer = 0
         For Each button In CTL_LEDS
             button.text = Exe_Cfg.LEDS(i)
@@ -2699,9 +2726,9 @@ Public Class MainWindow
 
         Next
         'After custom LEDS are loaded, find which are abort, plasma and ESTOP.
-        CTL.setAbortLED()
-        CTL.setESTOPLED()
-        CTL.setPlasmaLED()
+        leds().setAbortLED()
+        leds().setESTOPLED()
+        leds().setPlasmaLED()
     End Sub
 
     Private Sub LoadToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles LoadToolStripMenuItem.Click
@@ -3500,7 +3527,6 @@ Public Class MainWindow
         'RecipeButtonPurge.Visible = False
         'N2PurgeSquare.Visible = False
         AutoManBtn.Visible = False
-        LED.Visible = False
         N2Purgelabel.Visible = False
         N2Purgebtn.Visible = False
 
@@ -3557,7 +3583,6 @@ Public Class MainWindow
 
         'Stage Controls Buttons
         AutoManBtn.Visible = True
-        LED.Visible = True
 
         N2Purgelabel.Visible = True
         N2Purgebtn.Visible = True
@@ -4390,7 +4415,7 @@ Public Class MainWindow
                 CurrentStepTxtBox.Text = ("Collision Test")
                 SMCollisionPass.State = CPSM_GET_Z_UP
 
-                If CTL.PlasmaAlreadyActive() Then
+                If CTL.isPlasmaActive() Then
                     b_ToggleRunRecipe = True
                 End If
 
