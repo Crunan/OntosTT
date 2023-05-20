@@ -178,7 +178,7 @@ Public Class MainWindow
         End Function
         Public Sub SetIndexByLEDType(type As LEDType)
             Dim typeString As String = type.ToString()
-            Dim index As Integer = MainWindow.Exe_Cfg.FindLEDIndex(typeString)
+            Dim index As Integer = MainWindow.Exe_Cfg.FindLEDType(typeString)
 
             If index <> -1 Then
                 Me.Index = index
@@ -194,118 +194,63 @@ Public Class MainWindow
     End Class
 
 
-    Structure ControlBoard
-        Dim StatusBits As Integer
-        Dim StatusBitsWas As Integer
-        Dim LedStates As List(Of Boolean)
-        Dim AbortActive As Boolean
-        Dim EstopActive As Boolean
-        Dim PlasmaActive As Boolean
-
-        Public Sub InitializeLedStates()
-            LedStates = New List(Of Boolean)()
+    Public Class ControlBoard
+        Private _statusBits As Integer
+        Private _statusBitsWas As Integer
+        Private LedStates As New List(Of LED)()
+        Private Property Statusbits As Integer
+            Get
+                Return _statusBits
+            End Get
+            Set(value As Integer)
+                _statusBitsWas = _statusBits
+                _statusBits = value
+            End Set
+        End Property
+        Public Sub PopulateLedStates()
             For i As Integer = 0 To 15
-                LedStates.Add(False) ' Initialize with default value (e.g., False)
+                Dim ledName As String = "LED" & (i + 1).ToString()
+                Dim ledIndex As Integer = i
+                Dim ledType As LED.LEDType = LED.LEDType.Normal
+                Dim ledState As Boolean = False
+
+                LedStates.Add(New LED(ledName, ledIndex, ledType, ledState))
             Next
         End Sub
-        Public Sub ActivateAbort()
-            AbortActive = True
-        End Sub
-        Public Sub AcknowledgedAbort()
-            AbortActive = False
-        End Sub
-        Public Function AbortAlreadyActive()
-            Return AbortActive
-        End Function
-        Public Sub ActivateESTOP()
-            EstopActive = True
-        End Sub
-        Public Function ESTOPAlreadyActive()
-            Return EstopActive
-        End Function
 
-        Private Sub handleAbortLED(ledIndex As Integer)
-            'because LEDs can be customized in exe_config, any LED can be the ABORT led
-            If ledIndex = AbortLEDIndex And Not AbortAlreadyActive() Then
-                ActivateAbort()
-                MainWindow.PublishAbortCode()
-            End If
-        End Sub
-        Private Sub handleESTOPLED(ledIndex As Integer)
-            'because LEDs can be customized in exe_config, any LED can be the ESTOP led
-            If LEDMatchesESTOPLED(ledIndex) And Not ESTOPAlreadyActive() Then
-                ActivateESTOP()
-                MainWindow.WriteLogLine("ESTOP activated, shutting down.")
-                MsgBox("CRITICAL: Plasma System ESTOP => Exit")
-                'Exit the App after operator ack
-                Application.Exit()
-            End If
-        End Sub
-        Private Sub handlePlasmaLEDOn(ledIndex As Integer)
-            If LEDMatchesPlasmaLED(ledIndex) Then
-                PlasmaActive = True
-            End If
-        End Sub
-        Private Sub handlePlasmaLEDOff(ledIndex As Integer)
-            If LEDMatchesPlasmaLED(ledIndex) And Not isPlasmaActive() Then
-                PlasmaActive = False
-            End If
-        End Sub
+        Private Function LEDStateChanged() As Boolean
+            Return _statusBits <> _statusBitsWas
+        End Function
         Private Function BinaryIntegerToString(Bits16 As Integer) As String
-            Dim st_Rtn
-            Bits16 = Bits16 Or &H10000 'force Bit 16 high
-            st_Rtn = Convert.ToString(Bits16, 2) 'now st_Rtn has 17 chars
-            Return st_Rtn.Substring(1) 'return all to the right of the forced string
+            'the padleft ensures 16 characters by padding with leading zeroes if necessary. 
+            Return Convert.ToString(Bits16, 2).PadLeft(16, "0"c)
         End Function
-        Public Sub setStatusBits(ByRef status As Integer)
-            StatusBitsWas = Me.StatusBits
-            Me.StatusBits = status
-        End Sub
-
-        Public Function GetLEDState() As Integer
-            Return StatusBits
-        End Function
-
-        Public Function GetLEDStateWas() As Integer
-            Return StatusBitsWas
-        End Function
-        Public Function GetLEDStates() As List(Of Boolean)
-            Return LedStates
-        End Function
-        Public Function isPlasmaActive() As Boolean
-            Return PlasmaActive
-        End Function
-
-        Private Function LEDStateChanged()
-            If StatusBits <> StatusBitsWas Then
-                Return True
-            Else
-                Return False
-            End If
-        End Function
-        Private Sub SetEachLedFromCurrentBits()
+        Private Sub SetEachLedFromStatusBits()
             'This is the function that determine which bits are actually set.
-            For i As Integer = 0 To 15
+            For i As Integer = 0 To LedStates.Count() - 1
                 Dim bitPosition As Integer = 1 << i
-                LedStates(i) = (StatusBits And bitPosition) > 0
+                LedStates(i).State = (Statusbits And bitPosition) > 0
             Next
         End Sub
 
-        Public Function isLEDOn(i As Integer) As Boolean
-            Return LedStates(i)
-        End Function
-        Public Sub UpdateCTLGUILedsStatus()
-            For i As Integer = 1 To 16
-                Dim led As Object = MainWindow.CTL_LEDS(i)
-                If isLEDOn(i - 1) Then
-                    led
-                Else
-                    led.bordercolor = Color.Gainsboro
-                End If
-            Next
-        End Sub
+        'Private Function BinaryIntegerToString(Bits16 As Integer) As String
+        '    Dim st_Rtn
+        '    Bits16 = Bits16 Or &H10000 'force Bit 16 high
+        '    st_Rtn = Convert.ToString(Bits16, 2) 'now st_Rtn has 17 chars
+        '    Return st_Rtn.Substring(1) 'return all to the right of the forced string
+        'End Function
+        'Public Sub UpdateCTLGUILedsStatus()
+        '    For i As Integer = 1 To 16
+        '        Dim led As Object = MainWindow.CTL_LEDS(i)
+        '        If isLEDOn(i - 1) Then
+        '            led
+        '        Else
+        '            led.bordercolor = Color.Gainsboro
+        '        End If
+        '    Next
+        'End Sub
         Private Sub LogLEDChange()
-            MainWindow.WriteLogLine("Status Bits Change from " & BinaryIntegerToString(StatusBitsWas) & " to " & BinaryIntegerToString(StatusBits))
+            MainWindow.WriteLogLine("Status Bits Change from " & BinaryIntegerToString(StatusBitsWas) & " to " & BinaryIntegerToString(Statusbits))
         End Sub
         'UPdateStatus bit patterns => This changes all the time, now we can edit the Execonfig
         'LED_GAS_1       0 //VBWord bit 8    &H0100
@@ -333,7 +278,7 @@ Public Class MainWindow
             SetEachLedFromCurrentBits()
             UpdateCTLGUILedsStatus()
         End Sub
-    End Structure
+    End Class
     Dim CTL As ControlBoard
 
     'PCB Parameter Storage
@@ -2674,6 +2619,7 @@ Public Class MainWindow
                     st_KnownComPort = Exe_Cfg.KNOWN_COM_PORT
 
                 Case "LED0"
+                    'Can i just create an led object here and then set the name and index? seems like yes
                     Exe_Cfg.LEDS.Add(ExeConfigParamValue)
                     Guna2TextBox1.Text = Exe_Cfg.LEDS(0)
                 Case "LED1"
