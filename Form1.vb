@@ -8,6 +8,7 @@ Imports System.Runtime.InteropServices
 Imports System.Drawing
 Imports System.Runtime.Serialization
 Imports Guna.UI2.AnimatorNS
+Imports Guna.UI2.WinForms
 
 Public Class MainWindow
 
@@ -79,12 +80,6 @@ Public Class MainWindow
         Dim MFC_LABEL_4 As String
         Dim KNOWN_COM_PORT As String 'stores the last known com port
 
-        Dim LEDS As List(Of String)
-
-        Public Function FindLEDType(type As String) As Integer
-            Return LEDS.FindIndex(Function(item) item = type)
-        End Function
-
     End Structure
     Dim Exe_Cfg As EXE_CONFIG
 
@@ -123,6 +118,31 @@ Public Class MainWindow
         Private _index As Integer
         Private _type As LEDType
         Private _state As Boolean
+        Private Shared _nextIndex As Integer = 0
+
+        Public Sub New(ByVal name As String, Optional ByVal index As Integer = -1, Optional ByVal type As LEDType = LEDType.Normal, Optional ByVal state As Boolean = False)
+            Me.Name = name
+            Me.Type = type
+            Me.State = state
+
+            If index = -1 Then
+                Me.Index = _nextIndex
+                _nextIndex += 1
+            Else
+                Me.Index = index
+            End If
+
+            Select Case name
+                Case "ABORT"
+                    Me.Type = LEDType.Abort
+                Case "ESTOP"
+                    Me.Type = LEDType.EStop
+                Case "PL_ON"
+                    Me.Type = LEDType.PlasmaOn
+                Case Else
+                    Me.Type = LEDType.Normal
+            End Select
+        End Sub
 
         Public Property Name() As String
             Get
@@ -159,12 +179,6 @@ Public Class MainWindow
                 _state = value
             End Set
         End Property
-        Public Sub New(ByVal name As String, ByVal index As Integer, ByVal type As LEDType, ByVal state As Boolean)
-            Me.Name = name
-            Me.Index = index
-            Me.Type = type
-            Me.State = state
-        End Sub
         Public Sub TurnOn()
             State = True
         End Sub
@@ -176,47 +190,119 @@ Public Class MainWindow
         Public Function IsOn() As Boolean
             Return State
         End Function
-        Public Sub SetIndexByLEDType(type As LEDType)
-            Dim typeString As String = type.ToString()
-            Dim index As Integer = MainWindow.Exe_Cfg.FindLEDType(typeString)
-
-            If index <> -1 Then
-                Me.Index = index
-            Else
-                Dim errorMessage As String = "Unable to find an LED associated with " & typeString & "."
-                MsgBox(errorMessage)
-                MainWindow.WriteLogLine(errorMessage)
-            End If
-        End Sub
-
-
 
     End Class
 
+    Public Class LEDFactory
+        Private _ledList As New List(Of LED)()
+        'Used to associate GUI objects with each LED
+        Private _ledGuiObjects As New List(Of Guna2TextBox)()
+        Private _lastCreatedLedIndex As Integer = -1 ' Variable to keep track of the index of the last created LED
+        Public ReadOnly Property LedList As List(Of LED)
+            Get
+                Return _ledList
+            End Get
+        End Property
 
+        Public Sub CreateLED(ByVal name As String)
+            'adds the LED object to the _ledList but also associates the corresponding IGuiCtlLed object with the LED object.
+            Dim led As LED = New LED(name)
+            _ledList.Add(led)
+            _lastCreatedLedIndex = _ledList.Count - 1 'update the index of the last created LED 
+            AssociateLEDsWithGUIObject()
+            SetGuiLedText()
+        End Sub
+        Public Sub AssociateLEDsWithGUIObject()
+            MainWindow.GUI_CTL_LEDS(i + 1)
+            _ledGuiObjects.Add(guiObject)
+            End If
+            Next
+        End Sub
+
+        Public Sub SetGuiLedText()
+            If _lastCreatedLedIndex >= 0 AndAlso _lastCreatedLedIndex < _ledGuiObjects.Count Then
+                Dim led As LED = _ledList(_lastCreatedLedIndex)
+                Dim guiObject As Guna2TextBox = _ledGuiObjects(_lastCreatedLedIndex)
+                guiObject.Text = led.Name
+            End If
+        End Sub
+        Public Sub SetGuiLedColor()
+            For i As Integer = 0 To _ledList.Count - 1
+                If i < _ledGuiObjects.Count Then
+                    Dim led As LED = _ledList(i)
+                    Dim guiObject As Guna2TextBox = _ledGuiObjects(i)
+
+                    If led.IsOn() Then
+                        guiObject.BorderColor = Color.Lime
+                    Else
+                        guiObject.BorderColor = Color.Gainsboro
+                    End If
+                End If
+            Next
+        End Sub
+
+    End Class
     Public Class ControlBoard
+        Public LEDS As New LEDFactory()
         Private _statusBits As Integer
         Private _statusBitsWas As Integer
-        Private LedStates As New List(Of LED)()
-        Private Property Statusbits As Integer
+        Private _abortLed As LED
+        Private _estopLed As LED
+        Private _plasmaOnLed As LED
+
+
+        Public Property Statusbits As Integer
             Get
                 Return _statusBits
             End Get
             Set(value As Integer)
                 _statusBitsWas = _statusBits
                 _statusBits = value
+
+                If LEDStateChanged() Then
+                    UpdatedLEDsFromStatusBits()
+                    LEDS.SetGuiLedColor()
+                    LogLEDChange()
+                End If
             End Set
         End Property
-        Public Sub PopulateLedStates()
-            For i As Integer = 0 To 15
-                Dim ledName As String = "LED" & (i + 1).ToString()
-                Dim ledIndex As Integer = i
-                Dim ledType As LED.LEDType = LED.LEDType.Normal
-                Dim ledState As Boolean = False
 
-                LedStates.Add(New LED(ledName, ledIndex, ledType, ledState))
+        Public ReadOnly Property StatusBitsWas As Integer
+            Get
+                Return _statusBitsWas
+            End Get
+        End Property
+
+        Private Sub UpdatedLEDsFromStatusBits()
+            For Each led As LED In LEDS.LedList
+                Dim bitPosition As Integer = 1 << led.Index
+                If (_statusBits And bitPosition) > 0 Then
+                    led.TurnOn()
+
+                    ' Update the specific LED properties
+                    Select Case led.Type
+                        Case LED.LEDType.Abort
+                            _abortLed = led
+                        Case LED.LEDType.EStop
+                            _estopLed = led
+                        Case LED.LEDType.PlasmaOn
+                            _plasmaOnLed = led
+                    End Select
+                Else
+                    led.TurnOff()
+                End If
             Next
         End Sub
+        Public Function isAbortActive() As Boolean
+            Return _abortLed IsNot Nothing AndAlso _abortLed.IsOn()
+        End Function
+        Public Function isPlasmaActive() As Boolean
+            Return _plasmaOnLed IsNot Nothing AndAlso _plasmaOnLed.IsOn()
+        End Function
+        Public Function isEstopActive() As Boolean
+            Return _estopLed IsNot Nothing AndAlso _estopLed.IsOn()
+        End Function
+
 
         Private Function LEDStateChanged() As Boolean
             Return _statusBits <> _statusBitsWas
@@ -225,61 +311,12 @@ Public Class MainWindow
             'the padleft ensures 16 characters by padding with leading zeroes if necessary. 
             Return Convert.ToString(Bits16, 2).PadLeft(16, "0"c)
         End Function
-        Private Sub SetEachLedFromStatusBits()
-            'This is the function that determine which bits are actually set.
-            For i As Integer = 0 To LedStates.Count() - 1
-                Dim bitPosition As Integer = 1 << i
-                LedStates(i).State = (Statusbits And bitPosition) > 0
-            Next
-        End Sub
-
-        'Private Function BinaryIntegerToString(Bits16 As Integer) As String
-        '    Dim st_Rtn
-        '    Bits16 = Bits16 Or &H10000 'force Bit 16 high
-        '    st_Rtn = Convert.ToString(Bits16, 2) 'now st_Rtn has 17 chars
-        '    Return st_Rtn.Substring(1) 'return all to the right of the forced string
-        'End Function
-        'Public Sub UpdateCTLGUILedsStatus()
-        '    For i As Integer = 1 To 16
-        '        Dim led As Object = MainWindow.CTL_LEDS(i)
-        '        If isLEDOn(i - 1) Then
-        '            led
-        '        Else
-        '            led.bordercolor = Color.Gainsboro
-        '        End If
-        '    Next
-        'End Sub
         Private Sub LogLEDChange()
             MainWindow.WriteLogLine("Status Bits Change from " & BinaryIntegerToString(StatusBitsWas) & " to " & BinaryIntegerToString(Statusbits))
         End Sub
-        'UPdateStatus bit patterns => This changes all the time, now we can edit the Execonfig
-        'LED_GAS_1       0 //VBWord bit 8    &H0100
-        'LED_GAS_2       1 //VBWord bit 9    &H0200
-        'LED_GAS_3       2 //VBWord bit 10   &H0400
-        'LED_GAS_4       3 //VBWord bit 11   &H0800
-        'LED_VLV_5       4 //VBWord bit 12   &H1000 - R12 (not used here)
-        'LED_VLV_6       5 //VBWord bit 13   &H2000 - R12 (not used here)
-        'LED_VLV_7       6 //VBWord bit 14   &H4000
-        'LED_RF_EN       7 //VBWord bit 15   &H8000
-
-        'LED_PL_ON       8  //VBWord bit 0   &H0001
-        'LED_TUNING      9  //VBWord bit 1   &H0002 (not used here)
-        'LED_AUTO        10 //VBWord bit 2   &H0004
-        'LED_EXEC_RCP    11 //VBWord bit 3   &H0008
-        'LED_ESTOP       12 //VBWord bit 4   &H0010 (not used here)
-        'LED_DO_CMD      13 //VBWord bit 5   &H0020 (not used here)
-        'LED_HE_SIG      14 //VBWord bit 6   &H0040- R12 (not used here)
-        'LED_ABORT       15 //VBWord bit 7   &H0080
-
-        Public Sub UpdateStatus()
-            If LEDStateChanged() Then ' have a change, log it
-                LogLEDChange()
-            End If
-            SetEachLedFromCurrentBits()
-            UpdateCTLGUILedsStatus()
-        End Sub
+        
     End Class
-    Dim CTL As ControlBoard
+    Dim CTL As New ControlBoard
 
     'PCB Parameter Storage
     Structure PARAMETERS
@@ -655,8 +692,7 @@ Public Class MainWindow
     Dim st_MBLeftSpeed As String = "$11000032%" '$110dxxxx%  d=1,0 xxxx = num steps; resp[!110dxxxx#] when move STARTED
     Dim b_MB_Big_Step_Active As Boolean = True
 
-    Dim StatusBits As Integer = 0  'holds results of Status poll
-    Dim StatusBitsWas As Integer = 0 'memory for N-1 poll of Status
+
     Dim HeaterPower As Integer = 0 'holds current heater power setting
 
     Dim MAXRF_PF_WATTS As Integer 'maximum rated RF watts output => OTTS higher cause 40mm
@@ -696,7 +732,7 @@ Public Class MainWindow
     Dim b_CreateRecipe As Boolean = False
 
     'Collections to allow indexing into certain controls
-    Dim CTL_LEDS As New Collection
+    Dim GUI_CTL_LEDS As New Collection
     Dim RecipeValues As New Collection
     Dim EnterButtons As New Collection
     Dim StageButtons As New Collection
@@ -957,62 +993,6 @@ Public Class MainWindow
 
         DateTimeLabel1.Text = DateTime.Now.ToString("hh:mm dddd, dd MMMM yyyy")
 
-        'Make sure we check the Configuration for a known Port
-        GetExeCfg()  ' get the exe config parameters
-
-        'Calls to the system for a list of ports
-        ar_myPort = IO.Ports.SerialPort.GetPortNames()
-
-        'If you recognise the com Port from what is stored in EXE_CONFIG, set a flag that we found it
-        For i = 0 To UBound(ar_myPort)
-            If ar_myPort(i) = st_KnownComPort Then b_foundKnownComPort = True
-        Next
-
-        'If you found a recognised port, connect to it NOW.
-        If b_foundKnownComPort = True Then
-            'Start up the serial port
-            SerialPort1.Parity = Parity.None
-            SerialPort1.StopBits = StopBits.One
-            SerialPort1.DataBits = 8
-            SerialPort1.BaudRate = "57600"
-            SerialPort1.PortName = st_KnownComPort
-            SerialPort1.ReadTimeout = SERIAL_RESPONSE_TIMEOUT            'serial port timeout default is 500
-            SerialPort1.Open()
-
-            'Ensure the Comms button is set because we AUTO CONNECTED
-            b_Start_Stop_ON_OFF = True 'This is true so that if we click the button, it will shut down comms
-            Start_Stop_Toggle.BackColor = Color.Green
-            Start_Stop_Toggle.Text = "CONNECTED"
-            RunRcpBtn.Visible = True
-            If b_ENG_mode Then
-                AutoManBtn.Visible = True
-            End If
-
-            'Reset the controller PCB and give it time to do so
-            WriteCommand("$A9%", 4)  'SOFT_RESET   $A9%; resp[!A9#]; causes Aux PCB Soft Reset
-            responseLen = ReadResponse(0)
-            AUXResetTimeOut = 2500 / Timer1.Interval  'interval in milliseconds, so get close to 2.5 second wait
-
-
-            'Reset the controller PCB and give it time to do so
-            WriteCommand("$90%", 4)  'SOFT_RESET   $90% ; resp[!90#] Resets CTL PCB
-            responseLen = ReadResponse(0)
-            CTLResetTimeOut = 2500 / Timer1.Interval  'interval in milliseconds, so get close to 2.5 second wait
-
-            SM_State = STARTUP
-            'start up the log file
-            OpenLogFile()
-
-            'Set the Dropdown to have the known port 
-            com_portBox.Items.Add(st_KnownComPort)
-            com_portBox.Text = st_KnownComPort
-        Else
-            'set-up the comm port drop-box 
-            com_portBox.Items.AddRange(ar_myPort)
-            com_portBox.Visible = True
-            Com_Port_Label.Visible = True
-        End If
-
         'friend the collections with existing display objects to enable array indexing
         MFCActualFlow.Add(MFC_1_Read_Flow)
         MFCActualFlow.Add(MFC_2_Read_Flow)
@@ -1090,22 +1070,80 @@ Public Class MainWindow
         RecipeValues.Add(RecipeYMinTxt)
         RecipeValues.Add(RecipeYMaxTxt)
 
-        CTL_LEDS.Add(Guna2TextBox9)
-        CTL_LEDS.Add(Guna2TextBox10)
-        CTL_LEDS.Add(Guna2TextBox11)
-        CTL_LEDS.Add(Guna2TextBox12)
-        CTL_LEDS.Add(Guna2TextBox13)
-        CTL_LEDS.Add(Guna2TextBox14)
-        CTL_LEDS.Add(Guna2TextBox15)
-        CTL_LEDS.Add(Guna2TextBox16)
-        CTL_LEDS.Add(Guna2TextBox1)
-        CTL_LEDS.Add(Guna2TextBox2)
-        CTL_LEDS.Add(Guna2TextBox3)
-        CTL_LEDS.Add(Guna2TextBox4)
-        CTL_LEDS.Add(Guna2TextBox5)
-        CTL_LEDS.Add(Guna2TextBox6)
-        CTL_LEDS.Add(Guna2TextBox7)
-        CTL_LEDS.Add(Guna2TextBox8)
+        GUI_CTL_LEDS.Add(Guna2TextBox9)
+        GUI_CTL_LEDS.Add(Guna2TextBox10)
+        GUI_CTL_LEDS.Add(Guna2TextBox11)
+        GUI_CTL_LEDS.Add(Guna2TextBox12)
+        GUI_CTL_LEDS.Add(Guna2TextBox13)
+        GUI_CTL_LEDS.Add(Guna2TextBox14)
+        GUI_CTL_LEDS.Add(Guna2TextBox15)
+        GUI_CTL_LEDS.Add(Guna2TextBox16)
+        GUI_CTL_LEDS.Add(Guna2TextBox1)
+        GUI_CTL_LEDS.Add(Guna2TextBox2)
+        GUI_CTL_LEDS.Add(Guna2TextBox3)
+        GUI_CTL_LEDS.Add(Guna2TextBox4)
+        GUI_CTL_LEDS.Add(Guna2TextBox5)
+        GUI_CTL_LEDS.Add(Guna2TextBox6)
+        GUI_CTL_LEDS.Add(Guna2TextBox7)
+        GUI_CTL_LEDS.Add(Guna2TextBox8)
+
+        'Make sure we check the Configuration for a known Port
+        GetExeCfg()  ' get the exe config parameters
+
+        'Calls to the system for a list of ports
+        ar_myPort = IO.Ports.SerialPort.GetPortNames()
+
+        'If you recognise the com Port from what is stored in EXE_CONFIG, set a flag that we found it
+        For i = 0 To UBound(ar_myPort)
+            If ar_myPort(i) = st_KnownComPort Then b_foundKnownComPort = True
+        Next
+
+        'If you found a recognised port, connect to it NOW.
+        If b_foundKnownComPort = True Then
+            'Start up the serial port
+            SerialPort1.Parity = Parity.None
+            SerialPort1.StopBits = StopBits.One
+            SerialPort1.DataBits = 8
+            SerialPort1.BaudRate = "57600"
+            SerialPort1.PortName = st_KnownComPort
+            SerialPort1.ReadTimeout = SERIAL_RESPONSE_TIMEOUT            'serial port timeout default is 500
+            SerialPort1.Open()
+
+            'Ensure the Comms button is set because we AUTO CONNECTED
+            b_Start_Stop_ON_OFF = True 'This is true so that if we click the button, it will shut down comms
+            Start_Stop_Toggle.BackColor = Color.Green
+            Start_Stop_Toggle.Text = "CONNECTED"
+            RunRcpBtn.Visible = True
+            If b_ENG_mode Then
+                AutoManBtn.Visible = True
+            End If
+
+            'Reset the controller PCB and give it time to do so
+            WriteCommand("$A9%", 4)  'SOFT_RESET   $A9%; resp[!A9#]; causes Aux PCB Soft Reset
+            responseLen = ReadResponse(0)
+            AUXResetTimeOut = 2500 / Timer1.Interval  'interval in milliseconds, so get close to 2.5 second wait
+
+
+            'Reset the controller PCB and give it time to do so
+            WriteCommand("$90%", 4)  'SOFT_RESET   $90% ; resp[!90#] Resets CTL PCB
+            responseLen = ReadResponse(0)
+            CTLResetTimeOut = 2500 / Timer1.Interval  'interval in milliseconds, so get close to 2.5 second wait
+
+            SM_State = STARTUP
+            'start up the log file
+            OpenLogFile()
+
+            'Set the Dropdown to have the known port 
+            com_portBox.Items.Add(st_KnownComPort)
+            com_portBox.Text = st_KnownComPort
+        Else
+            'set-up the comm port drop-box 
+            com_portBox.Items.AddRange(ar_myPort)
+            com_portBox.Visible = True
+            Com_Port_Label.Visible = True
+        End If
+
+
 
     End Sub
     '------------------------ comm port selection makes the Start-Stop toggle button visible
@@ -1527,7 +1565,6 @@ Public Class MainWindow
                     WriteLogLine("Main State Machine Start Up")
                     RunStartUp()
                     SM_State = POLLING
-                    CTL.UpdateStatus()
                 End If
 
             Case POLLING
@@ -1555,14 +1592,13 @@ Public Class MainWindow
                     CollisionLaser() 'run the Collision Laser System state machine
                     RunHomeAxesSM() 'run Home Axes state machine
                     SetLightTower() 'run the Light Tower state machine
-                    CTL.UpdateStatus()
+
                 End If
 
             Case SHUTDOWN
                 WriteLogLine("Main State Machine Shut Down")
                 RunShutDown()
                 SM_State = IDLE
-                CTL.UpdateStatus()
 
             Case IDLE
 
@@ -1582,10 +1618,6 @@ Public Class MainWindow
         'Set initial stageTest values
         StageTestSM.SetDetailedLog(True)
         StageTestSM.SetTestZ(True)
-
-        'Initialize LED for CTL
-        CTL.InitializeLedStates()
-
 
         'Check if controller is connected.
         If gamepad IsNot Nothing Then
@@ -2081,8 +2113,9 @@ Public Class MainWindow
 
         StrVar = ar_CTL_ParamVals(0)
         b_IsStringANumber(StrVar, st_HexChars, "CTL Status Bits") 'restarts if = False
-        StatusBits = Convert.ToInt32(StrVar, 16)
-        CTL.setStatusBits(StatusBits) 'parse status bits to boolean
+        'CTL LEDS is reliant on these 4 (nibbles) characters (16 bits, 4nibbles). 
+        CTL.Statusbits = Convert.ToInt32(StrVar, 16) 'parse status bits to boolean
+
 
         StrVar = ar_CTL_ParamVals(1) 'MB Motor Position (to update slider bar)
         b_IsStringANumber(StrVar, st_DoubleChars, "MB Motor Pos")
@@ -2298,6 +2331,12 @@ Public Class MainWindow
                 & " Pfwd: " & ActWattsTxt.Text & " Pref: " & RflWattsTxt.Text)
         End If
 
+        If CTL.isAbortActive() Then PublishAbortCode()
+
+        If CTL.isEstopActive() Then
+            WriteLogLine("ESTOP active, application shutting down.")
+            Application.Exit()
+        End If
     End Sub
     Public Sub SetGUIFlowBars(index As Integer)
         Dim actualFlow As Double = MFC(index).GetActualFlow()
@@ -2471,13 +2510,7 @@ Public Class MainWindow
 
         Return DecStr
     End Function
-    Private Sub UpdateGUILedNames()
-        Dim i As Integer = 0
-        For Each button In CTL_LEDS
-            button.text = Exe_Cfg.LEDS(i)
-            i += 1
-        Next
-    End Sub
+
 
     Private Sub PublishAbortCode()
         Dim ResponseLen As Integer
@@ -2586,8 +2619,6 @@ Public Class MainWindow
         LogLineOut.Close()
     End Sub
     Private Sub GetExeCfg()
-        'Initialize list for reading from config file
-        Exe_Cfg.LEDS = New List(Of String)()
 
         ExeConfigPathFileName = ExeConfigPath + ExeConfigFileName + ".cfg"
         ' Open the file using a stream reader.
@@ -2618,63 +2649,12 @@ Public Class MainWindow
                     Exe_Cfg.KNOWN_COM_PORT = ExeConfigParamValue
                     st_KnownComPort = Exe_Cfg.KNOWN_COM_PORT
 
-                Case "LED0"
-                    'Can i just create an led object here and then set the name and index? seems like yes
-                    Exe_Cfg.LEDS.Add(ExeConfigParamValue)
-                    Guna2TextBox1.Text = Exe_Cfg.LEDS(0)
-                Case "LED1"
-                    Exe_Cfg.LEDS.Add(ExeConfigParamValue)
-                    Guna2TextBox2.Text = Exe_Cfg.LEDS(1)
-                Case "LED2"
-                    Exe_Cfg.LEDS.Add(ExeConfigParamValue)
-                    Guna2TextBox3.Text = Exe_Cfg.LEDS(2)
-                Case "LED3"
-                    Exe_Cfg.LEDS.Add(ExeConfigParamValue)
-                    Guna2TextBox4.Text = Exe_Cfg.LEDS(3)
-                Case "LED4"
-                    Exe_Cfg.LEDS.Add(ExeConfigParamValue)
-                    Guna2TextBox5.Text = Exe_Cfg.LEDS(4)
-                Case "LED5"
-                    Exe_Cfg.LEDS.Add(ExeConfigParamValue)
-                    Guna2TextBox6.Text = Exe_Cfg.LEDS(5)
-                Case "LED6"
-                    Exe_Cfg.LEDS.Add(ExeConfigParamValue)
-                    Guna2TextBox7.Text = Exe_Cfg.LEDS(6)
-                Case "LED7"
-                    Exe_Cfg.LEDS.Add(ExeConfigParamValue)
-                    Guna2TextBox8.Text = Exe_Cfg.LEDS(7)
-                Case "LED8"
-                    Exe_Cfg.LEDS.Add(ExeConfigParamValue)
-                    Guna2TextBox9.Text = Exe_Cfg.LEDS(8)
-                Case "LED9"
-                    Exe_Cfg.LEDS.Add(ExeConfigParamValue)
-                    Guna2TextBox10.Text = Exe_Cfg.LEDS(9)
-                Case "LED10"
-                    Exe_Cfg.LEDS.Add(ExeConfigParamValue)
-                    Guna2TextBox11.Text = Exe_Cfg.LEDS(10)
-                Case "LED11"
-                    Exe_Cfg.LEDS.Add(ExeConfigParamValue)
-                    Guna2TextBox12.Text = Exe_Cfg.LEDS(11)
-                Case "LED12"
-                    Exe_Cfg.LEDS.Add(ExeConfigParamValue)
-                    Guna2TextBox13.Text = Exe_Cfg.LEDS(12)
-                Case "LED13"
-                    Exe_Cfg.LEDS.Add(ExeConfigParamValue)
-                    Guna2TextBox14.Text = Exe_Cfg.LEDS(13)
-                Case "LED14"
-                    Exe_Cfg.LEDS.Add(ExeConfigParamValue)
-                    Guna2TextBox15.Text = Exe_Cfg.LEDS(14)
-                Case "LED15"
-                    Exe_Cfg.LEDS.Add(ExeConfigParamValue)
-                    Guna2TextBox16.Text = Exe_Cfg.LEDS(15)
+                Case "LED1", "LED2", "LED3", "LED4", "LED5", "LED6", "LED7", "LED8", "LED9", "LED10", "LED11", "LED12", "LED13", "LED14", "LED15", "LED16"
+                    CTL.LEDS.CreateLED(ExeConfigParamName)
                 Case Else
             End Select
-
         Next
-        'After custom LEDS are loaded, find which are abort, plasma and ESTOP.
-        leds().setAbortLED()
-        leds().setESTOPLED()
-        leds().setPlasmaLED()
+
     End Sub
 
     Private Sub LoadToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles LoadToolStripMenuItem.Click
@@ -2690,7 +2670,6 @@ Public Class MainWindow
         AC_CODE.Text = ""
         AC_CODE.Visible = False
         ClearAbortbtn.Visible = False
-        CTL.AcknowledgedAbort()
         b_ClearAbort = False
         RunRcpBtn.Enabled = True 're-enable the Start Plasma button
 

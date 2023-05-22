@@ -2931,7 +2931,7 @@ Partial Class MainWindow
         'Guna2TextBox1
         '
         Me.Guna2TextBox1.AutoRoundedCorners = True
-        Me.Guna2TextBox1.BorderColor = System.Drawing.Color.Gainsboro
+        Me.Guna2TextBox1.BorderColor = System.Drawing.Color.Silver
         Me.Guna2TextBox1.BorderRadius = 8
         Me.Guna2TextBox1.BorderThickness = 2
         Me.Guna2TextBox1.Cursor = System.Windows.Forms.Cursors.IBeam
