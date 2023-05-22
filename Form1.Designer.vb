@@ -124,7 +124,6 @@ Partial Class MainWindow
         Me.MFC_1_Recipe_Flow = New System.Windows.Forms.TextBox()
         Me.Temp_Radial = New Guna.UI2.WinForms.Guna2RadialGauge()
         Me.AutoManBtn = New Guna.UI2.WinForms.Guna2Button()
-        Me.LED = New System.Windows.Forms.Label()
         Me.PictureBox3 = New System.Windows.Forms.PictureBox()
         Me.ProgressBar1 = New Guna.UI2.WinForms.Guna2VProgressBar()
         Me.ProgressBar2 = New Guna.UI2.WinForms.Guna2VProgressBar()
@@ -1489,28 +1488,15 @@ Partial Class MainWindow
         Me.AutoManBtn.ForeColor = System.Drawing.Color.White
         Me.AutoManBtn.HoverState.FillColor = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.AutoManBtn.HoverState.Parent = Me.AutoManBtn
-        Me.AutoManBtn.Location = New System.Drawing.Point(982, 99)
+        Me.AutoManBtn.Location = New System.Drawing.Point(980, 99)
         Me.AutoManBtn.Name = "AutoManBtn"
         Me.AutoManBtn.ShadowDecoration.BorderRadius = 0
         Me.AutoManBtn.ShadowDecoration.Color = System.Drawing.Color.White
         Me.AutoManBtn.ShadowDecoration.Parent = Me.AutoManBtn
         Me.AutoManBtn.Size = New System.Drawing.Size(91, 33)
         Me.AutoManBtn.TabIndex = 62
-        Me.AutoManBtn.Text = "    AUTO"
+        Me.AutoManBtn.Text = "AUTO"
         Me.AutoManBtn.Visible = False
-        '
-        'LED
-        '
-        Me.LED.AutoSize = True
-        Me.LED.BackColor = System.Drawing.Color.Gainsboro
-        Me.LED.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
-        Me.LED.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.LED.Location = New System.Drawing.Point(990, 107)
-        Me.LED.Name = "LED"
-        Me.LED.Size = New System.Drawing.Size(18, 17)
-        Me.LED.TabIndex = 13
-        Me.LED.Text = "   "
-        Me.LED.Visible = False
         '
         'PictureBox3
         '
@@ -1530,7 +1516,6 @@ Partial Class MainWindow
         Me.ProgressBar1.BorderRadius = 24
         Me.ProgressBar1.GradientMode = System.Drawing.Drawing2D.LinearGradientMode.Horizontal
         Me.ProgressBar1.Location = New System.Drawing.Point(110, 175)
-        Me.ProgressBar1.Maximum = 20
         Me.ProgressBar1.Name = "ProgressBar1"
         Me.ProgressBar1.ProgressColor = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.ProgressBar1.ProgressColor2 = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
@@ -1546,7 +1531,6 @@ Partial Class MainWindow
         Me.ProgressBar2.BorderRadius = 24
         Me.ProgressBar2.GradientMode = System.Drawing.Drawing2D.LinearGradientMode.Horizontal
         Me.ProgressBar2.Location = New System.Drawing.Point(260, 175)
-        Me.ProgressBar2.Maximum = 20
         Me.ProgressBar2.Name = "ProgressBar2"
         Me.ProgressBar2.ProgressColor = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.ProgressBar2.ProgressColor2 = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
@@ -1562,7 +1546,6 @@ Partial Class MainWindow
         Me.ProgressBar3.BorderRadius = 24
         Me.ProgressBar3.GradientMode = System.Drawing.Drawing2D.LinearGradientMode.Horizontal
         Me.ProgressBar3.Location = New System.Drawing.Point(412, 175)
-        Me.ProgressBar3.Maximum = 30
         Me.ProgressBar3.Name = "ProgressBar3"
         Me.ProgressBar3.ProgressColor = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.ProgressBar3.ProgressColor2 = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
@@ -2950,6 +2933,7 @@ Partial Class MainWindow
         Me.Guna2TextBox1.AutoRoundedCorners = True
         Me.Guna2TextBox1.BorderColor = System.Drawing.Color.Gainsboro
         Me.Guna2TextBox1.BorderRadius = 8
+        Me.Guna2TextBox1.BorderThickness = 2
         Me.Guna2TextBox1.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.Guna2TextBox1.DefaultText = ""
         Me.Guna2TextBox1.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer))
@@ -2971,11 +2955,13 @@ Partial Class MainWindow
         Me.Guna2TextBox1.ShadowDecoration.Parent = Me.Guna2TextBox1
         Me.Guna2TextBox1.Size = New System.Drawing.Size(94, 18)
         Me.Guna2TextBox1.TabIndex = 248
+        Me.Guna2TextBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
         'Guna2TextBox2
         '
         Me.Guna2TextBox2.AutoRoundedCorners = True
         Me.Guna2TextBox2.BorderRadius = 8
+        Me.Guna2TextBox2.BorderThickness = 2
         Me.Guna2TextBox2.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.Guna2TextBox2.DefaultText = ""
         Me.Guna2TextBox2.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer))
@@ -2997,11 +2983,13 @@ Partial Class MainWindow
         Me.Guna2TextBox2.ShadowDecoration.Parent = Me.Guna2TextBox2
         Me.Guna2TextBox2.Size = New System.Drawing.Size(94, 18)
         Me.Guna2TextBox2.TabIndex = 249
+        Me.Guna2TextBox2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
         'Guna2TextBox3
         '
         Me.Guna2TextBox3.AutoRoundedCorners = True
         Me.Guna2TextBox3.BorderRadius = 8
+        Me.Guna2TextBox3.BorderThickness = 2
         Me.Guna2TextBox3.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.Guna2TextBox3.DefaultText = ""
         Me.Guna2TextBox3.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer))
@@ -3023,11 +3011,13 @@ Partial Class MainWindow
         Me.Guna2TextBox3.ShadowDecoration.Parent = Me.Guna2TextBox3
         Me.Guna2TextBox3.Size = New System.Drawing.Size(94, 18)
         Me.Guna2TextBox3.TabIndex = 251
+        Me.Guna2TextBox3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
         'Guna2TextBox4
         '
         Me.Guna2TextBox4.AutoRoundedCorners = True
         Me.Guna2TextBox4.BorderRadius = 8
+        Me.Guna2TextBox4.BorderThickness = 2
         Me.Guna2TextBox4.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.Guna2TextBox4.DefaultText = ""
         Me.Guna2TextBox4.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer))
@@ -3049,11 +3039,13 @@ Partial Class MainWindow
         Me.Guna2TextBox4.ShadowDecoration.Parent = Me.Guna2TextBox4
         Me.Guna2TextBox4.Size = New System.Drawing.Size(94, 18)
         Me.Guna2TextBox4.TabIndex = 250
+        Me.Guna2TextBox4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
         'Guna2TextBox5
         '
         Me.Guna2TextBox5.AutoRoundedCorners = True
         Me.Guna2TextBox5.BorderRadius = 8
+        Me.Guna2TextBox5.BorderThickness = 2
         Me.Guna2TextBox5.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.Guna2TextBox5.DefaultText = ""
         Me.Guna2TextBox5.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer))
@@ -3075,11 +3067,13 @@ Partial Class MainWindow
         Me.Guna2TextBox5.ShadowDecoration.Parent = Me.Guna2TextBox5
         Me.Guna2TextBox5.Size = New System.Drawing.Size(94, 18)
         Me.Guna2TextBox5.TabIndex = 255
+        Me.Guna2TextBox5.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
         'Guna2TextBox6
         '
         Me.Guna2TextBox6.AutoRoundedCorners = True
         Me.Guna2TextBox6.BorderRadius = 8
+        Me.Guna2TextBox6.BorderThickness = 2
         Me.Guna2TextBox6.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.Guna2TextBox6.DefaultText = ""
         Me.Guna2TextBox6.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer))
@@ -3101,11 +3095,13 @@ Partial Class MainWindow
         Me.Guna2TextBox6.ShadowDecoration.Parent = Me.Guna2TextBox6
         Me.Guna2TextBox6.Size = New System.Drawing.Size(94, 18)
         Me.Guna2TextBox6.TabIndex = 254
+        Me.Guna2TextBox6.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
         'Guna2TextBox7
         '
         Me.Guna2TextBox7.AutoRoundedCorners = True
         Me.Guna2TextBox7.BorderRadius = 8
+        Me.Guna2TextBox7.BorderThickness = 2
         Me.Guna2TextBox7.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.Guna2TextBox7.DefaultText = ""
         Me.Guna2TextBox7.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer))
@@ -3127,11 +3123,13 @@ Partial Class MainWindow
         Me.Guna2TextBox7.ShadowDecoration.Parent = Me.Guna2TextBox7
         Me.Guna2TextBox7.Size = New System.Drawing.Size(94, 18)
         Me.Guna2TextBox7.TabIndex = 253
+        Me.Guna2TextBox7.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
         'Guna2TextBox8
         '
         Me.Guna2TextBox8.AutoRoundedCorners = True
         Me.Guna2TextBox8.BorderRadius = 8
+        Me.Guna2TextBox8.BorderThickness = 2
         Me.Guna2TextBox8.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.Guna2TextBox8.DefaultText = ""
         Me.Guna2TextBox8.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer))
@@ -3153,11 +3151,13 @@ Partial Class MainWindow
         Me.Guna2TextBox8.ShadowDecoration.Parent = Me.Guna2TextBox8
         Me.Guna2TextBox8.Size = New System.Drawing.Size(94, 18)
         Me.Guna2TextBox8.TabIndex = 252
+        Me.Guna2TextBox8.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
         'Guna2TextBox9
         '
         Me.Guna2TextBox9.AutoRoundedCorners = True
         Me.Guna2TextBox9.BorderRadius = 8
+        Me.Guna2TextBox9.BorderThickness = 2
         Me.Guna2TextBox9.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.Guna2TextBox9.DefaultText = ""
         Me.Guna2TextBox9.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer))
@@ -3179,11 +3179,13 @@ Partial Class MainWindow
         Me.Guna2TextBox9.ShadowDecoration.Parent = Me.Guna2TextBox9
         Me.Guna2TextBox9.Size = New System.Drawing.Size(94, 18)
         Me.Guna2TextBox9.TabIndex = 263
+        Me.Guna2TextBox9.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
         'Guna2TextBox10
         '
         Me.Guna2TextBox10.AutoRoundedCorners = True
         Me.Guna2TextBox10.BorderRadius = 8
+        Me.Guna2TextBox10.BorderThickness = 2
         Me.Guna2TextBox10.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.Guna2TextBox10.DefaultText = ""
         Me.Guna2TextBox10.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer))
@@ -3205,11 +3207,13 @@ Partial Class MainWindow
         Me.Guna2TextBox10.ShadowDecoration.Parent = Me.Guna2TextBox10
         Me.Guna2TextBox10.Size = New System.Drawing.Size(94, 18)
         Me.Guna2TextBox10.TabIndex = 262
+        Me.Guna2TextBox10.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
         'Guna2TextBox11
         '
         Me.Guna2TextBox11.AutoRoundedCorners = True
         Me.Guna2TextBox11.BorderRadius = 8
+        Me.Guna2TextBox11.BorderThickness = 2
         Me.Guna2TextBox11.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.Guna2TextBox11.DefaultText = ""
         Me.Guna2TextBox11.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer))
@@ -3231,11 +3235,13 @@ Partial Class MainWindow
         Me.Guna2TextBox11.ShadowDecoration.Parent = Me.Guna2TextBox11
         Me.Guna2TextBox11.Size = New System.Drawing.Size(94, 18)
         Me.Guna2TextBox11.TabIndex = 261
+        Me.Guna2TextBox11.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
         'Guna2TextBox12
         '
         Me.Guna2TextBox12.AutoRoundedCorners = True
         Me.Guna2TextBox12.BorderRadius = 8
+        Me.Guna2TextBox12.BorderThickness = 2
         Me.Guna2TextBox12.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.Guna2TextBox12.DefaultText = ""
         Me.Guna2TextBox12.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer))
@@ -3257,11 +3263,13 @@ Partial Class MainWindow
         Me.Guna2TextBox12.ShadowDecoration.Parent = Me.Guna2TextBox12
         Me.Guna2TextBox12.Size = New System.Drawing.Size(94, 18)
         Me.Guna2TextBox12.TabIndex = 260
+        Me.Guna2TextBox12.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
         'Guna2TextBox13
         '
         Me.Guna2TextBox13.AutoRoundedCorners = True
         Me.Guna2TextBox13.BorderRadius = 8
+        Me.Guna2TextBox13.BorderThickness = 2
         Me.Guna2TextBox13.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.Guna2TextBox13.DefaultText = ""
         Me.Guna2TextBox13.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer))
@@ -3283,11 +3291,13 @@ Partial Class MainWindow
         Me.Guna2TextBox13.ShadowDecoration.Parent = Me.Guna2TextBox13
         Me.Guna2TextBox13.Size = New System.Drawing.Size(94, 18)
         Me.Guna2TextBox13.TabIndex = 259
+        Me.Guna2TextBox13.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
         'Guna2TextBox14
         '
         Me.Guna2TextBox14.AutoRoundedCorners = True
         Me.Guna2TextBox14.BorderRadius = 8
+        Me.Guna2TextBox14.BorderThickness = 2
         Me.Guna2TextBox14.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.Guna2TextBox14.DefaultText = ""
         Me.Guna2TextBox14.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer))
@@ -3309,11 +3319,13 @@ Partial Class MainWindow
         Me.Guna2TextBox14.ShadowDecoration.Parent = Me.Guna2TextBox14
         Me.Guna2TextBox14.Size = New System.Drawing.Size(94, 18)
         Me.Guna2TextBox14.TabIndex = 258
+        Me.Guna2TextBox14.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
         'Guna2TextBox15
         '
         Me.Guna2TextBox15.AutoRoundedCorners = True
         Me.Guna2TextBox15.BorderRadius = 8
+        Me.Guna2TextBox15.BorderThickness = 2
         Me.Guna2TextBox15.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.Guna2TextBox15.DefaultText = ""
         Me.Guna2TextBox15.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer))
@@ -3335,11 +3347,13 @@ Partial Class MainWindow
         Me.Guna2TextBox15.ShadowDecoration.Parent = Me.Guna2TextBox15
         Me.Guna2TextBox15.Size = New System.Drawing.Size(94, 18)
         Me.Guna2TextBox15.TabIndex = 257
+        Me.Guna2TextBox15.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
         'Guna2TextBox16
         '
         Me.Guna2TextBox16.AutoRoundedCorners = True
         Me.Guna2TextBox16.BorderRadius = 8
+        Me.Guna2TextBox16.BorderThickness = 2
         Me.Guna2TextBox16.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.Guna2TextBox16.DefaultText = ""
         Me.Guna2TextBox16.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer))
@@ -3361,6 +3375,7 @@ Partial Class MainWindow
         Me.Guna2TextBox16.ShadowDecoration.Parent = Me.Guna2TextBox16
         Me.Guna2TextBox16.Size = New System.Drawing.Size(94, 18)
         Me.Guna2TextBox16.TabIndex = 256
+        Me.Guna2TextBox16.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
         'Label21
         '
@@ -3514,7 +3529,6 @@ Partial Class MainWindow
         Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.Label1)
-        Me.Controls.Add(Me.LED)
         Me.Controls.Add(Me.RF_Label)
         Me.Controls.Add(Me.Line_Label3)
         Me.Controls.Add(Me.MFC_4_Label)
@@ -3699,7 +3713,6 @@ Partial Class MainWindow
     Friend WithEvents com_portBox As ComboBox
     Friend WithEvents Temp_Radial As Guna.UI2.WinForms.Guna2RadialGauge
     Friend WithEvents AutoManBtn As Guna.UI2.WinForms.Guna2Button
-    Friend WithEvents LED As Label
     Friend WithEvents PictureBox3 As PictureBox
     Friend WithEvents ProgressBar1 As Guna.UI2.WinForms.Guna2VProgressBar
     Friend WithEvents ProgressBar2 As Guna.UI2.WinForms.Guna2VProgressBar

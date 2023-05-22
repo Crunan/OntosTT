@@ -5,3 +5,35 @@
 *.sqlite
 *.json
 *.suo
+/.vs/OTT
+/.vs/OntosTT
+/My Project/Application.Designer.vb
+/My Project/Application.myapp
+/My Project/Resources.Designer.vb
+/My Project/Settings.Designer.vb
+/bin/Debug/app.publish
+*.application
+/bin/Debug/OTT_PLUS.exe
+/bin/Debug/OTT_PLUS.exe.config
+*.manifest
+/bin/Debug/OTT_PLUS.pdb
+*.dll
+*.xml
+*.lib
+*.vb
+/obj/Release/OntosTT.vbproj.AssemblyReference.cache
+/App.config
+/Form1.resx
+/OntosTT.vbproj.user
+/packages.config
+/bin/OTT_PLUS_EXE - V1.2.6 (Cascading Recipes Update).zip
+/obj/Debug/WindowsApplication1.MainWindow.resources
+/obj/Debug/OTT_PLUS.pdb
+/obj/Debug/OTT_PLUS.exe
+/obj/Debug/OntosTT.vbproj.SuggestedBindingRedirects.cache
+/obj/Debug/OntosTT.vbproj.GenerateResource.cache
+/obj/Debug/OntosTT.vbproj.FileListAbsolute.txt
+/obj/Debug/OntosTT.vbproj.CoreCompileInputs.cache
+/obj/Debug/OntosTT.vbproj.AssemblyReference.cache
+/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+/obj/Debug/DesignTimeResolveAssemblyReferences.cache
