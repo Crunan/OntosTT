@@ -227,6 +227,7 @@ Public Class MainWindow
     End Class
     Public Class ControlBoard
         Public LEDS As New LEDFactory()
+        Public displayStatus As Boolean
         Private _statusBits As Integer
         Private _statusBitsWas As Integer
         Private _abortLed As LED
@@ -255,6 +256,34 @@ Public Class MainWindow
                 Return _statusBitsWas
             End Get
         End Property
+        Private Sub ShowLEDS()
+            For Each LED In MainWindow.GUI_CTL_LEDS
+                LED.visible = True
+            Next
+            MainWindow.CTLStatusLabel.Visible = True
+        End Sub
+        Private Sub HideLEDS()
+            For Each LED In MainWindow.GUI_CTL_LEDS
+                LED.visible = False
+            Next
+            MainWindow.CTLStatusLabel.Visible = False
+        End Sub
+
+        Public Sub paintStripMenuDisplayStatus()
+            If displayStatus Then
+                MainWindow.ControllerStatusLEDSToolStripMenuItem.Text = "Controller Status LEDS: ON"
+                MainWindow.ControllerStatusLEDSToolStripMenuItem.BackColor = SystemColors.Highlight
+                ShowLEDS()
+            Else
+                MainWindow.ControllerStatusLEDSToolStripMenuItem.Text = "Controller Status LEDS: OFF"
+                MainWindow.ControllerStatusLEDSToolStripMenuItem.BackColor = SystemColors.Control
+                HideLEDS()
+            End If
+        End Sub
+        Public Sub ToggleDisplayStatus() '
+            displayStatus = Not displayStatus
+            paintStripMenuDisplayStatus()
+        End Sub
 
         Private Sub UpdatedLEDsFromStatusBits()
             For Each led As LED In LEDS.LedList
@@ -371,6 +400,7 @@ Public Class MainWindow
 
     Enum DoorAbortStates
         IDLE
+        DOOR_OPENED_NON_PROCESS
         DOORS_CLOSED
         WAIT_INITIALIZE
         GO_TO_LOAD
@@ -1054,6 +1084,7 @@ Public Class MainWindow
         StageButtons.Add(SetDiameterBtn)
         StageButtons.Add(RunScanBtn)
         StageButtons.Add(ClearAbortbtn)
+        StageButtons.Add(N2Purgebtn)
         'StageButtons.Add(AutoScanbtn)
 
         EnterButtons.Add(Set_MFC_1_Recipe_Button)
@@ -3482,6 +3513,10 @@ Public Class MainWindow
             element.enabled = False
         Next
 
+        For Each LED In GUI_CTL_LEDS
+            LED.visible = False
+        Next
+        CTLStatusLabel.Visible = False
         'Stage Controls Buttons
         SetDiameterBtn.Visible = False
         SetTwoSpotBtn.Visible = False
@@ -3503,7 +3538,9 @@ Public Class MainWindow
         'Cascading Recipes button
         BuildRecipeToolStripMenuItem.Visible = False
         StageTestToolStripMenuItem.Visible = False
+        ControllerStatusLEDSToolStripMenuItem.Visible = False
     End Sub
+
 
     Private Sub Engineer_Mode() 'Default size of Form 1024, 669
         'ENG Mode 
@@ -3535,6 +3572,9 @@ Public Class MainWindow
         For Each element In StageEnterButtons
             element.enabled = True
         Next
+
+
+
         If SMInitAxes.State = IASM_INITIALIZED Then
             SetTwoSpotBtn.Visible = True
             SetDiameterBtn.Visible = True
@@ -3560,19 +3600,25 @@ Public Class MainWindow
         'Cascading Recipes button
         BuildRecipeToolStripMenuItem.Visible = True
         StageTestToolStripMenuItem.Visible = True
+        ControllerStatusLEDSToolStripMenuItem.Visible = True
     End Sub
     Private Sub HandleDoorAbort()
         If DoorAbort.Active = True Then
             DoorAbort.State = DoorAbortStates.DOORS_CLOSED
+        ElseIf AxesStatus.b_DoorsOpen = True AndAlso DoorAbort.Active = False AndAlso Not CTL.isPlasmaActive() Then
+            DoorAbort.State = DoorAbortStates.DOOR_OPENED_NON_PROCESS
         End If
 
 
         Select Case DoorAbort.State
 
+            Case DoorAbortStates.DOOR_OPENED_NON_PROCESS
+                MsgBox("Door opened while stage was moving. Stage position has been lost, close the doors and click OK to initialize the stage and send stage to the Load position.", , "DOORS OPENED: STAGE MOVEMENT LOST")
+                DoorAbort.State = DoorAbortStates.DOORS_CLOSED
+
             Case DoorAbortStates.DOORS_CLOSED
                 If AxesStatus.b_DoorsOpen = False Then
                     DoorAbort.Active = False
-
                     SMScan.State = SCSM_IDLE
                     SMScan.SubState = SCSM_SUB_IDLE
                     StageTestSM.SetState(STSM_IDLE)
@@ -4495,4 +4541,7 @@ Public Class MainWindow
         StageTestSM.SetState(STSM_SHUTDOWN)
     End Sub
 
+    Private Sub ControllerStatusLEDSToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ControllerStatusLEDSToolStripMenuItem.Click
+        CTL.ToggleDisplayStatus()
+    End Sub
 End Class

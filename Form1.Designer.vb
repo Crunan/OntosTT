@@ -111,7 +111,6 @@ Partial Class MainWindow
         Me.RecipeButtonPins = New Guna.UI2.WinForms.Guna2Button()
         Me.Line_Label4 = New System.Windows.Forms.Label()
         Me.ActiveRecipeName = New System.Windows.Forms.TextBox()
-        Me.EXECUTE_RECIPE = New System.Windows.Forms.Label()
         Me.RF_Reflected_Label = New System.Windows.Forms.Label()
         Me.RF_Reflected_Radial = New Guna.UI2.WinForms.Guna2RadialGauge()
         Me.Watts2_Label = New System.Windows.Forms.Label()
@@ -178,7 +177,6 @@ Partial Class MainWindow
         Me.SetSpeedBtn = New Guna.UI2.WinForms.Guna2Button()
         Me.MB_Pos_Bar = New Guna.UI2.WinForms.Guna2RadialGauge()
         Me.Loaded_Progress_4 = New Guna.UI2.WinForms.Guna2VProgressBar()
-        Me.Label25 = New System.Windows.Forms.Label()
         Me.Label26 = New System.Windows.Forms.Label()
         Me.Label30 = New System.Windows.Forms.Label()
         Me.LabelLock = New System.Windows.Forms.Label()
@@ -221,8 +219,7 @@ Partial Class MainWindow
         Me.LaserSenseSquare = New System.Windows.Forms.Label()
         Me.ControllerLabel = New System.Windows.Forms.Label()
         Me.contollerONSquare = New System.Windows.Forms.Label()
-        Me.Label19 = New System.Windows.Forms.Label()
-        Me.Label20 = New System.Windows.Forms.Label()
+        Me.CTLStatusLabel = New System.Windows.Forms.Label()
         Me.Guna2TextBox1 = New Guna.UI2.WinForms.Guna2TextBox()
         Me.Guna2TextBox2 = New Guna.UI2.WinForms.Guna2TextBox()
         Me.Guna2TextBox3 = New Guna.UI2.WinForms.Guna2TextBox()
@@ -240,6 +237,7 @@ Partial Class MainWindow
         Me.Guna2TextBox15 = New Guna.UI2.WinForms.Guna2TextBox()
         Me.Guna2TextBox16 = New Guna.UI2.WinForms.Guna2TextBox()
         Me.Label21 = New System.Windows.Forms.Label()
+        Me.ControllerStatusLEDSToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuStrip1.SuspendLayout()
         CType(Me.MB_Left_Arrow, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.MB_Right_Arrow, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -453,7 +451,7 @@ Partial Class MainWindow
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
         Me.MenuStrip1.Name = "MenuStrip1"
         Me.MenuStrip1.Padding = New System.Windows.Forms.Padding(4, 2, 0, 2)
-        Me.MenuStrip1.Size = New System.Drawing.Size(1679, 48)
+        Me.MenuStrip1.Size = New System.Drawing.Size(1686, 48)
         Me.MenuStrip1.TabIndex = 22
         Me.MenuStrip1.Text = "MenuStrip1"
         '
@@ -563,7 +561,7 @@ Partial Class MainWindow
         '
         'ServiceToolStripMenuItem
         '
-        Me.ServiceToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.RestartAllToolStripMenuItem, Me.SetCTLToPLSimModeToolStripMenuItem, Me.MBScanToolStripMenuItem, Me.StageTestToolStripMenuItem, Me.EngineerModeToolStripMenuItem, Me.OperatorModeToolStripMenuItem})
+        Me.ServiceToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.RestartAllToolStripMenuItem, Me.SetCTLToPLSimModeToolStripMenuItem, Me.MBScanToolStripMenuItem, Me.StageTestToolStripMenuItem, Me.EngineerModeToolStripMenuItem, Me.OperatorModeToolStripMenuItem, Me.ControllerStatusLEDSToolStripMenuItem})
         Me.ServiceToolStripMenuItem.Name = "ServiceToolStripMenuItem"
         Me.ServiceToolStripMenuItem.Size = New System.Drawing.Size(118, 44)
         Me.ServiceToolStripMenuItem.Text = "Service"
@@ -1301,18 +1299,6 @@ Partial Class MainWindow
         Me.ActiveRecipeName.Text = "Active Recipe"
         Me.ActiveRecipeName.WordWrap = False
         '
-        'EXECUTE_RECIPE
-        '
-        Me.EXECUTE_RECIPE.AutoSize = True
-        Me.EXECUTE_RECIPE.BackColor = System.Drawing.Color.Gainsboro
-        Me.EXECUTE_RECIPE.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
-        Me.EXECUTE_RECIPE.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.EXECUTE_RECIPE.Location = New System.Drawing.Point(1905, 434)
-        Me.EXECUTE_RECIPE.Name = "EXECUTE_RECIPE"
-        Me.EXECUTE_RECIPE.Size = New System.Drawing.Size(18, 18)
-        Me.EXECUTE_RECIPE.TabIndex = 13
-        Me.EXECUTE_RECIPE.Text = "   "
-        '
         'RF_Reflected_Label
         '
         Me.RF_Reflected_Label.AutoSize = True
@@ -1997,7 +1983,7 @@ Partial Class MainWindow
         Me.PinsSquare.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.PinsSquare.Location = New System.Drawing.Point(1184, 215)
         Me.PinsSquare.Name = "PinsSquare"
-        Me.PinsSquare.Size = New System.Drawing.Size(18, 18)
+        Me.PinsSquare.Size = New System.Drawing.Size(19, 18)
         Me.PinsSquare.TabIndex = 146
         Me.PinsSquare.Text = "   "
         Me.PinsSquare.Visible = False
@@ -2317,16 +2303,6 @@ Partial Class MainWindow
         Me.Loaded_Progress_4.TabIndex = 84
         Me.Loaded_Progress_4.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SystemDefault
         Me.Loaded_Progress_4.UseTransparentBackground = True
-        '
-        'Label25
-        '
-        Me.Label25.AutoSize = True
-        Me.Label25.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label25.Location = New System.Drawing.Point(1374, 625)
-        Me.Label25.Name = "Label25"
-        Me.Label25.Size = New System.Drawing.Size(138, 20)
-        Me.Label25.TabIndex = 171
-        Me.Label25.Text = " `````````````````````````"
         '
         'Label26
         '
@@ -2649,7 +2625,7 @@ Partial Class MainWindow
         Me.ChuckVacSquare.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.ChuckVacSquare.Location = New System.Drawing.Point(1165, 360)
         Me.ChuckVacSquare.Name = "ChuckVacSquare"
-        Me.ChuckVacSquare.Size = New System.Drawing.Size(18, 18)
+        Me.ChuckVacSquare.Size = New System.Drawing.Size(19, 18)
         Me.ChuckVacSquare.TabIndex = 205
         Me.ChuckVacSquare.Text = "   "
         '
@@ -2672,7 +2648,7 @@ Partial Class MainWindow
         Me.AutoVacSquare.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.AutoVacSquare.Location = New System.Drawing.Point(1362, 216)
         Me.AutoVacSquare.Name = "AutoVacSquare"
-        Me.AutoVacSquare.Size = New System.Drawing.Size(18, 18)
+        Me.AutoVacSquare.Size = New System.Drawing.Size(19, 18)
         Me.AutoVacSquare.TabIndex = 46
         Me.AutoVacSquare.Text = "   "
         Me.AutoVacSquare.Visible = False
@@ -2693,7 +2669,7 @@ Partial Class MainWindow
         Me.DateTimeLabel1.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.DateTimeLabel1.Location = New System.Drawing.Point(1280, 15)
         Me.DateTimeLabel1.Name = "DateTimeLabel1"
-        Me.DateTimeLabel1.Size = New System.Drawing.Size(236, 16)
+        Me.DateTimeLabel1.Size = New System.Drawing.Size(237, 16)
         Me.DateTimeLabel1.TabIndex = 208
         Me.DateTimeLabel1.Text = "02:22 Wednesday, September 24 2020"
         '
@@ -2751,7 +2727,7 @@ Partial Class MainWindow
         Me.N2Purgelabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.N2Purgelabel.Location = New System.Drawing.Point(1362, 162)
         Me.N2Purgelabel.Name = "N2Purgelabel"
-        Me.N2Purgelabel.Size = New System.Drawing.Size(18, 18)
+        Me.N2Purgelabel.Size = New System.Drawing.Size(19, 18)
         Me.N2Purgelabel.TabIndex = 215
         Me.N2Purgelabel.Text = "   "
         Me.N2Purgelabel.Visible = False
@@ -2796,7 +2772,7 @@ Partial Class MainWindow
         Me.N2PurgeSquare.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.N2PurgeSquare.Location = New System.Drawing.Point(1281, 360)
         Me.N2PurgeSquare.Name = "N2PurgeSquare"
-        Me.N2PurgeSquare.Size = New System.Drawing.Size(18, 18)
+        Me.N2PurgeSquare.Size = New System.Drawing.Size(19, 18)
         Me.N2PurgeSquare.TabIndex = 216
         Me.N2PurgeSquare.Text = "   "
         '
@@ -2877,7 +2853,7 @@ Partial Class MainWindow
         Me.LaserSenseSquare.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.LaserSenseSquare.Location = New System.Drawing.Point(1394, 360)
         Me.LaserSenseSquare.Name = "LaserSenseSquare"
-        Me.LaserSenseSquare.Size = New System.Drawing.Size(18, 18)
+        Me.LaserSenseSquare.Size = New System.Drawing.Size(19, 18)
         Me.LaserSenseSquare.TabIndex = 224
         Me.LaserSenseSquare.Text = "   "
         '
@@ -2900,33 +2876,20 @@ Partial Class MainWindow
         Me.contollerONSquare.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.contollerONSquare.Location = New System.Drawing.Point(1281, 387)
         Me.contollerONSquare.Name = "contollerONSquare"
-        Me.contollerONSquare.Size = New System.Drawing.Size(18, 18)
+        Me.contollerONSquare.Size = New System.Drawing.Size(19, 18)
         Me.contollerONSquare.TabIndex = 228
         Me.contollerONSquare.Text = "   "
         '
-        'Label19
+        'CTLStatusLabel
         '
-        Me.Label19.AutoSize = True
-        Me.Label19.BackColor = System.Drawing.Color.White
-        Me.Label19.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.Label19.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!)
-        Me.Label19.Location = New System.Drawing.Point(1554, 112)
-        Me.Label19.MaximumSize = New System.Drawing.Size(1020, 2)
-        Me.Label19.MinimumSize = New System.Drawing.Size(2, 505)
-        Me.Label19.Name = "Label19"
-        Me.Label19.Size = New System.Drawing.Size(2, 505)
-        Me.Label19.TabIndex = 230
-        Me.Label19.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-        '
-        'Label20
-        '
-        Me.Label20.AutoSize = True
-        Me.Label20.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label20.Location = New System.Drawing.Point(1562, 116)
-        Me.Label20.Name = "Label20"
-        Me.Label20.Size = New System.Drawing.Size(89, 20)
-        Me.Label20.TabIndex = 231
-        Me.Label20.Text = "CTL Status"
+        Me.CTLStatusLabel.AutoSize = True
+        Me.CTLStatusLabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.CTLStatusLabel.Location = New System.Drawing.Point(1562, 116)
+        Me.CTLStatusLabel.Name = "CTLStatusLabel"
+        Me.CTLStatusLabel.Size = New System.Drawing.Size(89, 20)
+        Me.CTLStatusLabel.TabIndex = 231
+        Me.CTLStatusLabel.Text = "CTL Status"
+        Me.CTLStatusLabel.Visible = False
         '
         'Guna2TextBox1
         '
@@ -2956,6 +2919,7 @@ Partial Class MainWindow
         Me.Guna2TextBox1.Size = New System.Drawing.Size(94, 18)
         Me.Guna2TextBox1.TabIndex = 248
         Me.Guna2TextBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me.Guna2TextBox1.Visible = False
         '
         'Guna2TextBox2
         '
@@ -2984,6 +2948,7 @@ Partial Class MainWindow
         Me.Guna2TextBox2.Size = New System.Drawing.Size(94, 18)
         Me.Guna2TextBox2.TabIndex = 249
         Me.Guna2TextBox2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me.Guna2TextBox2.Visible = False
         '
         'Guna2TextBox3
         '
@@ -3012,6 +2977,7 @@ Partial Class MainWindow
         Me.Guna2TextBox3.Size = New System.Drawing.Size(94, 18)
         Me.Guna2TextBox3.TabIndex = 251
         Me.Guna2TextBox3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me.Guna2TextBox3.Visible = False
         '
         'Guna2TextBox4
         '
@@ -3040,6 +3006,7 @@ Partial Class MainWindow
         Me.Guna2TextBox4.Size = New System.Drawing.Size(94, 18)
         Me.Guna2TextBox4.TabIndex = 250
         Me.Guna2TextBox4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me.Guna2TextBox4.Visible = False
         '
         'Guna2TextBox5
         '
@@ -3068,6 +3035,7 @@ Partial Class MainWindow
         Me.Guna2TextBox5.Size = New System.Drawing.Size(94, 18)
         Me.Guna2TextBox5.TabIndex = 255
         Me.Guna2TextBox5.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me.Guna2TextBox5.Visible = False
         '
         'Guna2TextBox6
         '
@@ -3096,6 +3064,7 @@ Partial Class MainWindow
         Me.Guna2TextBox6.Size = New System.Drawing.Size(94, 18)
         Me.Guna2TextBox6.TabIndex = 254
         Me.Guna2TextBox6.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me.Guna2TextBox6.Visible = False
         '
         'Guna2TextBox7
         '
@@ -3124,6 +3093,7 @@ Partial Class MainWindow
         Me.Guna2TextBox7.Size = New System.Drawing.Size(94, 18)
         Me.Guna2TextBox7.TabIndex = 253
         Me.Guna2TextBox7.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me.Guna2TextBox7.Visible = False
         '
         'Guna2TextBox8
         '
@@ -3152,6 +3122,7 @@ Partial Class MainWindow
         Me.Guna2TextBox8.Size = New System.Drawing.Size(94, 18)
         Me.Guna2TextBox8.TabIndex = 252
         Me.Guna2TextBox8.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me.Guna2TextBox8.Visible = False
         '
         'Guna2TextBox9
         '
@@ -3180,6 +3151,7 @@ Partial Class MainWindow
         Me.Guna2TextBox9.Size = New System.Drawing.Size(94, 18)
         Me.Guna2TextBox9.TabIndex = 263
         Me.Guna2TextBox9.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me.Guna2TextBox9.Visible = False
         '
         'Guna2TextBox10
         '
@@ -3208,6 +3180,7 @@ Partial Class MainWindow
         Me.Guna2TextBox10.Size = New System.Drawing.Size(94, 18)
         Me.Guna2TextBox10.TabIndex = 262
         Me.Guna2TextBox10.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me.Guna2TextBox10.Visible = False
         '
         'Guna2TextBox11
         '
@@ -3236,6 +3209,7 @@ Partial Class MainWindow
         Me.Guna2TextBox11.Size = New System.Drawing.Size(94, 18)
         Me.Guna2TextBox11.TabIndex = 261
         Me.Guna2TextBox11.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me.Guna2TextBox11.Visible = False
         '
         'Guna2TextBox12
         '
@@ -3264,6 +3238,7 @@ Partial Class MainWindow
         Me.Guna2TextBox12.Size = New System.Drawing.Size(94, 18)
         Me.Guna2TextBox12.TabIndex = 260
         Me.Guna2TextBox12.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me.Guna2TextBox12.Visible = False
         '
         'Guna2TextBox13
         '
@@ -3292,6 +3267,7 @@ Partial Class MainWindow
         Me.Guna2TextBox13.Size = New System.Drawing.Size(94, 18)
         Me.Guna2TextBox13.TabIndex = 259
         Me.Guna2TextBox13.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me.Guna2TextBox13.Visible = False
         '
         'Guna2TextBox14
         '
@@ -3320,6 +3296,7 @@ Partial Class MainWindow
         Me.Guna2TextBox14.Size = New System.Drawing.Size(94, 18)
         Me.Guna2TextBox14.TabIndex = 258
         Me.Guna2TextBox14.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me.Guna2TextBox14.Visible = False
         '
         'Guna2TextBox15
         '
@@ -3348,6 +3325,7 @@ Partial Class MainWindow
         Me.Guna2TextBox15.Size = New System.Drawing.Size(94, 18)
         Me.Guna2TextBox15.TabIndex = 257
         Me.Guna2TextBox15.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me.Guna2TextBox15.Visible = False
         '
         'Guna2TextBox16
         '
@@ -3376,6 +3354,7 @@ Partial Class MainWindow
         Me.Guna2TextBox16.Size = New System.Drawing.Size(94, 18)
         Me.Guna2TextBox16.TabIndex = 256
         Me.Guna2TextBox16.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me.Guna2TextBox16.Visible = False
         '
         'Label21
         '
@@ -3390,13 +3369,20 @@ Partial Class MainWindow
         Me.Label21.TabIndex = 264
         Me.Label21.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
+        'ControllerStatusLEDSToolStripMenuItem
+        '
+        Me.ControllerStatusLEDSToolStripMenuItem.Name = "ControllerStatusLEDSToolStripMenuItem"
+        Me.ControllerStatusLEDSToolStripMenuItem.Size = New System.Drawing.Size(442, 44)
+        Me.ControllerStatusLEDSToolStripMenuItem.Text = "Controller Status LEDS: OFF"
+        Me.ControllerStatusLEDSToolStripMenuItem.Visible = False
+        '
         'MainWindow
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.White
         Me.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
-        Me.ClientSize = New System.Drawing.Size(1679, 857)
+        Me.ClientSize = New System.Drawing.Size(1686, 857)
         Me.ControlBox = False
         Me.Controls.Add(Me.Label21)
         Me.Controls.Add(Me.Guna2TextBox9)
@@ -3415,8 +3401,7 @@ Partial Class MainWindow
         Me.Controls.Add(Me.Guna2TextBox4)
         Me.Controls.Add(Me.Guna2TextBox2)
         Me.Controls.Add(Me.Guna2TextBox1)
-        Me.Controls.Add(Me.Label20)
-        Me.Controls.Add(Me.Label19)
+        Me.Controls.Add(Me.CTLStatusLabel)
         Me.Controls.Add(Me.ControllerLabel)
         Me.Controls.Add(Me.contollerONSquare)
         Me.Controls.Add(Me.Label17)
@@ -3459,7 +3444,6 @@ Partial Class MainWindow
         Me.Controls.Add(Me.LabelLock)
         Me.Controls.Add(Me.Label30)
         Me.Controls.Add(Me.Label26)
-        Me.Controls.Add(Me.Label25)
         Me.Controls.Add(Me.MB_Right_Arrow)
         Me.Controls.Add(Me.PH_Temp_Label)
         Me.Controls.Add(Me.Com_Port_Label)
@@ -3522,7 +3506,6 @@ Partial Class MainWindow
         Me.Controls.Add(Me.RF_Reflected_Label)
         Me.Controls.Add(Me.ActiveRecipeName)
         Me.Controls.Add(Me.Line_Label4)
-        Me.Controls.Add(Me.EXECUTE_RECIPE)
         Me.Controls.Add(Me.Label4)
         Me.Controls.Add(Me.RecipeButtonPins)
         Me.Controls.Add(Me.RunScanBtn)
@@ -3701,7 +3684,6 @@ Partial Class MainWindow
     Friend WithEvents Label4 As Label
     Friend WithEvents Line_Label4 As Label
     Public WithEvents ActiveRecipeName As TextBox
-    Friend WithEvents EXECUTE_RECIPE As Label
     Friend WithEvents RF_Reflected_Label As Label
     Friend WithEvents RF_Reflected_Radial As Guna.UI2.WinForms.Guna2RadialGauge
     Friend WithEvents Tuner_Label As Label
@@ -3772,7 +3754,6 @@ Partial Class MainWindow
     Friend WithEvents SetCyclesBtn As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents MB_Pos_Bar As Guna.UI2.WinForms.Guna2RadialGauge
     Friend WithEvents Loaded_Progress_4 As Guna.UI2.WinForms.Guna2VProgressBar
-    Friend WithEvents Label25 As Label
     Friend WithEvents Label26 As Label
     Friend WithEvents Label30 As Label
     Friend WithEvents LabelLock As Label
@@ -3824,8 +3805,7 @@ Partial Class MainWindow
     Friend WithEvents StopToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents DetailedLogToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents TestZToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents Label19 As Label
-    Friend WithEvents Label20 As Label
+    Friend WithEvents CTLStatusLabel As Label
     Friend WithEvents Guna2TextBox1 As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents Guna2TextBox2 As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents Guna2TextBox3 As Guna.UI2.WinForms.Guna2TextBox
@@ -3843,4 +3823,5 @@ Partial Class MainWindow
     Friend WithEvents Guna2TextBox15 As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents Guna2TextBox16 As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents Label21 As Label
+    Friend WithEvents ControllerStatusLEDSToolStripMenuItem As ToolStripMenuItem
 End Class
