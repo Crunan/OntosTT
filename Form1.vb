@@ -195,8 +195,8 @@ Public Class MainWindow
 
     Public Class LEDFactory
         Private _ledList As New List(Of LED)()
-        'Used to associate GUI objects with each LED
         Private _ledGuiObjects As New List(Of Guna2TextBox)()
+        'Used to associate GUI objects with each LED
         Private _lastCreatedLedIndex As Integer = -1 ' Variable to keep track of the index of the last created LED
         Public ReadOnly Property LedList As List(Of LED)
             Get
@@ -209,33 +209,16 @@ Public Class MainWindow
             Dim led As LED = New LED(name)
             _ledList.Add(led)
             _lastCreatedLedIndex = _ledList.Count - 1 'update the index of the last created LED 
-            AssociateLEDsWithGUIObject()
-            SetGuiLedText()
-        End Sub
-        Public Sub AssociateLEDsWithGUIObject()
-            MainWindow.GUI_CTL_LEDS(i + 1)
-            _ledGuiObjects.Add(guiObject)
-            End If
-            Next
-        End Sub
-
-        Public Sub SetGuiLedText()
-            If _lastCreatedLedIndex >= 0 AndAlso _lastCreatedLedIndex < _ledGuiObjects.Count Then
-                Dim led As LED = _ledList(_lastCreatedLedIndex)
-                Dim guiObject As Guna2TextBox = _ledGuiObjects(_lastCreatedLedIndex)
-                guiObject.Text = led.Name
-            End If
+            MainWindow.GUI_CTL_LEDS(_ledList.Count).Text = led.Name
         End Sub
         Public Sub SetGuiLedColor()
             For i As Integer = 0 To _ledList.Count - 1
-                If i < _ledGuiObjects.Count Then
+                If i < MainWindow.GUI_CTL_LEDS.Count Then
                     Dim led As LED = _ledList(i)
-                    Dim guiObject As Guna2TextBox = _ledGuiObjects(i)
-
                     If led.IsOn() Then
-                        guiObject.BorderColor = Color.Lime
+                        MainWindow.GUI_CTL_LEDS(i + 1).BorderColor = Color.Lime
                     Else
-                        guiObject.BorderColor = Color.Gainsboro
+                        MainWindow.GUI_CTL_LEDS(i + 1).BorderColor = Color.Gainsboro
                     End If
                 End If
             Next
@@ -385,6 +368,41 @@ Public Class MainWindow
         Dim State As Integer
     End Structure
     Dim CLaser As CLASERSM
+
+    Enum DoorAbortStates
+        IDLE
+        DOORS_CLOSED
+        WAIT_INITIALIZE
+        GO_TO_LOAD
+    End Enum
+
+    Structure DoorAbortHandler
+        Private _state As DoorAbortStates
+        Private _active As Boolean
+
+        Public Sub New(state As DoorAbortStates, active As Boolean)
+            _state = state
+            _active = active
+        End Sub
+        Public Property State As DoorAbortStates
+            Get
+                Return _state
+            End Get
+            Set(value As DoorAbortStates)
+                _state = value
+            End Set
+        End Property
+
+        Public Property Active As Boolean
+            Get
+                Return _active
+            End Get
+            Set(value As Boolean)
+                _active = value
+            End Set
+        End Property
+    End Structure
+    Dim DoorAbort As New DoorAbortHandler(DoorAbortStates.IDLE, False)
 
     Const CLSM_IDLE = 0
     Const CLSM_TRIPPED = 1 'Laser COLLISION DETECTED
@@ -769,7 +787,7 @@ Public Class MainWindow
     Const AC_NO_GAS_4 = &H6
     Const AC_BAD_HELIUM = &H7
     Const AC_ESTOP = &H8
-    Const AC_NO_RS485 = &H9
+    Const AC_DOORS_OPEN = &H9
     Const AC_PWR_FWD_LOW = &HA
     Const AC_OVER_TEMP = &HB
 
@@ -1035,6 +1053,7 @@ Public Class MainWindow
         StageButtons.Add(SetTwoSpotBtn)
         StageButtons.Add(SetDiameterBtn)
         StageButtons.Add(RunScanBtn)
+        StageButtons.Add(ClearAbortbtn)
         'StageButtons.Add(AutoScanbtn)
 
         EnterButtons.Add(Set_MFC_1_Recipe_Button)
@@ -1132,6 +1151,7 @@ Public Class MainWindow
             SM_State = STARTUP
             'start up the log file
             OpenLogFile()
+
 
             'Set the Dropdown to have the known port 
             com_portBox.Items.Add(st_KnownComPort)
@@ -1592,6 +1612,7 @@ Public Class MainWindow
                     CollisionLaser() 'run the Collision Laser System state machine
                     RunHomeAxesSM() 'run Home Axes state machine
                     SetLightTower() 'run the Light Tower state machine
+                    HandleDoorAbort() 'run the Door Abort state machine
 
                 End If
 
@@ -2100,9 +2121,12 @@ Public Class MainWindow
             End If
         End If
 
+
+
         WriteCommand("$91%", 4) 'GET_STATUS    $91% ; resp[!91LLRR#] LL = left LEDS, RR = right LEDS
         ResponseLen = ReadResponse(0)
         If ResponseLen < 50 Then Return 'EMMETT.. this happens sometimes FIX IT!
+
 
         st_RCV = st_RCV.Substring(3) 'lop off the first three chars
         If st_CTLPCBStatus <> st_RCV Then 'only write log line if status has changed
@@ -2510,6 +2534,15 @@ Public Class MainWindow
 
         Return DecStr
     End Function
+    'UPdateStatus bit patterns =>
+    'LED_GAS_1        0 //VBWord bit 8    &H0100
+    'LED_GAS_2        1 //VBWord bit 9    &H0200
+    'LED_GAS_3        2 //VBWord bit 10   &H0400
+    'LED_GAS_4        3 //VBWord bit 11   &H0800
+    'LED_VLV_5        4 //VBWord bit 12   &H1000 - R12 (not used here)
+    'LED_VLV_6        5 //VBWord bit 13   &H2000 - R12 (not used here)
+    'LED_VLV_7        6 //VBWord bit 14   &H4000
+    'LED_RF_EN        7 //VBWord bit 15   &H8000
 
 
     Private Sub PublishAbortCode()
@@ -2575,9 +2608,11 @@ Public Class MainWindow
                     b_ClearAbort = True
                     AC_CODE.Visible = True
                     ClearAbortbtn.Visible = True
-                Case AC_NO_RS485
-                    AC_CODE.Text = "MFC Comms Down"
-                    WriteLogLine("MFC Comms Down")
+                Case AC_DOORS_OPEN
+                    AC_CODE.Text = "ABORT: DOOR OPENED"
+                    MsgBox("Door opened during processing. Stage position has been lost, click OK to initialize the stage. Then Acknowledge the abort to send stage to the Load position.", , "PROCESS ABORT: DOORS OPENED")
+                    WriteLogLine("ABORT: DOOR OPEN")
+                    DoorAbort.Active = True
                     b_ClearAbort = True
                     AC_CODE.Visible = True
                     ClearAbortbtn.Visible = True
@@ -2650,9 +2685,10 @@ Public Class MainWindow
                     st_KnownComPort = Exe_Cfg.KNOWN_COM_PORT
 
                 Case "LED1", "LED2", "LED3", "LED4", "LED5", "LED6", "LED7", "LED8", "LED9", "LED10", "LED11", "LED12", "LED13", "LED14", "LED15", "LED16"
-                    CTL.LEDS.CreateLED(ExeConfigParamName)
+                    CTL.LEDS.CreateLED(ExeConfigParamValue)
                 Case Else
             End Select
+
         Next
 
     End Sub
@@ -3525,6 +3561,43 @@ Public Class MainWindow
         BuildRecipeToolStripMenuItem.Visible = True
         StageTestToolStripMenuItem.Visible = True
     End Sub
+    Private Sub HandleDoorAbort()
+        If DoorAbort.Active = True Then
+            DoorAbort.State = DoorAbortStates.DOORS_CLOSED
+        End If
+
+
+        Select Case DoorAbort.State
+
+            Case DoorAbortStates.DOORS_CLOSED
+                If AxesStatus.b_DoorsOpen = False Then
+                    DoorAbort.Active = False
+
+                    SMScan.State = SCSM_IDLE
+                    SMScan.SubState = SCSM_SUB_IDLE
+                    StageTestSM.SetState(STSM_IDLE)
+                    SMHomeAxes.State = HASM_IDLE
+                    SMTwoSpot.State = TSSM_IDLE
+                    SMInitAxes.State = IASM_START_UP
+                    DoorAbort.State = DoorAbortStates.WAIT_INITIALIZE
+                End If
+
+            Case DoorAbortStates.WAIT_INITIALIZE
+                If SMInitAxes.State = IASM_INITIALIZED Then
+                    DoorAbort.State = DoorAbortStates.GO_TO_LOAD
+                End If
+
+            Case DoorAbortStates.GO_TO_LOAD
+                If b_ClearAbort = False Then
+                    SMHomeAxes.State = HASM_START
+                    DoorAbort.State = DoorAbortStates.IDLE
+                End If
+
+            Case DoorAbortStates.IDLE
+                'DO NOTHING
+        End Select
+
+    End Sub
 
     Private Sub CollisionLaser()
         Dim ResponseLen As Integer
@@ -3810,7 +3883,10 @@ Public Class MainWindow
                         SetTwoSpotBtn.Visible = True
                         SetDiameterBtn.Visible = True
                     End If
+
+
                 End If
+
             Case IASM_IDLE
                 'do nothing
             Case IASM_INITIALIZED
@@ -3826,26 +3902,29 @@ Public Class MainWindow
         Select Case SMHomeAxes.State
 
             Case HASM_START 'Start by parking Z in a safe position to move
-                RunScanBtn.Visible = False
-                SetTwoSpotBtn.Visible = False
-                SetDiameterBtn.Visible = False
-                HomeAxesBtn.Text = "STOP"
+                If AxesStatus.b_XYZSameState = True And AxesStatus.XState >= ASM_IDLE Then
+                    RunScanBtn.Visible = False
+                    SetTwoSpotBtn.Visible = False
+                    SetDiameterBtn.Visible = False
+                    HomeAxesBtn.Text = "STOP"
+
+                    PinsSquare.BackColor = Color.Gainsboro
+                    b_HasPins = False 'This is so the first time the button is hit, the button will bury the pins
+
+                    WriteLogLine("Homing Start")
+                    CurrentStepTxtBox.Text = "Homing Start"
+                    st_Command = "$B402" & Param.db_Z_Max_Speed.ToString("F") & "%"
+                    WriteCommand(st_Command, st_Command.Length) 'SET_SPEED  $B40xss.ss%; resp [!B40xss.ss#] 0x = axis number, ss.ss = mm/sec (float)
+                    ResponseLen = ReadResponse(0)
+                    db_ZParkPos = CoordParam.db_ZPinsBuriedPos '20200123
+                    st_Command = "$B602" & db_ZParkPos.ToString("F") & "%"
+                    WriteCommand(st_Command, st_Command.Length) 'ABS_MOVE $B60xaa.aa%; resp [!B60xaa.aa#] 0x = axis num, aa.aa = destination in mm (float)
+                    ResponseLen = ReadResponse(0)
+                    WriteLogLine("Move Z Speed: " & Param.db_Z_Max_Speed.ToString("F") & " /sec " & "to " & db_ZParkPos.ToString("F"))
 
 
-                WriteLogLine("Homing Start")
-                CurrentStepTxtBox.Text = "Homing Start"
-                st_Command = "$B402" & Param.db_Z_Max_Speed.ToString("F") & "%"
-                WriteCommand(st_Command, st_Command.Length) 'SET_SPEED  $B40xss.ss%; resp [!B40xss.ss#] 0x = axis number, ss.ss = mm/sec (float)
-                ResponseLen = ReadResponse(0)
-                db_ZParkPos = CoordParam.db_ZPinsBuriedPos '20200123
-                st_Command = "$B602" & db_ZParkPos.ToString("F") & "%"
-                WriteCommand(st_Command, st_Command.Length) 'ABS_MOVE $B60xaa.aa%; resp [!B60xaa.aa#] 0x = axis num, aa.aa = destination in mm (float)
-                ResponseLen = ReadResponse(0)
-                WriteLogLine("Move Z Speed: " & Param.db_Z_Max_Speed.ToString("F") & " /sec " & "to " & db_ZParkPos.ToString("F"))
-
-
-                SMHomeAxes.State = HASM_WAIT_PARK_Z
-
+                    SMHomeAxes.State = HASM_WAIT_PARK_Z
+                End If
             Case HASM_WAIT_PARK_Z 'wait until Z is parked
                 If AxesStatus.b_XYZSameState = True And AxesStatus.XState >= ASM_IDLE Then
                     SMHomeAxes.State = HASM_HOME_XY
