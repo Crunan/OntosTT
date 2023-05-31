@@ -628,9 +628,10 @@ Public Class MainWindow
     End Structure
     Dim SMInitAxes As INITAXESSTATEMACHINE
     Const IASM_IDLE = 0
-    Const IASM_START_UP = 1
-    Const IASM_WAIT_FOR_DONE = 2
-    Const IASM_INITIALIZED = 3
+    Const IASM_INITIALIZED = 1
+    Const IASM_START_UP = 2
+    Const IASM_WAIT_FOR_DONE = 3
+
 
     Structure HOMEAXESSTATEMACHINE
         Dim State As Integer
@@ -3602,10 +3603,25 @@ Public Class MainWindow
         StageTestToolStripMenuItem.Visible = True
         ControllerStatusLEDSToolStripMenuItem.Visible = True
     End Sub
+    Public Function isAnyAxisStateMachinesActive() As Boolean
+        If SMInitAxes.State > 1 Then
+            Return True
+        ElseIf SMHomeAxes.State > 0 Then
+            Return True
+        ElseIf SMScan.State > 0 Then
+            Return True
+        ElseIf SMTwoSpot.State > 0 Then
+            Return True
+        ElseIf SMCollisionPass.State > 0 Then
+            Return True
+        Else
+            Return False
+        End If
+    End Function
     Private Sub HandleDoorAbort()
         If DoorAbort.Active = True Then
             DoorAbort.State = DoorAbortStates.DOORS_CLOSED
-        ElseIf AxesStatus.b_DoorsOpen = True AndAlso DoorAbort.Active = False AndAlso Not CTL.isPlasmaActive() Then
+        ElseIf AxesStatus.b_DoorsOpen = True AndAlso isAnyAxisStateMachinesActive() Then
             DoorAbort.State = DoorAbortStates.DOOR_OPENED_NON_PROCESS
         End If
 
@@ -3618,6 +3634,7 @@ Public Class MainWindow
 
             Case DoorAbortStates.DOORS_CLOSED
                 If AxesStatus.b_DoorsOpen = False Then
+                    WriteLogLine("Stage position lost : doors opened.")
                     DoorAbort.Active = False
                     SMScan.State = SCSM_IDLE
                     SMScan.SubState = SCSM_SUB_IDLE
