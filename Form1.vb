@@ -787,6 +787,7 @@ Public Class MainWindow
     Dim StageButtons As New Collection
     Dim StageEnterButtons As New Collection
     Dim MFCProgressValue As New Collection
+    Dim MFCLoadedProgressValue As New Collection
     Dim MFCActualFlow As New Collection
     Dim MFCRecipeFlow As New Collection
     Dim MFCLoadedFlow As New Collection
@@ -1072,10 +1073,11 @@ Public Class MainWindow
         MFCProgressValue.Add(ProgressBar2)
         MFCProgressValue.Add(ProgressBar3)
         MFCProgressValue.Add(ProgressBar4)
-        MFCProgressValue.Add(Loaded_Progress_1)
-        MFCProgressValue.Add(Loaded_Progress_2)
-        MFCProgressValue.Add(Loaded_Progress_3)
-        MFCProgressValue.Add(Loaded_Progress_4)
+
+        MFCLoadedProgressValue.Add(Loaded_Progress_1)
+        MFCLoadedProgressValue.Add(Loaded_Progress_2)
+        MFCLoadedProgressValue.Add(Loaded_Progress_3)
+        MFCLoadedProgressValue.Add(Loaded_Progress_4)
 
         StageButtons.Add(Vacbtn)
         StageButtons.Add(RecipeButtonPins)
@@ -1350,8 +1352,8 @@ Public Class MainWindow
         If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
             If StrVar = "" Or StrVar.Length > 6 Then Return
             DoubVal = Convert.ToDouble(StrVar) 'Convert the string value to a floating point
-            If DoubVal > MFC(1).db_Range Or DoubVal < 0 Then Return
-            Loaded_Progress_1.Value = CInt(DoubVal * 100)
+            If DoubVal > MFC(1).GetRange() Or DoubVal < 0 Then Return
+            SetGUILoadProgressBars(1, DoubVal)
             MFCRecipeFlow(1).Text = DoubVal.ToString("F")
             MFC(1).b_MFCLoadRecipeFlow = True
         Else
@@ -1368,8 +1370,8 @@ Public Class MainWindow
         If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
             If StrVar = "" Or StrVar.Length > 6 Then Return
             DoubVal = Convert.ToDouble(StrVar) 'Convert the string value to a floating point
-            If DoubVal > MFC(2).db_Range Or DoubVal < 0 Then Return
-            Loaded_Progress_2.Value = CInt(DoubVal * 100)
+            If DoubVal > MFC(2).GetRange() Or DoubVal < 0 Then Return
+            SetGUILoadProgressBars(2, DoubVal)
             MFCRecipeFlow(2).Text = DoubVal.ToString("F")
             MFC(2).b_MFCLoadRecipeFlow = True
         Else
@@ -1386,8 +1388,8 @@ Public Class MainWindow
         If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
             If StrVar = "" Or StrVar.Length > 5 Then Return
             DoubVal = Convert.ToDouble(StrVar) 'Convert the string value to a floating point
-            If DoubVal > MFC(3).db_Range Or DoubVal < 0 Then Return
-            Loaded_Progress_3.Value = CInt(DoubVal * 100)
+            If DoubVal > MFC(3).GetRange() Or DoubVal < 0 Then Return
+            SetGUILoadProgressBars(3, DoubVal)
             MFCRecipeFlow(3).Text = DoubVal.ToString("F3")
             MFC(3).b_MFCLoadRecipeFlow = True
         Else
@@ -1404,8 +1406,8 @@ Public Class MainWindow
         If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
             If StrVar = "" Or StrVar.Length > 5 Then Return
             DoubVal = Convert.ToDouble(StrVar) 'Convert the string value to a floating point
-            If DoubVal > MFC(4).db_Range Or DoubVal < 0 Then Return
-            Loaded_Progress_4.Value = CInt(DoubVal * 100)
+            If DoubVal > MFC(4).GetRange() Or DoubVal < 0 Then Return
+            SetGUILoadProgressBars(4, DoubVal)
             MFCRecipeFlow(4).Text = DoubVal.ToString("F3")
             MFC(4).b_MFCLoadRecipeFlow = True
         Else
@@ -1716,11 +1718,6 @@ Public Class MainWindow
             End If
         End If
 
-        'Get Set Temp
-        'WriteCommand("$CF%", 4) '$CF% resp [!CFtt.t#] where tt.t Is the target temperature
-        'ResponseLen = ReadResponse(0)
-        'CurrentStepTxtBox.Text = st_RCV.Substring(3,4)
-
         'This is for Batch Logging systems only
         WriteCommand("$2A011%", 7) 'GET BatchIDLogging $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
         ResponseLen = ReadResponse(0)
@@ -1734,6 +1731,22 @@ Public Class MainWindow
                 b_togglebatchIDLogging = True 'this is the flag to set Batch ID on/off 
             End If
         End If
+
+        For Index = 1 To NumMFC
+            WriteCommand("$85" & CMDIndex(Index), 6) 'GET_MFC_RANGE $850m% 1<=m<=4; resp[!850xxx.yy#]
+            ResponseLen = ReadResponse(0)
+            If ResponseLen > 6 Then
+                StrVar = st_RCV.Substring(5, ResponseLen - 6)
+                If (IsNumeric(StrVar) = True) Then
+                    DblVar = CDbl(StrVar)
+                    'If (DblVar > MFCRangeMAX) And (Index > 2) Then DblVar = MFCRangeMAX
+                    MFC(Index).db_Range = DblVar
+                    MFCRange(Index).Text = MFC(Index).db_Range.ToString("F")
+                Else
+                    MFCRange(Index).Text = "NO RS485"
+                End If
+            End If
+        Next
 
         WriteCommand("$2A606%", 7) 'GET RECIPE MB Start Position () $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
         ResponseLen = ReadResponse(0)
@@ -1761,7 +1774,8 @@ Public Class MainWindow
         If ResponseLen > 7 Then
             MFC(4).db_LoadedFlow = CDbl(st_RCV.Substring(7, ResponseLen - 8))
             MFCLoadedFlow(4).Text = MFC(4).db_LoadedFlow.ToString("F3")
-            MFCRecipeFlow(4).Text = MFC(4).db_LoadedFlow.ToString("F3") 'this is for the New GUI to view Loaded values        
+            MFCRecipeFlow(4).Text = MFC(4).db_LoadedFlow.ToString("F3") 'this is for the New GUI to view Loaded values
+            SetGUILoadProgressBars(4, MFCRecipeFlow(4).Text)
         End If
         WriteCommand("$2A603%", 7) 'GET RECIPE MFC3 Flow (SLPM) $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
         ResponseLen = ReadResponse(0)
@@ -1769,6 +1783,7 @@ Public Class MainWindow
             MFC(3).db_LoadedFlow = CDbl(st_RCV.Substring(7, ResponseLen - 8))
             MFCLoadedFlow(3).Text = MFC(3).db_LoadedFlow.ToString("F3")
             MFCRecipeFlow(3).Text = MFC(3).db_LoadedFlow.ToString("F3") 'this is for the New GUI to view Loaded values        
+            SetGUILoadProgressBars(3, MFCRecipeFlow(3).Text)
         End If
         WriteCommand("$2A602%", 7) 'GET RECIPE MFC2 Flow (SLPM) $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
         ResponseLen = ReadResponse(0)
@@ -1776,6 +1791,7 @@ Public Class MainWindow
             MFC(2).db_LoadedFlow = CDbl(st_RCV.Substring(7, ResponseLen - 8))
             MFCLoadedFlow(2).Text = MFC(2).db_LoadedFlow.ToString("F")
             MFCRecipeFlow(2).Text = MFC(2).db_LoadedFlow.ToString("F")
+            SetGUILoadProgressBars(2, MFCRecipeFlow(2).Text)
         End If
         WriteCommand("$2A601%", 7) 'GET RECIPE MFC1 Flow (SLPM) $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
         ResponseLen = ReadResponse(0)
@@ -1783,23 +1799,10 @@ Public Class MainWindow
             MFC(1).db_LoadedFlow = CDbl(st_RCV.Substring(7, ResponseLen - 8))
             MFCLoadedFlow(1).Text = MFC(1).db_LoadedFlow.ToString("F")
             MFCRecipeFlow(1).Text = MFC(1).db_LoadedFlow.ToString("F")
+            SetGUILoadProgressBars(1, MFCRecipeFlow(1).Text)
         End If
 
-        For Index = 1 To NumMFC
-            WriteCommand("$85" & CMDIndex(Index), 6) 'GET_MFC_RANGE $850m% 1<=m<=4; resp[!850xxx.yy#]
-            ResponseLen = ReadResponse(0)
-            If ResponseLen > 6 Then
-                StrVar = st_RCV.Substring(5, ResponseLen - 6)
-                If (IsNumeric(StrVar) = True) Then
-                    DblVar = CDbl(StrVar)
-                    'If (DblVar > MFCRangeMAX) And (Index > 2) Then DblVar = MFCRangeMAX
-                    MFC(Index).db_Range = DblVar
-                    MFCRange(Index).Text = MFC(Index).db_Range.ToString("F")
-                Else
-                    MFCRange(Index).Text = "NO RS485"
-                End If
-            End If
-        Next
+
 
         WriteCommand("$2A705%", 7)  'Get Max RF power forward  $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
         ResponseLen = ReadResponse(0)
@@ -2402,6 +2405,22 @@ Public Class MainWindow
         MFCProgressValue(index).Value = percent
     End Sub
 
+    Public Sub SetGUILoadProgressBars(index As Integer, value As String)
+        Dim Flow As Double = CDbl(value)
+        Dim range As Double = MFC(index).GetRange()
+        Dim percent As Integer
+
+        If Flow = 0 Then
+            ' Handle the case when Flow is 0
+            percent = 0 ' Or any other appropriate value
+        Else
+            percent = CInt(Flow / range * 100)
+        End If
+
+        MFCLoadedProgressValue(index).Value = percent
+    End Sub
+
+
     Public Sub SetGUITextFlow(index As Integer)
         MFCActualFlow(index).Text = MFC(index).GetActualFlowAsString()
     End Sub
@@ -2852,12 +2871,16 @@ Public Class MainWindow
             Select Case st_RecipeParamName 'load up the recipe values
                 Case "MFC1"
                     MFC_1_Recipe_Flow.Text = st_RecipeParamValue
+                    SetGUILoadProgressBars(1, st_RecipeParamValue)
                 Case "MFC2"
                     MFC_2_Recipe_Flow.Text = st_RecipeParamValue
+                    SetGUILoadProgressBars(2, st_RecipeParamValue)
                 Case "MFC3"
                     MFC_3_Recipe_Flow.Text = st_RecipeParamValue
+                    SetGUILoadProgressBars(3, st_RecipeParamValue)
                 Case "MFC4"
                     MFC_4_Recipe_Flow.Text = st_RecipeParamValue
+                    SetGUILoadProgressBars(4, st_RecipeParamValue)
                 Case "PWR"
                     RecipeWattsTxt.Text = st_RecipeParamValue
                 Case "TUNER"
@@ -2923,11 +2946,6 @@ Public Class MainWindow
         MFC(4).b_MFCLoadRecipeFlow = True
         RF.b_LoadRecipePower = True 'signal main loop to load the new RF Power
         TUNER.b_LoadTunerPos = True 'signal main loop to load the new Tuner Start Position
-        'Also need to adjust the progress bars to display the recipe setpoint
-        Loaded_Progress_1.Value = CInt(MFC_1_Recipe_Flow.Text * 100) 'This value is coming from a double, multiple by 100 to get a integer that will be appropriate.
-        Loaded_Progress_2.Value = CInt(MFC_2_Recipe_Flow.Text * 100)
-        Loaded_Progress_3.Value = CInt(MFC_3_Recipe_Flow.Text * 100)
-        Loaded_Progress_4.Value = CInt(MFC_4_Recipe_Flow.Text * 100)
         'Enable the Plasma button since we HAVE A RECIPE NOW
         If b_ENG_mode = True Then
             SaveToolStripMenuItem.Enabled = True 'Enable 'Save'

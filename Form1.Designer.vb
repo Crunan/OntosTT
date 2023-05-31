@@ -66,6 +66,7 @@ Partial Class MainWindow
         Me.TestZToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.EngineerModeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.OperatorModeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ControllerStatusLEDSToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MFC_1_Loaded_Flow = New System.Windows.Forms.TextBox()
         Me.MFC_2_Loaded_Flow = New System.Windows.Forms.TextBox()
         Me.MFC_3_Loaded_Flow = New System.Windows.Forms.TextBox()
@@ -237,7 +238,6 @@ Partial Class MainWindow
         Me.Guna2TextBox15 = New Guna.UI2.WinForms.Guna2TextBox()
         Me.Guna2TextBox16 = New Guna.UI2.WinForms.Guna2TextBox()
         Me.Label21 = New System.Windows.Forms.Label()
-        Me.ControllerStatusLEDSToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuStrip1.SuspendLayout()
         CType(Me.MB_Left_Arrow, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.MB_Right_Arrow, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -570,14 +570,14 @@ Partial Class MainWindow
         'RestartAllToolStripMenuItem
         '
         Me.RestartAllToolStripMenuItem.Name = "RestartAllToolStripMenuItem"
-        Me.RestartAllToolStripMenuItem.Size = New System.Drawing.Size(400, 44)
+        Me.RestartAllToolStripMenuItem.Size = New System.Drawing.Size(442, 44)
         Me.RestartAllToolStripMenuItem.Text = "Restart All"
         Me.RestartAllToolStripMenuItem.Visible = False
         '
         'SetCTLToPLSimModeToolStripMenuItem
         '
         Me.SetCTLToPLSimModeToolStripMenuItem.Name = "SetCTLToPLSimModeToolStripMenuItem"
-        Me.SetCTLToPLSimModeToolStripMenuItem.Size = New System.Drawing.Size(400, 44)
+        Me.SetCTLToPLSimModeToolStripMenuItem.Size = New System.Drawing.Size(442, 44)
         Me.SetCTLToPLSimModeToolStripMenuItem.Text = "Set CTL to PL Sim Mode"
         Me.SetCTLToPLSimModeToolStripMenuItem.Visible = False
         '
@@ -585,7 +585,7 @@ Partial Class MainWindow
         '
         Me.MBScanToolStripMenuItem.Enabled = False
         Me.MBScanToolStripMenuItem.Name = "MBScanToolStripMenuItem"
-        Me.MBScanToolStripMenuItem.Size = New System.Drawing.Size(400, 44)
+        Me.MBScanToolStripMenuItem.Size = New System.Drawing.Size(442, 44)
         Me.MBScanToolStripMenuItem.Text = "MB Scan"
         Me.MBScanToolStripMenuItem.Visible = False
         '
@@ -593,7 +593,7 @@ Partial Class MainWindow
         '
         Me.StageTestToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.StartToolStripMenuItem, Me.StopToolStripMenuItem, Me.DetailedLogToolStripMenuItem, Me.TestZToolStripMenuItem})
         Me.StageTestToolStripMenuItem.Name = "StageTestToolStripMenuItem"
-        Me.StageTestToolStripMenuItem.Size = New System.Drawing.Size(400, 44)
+        Me.StageTestToolStripMenuItem.Size = New System.Drawing.Size(442, 44)
         Me.StageTestToolStripMenuItem.Text = "Stage Test"
         Me.StageTestToolStripMenuItem.Visible = False
         '
@@ -626,14 +626,21 @@ Partial Class MainWindow
         'EngineerModeToolStripMenuItem
         '
         Me.EngineerModeToolStripMenuItem.Name = "EngineerModeToolStripMenuItem"
-        Me.EngineerModeToolStripMenuItem.Size = New System.Drawing.Size(400, 44)
+        Me.EngineerModeToolStripMenuItem.Size = New System.Drawing.Size(442, 44)
         Me.EngineerModeToolStripMenuItem.Text = "Engineer Mode"
         '
         'OperatorModeToolStripMenuItem
         '
         Me.OperatorModeToolStripMenuItem.Name = "OperatorModeToolStripMenuItem"
-        Me.OperatorModeToolStripMenuItem.Size = New System.Drawing.Size(400, 44)
+        Me.OperatorModeToolStripMenuItem.Size = New System.Drawing.Size(442, 44)
         Me.OperatorModeToolStripMenuItem.Text = "Operator Mode"
+        '
+        'ControllerStatusLEDSToolStripMenuItem
+        '
+        Me.ControllerStatusLEDSToolStripMenuItem.Name = "ControllerStatusLEDSToolStripMenuItem"
+        Me.ControllerStatusLEDSToolStripMenuItem.Size = New System.Drawing.Size(442, 44)
+        Me.ControllerStatusLEDSToolStripMenuItem.Text = "Controller Status LEDS: OFF"
+        Me.ControllerStatusLEDSToolStripMenuItem.Visible = False
         '
         'MFC_1_Loaded_Flow
         '
@@ -1799,7 +1806,6 @@ Partial Class MainWindow
         Me.Loaded_Progress_2.FillColor = System.Drawing.Color.Transparent
         Me.Loaded_Progress_2.GradientMode = System.Drawing.Drawing2D.LinearGradientMode.Horizontal
         Me.Loaded_Progress_2.Location = New System.Drawing.Point(226, 175)
-        Me.Loaded_Progress_2.Maximum = 2000
         Me.Loaded_Progress_2.Name = "Loaded_Progress_2"
         Me.Loaded_Progress_2.ShadowDecoration.Parent = Me.Loaded_Progress_2
         Me.Loaded_Progress_2.Size = New System.Drawing.Size(10, 450)
@@ -1814,7 +1820,6 @@ Partial Class MainWindow
         Me.Loaded_Progress_1.FillColor = System.Drawing.Color.Transparent
         Me.Loaded_Progress_1.GradientMode = System.Drawing.Drawing2D.LinearGradientMode.Horizontal
         Me.Loaded_Progress_1.Location = New System.Drawing.Point(77, 175)
-        Me.Loaded_Progress_1.Maximum = 2000
         Me.Loaded_Progress_1.Name = "Loaded_Progress_1"
         Me.Loaded_Progress_1.ShadowDecoration.Parent = Me.Loaded_Progress_1
         Me.Loaded_Progress_1.Size = New System.Drawing.Size(10, 450)
@@ -2121,7 +2126,6 @@ Partial Class MainWindow
         Me.Loaded_Progress_3.FillColor = System.Drawing.Color.Transparent
         Me.Loaded_Progress_3.GradientMode = System.Drawing.Drawing2D.LinearGradientMode.Horizontal
         Me.Loaded_Progress_3.Location = New System.Drawing.Point(379, 175)
-        Me.Loaded_Progress_3.Maximum = 30
         Me.Loaded_Progress_3.Name = "Loaded_Progress_3"
         Me.Loaded_Progress_3.ShadowDecoration.Parent = Me.Loaded_Progress_3
         Me.Loaded_Progress_3.Size = New System.Drawing.Size(10, 450)
@@ -3368,13 +3372,6 @@ Partial Class MainWindow
         Me.Label21.Size = New System.Drawing.Size(164, 2)
         Me.Label21.TabIndex = 264
         Me.Label21.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-        '
-        'ControllerStatusLEDSToolStripMenuItem
-        '
-        Me.ControllerStatusLEDSToolStripMenuItem.Name = "ControllerStatusLEDSToolStripMenuItem"
-        Me.ControllerStatusLEDSToolStripMenuItem.Size = New System.Drawing.Size(442, 44)
-        Me.ControllerStatusLEDSToolStripMenuItem.Text = "Controller Status LEDS: OFF"
-        Me.ControllerStatusLEDSToolStripMenuItem.Visible = False
         '
         'MainWindow
         '
