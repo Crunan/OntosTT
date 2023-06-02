@@ -1872,7 +1872,10 @@ Public Class MainWindow
             b_IsStringANumber(StrVar, st_HexChars, "$89%")
             IntVar = Convert.ToInt32(StrVar, 16)
             b_AutoModeOn = False
-            If IntVar > 0 Then b_AutoModeOn = True
+            If IntVar > 0 Then
+                b_AutoModeOn = True
+                AutoManBtn.Checked = True
+            End If
         End If
 
         'turn off Exec Recipe
@@ -4720,7 +4723,7 @@ Public Class MainWindow
         CTL.ToggleDisplayStatus()
     End Sub
 
-    Private Sub AutoManBtn_CheckedChanged(sender As Object, e As EventArgs) Handles AutoManBtn.CheckedChanged
+    Private Sub AutoManBtn_CheckedChanged(sender As Object, e As EventArgs) Handles AutoManBtn.Click
         b_ToggleAutoMode = True
     End Sub
 

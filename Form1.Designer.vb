@@ -44,9 +44,10 @@ Partial Class MainWindow
         Me.BuildRecipeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.OpenCascadeRecipeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.OpenToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.CustomRecipeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.SetActiveRecipesFolderToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.toolStripSeparator = New System.Windows.Forms.ToolStripSeparator()
         Me.EnableServiceMenuToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.CustomRecipeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.SaveToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.SaveAsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.LoadToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -240,7 +241,6 @@ Partial Class MainWindow
         Me.Label21 = New System.Windows.Forms.Label()
         Me.AutoManBtn = New Guna.UI2.WinForms.Guna2ToggleSwitch()
         Me.auto_tune_label = New System.Windows.Forms.Label()
-        Me.SetActiveRecipesFolderToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuStrip1.SuspendLayout()
         CType(Me.MB_Left_Arrow, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.MB_Right_Arrow, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -468,14 +468,14 @@ Partial Class MainWindow
         'BuildRecipeToolStripMenuItem
         '
         Me.BuildRecipeToolStripMenuItem.Name = "BuildRecipeToolStripMenuItem"
-        Me.BuildRecipeToolStripMenuItem.Size = New System.Drawing.Size(372, 44)
+        Me.BuildRecipeToolStripMenuItem.Size = New System.Drawing.Size(415, 44)
         Me.BuildRecipeToolStripMenuItem.Text = "Build Cascade Recipe"
         Me.BuildRecipeToolStripMenuItem.Visible = False
         '
         'OpenCascadeRecipeToolStripMenuItem
         '
         Me.OpenCascadeRecipeToolStripMenuItem.Name = "OpenCascadeRecipeToolStripMenuItem"
-        Me.OpenCascadeRecipeToolStripMenuItem.Size = New System.Drawing.Size(372, 44)
+        Me.OpenCascadeRecipeToolStripMenuItem.Size = New System.Drawing.Size(415, 44)
         Me.OpenCascadeRecipeToolStripMenuItem.Text = "Open Cascade Recipe"
         '
         'OpenToolStripMenuItem
@@ -487,22 +487,28 @@ Partial Class MainWindow
         Me.OpenToolStripMenuItem.Size = New System.Drawing.Size(415, 44)
         Me.OpenToolStripMenuItem.Text = "&Open"
         '
+        'CustomRecipeToolStripMenuItem
+        '
+        Me.CustomRecipeToolStripMenuItem.Name = "CustomRecipeToolStripMenuItem"
+        Me.CustomRecipeToolStripMenuItem.Size = New System.Drawing.Size(415, 44)
+        Me.CustomRecipeToolStripMenuItem.Text = "Add Recipe Folder"
+        '
+        'SetActiveRecipesFolderToolStripMenuItem
+        '
+        Me.SetActiveRecipesFolderToolStripMenuItem.Name = "SetActiveRecipesFolderToolStripMenuItem"
+        Me.SetActiveRecipesFolderToolStripMenuItem.Size = New System.Drawing.Size(415, 44)
+        Me.SetActiveRecipesFolderToolStripMenuItem.Text = "Set Active Recipes Folder"
+        '
         'toolStripSeparator
         '
         Me.toolStripSeparator.Name = "toolStripSeparator"
-        Me.toolStripSeparator.Size = New System.Drawing.Size(369, 6)
+        Me.toolStripSeparator.Size = New System.Drawing.Size(412, 6)
         '
         'EnableServiceMenuToolStripMenuItem
         '
         Me.EnableServiceMenuToolStripMenuItem.Name = "EnableServiceMenuToolStripMenuItem"
-        Me.EnableServiceMenuToolStripMenuItem.Size = New System.Drawing.Size(372, 44)
+        Me.EnableServiceMenuToolStripMenuItem.Size = New System.Drawing.Size(415, 44)
         Me.EnableServiceMenuToolStripMenuItem.Text = "Enable Service Menu"
-        '
-        'CustomRecipeToolStripMenuItem
-        '
-        Me.CustomRecipeToolStripMenuItem.Name = "CustomRecipeToolStripMenuItem"
-        Me.CustomRecipeToolStripMenuItem.Size = New System.Drawing.Size(372, 44)
-        Me.CustomRecipeToolStripMenuItem.Text = "Add Recipe Folder"
         '
         'SaveToolStripMenuItem
         '
@@ -511,21 +517,21 @@ Partial Class MainWindow
         Me.SaveToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta
         Me.SaveToolStripMenuItem.Name = "SaveToolStripMenuItem"
         Me.SaveToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.S), System.Windows.Forms.Keys)
-        Me.SaveToolStripMenuItem.Size = New System.Drawing.Size(372, 44)
+        Me.SaveToolStripMenuItem.Size = New System.Drawing.Size(415, 44)
         Me.SaveToolStripMenuItem.Text = "&Save"
         '
         'SaveAsToolStripMenuItem
         '
         Me.SaveAsToolStripMenuItem.Enabled = False
         Me.SaveAsToolStripMenuItem.Name = "SaveAsToolStripMenuItem"
-        Me.SaveAsToolStripMenuItem.Size = New System.Drawing.Size(372, 44)
+        Me.SaveAsToolStripMenuItem.Size = New System.Drawing.Size(415, 44)
         Me.SaveAsToolStripMenuItem.Text = "Save &As"
         '
         'LoadToolStripMenuItem
         '
         Me.LoadToolStripMenuItem.Enabled = False
         Me.LoadToolStripMenuItem.Name = "LoadToolStripMenuItem"
-        Me.LoadToolStripMenuItem.Size = New System.Drawing.Size(372, 44)
+        Me.LoadToolStripMenuItem.Size = New System.Drawing.Size(415, 44)
         Me.LoadToolStripMenuItem.Text = "Load to Controller"
         Me.LoadToolStripMenuItem.Visible = False
         '
@@ -533,13 +539,13 @@ Partial Class MainWindow
         '
         Me.SetDefaultToolStripMenuItem.Enabled = False
         Me.SetDefaultToolStripMenuItem.Name = "SetDefaultToolStripMenuItem"
-        Me.SetDefaultToolStripMenuItem.Size = New System.Drawing.Size(372, 44)
+        Me.SetDefaultToolStripMenuItem.Size = New System.Drawing.Size(415, 44)
         Me.SetDefaultToolStripMenuItem.Text = "Set Default"
         '
         'ExitToolStripMenuItem
         '
         Me.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem"
-        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(372, 44)
+        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(415, 44)
         Me.ExitToolStripMenuItem.Text = "E&xit"
         '
         'HelpToolStripMenuItem
@@ -3390,12 +3396,6 @@ Partial Class MainWindow
         Me.auto_tune_label.TabIndex = 266
         Me.auto_tune_label.Text = "Auto Tune"
         Me.auto_tune_label.Visible = False
-        '
-        'SetActiveRecipesFolderToolStripMenuItem
-        '
-        Me.SetActiveRecipesFolderToolStripMenuItem.Name = "SetActiveRecipesFolderToolStripMenuItem"
-        Me.SetActiveRecipesFolderToolStripMenuItem.Size = New System.Drawing.Size(415, 44)
-        Me.SetActiveRecipesFolderToolStripMenuItem.Text = "Set Active Recipes Folder"
         '
         'MainWindow
         '
