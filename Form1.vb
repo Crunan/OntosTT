@@ -788,6 +788,11 @@ Public Class MainWindow
     Dim StageEnterButtons As New Collection
     Dim MFCProgressValue As New Collection
     Dim MFCLoadedProgressValue As New Collection
+    Dim MFC1LoadedProgressText As New Collection
+    Dim MFC2LoadedProgressText As New Collection
+    Dim MFC3LoadedProgressText As New Collection
+    Dim MFC4LoadedProgressText As New Collection
+
     Dim MFCActualFlow As New Collection
     Dim MFCRecipeFlow As New Collection
     Dim MFCLoadedFlow As New Collection
@@ -1034,6 +1039,35 @@ Public Class MainWindow
             VirtualJoyMove(Axis.Y, flipMySign(result.yPercent))
         End If
     End Function
+
+    Private Sub setGUIMFC1LoadedProgressNumbers()
+        Dim range As Double = MFC(1).GetRange()
+        Loaded_Progress_1_100.Text = range.ToString()
+        Loaded_Progress_1_75.Text = (range / 0.75).ToString()
+        Loaded_Progress_1_50.Text = (range / 0.5).ToString()
+        Loaded_Progress_1_25.Text = (range / 0.25).ToString()
+    End Sub
+    Private Sub setGUIMFC2LoadedProgressNumbers()
+        Dim range As Double = MFC(1).GetRange()
+        Loaded_Progress_2_100.Text = range.ToString()
+        Loaded_Progress_2_75.Text = (range / 0.75).ToString()
+        Loaded_Progress_2_50.Text = (range / 0.5).ToString()
+        Loaded_Progress_2_25.Text = (range / 0.25).ToString()
+    End Sub
+    Private Sub setGUIMFC3LoadedProgressNumbers()
+        Dim range As Double = MFC(1).GetRange()
+        Loaded_Progress_3_100.Text = range.ToString()
+        Loaded_Progress_3_75.Text = (range / 0.75).ToString()
+        Loaded_Progress_3_50.Text = (range / 0.5).ToString()
+        Loaded_Progress_3_25.Text = (range / 0.25).ToString()
+    End Sub
+    Private Sub setGUIMFC4LoadedProgressNumbers()
+        Dim range As Double = MFC(1).GetRange()
+        Loaded_Progress_4_100.Text = range.ToString()
+        Loaded_Progress_4_75.Text = (range / 0.75).ToString()
+        Loaded_Progress_4_50.Text = (range / 0.5).ToString()
+        Loaded_Progress_4_25.Text = (range / 0.25).ToString()
+    End Sub
     '------------------------- Load the form
     Private Sub Form1_Load(sender As System.Object, e As System.EventArgs) Handles MyBase.Load
         Dim i As Integer
@@ -1078,6 +1112,26 @@ Public Class MainWindow
         MFCLoadedProgressValue.Add(Loaded_Progress_2)
         MFCLoadedProgressValue.Add(Loaded_Progress_3)
         MFCLoadedProgressValue.Add(Loaded_Progress_4)
+
+        MFC1LoadedProgressText.Add(Loaded_Progress_1_100)
+        MFC1LoadedProgressText.Add(Loaded_Progress_1_75)
+        MFC1LoadedProgressText.Add(Loaded_Progress_1_50)
+        MFC1LoadedProgressText.Add(Loaded_Progress_1_25)
+
+        MFC2LoadedProgressText.Add(Loaded_Progress_2_100)
+        MFC2LoadedProgressText.Add(Loaded_Progress_2_75)
+        MFC2LoadedProgressText.Add(Loaded_Progress_2_50)
+        MFC2LoadedProgressText.Add(Loaded_Progress_2_25)
+
+        MFC3LoadedProgressText.Add(Loaded_Progress_3_100)
+        MFC3LoadedProgressText.Add(Loaded_Progress_3_75)
+        MFC3LoadedProgressText.Add(Loaded_Progress_3_50)
+        MFC3LoadedProgressText.Add(Loaded_Progress_3_25)
+
+        MFC4LoadedProgressText.Add(Loaded_Progress_4_100)
+        MFC4LoadedProgressText.Add(Loaded_Progress_4_75)
+        MFC4LoadedProgressText.Add(Loaded_Progress_4_50)
+        MFC4LoadedProgressText.Add(Loaded_Progress_4_25)
 
         StageButtons.Add(Vacbtn)
         StageButtons.Add(RecipeButtonPins)
@@ -1742,6 +1796,7 @@ Public Class MainWindow
                     'If (DblVar > MFCRangeMAX) And (Index > 2) Then DblVar = MFCRangeMAX
                     MFC(Index).db_Range = DblVar
                     MFCRange(Index).Text = MFC(Index).db_Range.ToString("F")
+                    setGUIMFCLoadedProgressNumbers(Index)
                 Else
                     MFCRange(Index).Text = "NO RS485"
                 End If
@@ -2007,6 +2062,9 @@ Public Class MainWindow
 
         Operator_Mode()
     End Sub
+
+
+
     Private Sub GetAxesStatus() 'update the AxesStatus data structure
         Dim ResponseLen As Integer
         Dim StrVar As String
@@ -4579,4 +4637,6 @@ Public Class MainWindow
     Private Sub ControllerStatusLEDSToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ControllerStatusLEDSToolStripMenuItem.Click
         CTL.ToggleDisplayStatus()
     End Sub
+
+
 End Class
