@@ -43,7 +43,7 @@ Public Class MainWindow
     Dim WaferDiameter As Integer = 0
     'Recipe file management stuff
     Dim CasRecipeNumber As Integer = 0 'The # associated with the order for a recipe within a cascaded recipe (0 index based)
-    Dim st_RecipePath As String = "C:\OTT_PLUS\Recipes\" 'Recipe Path without filename
+    Dim st_RecipePath As String = ReadCustomFolderFromConfigFile()
     Dim st_RecipePathFileName As String 'Recipe filename with path information
     Public Shared st_RecipeFileName As String = "none_entered" 'Recipe filename for display
     Dim st_RecipeString As String 'Recipe file contents as continuous string
@@ -326,7 +326,7 @@ Public Class MainWindow
         Private Sub LogLEDChange()
             MainWindow.WriteLogLine("Status Bits Change from " & BinaryIntegerToString(StatusBitsWas) & " to " & BinaryIntegerToString(Statusbits))
         End Sub
-        
+
     End Class
     Dim CTL As New ControlBoard
 
@@ -1040,34 +1040,34 @@ Public Class MainWindow
         End If
     End Function
 
-    Private Sub setGUIMFC1LoadedProgressNumbers()
-        Dim range As Double = MFC(1).GetRange()
-        Loaded_Progress_1_100.Text = range.ToString()
-        Loaded_Progress_1_75.Text = (range / 0.75).ToString()
-        Loaded_Progress_1_50.Text = (range / 0.5).ToString()
-        Loaded_Progress_1_25.Text = (range / 0.25).ToString()
+    Private Sub SetGUILoadedProgressNumbers(index As Integer)
+        Dim range As Double = MFC(index).GetRange()
+        Dim loadedProgressText As Collection = Nothing
+        Dim stringFormatCode As String = "F"
+
+        Select Case index
+            Case 1
+                loadedProgressText = MFC1LoadedProgressText
+                stringFormatCode = "F"
+            Case 2
+                loadedProgressText = MFC2LoadedProgressText
+                stringFormatCode = "F"
+            Case 3
+                loadedProgressText = MFC3LoadedProgressText
+                stringFormatCode = "F3"
+            Case 4
+                loadedProgressText = MFC4LoadedProgressText
+                stringFormatCode = "F3"
+        End Select
+
+        If loadedProgressText IsNot Nothing Then
+            loadedProgressText(1).Text = range.ToString(stringFormatCode)
+            loadedProgressText(2).Text = (range * 0.75).ToString(stringFormatCode)
+            loadedProgressText(3).Text = (range * 0.5).ToString(stringFormatCode)
+            loadedProgressText(4).Text = (range * 0.25).ToString(stringFormatCode)
+        End If
     End Sub
-    Private Sub setGUIMFC2LoadedProgressNumbers()
-        Dim range As Double = MFC(1).GetRange()
-        Loaded_Progress_2_100.Text = range.ToString()
-        Loaded_Progress_2_75.Text = (range / 0.75).ToString()
-        Loaded_Progress_2_50.Text = (range / 0.5).ToString()
-        Loaded_Progress_2_25.Text = (range / 0.25).ToString()
-    End Sub
-    Private Sub setGUIMFC3LoadedProgressNumbers()
-        Dim range As Double = MFC(1).GetRange()
-        Loaded_Progress_3_100.Text = range.ToString()
-        Loaded_Progress_3_75.Text = (range / 0.75).ToString()
-        Loaded_Progress_3_50.Text = (range / 0.5).ToString()
-        Loaded_Progress_3_25.Text = (range / 0.25).ToString()
-    End Sub
-    Private Sub setGUIMFC4LoadedProgressNumbers()
-        Dim range As Double = MFC(1).GetRange()
-        Loaded_Progress_4_100.Text = range.ToString()
-        Loaded_Progress_4_75.Text = (range / 0.75).ToString()
-        Loaded_Progress_4_50.Text = (range / 0.5).ToString()
-        Loaded_Progress_4_25.Text = (range / 0.25).ToString()
-    End Sub
+
     '------------------------- Load the form
     Private Sub Form1_Load(sender As System.Object, e As System.EventArgs) Handles MyBase.Load
         Dim i As Integer
@@ -1644,9 +1644,7 @@ Public Class MainWindow
     End Sub
 
 
-    Private Sub AutoManBtn_Click(sender As Object, e As EventArgs) Handles AutoManBtn.Click
-        b_ToggleAutoMode = True
-    End Sub
+
     Private Sub RunRcpBtn_Click(sender As Object, e As EventArgs) Handles RunRcpBtn.Click
         If b_HasCollision = True And b_autoScanActive And Not CTL.isPlasmaActive() Then
             b_PlannedAutoStart = True 'this will make sure we dont accidently start plasma when just clicking RUN SCAN button
@@ -1796,7 +1794,7 @@ Public Class MainWindow
                     'If (DblVar > MFCRangeMAX) And (Index > 2) Then DblVar = MFCRangeMAX
                     MFC(Index).db_Range = DblVar
                     MFCRange(Index).Text = MFC(Index).db_Range.ToString("F")
-                    setGUIMFCLoadedProgressNumbers(Index)
+                    SetGUILoadedProgressNumbers(Index)
                 Else
                     MFCRange(Index).Text = "NO RS485"
                 End If
@@ -3054,6 +3052,89 @@ Public Class MainWindow
         WriteLogLine("Saved " + st_RecipeFileName + " : " + st_RecipeString.Replace(vbCr, "").Replace(vbLf, "")) 'Log this recipe entry
 
     End Sub
+    Private Sub SetCustomRecipesFolder() Handles CustomRecipeToolStripMenuItem.Click
+        Dim folderBrowser As New FolderBrowserDialog()
+        folderBrowser.Description = "Select the custom recipe folder"
+        folderBrowser.RootFolder = Environment.SpecialFolder.MyComputer
+        folderBrowser.SelectedPath = "C:\OTT_PLUS\Recipes"
+        folderBrowser.ShowNewFolderButton = True
+
+        If folderBrowser.ShowDialog() = DialogResult.OK Then
+            Dim customFolderPath As String = folderBrowser.SelectedPath
+            Dim customFolderName As String = Path.GetFileName(customFolderPath)
+
+            ' Now you can use the customFolder variable to construct the recipe path
+            st_RecipePath = customFolderPath & "\"
+
+            WriteCustomFolderToConfigFile(st_RecipePath)
+        End If
+    End Sub
+    Private Sub SetActiveRecipesFolder() Handles SetActiveRecipesFolderToolStripMenuItem.Click
+        Dim folderBrowser As New FolderBrowserDialog()
+        folderBrowser.Description = "Select a folder to be the Active recipes."
+        folderBrowser.RootFolder = Environment.SpecialFolder.MyComputer
+        folderBrowser.SelectedPath = "C:\OTT_PLUS\Recipes"
+        folderBrowser.ShowNewFolderButton = False
+
+        If folderBrowser.ShowDialog() = DialogResult.OK Then
+            Dim customFolderPath As String = folderBrowser.SelectedPath
+
+            ' Now you can use the customFolder variable to construct the recipe path
+            st_RecipePath = customFolderPath & "\"
+
+            WriteCustomFolderToConfigFile(st_RecipePath)
+        End If
+    End Sub
+    Private Sub WriteCustomFolderToConfigFile(customFolder As String)
+        Dim configFilePath As String = "C:\OTT_PLUS\Execonfig\default.cfg"
+        Dim tempFilePath As String = "C:\OTT_PLUS\Execonfig\default_temp.cfg"
+
+        ' Write the custom folder entries to the config file
+        Using inputFile As New StreamReader(configFilePath)
+            Using outputFile As New StreamWriter(tempFilePath, False)
+                Dim line As String
+                Dim updated As Boolean = False
+
+                While Not inputFile.EndOfStream
+                    line = inputFile.ReadLine()
+                    'we write everything to a temp file until we the end
+                    If line.Contains("<ACTIVE_FOLDER>") Then
+                        outputFile.WriteLine("<ACTIVE_FOLDER>" + customFolder)
+                        updated = True
+                    Else
+                        'this is just making sure we copy all other lines. 
+                        outputFile.WriteLine(line)
+                    End If
+                End While
+
+                ' If the custom folder entry doesn't exist, add it at the end of the file
+                If Not updated Then
+                    outputFile.WriteLine("<ACTIVE_FOLDER>" + customFolder)
+                End If
+            End Using
+        End Using
+        ' Replace the original config file with the updated temp file
+        File.Delete(configFilePath)
+        File.Move(tempFilePath, configFilePath)
+    End Sub
+    Private Function ReadCustomFolderFromConfigFile() As String
+        Dim configFilePath As String = "C:\OTT_PLUS\Execonfig\default.cfg"
+
+        ' Read the config file and search for custom folder entries
+        Using configFile As New StreamReader(configFilePath)
+            Dim line As String
+            While Not configFile.EndOfStream
+                line = configFile.ReadLine()
+                If line.Contains("<ACTIVE_FOLDER>") Then
+                    st_RecipePath = line.Substring(line.IndexOf("<ACTIVE_FOLDER>") + "<ACTIVE_FOLDER>".Length)
+                    Exit While
+                End If
+            End While
+        End Using
+
+        Return st_RecipePath
+    End Function
+
     Private Sub SaveAsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SaveAsToolStripMenuItem.Click
         st_RecipeFileName = InputBox("No extension", "Enter Recipe Name", st_RecipeFileName)
         ActiveRecipeName.Text = st_RecipeFileName
@@ -3600,6 +3681,7 @@ Public Class MainWindow
         'RecipeButtonPurge.Visible = False
         'N2PurgeSquare.Visible = False
         AutoManBtn.Visible = False
+        auto_tune_label.Visible = False
         N2Purgelabel.Visible = False
         N2Purgebtn.Visible = False
 
@@ -3661,7 +3743,7 @@ Public Class MainWindow
 
         'Stage Controls Buttons
         AutoManBtn.Visible = True
-
+        auto_tune_label.Visible = True
         N2Purgelabel.Visible = True
         N2Purgebtn.Visible = True
 
@@ -3824,7 +3906,7 @@ Public Class MainWindow
         ReadResponse(0)
         WriteLogLine("RCV: " + st_RCV)
     End Sub
-    Public Sub CearAxisError(axis As String)
+    Public Sub ClearAxisError(axis As String)
         WriteCommand("$B80" + axis + "%", 6) 'CLEAR_ERROR 
         ReadResponse(0)
         WriteLogLine("RCV: " + st_RCV)
@@ -3858,7 +3940,7 @@ Public Class MainWindow
         ReadResponse(0)
         If StageTestSM.isDetailLogEnabled Then
             DumpMoveData(axis)
-            CearAxisError(axis)
+            ClearAxisError(axis)
         End If
     End Sub
     Private Sub TestXMax()
@@ -4636,6 +4718,10 @@ Public Class MainWindow
 
     Private Sub ControllerStatusLEDSToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ControllerStatusLEDSToolStripMenuItem.Click
         CTL.ToggleDisplayStatus()
+    End Sub
+
+    Private Sub AutoManBtn_CheckedChanged(sender As Object, e As EventArgs) Handles AutoManBtn.CheckedChanged
+        b_ToggleAutoMode = True
     End Sub
 
 
