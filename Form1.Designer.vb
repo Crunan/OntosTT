@@ -787,13 +787,13 @@ Partial Class MainWindow
         '
         Me.ActTunerTxt.BackColor = System.Drawing.Color.White
         Me.ActTunerTxt.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.ActTunerTxt.Font = New System.Drawing.Font("Arial", 26.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.ActTunerTxt.Font = New System.Drawing.Font("Arial", 21.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.ActTunerTxt.ForeColor = System.Drawing.Color.Black
         Me.ActTunerTxt.Location = New System.Drawing.Point(980, 221)
         Me.ActTunerTxt.Margin = New System.Windows.Forms.Padding(2)
         Me.ActTunerTxt.Name = "ActTunerTxt"
         Me.ActTunerTxt.ReadOnly = True
-        Me.ActTunerTxt.Size = New System.Drawing.Size(91, 41)
+        Me.ActTunerTxt.Size = New System.Drawing.Size(91, 34)
         Me.ActTunerTxt.TabIndex = 16
         Me.ActTunerTxt.Text = "0"
         Me.ActTunerTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center

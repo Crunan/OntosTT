@@ -1,13 +1,7 @@
-﻿Imports System
-Imports System.Threading
-Imports System.IO.Ports
-Imports System.ComponentModel
-Imports System.IO
-Imports System.String
+﻿Imports System.IO
 Imports System.Runtime.InteropServices
-Imports System.Drawing
 Imports System.Runtime.Serialization
-Imports Guna.UI2.AnimatorNS
+Imports RJCP.IO.Ports
 Imports Guna.UI2.WinForms
 
 Public Class MainWindow
@@ -31,11 +25,12 @@ Public Class MainWindow
 
     'Controller stuff    
     Dim gamepad As GamepadInput = searchForGamepad()
+    Private SerialPort As SerialPortStream
 
     '    Serial Port Stuff
     Dim CR As String = Chr(13)
     Dim LF As String = Chr(10)
-    Dim ar_myPort As Array
+    Dim portNames As String() = SerialPortStream.GetPortNames()
     Dim st_LastCMD As String ' for debug
     Dim st_RCV As String
     Dim st_Was As String
@@ -1067,16 +1062,62 @@ Public Class MainWindow
             loadedProgressText(4).Text = (range * 0.25).ToString(stringFormatCode)
         End If
     End Sub
+    Public Function getCurrentPortName() As String
+        'set-up the comm port drop-box 
+        Dim currentComPort = com_portBox.SelectedItem()
+        If b_foundKnownComPort Then
+            Return st_KnownComPort
+        ElseIf currentComPort IsNot Nothing Then
+            Return currentComPort.Text()
+        Else
+            Return com_portBox.Items(0).Text()
+        End If
+    End Function
+    Public Sub setupSerialConnection()
+        SerialPort = New SerialPortStream()
 
-    '------------------------- Load the form
-    Private Sub Form1_Load(sender As System.Object, e As System.EventArgs) Handles MyBase.Load
-        Dim i As Integer
-        Dim ar_myPort As String()
-        Dim responseLen As Integer
+        With SerialPort
+            .PortName = getCurrentPortName()
+            .BaudRate = 57600
+            .DataBits = 8
+            .Parity = Parity.None
+            .StopBits = StopBits.One
+            .ReadTimeout = SERIAL_RESPONSE_TIMEOUT
+            .WriteTimeout = SERIAL_RESPONSE_TIMEOUT
+        End With
+
+        Try
+            SerialPort.Open()
+            Console.WriteLine("Serial port opened successfully.")
+        Catch ex As Exception
+            Console.WriteLine("Error opening the serial port: " + ex.Message)
+            WriteLogLine("Error opening the serial port: " + ex.Message)
+        End Try
+
+        'Reset the controller PCB and give it time to do so
+        WriteCommand("$A9%", 4)  'SOFT_RESET   $A9%; resp[!A9#]; causes Aux PCB Soft Reset
+        ReadResponse(0)
+        AUXResetTimeOut = 2500 / Timer1.Interval  'interval in milliseconds, so get close to 2.5 second wait
 
 
-        DateTimeLabel1.Text = DateTime.Now.ToString("hh:mm dddd, dd MMMM yyyy")
+        'Reset the controller PCB and give it time to do so
+        WriteCommand("$90%", 4)  'SOFT_RESET   $90% ; resp[!90#] Resets CTL PCB
+        ReadResponse(0)
+        CTLResetTimeOut = 2500 / Timer1.Interval  'interval in milliseconds, so get close to 2.5 second wait
 
+        'Ensure the Comms button is set because we AUTO CONNECTED
+        b_Start_Stop_ON_OFF = True 'This is true so that if we click the button, it will shut down comms
+        Start_Stop_Toggle.BackColor = Color.Green
+        Start_Stop_Toggle.Text = "CONNECTED"
+        RunRcpBtn.Visible = True
+        If b_ENG_mode Then
+            AutoManBtn.Visible = True
+        End If
+
+        SM_State = STARTUP
+        'start up the log file
+    End Sub
+    Public Sub setupGUICollections()
         'friend the collections with existing display objects to enable array indexing
         MFCActualFlow.Add(MFC_1_Read_Flow)
         MFCActualFlow.Add(MFC_2_Read_Flow)
@@ -1142,7 +1183,6 @@ Public Class MainWindow
         StageButtons.Add(RunScanBtn)
         StageButtons.Add(ClearAbortbtn)
         StageButtons.Add(N2Purgebtn)
-        'StageButtons.Add(AutoScanbtn)
 
         EnterButtons.Add(Set_MFC_1_Recipe_Button)
         EnterButtons.Add(Set_MFC_2_Recipe_Button)
@@ -1193,65 +1233,32 @@ Public Class MainWindow
         GUI_CTL_LEDS.Add(Guna2TextBox6)
         GUI_CTL_LEDS.Add(Guna2TextBox7)
         GUI_CTL_LEDS.Add(Guna2TextBox8)
+    End Sub
+
+    '------------------------- Load the form
+    Private Sub Form1_Load(sender As System.Object, e As System.EventArgs) Handles MyBase.Load
+        DateTimeLabel1.Text = DateTime.Now.ToString("hh:mm dddd, dd MMMM yyyy")
+
+        OpenLogFile()
+
+        setupGUICollections()
 
         'Make sure we check the Configuration for a known Port
         GetExeCfg()  ' get the exe config parameters
 
-        'Calls to the system for a list of ports
-        ar_myPort = IO.Ports.SerialPort.GetPortNames()
-
         'If you recognise the com Port from what is stored in EXE_CONFIG, set a flag that we found it
-        For i = 0 To UBound(ar_myPort)
-            If ar_myPort(i) = st_KnownComPort Then b_foundKnownComPort = True
+        For Each portName As String In portNames
+            If portName = st_KnownComPort Then b_foundKnownComPort = True
+            com_portBox.Items.Add(portName)
         Next
 
-        'If you found a recognised port, connect to it NOW.
+        'If you found a recognised port, connect to it.
         If b_foundKnownComPort = True Then
-            'Start up the serial port
-            SerialPort1.Parity = Parity.None
-            SerialPort1.StopBits = StopBits.One
-            SerialPort1.DataBits = 8
-            SerialPort1.BaudRate = "57600"
-            SerialPort1.PortName = st_KnownComPort
-            SerialPort1.ReadTimeout = SERIAL_RESPONSE_TIMEOUT            'serial port timeout default is 500
-            SerialPort1.Open()
-
-            'Ensure the Comms button is set because we AUTO CONNECTED
-            b_Start_Stop_ON_OFF = True 'This is true so that if we click the button, it will shut down comms
-            Start_Stop_Toggle.BackColor = Color.Green
-            Start_Stop_Toggle.Text = "CONNECTED"
-            RunRcpBtn.Visible = True
-            If b_ENG_mode Then
-                AutoManBtn.Visible = True
-            End If
-
-            'Reset the controller PCB and give it time to do so
-            WriteCommand("$A9%", 4)  'SOFT_RESET   $A9%; resp[!A9#]; causes Aux PCB Soft Reset
-            responseLen = ReadResponse(0)
-            AUXResetTimeOut = 2500 / Timer1.Interval  'interval in milliseconds, so get close to 2.5 second wait
-
-
-            'Reset the controller PCB and give it time to do so
-            WriteCommand("$90%", 4)  'SOFT_RESET   $90% ; resp[!90#] Resets CTL PCB
-            responseLen = ReadResponse(0)
-            CTLResetTimeOut = 2500 / Timer1.Interval  'interval in milliseconds, so get close to 2.5 second wait
-
-            SM_State = STARTUP
-            'start up the log file
-            OpenLogFile()
-
-
-            'Set the Dropdown to have the known port 
-            com_portBox.Items.Add(st_KnownComPort)
-            com_portBox.Text = st_KnownComPort
+            setupSerialConnection()
         Else
-            'set-up the comm port drop-box 
-            com_portBox.Items.AddRange(ar_myPort)
             com_portBox.Visible = True
             Com_Port_Label.Visible = True
         End If
-
-
 
     End Sub
     '------------------------ comm port selection makes the Start-Stop toggle button visible
@@ -1260,59 +1267,25 @@ Public Class MainWindow
         If com_portBox.Text <> "" And b_foundKnownComPort = False Then Start_Stop_Toggle.Visible = True
     End Sub
     Private Sub Start_Stop_CheckedChanged(sender As Object, e As EventArgs) Handles Start_Stop_Toggle.Click
-        Dim ResponseLen As Integer
-
         b_Start_Stop_ON_OFF = Not b_Start_Stop_ON_OFF 'keeps track of what the button is doing.
 
         If b_Start_Stop_ON_OFF Then
-            SerialPort1.Parity = Parity.None
-            SerialPort1.StopBits = StopBits.One
-            SerialPort1.DataBits = 8
-            SerialPort1.BaudRate = "57600"
-            SerialPort1.PortName = com_portBox.Text()
-            SerialPort1.ReadTimeout = SERIAL_RESPONSE_TIMEOUT            'serial port timeout default is 500
-            SerialPort1.Open()
-
-            Start_Stop_Toggle.BackColor = Color.Green
-            Start_Stop_Toggle.Text = "CONNECTED"
-            RunRcpBtn.Visible = True
-            If b_ENG_mode Then
-                AutoManBtn.Visible = True
-            End If
-
-            'Reset the controller PCB and give it time to do so
-            WriteCommand("$A9%", 4)  'SOFT_RESET   $A9%; resp[!A9#]; causes Aux PCB Soft Reset
-            ResponseLen = ReadResponse(0)
-            AUXResetTimeOut = 2500 / Timer1.Interval  'interval in milliseconds, so get close to 2.5 second wait
-
-            'Reset the controller PCB and give it time to do so
-            WriteCommand("$90%", 4)  'SOFT_RESET   $90% ; resp[!90#] Resets CTL PCB
-            ResponseLen = ReadResponse(0)
-            CTLResetTimeOut = 2500 / Timer1.Interval  'interval in milliseconds, so get close to 2.5 second wait
-
-            SM_State = STARTUP
-            'start up the log file
-            OpenLogFile()
-
+            setupSerialConnection()
         Else
+            If SerialPort IsNot Nothing Then SerialPort.Close()
             Start_Stop_Toggle.BackColor = Color.Red
             Start_Stop_Toggle.Text = "CONNECT"
-
-            b_ShutDownComms = True
         End If
-
-
     End Sub
     Private Sub WriteCommand(CMD_Str As String, CMD_Len As Integer)
         Dim Index As Integer
 
-        If SerialPort1.IsOpen Then 'if the connection is closed, dont run the code
+        If SerialPort.IsOpen() Then 'if the connection is closed, dont run the code
             st_LastCMD = CMD_Str    'for debug, esp when have read timeout
-            SerialPort1.DiscardInBuffer() 'clear receive buffer
             If (CMD_Len > 90) Then CMD_Len = 90 'don't overrun CTLer input buffers
             For Index = 0 To (CMD_Len - 1) 'one char at a time
                 'Threading.Thread.Sleep(2) '<<EMMETT.. do we need this?
-                SerialPort1.Write(CMD_Str, Index, 1)
+                SerialPort.WriteByte(Asc(CMD_Str(Index)))
             Next
         Else
             b_ErrorStateActive = True
@@ -1320,7 +1293,7 @@ Public Class MainWindow
 
         If b_ErrorStateActive = True Then
             Timer1.Enabled = False 'gotta shut off main while user processes message
-            MsgBox("Error: The port has been closed: Exit")
+            MsgBox("Error: The port has been closed, last CMD: " + st_LastCMD)
             If b_LogOpen = True Then
                 LogLineOut.Close()
             End If
@@ -1331,49 +1304,11 @@ Public Class MainWindow
 
 
     End Sub
-    Private Function ReadChar() As Integer
-        Dim ReturnValue As Integer = 0
-
-        If b_ErrorStateActive = False Then
-            Try
-                ReturnValue = SerialPort1.ReadByte
-            Catch ex As TimeoutException
-                b_ErrorStateActive = True
-            Finally
-                'If SerialPort1 IsNot Nothing Then SerialPort1.Close()
-            End Try
-        End If
-        If b_ErrorStateActive = True Then
-            Timer1.Enabled = False 'gotta shut off main while user processes message            
-            MsgBox("Error: Read timeout on command " + st_LastCMD + "  Exit")
-
-            If b_LogOpen = True Then
-                LogLineOut.Close()
-            End If
-            Me.Close()
-            Application.Exit()
-            End
-        End If
-        Return ReturnValue
-    End Function
-
     Private Function ReadResponse(b_LogIt As Boolean) As Integer
-        Dim ResponseVal As Integer = 0
-        Dim ResponseLen As Integer = 0
-
-        st_RCV = "" 'reset st_RCV as null string
-        While ResponseVal <> Asc("#") ' all this so I can see the # terminator
-            ResponseVal = ReadChar()
-            If (ResponseVal > 31) And (ResponseVal < 127) Then 'only process ascii chars
-                ResponseLen += 1
-                st_RCV &= Chr(ResponseVal)
-                If ResponseLen > 100 Then Exit While 'protect against loss of "#"
-            End If
-        End While
-        If b_LogIt = True Then
-            WriteLogLine(st_RCV)
-        End If
-        Return ResponseLen
+        Dim response As String = SerialPort.ReadTo("#")
+        st_RCV = response
+        If b_LogIt = True Then WriteLogLine(st_RCV)
+        Return response.Length
     End Function
     Private Sub Main_Loop_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
         Dim ResponseLen As Integer
@@ -1386,7 +1321,7 @@ Public Class MainWindow
         If b_ShutDownComms Then
             WriteCommand("$90%", 4) 'SOFT_RESET  $90% ; resp[!90#] Resets CTL PCB
             ResponseLen = ReadResponse(0)
-            SerialPort1.Close() 'close the port
+            SerialPort.Close() 'close the port
             b_ShutDownComms = False
             SM_State = SHUTDOWN
         End If
@@ -2165,9 +2100,7 @@ Public Class MainWindow
         SubStr = StrVar.Substring(0, Index)
         AxesStatus.ZError = Convert.ToInt32(SubStr, 16)
 
-        StrVar = StrVar.Substring(Index + 1)
-        Index = StrVar.IndexOf("#")
-        SubStr = StrVar.Substring(0, Index)
+        SubStr = StrVar.Substring(Index + 1)
         AxesStatus.db_ZPos = Convert.ToDouble(SubStr)
         LogStr &= " ZPos: " & SubStr
 
@@ -2287,6 +2220,19 @@ Public Class MainWindow
             b_RunRecipeOn = False
         End If
 
+        If (b_Step_MB_SM_Left = True) Then
+            WriteCommand(st_MBLeftSpeed, Len(st_MBLeftSpeed))
+            ResponseLen = ReadResponse(0)
+            b_Step_MB_SM_Left = False '
+            MB_Left_Arrow.Enabled = False
+        End If
+
+        If (b_Step_MB_SM_Right = True) Then
+            WriteCommand(st_MBRightSpeed, Len(st_MBRightSpeed))
+            ResponseLen = ReadResponse(0)
+            b_Step_MB_SM_Right = False
+            MB_Right_Arrow.Enabled = False
+        End If
         'Get MFC FLows
         For Index = 1 To NumMFC
             StrVar = ar_CTL_ParamVals(Index + 4)
@@ -2301,31 +2247,31 @@ Public Class MainWindow
 
 
         'Get Plasma Head Temperature
-        WriteCommand("$8c%", 4)  'GET_TEMP  $8C%: resp[!8Cxx.xx#]; xx.xx = head temp degrees C base 10
-        ResponseLen = ReadResponse(0)
-        If ResponseLen > 3 Then
-            StrVar = st_RCV.Substring(3, 7)
-            If b_IsStringANumber(StrVar, st_DoubleChars, st_EmptyChars) = True Then 'st_EmptyChars
-                DoubVal = Convert.ToDouble(StrVar)
-                IntVal = Math.Ceiling(DoubVal)
-                StrVar = IntVal.ToString()
-                Temp_Radial.Value = IntVal 'Set the Temperature Radial for Operator
-                PHTempTxt.Text = StrVar 'Display the val in deg C
-                If Temp_Radial.Value < 50 Then
-                    Temp_Radial.ProgressColor = Color.DodgerBlue
-                    Temp_Radial.ProgressColor2 = Color.DodgerBlue
-                ElseIf Temp_Radial.Value < 60 Then
-                    Temp_Radial.ProgressColor = Color.Yellow
-                    Temp_Radial.ProgressColor2 = Color.Yellow
-                Else
-                    Temp_Radial.ProgressColor = Color.Red
-                    Temp_Radial.ProgressColor2 = Color.Red
-                End If
+        'WriteCommand("$8c%", 4)  'GET_TEMP  $8C%: resp[!8Cxx.xx#]; xx.xx = head temp degrees C base 10
+        'ResponseLen = ReadResponse(0)
+        'If ResponseLen > 3 Then
+        '    StrVar = st_RCV.Substring(3, 7)
+        '    If b_IsStringANumber(StrVar, st_DoubleChars, st_EmptyChars) = True Then 'st_EmptyChars
+        '        DoubVal = Convert.ToDouble(StrVar)
+        '        IntVal = Math.Ceiling(DoubVal)
+        '        StrVar = IntVal.ToString()
+        '        Temp_Radial.Value = IntVal 'Set the Temperature Radial for Operator
+        '        PHTempTxt.Text = StrVar 'Display the val in deg C
+        '        If Temp_Radial.Value < 50 Then
+        '            Temp_Radial.ProgressColor = Color.DodgerBlue
+        '            Temp_Radial.ProgressColor2 = Color.DodgerBlue
+        '        ElseIf Temp_Radial.Value < 60 Then
+        '            Temp_Radial.ProgressColor = Color.Yellow
+        '            Temp_Radial.ProgressColor2 = Color.Yellow
+        '        Else
+        '            Temp_Radial.ProgressColor = Color.Red
+        '            Temp_Radial.ProgressColor2 = Color.Red
+        '        End If
 
-            Else
-                PHTempTxt.Text = "???" 'allow for disconnected or bad temperature probe
-            End If
-        End If
+        '    Else
+        '        PHTempTxt.Text = "???" 'allow for disconnected or bad temperature probe
+        '    End If
+        'End If
 
         'Check Abort flag and if active, flash Abort Clear button
         If b_ClearAbort Then
@@ -2501,17 +2447,8 @@ Public Class MainWindow
         End If
 
 
-        If (b_Step_MB_SM_Left = True) Then
-            WriteCommand(st_MBLeftSpeed, Len(st_MBLeftSpeed))
-            ResponseLen = ReadResponse(0)
-            b_Step_MB_SM_Left = False '
-        End If
 
-        If (b_Step_MB_SM_Right = True) Then
-            WriteCommand(st_MBRightSpeed, Len(st_MBRightSpeed))
-            ResponseLen = ReadResponse(0)
-            b_Step_MB_SM_Right = False
-        End If
+
 
         For Index = 1 To 4 'check to see if new Recipe Flows are Entered
             If MFC(Index).b_MFCLoadRecipeFlow = True Then
@@ -3213,24 +3150,12 @@ Public Class MainWindow
     End Sub
     Private Sub MB_Left_Arrow_Click(sender As Object, e As EventArgs) Handles MB_Left_Arrow.Click
         b_Step_MB_SM_Left = True
+        MB_Left_Arrow.Enabled = False
     End Sub
 
     Private Sub MB_Right_Arrow_Click(sender As Object, e As EventArgs) Handles MB_Right_Arrow.Click
         b_Step_MB_SM_Right = True
-    End Sub
-    Private Sub MB_Big_Step_Button_Click(sender As Object, e As EventArgs) Handles MB_Big_Step_Button.Click
-        st_MBRightSpeed = "$11010002%" '$110dxxxx%  d=1,0 xxxx = num steps; resp[!110dxxxx#] when move STARTED
-        st_MBLeftSpeed = "$11000002%"
-        MB_Small_Step_Button.Visible = True
-        MB_Big_Step_Button.Visible = False
-        b_MB_Big_Step_Active = False
-    End Sub
-    Private Sub MB_Small_Step_Button_Click(sender As Object, e As EventArgs) Handles MB_Small_Step_Button.Click
-        st_MBRightSpeed = "$11010050%" '$110dxxxx%  d=1,0 xxxx = Base10 num steps; resp[!110dxxxx#] when move STARTED
-        st_MBLeftSpeed = "$11000050%"
-        MB_Small_Step_Button.Visible = False
-        MB_Big_Step_Button.Visible = True
-        b_MB_Big_Step_Active = True
+        MB_Right_Arrow.Enabled = False
     End Sub
 
     Private Sub Launch_SMTwoSpot(sender As Object, e As EventArgs) Handles SetTwoSpotBtn.Click
