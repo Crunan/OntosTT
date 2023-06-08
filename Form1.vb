@@ -2964,7 +2964,7 @@ Public Class MainWindow
             WriteCommand("$90%", 4)  'SOFT_RESET   $90% ; resp[!90#] Resets CTL PCB and AUX PCB
             ReadResponse(0)
 
-            SerialPort1.Close()
+            If SerialPort IsNot Nothing Then SerialPort.Close()
             Me.Close()
             Application.Exit()
             End
