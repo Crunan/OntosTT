@@ -53,3 +53,42 @@ C:\Users\Crunan\OneDrive - SETNA\Documents\source\repos\OES\Archived\Versions\OT
 C:\Users\Crunan\OneDrive - SETNA\Documents\source\repos\OES\Archived\Versions\OTT_PLUS_EXE - V1.2.6 (Cascading Recipes Update)\obj\Release\OTT_PLUS.exe
 C:\Users\Crunan\OneDrive - SETNA\Documents\source\repos\OES\Archived\Versions\OTT_PLUS_EXE - V1.2.6 (Cascading Recipes Update)\obj\Release\OTT_PLUS.xml
 C:\Users\Crunan\OneDrive - SETNA\Documents\source\repos\OES\Archived\Versions\OTT_PLUS_EXE - V1.2.6 (Cascading Recipes Update)\obj\Release\OTT_PLUS.pdb
+C:\Users\OES\source\repos\Crunan\OntosTT\bin\XInput1_4.dll
+C:\Users\OES\source\repos\Crunan\OntosTT\bin\XInput9_1_0.dll
+C:\Users\OES\source\repos\Crunan\OntosTT\bin\xinput.lib
+C:\Users\OES\source\repos\Crunan\OntosTT\bin\OTT_PLUS.exe.config
+C:\Users\OES\source\repos\Crunan\OntosTT\bin\OTT_PLUS.exe.manifest
+C:\Users\OES\source\repos\Crunan\OntosTT\bin\OTT_PLUS.application
+C:\Users\OES\source\repos\Crunan\OntosTT\bin\OTT_PLUS.exe
+C:\Users\OES\source\repos\Crunan\OntosTT\bin\OTT_PLUS.pdb
+C:\Users\OES\source\repos\Crunan\OntosTT\bin\OTT_PLUS.xml
+C:\Users\OES\source\repos\Crunan\OntosTT\bin\Guna.UI2.dll
+C:\Users\OES\source\repos\Crunan\OntosTT\bin\System.ValueTuple.dll
+C:\Users\OES\source\repos\Crunan\OntosTT\bin\System.ValueTuple.xml
+C:\Users\OES\source\repos\Crunan\OntosTT\bin\Release\XInput1_4.dll
+C:\Users\OES\source\repos\Crunan\OntosTT\bin\Release\XInput9_1_0.dll
+C:\Users\OES\source\repos\Crunan\OntosTT\bin\Release\xinput.lib
+C:\Users\OES\source\repos\Crunan\OntosTT\bin\Release\OTT_PLUS.exe.config
+C:\Users\OES\source\repos\Crunan\OntosTT\bin\Release\OTT_PLUS.exe.manifest
+C:\Users\OES\source\repos\Crunan\OntosTT\bin\Release\OTT_PLUS.application
+C:\Users\OES\source\repos\Crunan\OntosTT\bin\Release\OTT_PLUS.exe
+C:\Users\OES\source\repos\Crunan\OntosTT\bin\Release\OTT_PLUS.pdb
+C:\Users\OES\source\repos\Crunan\OntosTT\bin\Release\OTT_PLUS.xml
+C:\Users\OES\source\repos\Crunan\OntosTT\bin\Release\Guna.UI2.dll
+C:\Users\OES\source\repos\Crunan\OntosTT\bin\Release\System.ValueTuple.dll
+C:\Users\OES\source\repos\Crunan\OntosTT\bin\Release\System.ValueTuple.xml
+C:\Users\OES\source\repos\Crunan\OntosTT\obj\Release\WindowsApplication1.AboutBox1.resources
+C:\Users\OES\source\repos\Crunan\OntosTT\obj\Release\WindowsApplication1.MainWindow.resources
+C:\Users\OES\source\repos\Crunan\OntosTT\obj\Release\WindowsApplication1.DiameterEntryDialog.resources
+C:\Users\OES\source\repos\Crunan\OntosTT\obj\Release\WindowsApplication1.Form4.resources
+C:\Users\OES\source\repos\Crunan\OntosTT\obj\Release\WindowsApplication1.CascadingRecipesDialog.resources
+C:\Users\OES\source\repos\Crunan\OntosTT\obj\Release\WindowsApplication1.Resources.resources
+C:\Users\OES\source\repos\Crunan\OntosTT\obj\Release\WindowsApplication1.TSSBForm.resources
+C:\Users\OES\source\repos\Crunan\OntosTT\obj\Release\OntosTT.vbproj.GenerateResource.cache
+C:\Users\OES\source\repos\Crunan\OntosTT\obj\Release\OntosTT.vbproj.CoreCompileInputs.cache
+C:\Users\OES\source\repos\Crunan\OntosTT\obj\Release\OTT_PLUS.exe.manifest
+C:\Users\OES\source\repos\Crunan\OntosTT\obj\Release\OTT_PLUS.application
+C:\Users\OES\source\repos\Crunan\OntosTT\obj\Release\OntosTT.vbproj.CopyComplete
+C:\Users\OES\source\repos\Crunan\OntosTT\obj\Release\OTT_PLUS.exe
+C:\Users\OES\source\repos\Crunan\OntosTT\obj\Release\OTT_PLUS.xml
+C:\Users\OES\source\repos\Crunan\OntosTT\obj\Release\OTT_PLUS.pdb
