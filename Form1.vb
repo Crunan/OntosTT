@@ -26,6 +26,8 @@ Public Class MainWindow
     Public Shared b_autoScanActive As Boolean = True
     Public Shared st_AutoScanSave As String = 1 'For saving the AUTO SCAN state   
     '
+    Public Shared st_has3AxisBoard As String
+    Public Shared st_password As String
     Public Shared b_HasCollision As Boolean = False 'the tool has a Collision System on 
 
 
@@ -761,6 +763,7 @@ Public Class MainWindow
     Dim b_PlannedAutoStart As Boolean = False 'This is strictly for Auto Start PLasma, to prevent RUN SCAN from starting plasma.
 
 
+
     Dim b_LightTowerError As Boolean = False 'Flag for light tower (might not need)
     Dim b_toggleDoorsOpen As Boolean = False 'Just for flashing the doors open 
 
@@ -1225,28 +1228,29 @@ Public Class MainWindow
                 AutoManBtn.Visible = True
             End If
 
-            'Reset the controller PCB and give it time to do so
-            WriteCommand("$A9%", 4)  'SOFT_RESET   $A9%; resp[!A9#]; causes Aux PCB Soft Reset
-            responseLen = ReadResponse(0)
-            AUXResetTimeOut = 2500 / Timer1.Interval  'interval in milliseconds, so get close to 2.5 second wait
-
+            If (st_has3AxisBoard = "1") Then
+                'Reset the controller PCB and give it time to do so
+                WriteCommand("$A9%", 4)  'SOFT_RESET   $A9%; resp[!A9#]; causes Aux PCB Soft Reset
+                responseLen = ReadResponse(0)
+                AUXResetTimeOut = 2500 / Timer1.Interval  'interval in milliseconds, so get close to 2.5 second wait
+            End If
 
             'Reset the controller PCB and give it time to do so
             WriteCommand("$90%", 4)  'SOFT_RESET   $90% ; resp[!90#] Resets CTL PCB
-            responseLen = ReadResponse(0)
-            CTLResetTimeOut = 2500 / Timer1.Interval  'interval in milliseconds, so get close to 2.5 second wait
+                responseLen = ReadResponse(0)
+                CTLResetTimeOut = 2500 / Timer1.Interval  'interval in milliseconds, so get close to 2.5 second wait
 
-            SM_State = STARTUP
-            'start up the log file
-            OpenLogFile()
+                SM_State = STARTUP
+                'start up the log file
+                OpenLogFile()
 
 
-            'Set the Dropdown to have the known port 
-            com_portBox.Items.Add(st_KnownComPort)
-            com_portBox.Text = st_KnownComPort
-        Else
-            'set-up the comm port drop-box 
-            com_portBox.Items.AddRange(ar_myPort)
+                'Set the Dropdown to have the known port 
+                com_portBox.Items.Add(st_KnownComPort)
+                com_portBox.Text = st_KnownComPort
+            Else
+                'set-up the comm port drop-box 
+                com_portBox.Items.AddRange(ar_myPort)
             com_portBox.Visible = True
             Com_Port_Label.Visible = True
         End If
@@ -1745,12 +1749,7 @@ Public Class MainWindow
             WriteLogLine("CTL Firmware Version: " + StrVar)
         End If
 
-        WriteCommand("$A1%", 4) 'GET FW VERSION $A1% resp[!A1xx#]; xx = hard coded FW rev in Hex
-        ResponseLen = ReadResponse(0)
-        If ResponseLen > 3 Then
-            StrVar = st_RCV.Substring(3, 2)
-            WriteLogLine("Axis Firmware Version: " + StrVar)
-        End If
+
         'How many MFCs?
         WriteCommand("$2A002%", 7) 'GET Number of MFCs (1-4) $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
         ResponseLen = ReadResponse(0)
@@ -1886,180 +1885,190 @@ Public Class MainWindow
         'enable service menu
         EnableServiceMenuToolStripMenuItem.Enabled = True
 
-
-        'Ask the Aux PCB for MAX & MIN values
-        WriteCommand("$DA106%", 7) 'GET_X_MAX_POSITION  X maximum allowed position in MM (float) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-        ResponseLen = ReadResponse(1)
-        If ResponseLen > 7 Then
-            StrVar = st_RCV.Substring(7)
-            StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-            b_IsStringANumber(StrVar, st_DoubleChars, "$DA106%")
-            Param.db_X_Max_Pos = Convert.ToDouble(StrVar)
-        End If
-        'Ask the Aux PCB for MAX & MIN values              
-        WriteCommand("$DA206%", 7) 'GET_Y_MAX_POSITION Y maximum allowed position in MM (float) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-        ResponseLen = ReadResponse(1)
-        If ResponseLen > 7 Then
-            StrVar = st_RCV.Substring(7)
-            StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-            b_IsStringANumber(StrVar, st_DoubleChars, "$DA206%")
-            Param.db_Y_Max_Pos = Convert.ToDouble(StrVar)
+        If (st_has3AxisBoard = "1") Then
+            WriteCommand("$A1%", 4) 'GET FW VERSION $A1% resp[!A1xx#]; xx = hard coded FW rev in Hex
+            ResponseLen = ReadResponse(0)
+            If ResponseLen > 3 Then
+                StrVar = st_RCV.Substring(3, 2)
+                WriteLogLine("Axis Firmware Version: " + StrVar)
+            End If
             'Ask the Aux PCB for MAX & MIN values
-        End If
-        WriteCommand("$DA306%", 7) ''GET_Z_MAX_POSITION  Z maximum allowed position in MM (float) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-        ResponseLen = ReadResponse(1)
-        If ResponseLen > 7 Then
-            StrVar = st_RCV.Substring(7)
-            StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-            b_IsStringANumber(StrVar, st_DoubleChars, "$DA306%")
-            Param.db_Z_Max_Pos = Convert.ToDouble(StrVar)
-        End If
-        WriteCommand("$DA107%", 7) 'GET_X_MAX_SPEED  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-        ResponseLen = ReadResponse(1)
-        If ResponseLen > 7 Then
-            StrVar = st_RCV.Substring(7)
-            StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-            b_IsStringANumber(StrVar, st_DoubleChars, "$DA107%")
-            Param.db_X_Max_Speed = Convert.ToDouble(StrVar)
-        End If
-        WriteCommand("$DA207%", 7) 'GET_Y_MAX_SPEED  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-        ResponseLen = ReadResponse(1)
-        If ResponseLen > 7 Then
-            StrVar = st_RCV.Substring(7)
-            StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-            b_IsStringANumber(StrVar, st_DoubleChars, "$DA207%")
-            Param.db_Y_Max_Speed = Convert.ToDouble(StrVar)
-        End If
-        WriteCommand("$DA307%", 7) 'GET_Z_MAX_SPEED  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-        ResponseLen = ReadResponse(1)
-        If ResponseLen > 7 Then
-            StrVar = st_RCV.Substring(7) '<<<EMMETT USE TRIM HERE
-            StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-            b_IsStringANumber(StrVar, st_DoubleChars, "$DA307%")
-            Param.db_Z_Max_Speed = Convert.ToDouble(StrVar)
+            WriteCommand("$DA106%", 7) 'GET_X_MAX_POSITION  X maximum allowed position in MM (float) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            ResponseLen = ReadResponse(1)
+            If ResponseLen > 7 Then
+                StrVar = st_RCV.Substring(7)
+                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
+                b_IsStringANumber(StrVar, st_DoubleChars, "$DA106%")
+                Param.db_X_Max_Pos = Convert.ToDouble(StrVar)
+            End If
+            'Ask the Aux PCB for MAX & MIN values              
+            WriteCommand("$DA206%", 7) 'GET_Y_MAX_POSITION Y maximum allowed position in MM (float) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            ResponseLen = ReadResponse(1)
+            If ResponseLen > 7 Then
+                StrVar = st_RCV.Substring(7)
+                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
+                b_IsStringANumber(StrVar, st_DoubleChars, "$DA206%")
+                Param.db_Y_Max_Pos = Convert.ToDouble(StrVar)
+                'Ask the Aux PCB for MAX & MIN values
+            End If
+            WriteCommand("$DA306%", 7) ''GET_Z_MAX_POSITION  Z maximum allowed position in MM (float) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            ResponseLen = ReadResponse(1)
+            If ResponseLen > 7 Then
+                StrVar = st_RCV.Substring(7)
+                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
+                b_IsStringANumber(StrVar, st_DoubleChars, "$DA306%")
+                Param.db_Z_Max_Pos = Convert.ToDouble(StrVar)
+            End If
+            WriteCommand("$DA107%", 7) 'GET_X_MAX_SPEED  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            ResponseLen = ReadResponse(1)
+            If ResponseLen > 7 Then
+                StrVar = st_RCV.Substring(7)
+                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
+                b_IsStringANumber(StrVar, st_DoubleChars, "$DA107%")
+                Param.db_X_Max_Speed = Convert.ToDouble(StrVar)
+            End If
+            WriteCommand("$DA207%", 7) 'GET_Y_MAX_SPEED  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            ResponseLen = ReadResponse(1)
+            If ResponseLen > 7 Then
+                StrVar = st_RCV.Substring(7)
+                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
+                b_IsStringANumber(StrVar, st_DoubleChars, "$DA207%")
+                Param.db_Y_Max_Speed = Convert.ToDouble(StrVar)
+            End If
+            WriteCommand("$DA307%", 7) 'GET_Z_MAX_SPEED  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            ResponseLen = ReadResponse(1)
+            If ResponseLen > 7 Then
+                StrVar = st_RCV.Substring(7) '<<<EMMETT USE TRIM HERE
+                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
+                b_IsStringANumber(StrVar, st_DoubleChars, "$DA307%")
+                Param.db_Z_Max_Speed = Convert.ToDouble(StrVar)
+            End If
+
+            'get Coordinate system info from 3-Axis PCB
+            WriteCommand("$DA510%", 7) 'GET db_Xp_2Base  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            ResponseLen = ReadResponse(0)
+            If ResponseLen > 7 Then
+                StrVar = st_RCV.Substring(7)
+                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
+                b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
+                CoordParam.db_Xp_2_Base = Convert.ToDouble(StrVar)
+            End If
+            WriteCommand("$DA520%", 7) 'GET db_Yp_2Base  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            ResponseLen = ReadResponse(0)
+            If ResponseLen > 7 Then
+                StrVar = st_RCV.Substring(7)
+                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
+                b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
+                CoordParam.db_Yp_2_Base = Convert.ToDouble(StrVar)
+            End If
+            WriteCommand("$DA530%", 7) 'GET db_Zp_2Base  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            ResponseLen = ReadResponse(0)
+            If ResponseLen > 7 Then
+                StrVar = st_RCV.Substring(7)
+                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
+                b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
+                CoordParam.db_Zp_2_Base = Convert.ToDouble(StrVar)
+                Param.db_Z_Head_Pos = Convert.ToDouble(StrVar) 'Used for running scan, need to know where the head is. 
+            End If
+            WriteCommand("$DA511%", 7) 'GET db_Xs_2_PH  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            ResponseLen = ReadResponse(0)
+            If ResponseLen > 7 Then
+                StrVar = st_RCV.Substring(7)
+                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
+                b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
+                CoordParam.db_Xs_2_PH = Convert.ToDouble(StrVar)
+            End If
+            WriteCommand("$DA521%", 7) 'GET db_Ys_2_PH  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            ResponseLen = ReadResponse(0)
+            If ResponseLen > 7 Then
+                StrVar = st_RCV.Substring(7)
+                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
+                b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
+                CoordParam.db_Ys_2_PH = Convert.ToDouble(StrVar)
+            End If
+            WriteCommand("$DA540%", 7) 'GET Plasma Head Slit Length (mm)  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            ResponseLen = ReadResponse(0)
+            If ResponseLen > 7 Then
+                StrVar = st_RCV.Substring(7)
+                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
+                b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
+                CoordParam.db_PlasmaHeadSlitLength = Convert.ToDouble(StrVar)
+            End If
+            WriteCommand("$DA541%", 7) 'GET Plasma Head Slit Width (mm) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            ResponseLen = ReadResponse(0)
+            If ResponseLen > 7 Then
+                StrVar = st_RCV.Substring(7)
+                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
+                b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
+                CoordParam.db_PlasmaHeadSlitWidth = Convert.ToDouble(StrVar)
+            End If
+            WriteCommand("$DA542%", 7) 'GET Chuck to Plasma Head safety gap (mm) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            ResponseLen = ReadResponse(0)
+            If ResponseLen > 7 Then
+                StrVar = st_RCV.Substring(7)
+                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
+                b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
+                CoordParam.db_ChuckToPlasmaHeadSafetyGap = Convert.ToDouble(StrVar)
+            End If
+            WriteCommand("$DA543%", 7) 'GET Z Pins Buried Pos (mm) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            ResponseLen = ReadResponse(0)
+            If ResponseLen > 7 Then
+                StrVar = st_RCV.Substring(7)
+                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
+                b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
+                CoordParam.db_ZPinsBuriedPos = Convert.ToDouble(StrVar)
+            End If
+            WriteCommand("$DA544%", 7) 'GET Z Pins Exposed Pos (mm) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            ResponseLen = ReadResponse(0)
+            If ResponseLen > 7 Then
+                StrVar = st_RCV.Substring(7)
+                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
+                b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
+                CoordParam.db_ZPinsExposedPos = Convert.ToDouble(StrVar)
+            End If
+            'Get the Home Position Parameters
+            WriteCommand("$DA512%", 7) 'GET db_LoadPos_X_Base $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            ResponseLen = ReadResponse(0)
+            If ResponseLen > 7 Then
+                StrVar = st_RCV.Substring(7)
+                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
+                b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
+                Param.db_X_Home_Pos = Convert.ToDouble(StrVar)
+            End If
+            WriteCommand("$DA522%", 7) 'GET db_LoadPos_Y_Base $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            ResponseLen = ReadResponse(0)
+            If ResponseLen > 7 Then
+                StrVar = st_RCV.Substring(7)
+                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
+                b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
+                Param.db_Y_Home_Pos = Convert.ToDouble(StrVar)
+            End If
+            WriteCommand("$DA532%", 7) 'GET db_LoadPos_Z_Base $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            ResponseLen = ReadResponse(0)
+            If ResponseLen > 7 Then
+                StrVar = st_RCV.Substring(7)
+                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
+                b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
+                Param.db_Z_Home_Pos = Convert.ToDouble(StrVar)
+            End If
+
+            InitAxesBtn.Enabled = True
+            'Initialize sub-StateMachines        
+            SMTwoSpot.State = TSSM_IDLE
+            SMInitAxes.State = IASM_IDLE
+            SMScan.State = SCSM_IDLE
+            SMScan.SubState = SCSM_SUB_IDLE
+            SMScan.b_ExternalStateChange = False
+            SMHomeAxes.State = HASM_IDLE
+            SMTwoSpot.State = TSSM_IDLE
+            SMTwoSpot.b_ExternalStateChange = False
+
         End If
 
-        'get Coordinate system info from 3-Axis PCB
-        WriteCommand("$DA510%", 7) 'GET db_Xp_2Base  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-        ResponseLen = ReadResponse(0)
-        If ResponseLen > 7 Then
-            StrVar = st_RCV.Substring(7)
-            StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-            b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
-            CoordParam.db_Xp_2_Base = Convert.ToDouble(StrVar)
-        End If
-        WriteCommand("$DA520%", 7) 'GET db_Yp_2Base  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-        ResponseLen = ReadResponse(0)
-        If ResponseLen > 7 Then
-            StrVar = st_RCV.Substring(7)
-            StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-            b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
-            CoordParam.db_Yp_2_Base = Convert.ToDouble(StrVar)
-        End If
-        WriteCommand("$DA530%", 7) 'GET db_Zp_2Base  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-        ResponseLen = ReadResponse(0)
-        If ResponseLen > 7 Then
-            StrVar = st_RCV.Substring(7)
-            StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-            b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
-            CoordParam.db_Zp_2_Base = Convert.ToDouble(StrVar)
-            Param.db_Z_Head_Pos = Convert.ToDouble(StrVar) 'Used for running scan, need to know where the head is. 
-        End If
-        WriteCommand("$DA511%", 7) 'GET db_Xs_2_PH  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-        ResponseLen = ReadResponse(0)
-        If ResponseLen > 7 Then
-            StrVar = st_RCV.Substring(7)
-            StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-            b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
-            CoordParam.db_Xs_2_PH = Convert.ToDouble(StrVar)
-        End If
-        WriteCommand("$DA521%", 7) 'GET db_Ys_2_PH  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-        ResponseLen = ReadResponse(0)
-        If ResponseLen > 7 Then
-            StrVar = st_RCV.Substring(7)
-            StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-            b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
-            CoordParam.db_Ys_2_PH = Convert.ToDouble(StrVar)
-        End If
-        WriteCommand("$DA540%", 7) 'GET Plasma Head Slit Length (mm)  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-        ResponseLen = ReadResponse(0)
-        If ResponseLen > 7 Then
-            StrVar = st_RCV.Substring(7)
-            StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-            b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
-            CoordParam.db_PlasmaHeadSlitLength = Convert.ToDouble(StrVar)
-        End If
-        WriteCommand("$DA541%", 7) 'GET Plasma Head Slit Width (mm) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-        ResponseLen = ReadResponse(0)
-        If ResponseLen > 7 Then
-            StrVar = st_RCV.Substring(7)
-            StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-            b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
-            CoordParam.db_PlasmaHeadSlitWidth = Convert.ToDouble(StrVar)
-        End If
-        WriteCommand("$DA542%", 7) 'GET Chuck to Plasma Head safety gap (mm) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-        ResponseLen = ReadResponse(0)
-        If ResponseLen > 7 Then
-            StrVar = st_RCV.Substring(7)
-            StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-            b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
-            CoordParam.db_ChuckToPlasmaHeadSafetyGap = Convert.ToDouble(StrVar)
-        End If
-        WriteCommand("$DA543%", 7) 'GET Z Pins Buried Pos (mm) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-        ResponseLen = ReadResponse(0)
-        If ResponseLen > 7 Then
-            StrVar = st_RCV.Substring(7)
-            StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-            b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
-            CoordParam.db_ZPinsBuriedPos = Convert.ToDouble(StrVar)
-        End If
-        WriteCommand("$DA544%", 7) 'GET Z Pins Exposed Pos (mm) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-        ResponseLen = ReadResponse(0)
-        If ResponseLen > 7 Then
-            StrVar = st_RCV.Substring(7)
-            StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-            b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
-            CoordParam.db_ZPinsExposedPos = Convert.ToDouble(StrVar)
-        End If
-        'Get the Home Position Parameters
-        WriteCommand("$DA512%", 7) 'GET db_LoadPos_X_Base $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-        ResponseLen = ReadResponse(0)
-        If ResponseLen > 7 Then
-            StrVar = st_RCV.Substring(7)
-            StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-            b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
-            Param.db_X_Home_Pos = Convert.ToDouble(StrVar)
-        End If
-        WriteCommand("$DA522%", 7) 'GET db_LoadPos_Y_Base $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-        ResponseLen = ReadResponse(0)
-        If ResponseLen > 7 Then
-            StrVar = st_RCV.Substring(7)
-            StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-            b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
-            Param.db_Y_Home_Pos = Convert.ToDouble(StrVar)
-        End If
-        WriteCommand("$DA532%", 7) 'GET db_LoadPos_Z_Base $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-        ResponseLen = ReadResponse(0)
-        If ResponseLen > 7 Then
-            StrVar = st_RCV.Substring(7)
-            StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-            b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
-            Param.db_Z_Home_Pos = Convert.ToDouble(StrVar)
-        End If
-
-        InitAxesBtn.Enabled = True
         SettingsBtn.Enabled = True
         FileToolStripMenuItem.Enabled = True
         CodeToolStripMenuItem.Enabled = True
-        'Initialize sub-StateMachines        
-        SMTwoSpot.State = TSSM_IDLE
-        SMInitAxes.State = IASM_IDLE
-        SMScan.State = SCSM_IDLE
-        SMScan.SubState = SCSM_SUB_IDLE
-        SMScan.b_ExternalStateChange = False
-        SMHomeAxes.State = HASM_IDLE
-        SMTwoSpot.State = TSSM_IDLE
-        SMTwoSpot.b_ExternalStateChange = False
+
 
         Operator_Mode()
     End Sub
@@ -2416,32 +2425,35 @@ Public Class MainWindow
 
 
         'Get Axes Status
-        GetAxesStatus() 'Update AxesStatus Data Structure
-        'Manage Axes Status Message
-        If AxesStatus.b_XYZSameState = True And AxesStatus.XState < ASM_IDLE Then
-            CurrentStepTxtBox.Text = "Stage Not Initialized"
-        End If
+        If (st_has3AxisBoard = "1") Then
+            GetAxesStatus() 'Update AxesStatus Data Structure
+            'Manage Axes Status Message
+            If AxesStatus.b_XYZSameState = True And AxesStatus.XState < ASM_IDLE Then
+                CurrentStepTxtBox.Text = "Stage Not Initialized"
+            End If
 
 
-        'Manage Actual Position Windows
-        If AxesStatus.XState >= ASM_IDLE Then
-            DoubVal = db_C_XPos_RefB_2_RefPH(AxesStatus.db_XPos)
-            AxesXActual.Text = DoubVal.ToString("F") '2 decimal point
-        Else
-            AxesXActual.Text = "???"
+            'Manage Actual Position Windows
+            If AxesStatus.XState >= ASM_IDLE Then
+                DoubVal = db_C_XPos_RefB_2_RefPH(AxesStatus.db_XPos)
+                AxesXActual.Text = DoubVal.ToString("F") '2 decimal point
+            Else
+                AxesXActual.Text = "???"
+            End If
+            If AxesStatus.YState >= ASM_IDLE Then
+                DoubVal = db_C_YPos_RefB_2_RefPH(AxesStatus.db_YPos)
+                AxesYActual.Text = DoubVal.ToString("F") '2 decimal point
+            Else
+                AxesYActual.Text = "???"
+            End If
+            If AxesStatus.ZState >= ASM_IDLE Then
+                DoubVal = db_C_ZPos_RefB_2_RefPH(AxesStatus.db_ZPos)
+                AxesZActual.Text = DoubVal.ToString("F") '2 decimal point
+            Else
+                AxesZActual.Text = "???"
+            End If
         End If
-        If AxesStatus.YState >= ASM_IDLE Then
-            DoubVal = db_C_YPos_RefB_2_RefPH(AxesStatus.db_YPos)
-            AxesYActual.Text = DoubVal.ToString("F") '2 decimal point
-        Else
-            AxesYActual.Text = "???"
-        End If
-        If AxesStatus.ZState >= ASM_IDLE Then
-            DoubVal = db_C_ZPos_RefB_2_RefPH(AxesStatus.db_ZPos)
-            AxesZActual.Text = DoubVal.ToString("F") '2 decimal point
-        Else
-            AxesZActual.Text = "???"
-        End If
+
 
         If (b_StatusChanged = True) And (b_RunRecipeOn = True) Then
             WriteLogLine("Tuner: " & ActTunerTxt.Text & " Temp: " & PHTempTxt.Text _
@@ -2664,83 +2676,88 @@ Public Class MainWindow
         ResponseLen = ReadResponse(0)
         If ResponseLen > 3 Then 'it got the command OK
             StrVar = st_RCV.Substring(3, 4)
-            b_IsStringANumber(StrVar, st_IntChars, "$8B%") 'restarts if = False
-            ErrorCode = Convert.ToInt32(StrVar, 10)
-
-            Select Case ErrorCode
-                Case AC_OK
+            If Integer.TryParse(StrVar, Globalization.NumberStyles.HexNumber, Nothing, ErrorCode) Then
+                ' Conversion succeeded
+                ' The converted value is stored in the ErrorCode variable
+                Select Case ErrorCode
+                    Case AC_OK
                     'AC_CODE.Visible = False
-                Case AC_NO_N2
-                    AC_CODE.Text = "NO PURGE N2"
-                    WriteLogLine("NO PURGE N2")
-                    b_ClearAbort = True
-                    AC_CODE.Visible = True
-                    ClearAbortbtn.Visible = True
-                Case AC_NO_HEARTBEAT
-                    AC_CODE.Text = "NO HEARTBEAT"
-                    WriteLogLine("NO HEARTBEAT")
-                    b_ClearAbort = True
-                    AC_CODE.Visible = True
-                    ClearAbortbtn.Visible = True
-                Case AC_NO_GAS_1
-                    AC_CODE.Text = "MFC_1 Low Flow"
-                    WriteLogLine("MFC_1 Low Flow")
-                    b_ClearAbort = True
-                    AC_CODE.Visible = True
-                    ClearAbortbtn.Visible = True
-                Case AC_NO_GAS_2
-                    AC_CODE.Text = "MFC_2 Low Flow"
-                    WriteLogLine("MFC_2 Low Flow")
-                    b_ClearAbort = True
-                    AC_CODE.Visible = True
-                    ClearAbortbtn.Visible = True
-                Case AC_NO_GAS_3
-                    AC_CODE.Text = "MFC_3 Low Flow"
-                    WriteLogLine("MFC_3 Low Flow")
-                    b_ClearAbort = True
-                    AC_CODE.Visible = True
-                    ClearAbortbtn.Visible = True
-                Case AC_NO_GAS_4
-                    AC_CODE.Text = "MFC_4 Low Flow"
-                    WriteLogLine("MFC_4 Low Flow")
-                    b_ClearAbort = True
-                    AC_CODE.Visible = True
-                    ClearAbortbtn.Visible = True
-                Case AC_BAD_HELIUM
-                    AC_CODE.Text = "BAD HELIUM"
-                    WriteLogLine("BAD HELIUM")
-                    b_ClearAbort = True
-                    AC_CODE.Visible = True
-                    ClearAbortbtn.Visible = True
-                Case AC_ESTOP
-                    AC_CODE.Text = "ESTOP ACTIVE"
-                    WriteLogLine("ESTOP ACTIVE")
-                    b_ClearAbort = True
-                    AC_CODE.Visible = True
-                    ClearAbortbtn.Visible = True
-                Case AC_DOORS_OPEN
-                    AC_CODE.Text = "ABORT: DOOR OPENED"
-                    MsgBox("Door opened during processing. Stage position has been lost, click OK to initialize the stage. Then Acknowledge the abort to send stage to the Load position.", , "PROCESS ABORT: DOORS OPENED")
-                    WriteLogLine("ABORT: DOOR OPEN")
-                    DoorAbort.Active = True
-                    b_ClearAbort = True
-                    AC_CODE.Visible = True
-                    ClearAbortbtn.Visible = True
-                Case AC_PWR_FWD_LOW
-                    AC_CODE.Text = "Power Fwd Low"
-                    WriteLogLine("Power Fwd Low")
-                    b_ClearAbort = True
-                    AC_CODE.Visible = True
-                    ClearAbortbtn.Visible = True
-                Case AC_OVER_TEMP
-                    AC_CODE.Text = "Head Too Hot"
-                    WriteLogLine("Head Too Hot")
-                    b_ClearAbort = True
-                    AC_CODE.Visible = True
-                    ClearAbortbtn.Visible = True
-                Case Else
+                    Case AC_NO_N2
+                        AC_CODE.Text = "NO PURGE N2"
+                        WriteLogLine("NO PURGE N2")
+                        b_ClearAbort = True
+                        AC_CODE.Visible = True
+                        ClearAbortbtn.Visible = True
+                    Case AC_NO_HEARTBEAT
+                        AC_CODE.Text = "NO HEARTBEAT"
+                        WriteLogLine("NO HEARTBEAT")
+                        b_ClearAbort = True
+                        AC_CODE.Visible = True
+                        ClearAbortbtn.Visible = True
+                    Case AC_NO_GAS_1
+                        AC_CODE.Text = "MFC_1 Low Flow"
+                        WriteLogLine("MFC_1 Low Flow")
+                        b_ClearAbort = True
+                        AC_CODE.Visible = True
+                        ClearAbortbtn.Visible = True
+                    Case AC_NO_GAS_2
+                        AC_CODE.Text = "MFC_2 Low Flow"
+                        WriteLogLine("MFC_2 Low Flow")
+                        b_ClearAbort = True
+                        AC_CODE.Visible = True
+                        ClearAbortbtn.Visible = True
+                    Case AC_NO_GAS_3
+                        AC_CODE.Text = "MFC_3 Low Flow"
+                        WriteLogLine("MFC_3 Low Flow")
+                        b_ClearAbort = True
+                        AC_CODE.Visible = True
+                        ClearAbortbtn.Visible = True
+                    Case AC_NO_GAS_4
+                        AC_CODE.Text = "MFC_4 Low Flow"
+                        WriteLogLine("MFC_4 Low Flow")
+                        b_ClearAbort = True
+                        AC_CODE.Visible = True
+                        ClearAbortbtn.Visible = True
+                    Case AC_BAD_HELIUM
+                        AC_CODE.Text = "BAD HELIUM"
+                        WriteLogLine("BAD HELIUM")
+                        b_ClearAbort = True
+                        AC_CODE.Visible = True
+                        ClearAbortbtn.Visible = True
+                    Case AC_ESTOP
+                        AC_CODE.Text = "ESTOP ACTIVE"
+                        WriteLogLine("ESTOP ACTIVE")
+                        b_ClearAbort = True
+                        AC_CODE.Visible = True
+                        ClearAbortbtn.Visible = True
+                    Case AC_DOORS_OPEN
+                        AC_CODE.Text = "ABORT: DOOR OPENED"
+                        MsgBox("Door opened during processing. Stage position has been lost, click OK to initialize the stage. Then Acknowledge the abort to send stage to the Load position.", , "PROCESS ABORT: DOORS OPENED")
+                        WriteLogLine("ABORT: DOOR OPEN")
+                        DoorAbort.Active = True
+                        b_ClearAbort = True
+                        AC_CODE.Visible = True
+                        ClearAbortbtn.Visible = True
+                    Case AC_PWR_FWD_LOW
+                        AC_CODE.Text = "Power Fwd Low"
+                        WriteLogLine("Power Fwd Low")
+                        b_ClearAbort = True
+                        AC_CODE.Visible = True
+                        ClearAbortbtn.Visible = True
+                    Case AC_OVER_TEMP
+                        AC_CODE.Text = "Head Too Hot"
+                        WriteLogLine("Head Too Hot")
+                        b_ClearAbort = True
+                        AC_CODE.Visible = True
+                        ClearAbortbtn.Visible = True
+                    Case Else
 
-            End Select
+                End Select
+            Else
+                ' Conversion failed
+                ' Handle the error case appropriately
+            End If
+
         Else
             ClearAbortbtn.Visible = False
         End If
@@ -2793,6 +2810,13 @@ Public Class MainWindow
                 Case "KNOWN_COM_PORT"
                     Exe_Cfg.KNOWN_COM_PORT = ExeConfigParamValue
                     st_KnownComPort = Exe_Cfg.KNOWN_COM_PORT
+                Case "HAS_3_AXIS_BOARD"
+                    Exe_Cfg.KNOWN_COM_PORT = ExeConfigParamValue
+                    st_has3AxisBoard = Exe_Cfg.KNOWN_COM_PORT
+                Case "PW"
+                    Exe_Cfg.KNOWN_COM_PORT = ExeConfigParamValue
+                    st_password = Exe_Cfg.KNOWN_COM_PORT
+
 
                 Case "LED1", "LED2", "LED3", "LED4", "LED5", "LED6", "LED7", "LED8", "LED9", "LED10", "LED11", "LED12", "LED13", "LED14", "LED15", "LED16"
                     CTL.LEDS.CreateLED(ExeConfigParamValue)
@@ -3195,7 +3219,6 @@ Public Class MainWindow
 
     Private Sub EngineerModeToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles EngineerModeToolStripMenuItem.Click
         Dim StrVar As String
-        Dim st_password As String = "9820"
 
         StrVar = InputBox("Enter the Password:", "Password", "")
         If StrVar = st_password Then
