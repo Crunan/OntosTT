@@ -831,6 +831,7 @@ Public Class MainWindow
     Const AC_DOORS_OPEN = &H9
     Const AC_PWR_FWD_LOW = &HA
     Const AC_OVER_TEMP = &HB
+    Const AC_NO_CDA = &HC
 
     Dim SM_State As Integer = IDLE
     Dim SM_PollCounter As Integer = 0
@@ -1887,7 +1888,7 @@ Public Class MainWindow
         'enable service menu
         EnableServiceMenuToolStripMenuItem.Enabled = True
 
-        If st_hasHandshake Then
+        If (st_hasHandshake = "1") Then
             WriteCommand("$1E01%", 6)
             ResponseLen = ReadResponse(1)
         Else
@@ -2757,6 +2758,12 @@ Public Class MainWindow
                     Case AC_OVER_TEMP
                         AC_CODE.Text = "Head Too Hot"
                         WriteLogLine("Head Too Hot")
+                        b_ClearAbort = True
+                        AC_CODE.Visible = True
+                        ClearAbortbtn.Visible = True
+                    Case AC_NO_CDA
+                        AC_CODE.Text = "No CDA"
+                        WriteLogLine("NO CDA")
                         b_ClearAbort = True
                         AC_CODE.Visible = True
                         ClearAbortbtn.Visible = True
