@@ -28,6 +28,7 @@ Public Class MainWindow
     '
     Public Shared st_has3AxisBoard As String
     Public Shared st_password As String
+    Public Shared st_hasHandshake As String
     Public Shared b_HasCollision As Boolean = False 'the tool has a Collision System on 
 
 
@@ -1283,11 +1284,12 @@ Public Class MainWindow
             If b_ENG_mode Then
                 AutoManBtn.Visible = True
             End If
-
-            'Reset the controller PCB and give it time to do so
-            WriteCommand("$A9%", 4)  'SOFT_RESET   $A9%; resp[!A9#]; causes Aux PCB Soft Reset
-            ResponseLen = ReadResponse(0)
-            AUXResetTimeOut = 2500 / Timer1.Interval  'interval in milliseconds, so get close to 2.5 second wait
+            If (st_has3AxisBoard = "1") Then
+                'Reset the controller PCB and give it time to do so
+                WriteCommand("$A9%", 4)  'SOFT_RESET   $A9%; resp[!A9#]; causes Aux PCB Soft Reset
+                ResponseLen = ReadResponse(0)
+                AUXResetTimeOut = 2500 / Timer1.Interval  'interval in milliseconds, so get close to 2.5 second wait
+            End If
 
             'Reset the controller PCB and give it time to do so
             WriteCommand("$90%", 4)  'SOFT_RESET   $90% ; resp[!90#] Resets CTL PCB
@@ -1693,17 +1695,17 @@ Public Class MainWindow
                 If SM_PollCounter >= SM_POLL_PERIOD Then
                     SM_PollCounter = 0
                     RunPolling() 'poll the main PCB
-
-                    RunInitAxesSM() 'run the Initialize Axes state machine
-                    RunTwoSpotSM() 'run the Two Spot state machine                                   
-                    RunScanSM() 'run the Scan state machine
-                    RunStageTest() 'run the Stage test state machine
-                    RunCollisionPassSM()
-                    CollisionLaser() 'run the Collision Laser System state machine
-                    RunHomeAxesSM() 'run Home Axes state machine
-                    SetLightTower() 'run the Light Tower state machine
-                    HandleDoorAbort() 'run the Door Abort state machine
-
+                    If st_has3AxisBoard Then
+                        RunInitAxesSM() 'run the Initialize Axes state machine
+                        RunTwoSpotSM() 'run the Two Spot state machine                                   
+                        RunScanSM() 'run the Scan state machine
+                        RunStageTest() 'run the Stage test state machine
+                        RunCollisionPassSM()
+                        CollisionLaser() 'run the Collision Laser System state machine
+                        RunHomeAxesSM() 'run Home Axes state machine
+                        SetLightTower() 'run the Light Tower state machine
+                        HandleDoorAbort() 'run the Door Abort state machine
+                    End If
                 End If
 
             Case SHUTDOWN
@@ -1884,6 +1886,14 @@ Public Class MainWindow
 
         'enable service menu
         EnableServiceMenuToolStripMenuItem.Enabled = True
+
+        If st_hasHandshake Then
+            WriteCommand("$1E01%", 6)
+            ResponseLen = ReadResponse(1)
+        Else
+            WriteCommand("$1E00%", 6)
+            ResponseLen = ReadResponse(1)
+        End If
 
         If (st_has3AxisBoard = "1") Then
             WriteCommand("$A1%", 4) 'GET FW VERSION $A1% resp[!A1xx#]; xx = hard coded FW rev in Hex
@@ -2816,6 +2826,9 @@ Public Class MainWindow
                 Case "PW"
                     Exe_Cfg.KNOWN_COM_PORT = ExeConfigParamValue
                     st_password = Exe_Cfg.KNOWN_COM_PORT
+                Case "HANDSHAKE"
+                    Exe_Cfg.KNOWN_COM_PORT = ExeConfigParamValue
+                    st_hasHandshake = Exe_Cfg.KNOWN_COM_PORT
 
 
                 Case "LED1", "LED2", "LED3", "LED4", "LED5", "LED6", "LED7", "LED8", "LED9", "LED10", "LED11", "LED12", "LED13", "LED14", "LED15", "LED16"
