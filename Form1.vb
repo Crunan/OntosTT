@@ -819,19 +819,40 @@ Public Class MainWindow
     Const SERIAL_RESPONSE_TIMEOUT = 1000 'timeout waiting for control pcb response (milliseconds)
 
     ' Controller Error Codes
-    Const AC_OK = &H0
-    Const AC_NO_N2 = &H1
-    Const AC_NO_HEARTBEAT = &H2
-    Const AC_NO_GAS_1 = &H3
-    Const AC_NO_GAS_2 = &H4
-    Const AC_NO_GAS_3 = &H5
-    Const AC_NO_GAS_4 = &H6
-    Const AC_BAD_HELIUM = &H7
-    Const AC_ESTOP = &H8
-    Const AC_DOORS_OPEN = &H9
-    Const AC_PWR_FWD_LOW = &HA
-    Const AC_OVER_TEMP = &HB
-    Const AC_NO_CDA = &HC
+    Public Enum AbortCode
+        AC_OK = &H0
+        AC_NO_N2 = &H1
+        AC_NO_HEARTBEAT = &H2
+        AC_NO_GAS_1 = &H3
+        AC_NO_GAS_2 = &H4
+        AC_NO_GAS_3 = &H5
+        AC_NO_GAS_4 = &H6
+        AC_BAD_HELIUM = &H7
+        AC_ESTOP = &H8
+        AC_DOORS_OPEN = &H9
+        AC_PWR_FWD_LOW = &HA
+        AC_OVER_TEMP = &HB
+        AC_NO_CDA = &HC
+    End Enum
+
+
+    ' At the top of your class/module
+    Private AbortCodeMessages As Dictionary(Of String, String) = New Dictionary(Of String, String) From {
+        {AbortCode.AC_NO_N2.ToString(), "NO PURGE N2"},
+        {AbortCode.AC_NO_HEARTBEAT.ToString(), "NO HEARTBEAT"},
+        {AbortCode.AC_NO_GAS_1.ToString(), "MFC_1 Low Flow"},
+        {AbortCode.AC_NO_GAS_2.ToString(), "MFC_2 Low Flow"},
+        {AbortCode.AC_NO_GAS_3.ToString(), "MFC_3 Low Flow"},
+        {AbortCode.AC_NO_GAS_4.ToString(), "MFC_4 Low Flow"},
+        {AbortCode.AC_BAD_HELIUM.ToString(), "BAD HELIUM"},
+        {AbortCode.AC_ESTOP.ToString(), "ESTOP ACTIVE"},
+        {AbortCode.AC_DOORS_OPEN.ToString(), "ABORT: DOOR OPENED"},
+        {AbortCode.AC_PWR_FWD_LOW.ToString(), "Power Fwd Low"},
+        {AbortCode.AC_OVER_TEMP.ToString(), "Head Too Hot"},
+        {AbortCode.AC_NO_CDA.ToString(), "No CDA"}
+    }
+
+
 
     Dim SM_State As Integer = IDLE
     Dim SM_PollCounter As Integer = 0
@@ -2321,31 +2342,31 @@ Public Class MainWindow
 
 
         'Get Plasma Head Temperature
-        WriteCommand("$8c%", 4)  'GET_TEMP  $8C%: resp[!8Cxx.xx#]; xx.xx = head temp degrees C base 10
-        ResponseLen = ReadResponse(0)
-        If ResponseLen > 3 Then
-            StrVar = st_RCV.Substring(3, 7)
-            If b_IsStringANumber(StrVar, st_DoubleChars, st_EmptyChars) = True Then 'st_EmptyChars
-                DoubVal = Convert.ToDouble(StrVar)
-                IntVal = Math.Ceiling(DoubVal)
-                StrVar = IntVal.ToString()
-                Temp_Radial.Value = IntVal 'Set the Temperature Radial for Operator
-                PHTempTxt.Text = StrVar 'Display the val in deg C
-                If Temp_Radial.Value < 50 Then
-                    Temp_Radial.ProgressColor = Color.DodgerBlue
-                    Temp_Radial.ProgressColor2 = Color.DodgerBlue
-                ElseIf Temp_Radial.Value < 60 Then
-                    Temp_Radial.ProgressColor = Color.Yellow
-                    Temp_Radial.ProgressColor2 = Color.Yellow
-                Else
-                    Temp_Radial.ProgressColor = Color.Red
-                    Temp_Radial.ProgressColor2 = Color.Red
-                End If
+        'WriteCommand("$8c%", 4)  'GET_TEMP  $8C%: resp[!8Cxx.xx#]; xx.xx = head temp degrees C base 10
+        'ResponseLen = ReadResponse(0)
+        'If ResponseLen > 3 Then
+        '    StrVar = st_RCV.Substring(3, 7)
+        '    If b_IsStringANumber(StrVar, st_DoubleChars, st_EmptyChars) = True Then 'st_EmptyChars
+        '        DoubVal = Convert.ToDouble(StrVar)
+        '        IntVal = Math.Ceiling(DoubVal)
+        '        StrVar = IntVal.ToString()
+        '        Temp_Radial.Value = IntVal 'Set the Temperature Radial for Operator
+        '        PHTempTxt.Text = StrVar 'Display the val in deg C
+        '        If Temp_Radial.Value < 50 Then
+        '            Temp_Radial.ProgressColor = Color.DodgerBlue
+        '            Temp_Radial.ProgressColor2 = Color.DodgerBlue
+        '        ElseIf Temp_Radial.Value < 60 Then
+        '            Temp_Radial.ProgressColor = Color.Yellow
+        '            Temp_Radial.ProgressColor2 = Color.Yellow
+        '        Else
+        '            Temp_Radial.ProgressColor = Color.Red
+        '            Temp_Radial.ProgressColor2 = Color.Red
+        '        End If
 
-            Else
-                PHTempTxt.Text = "???" 'allow for disconnected or bad temperature probe
-            End If
-        End If
+        '    Else
+        '        PHTempTxt.Text = "???" 'allow for disconnected or bad temperature probe
+        '    End If
+        'End If
 
         'Check Abort flag and if active, flash Abort Clear button
         If b_ClearAbort Then
@@ -2681,104 +2702,46 @@ Public Class MainWindow
     Private Sub PublishAbortCode()
         Dim ResponseLen As Integer
         Dim StrVar As String
-        Dim ErrorCode As Integer
 
         WriteCommand("$8B%", 4) 'GETSET_ABORT_CODE  $8B%; resp [!8Bcccc#] cccc = Base10 Abort Code
         ResponseLen = ReadResponse(0)
         If ResponseLen > 3 Then 'it got the command OK
             StrVar = st_RCV.Substring(3, 4)
-            If Integer.TryParse(StrVar, Globalization.NumberStyles.HexNumber, Nothing, ErrorCode) Then
-                ' Conversion succeeded
-                ' The converted value is stored in the ErrorCode variable
-                Select Case ErrorCode
-                    Case AC_OK
-                    'AC_CODE.Visible = False
-                    Case AC_NO_N2
-                        AC_CODE.Text = "NO PURGE N2"
-                        WriteLogLine("NO PURGE N2")
-                        b_ClearAbort = True
-                        AC_CODE.Visible = True
-                        ClearAbortbtn.Visible = True
-                    Case AC_NO_HEARTBEAT
-                        AC_CODE.Text = "NO HEARTBEAT"
-                        WriteLogLine("NO HEARTBEAT")
-                        b_ClearAbort = True
-                        AC_CODE.Visible = True
-                        ClearAbortbtn.Visible = True
-                    Case AC_NO_GAS_1
-                        AC_CODE.Text = "MFC_1 Low Flow"
-                        WriteLogLine("MFC_1 Low Flow")
-                        b_ClearAbort = True
-                        AC_CODE.Visible = True
-                        ClearAbortbtn.Visible = True
-                    Case AC_NO_GAS_2
-                        AC_CODE.Text = "MFC_2 Low Flow"
-                        WriteLogLine("MFC_2 Low Flow")
-                        b_ClearAbort = True
-                        AC_CODE.Visible = True
-                        ClearAbortbtn.Visible = True
-                    Case AC_NO_GAS_3
-                        AC_CODE.Text = "MFC_3 Low Flow"
-                        WriteLogLine("MFC_3 Low Flow")
-                        b_ClearAbort = True
-                        AC_CODE.Visible = True
-                        ClearAbortbtn.Visible = True
-                    Case AC_NO_GAS_4
-                        AC_CODE.Text = "MFC_4 Low Flow"
-                        WriteLogLine("MFC_4 Low Flow")
-                        b_ClearAbort = True
-                        AC_CODE.Visible = True
-                        ClearAbortbtn.Visible = True
-                    Case AC_BAD_HELIUM
-                        AC_CODE.Text = "BAD HELIUM"
-                        WriteLogLine("BAD HELIUM")
-                        b_ClearAbort = True
-                        AC_CODE.Visible = True
-                        ClearAbortbtn.Visible = True
-                    Case AC_ESTOP
-                        AC_CODE.Text = "ESTOP ACTIVE"
-                        WriteLogLine("ESTOP ACTIVE")
-                        b_ClearAbort = True
-                        AC_CODE.Visible = True
-                        ClearAbortbtn.Visible = True
-                    Case AC_DOORS_OPEN
-                        AC_CODE.Text = "ABORT: DOOR OPENED"
-                        MsgBox("Door opened during processing. Stage position has been lost, click OK to initialize the stage. Then Acknowledge the abort to send stage to the Load position.", , "PROCESS ABORT: DOORS OPENED")
-                        WriteLogLine("ABORT: DOOR OPEN")
-                        DoorAbort.Active = True
-                        b_ClearAbort = True
-                        AC_CODE.Visible = True
-                        ClearAbortbtn.Visible = True
-                    Case AC_PWR_FWD_LOW
-                        AC_CODE.Text = "Power Fwd Low"
-                        WriteLogLine("Power Fwd Low")
-                        b_ClearAbort = True
-                        AC_CODE.Visible = True
-                        ClearAbortbtn.Visible = True
-                    Case AC_OVER_TEMP
-                        AC_CODE.Text = "Head Too Hot"
-                        WriteLogLine("Head Too Hot")
-                        b_ClearAbort = True
-                        AC_CODE.Visible = True
-                        ClearAbortbtn.Visible = True
-                    Case AC_NO_CDA
-                        AC_CODE.Text = "No CDA"
-                        WriteLogLine("NO CDA")
-                        b_ClearAbort = True
-                        AC_CODE.Visible = True
-                        ClearAbortbtn.Visible = True
-                    Case Else
-
-                End Select
+            If AbortCodeMessages.ContainsKey(StrVar) Then
+                Dim errorMessage As String = AbortCodeMessages(StrVar)
+                ' Inform the user of the abort code message here
+                MsgBox(errorMessage)
             Else
-                ' Conversion failed
-                ' Handle the error case appropriately
+                ' Handle the case when the ErrorCode is not found in the dictionary
+                ' It might indicate an unexpected situation, and you can handle it accordingly
             End If
-
         Else
             ClearAbortbtn.Visible = False
         End If
     End Sub
+    Private Sub PublishAbortCode()
+        Dim ResponseLen As Integer
+        Dim StrVar As String
+
+        WriteCommand("$8B%", 4) 'GETSET_ABORT_CODE  $8B%; resp [!8Bcccc#] cccc = Base10 Abort Code
+        ResponseLen = ReadResponse(0)
+        If ResponseLen > 3 Then 'it got the command OK
+            StrVar = st_RCV.Substring(3, 4)
+            If AbortCodeMessages.ContainsKey(StrVar) Then
+                Dim errorMessage As String = AbortCodeMessages(StrVar)
+                ' Inform the user of the abort code message here
+                MsgBox(errorMessage)
+            Else
+                ' Handle the case when the ErrorCode is not found in the dictionary
+                ' It might indicate an unexpected situation, and you can handle it accordingly
+                MsgBox("Abort occurred, no corresponding abort code found.")
+            End If
+        Else
+            ClearAbortbtn.Visible = False
+            MsgBox("Unable to retrieve abort code from the controller.")
+        End If
+    End Sub
+
     Private Sub OpenLogFile()
         st_TimeStamp = System.DateTime.Now.ToString("yyyy-MM-dd")
         st_LogPathFileName = st_LogFilePath + st_LogFileName + st_TimeStamp + ".log"
