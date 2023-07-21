@@ -2699,27 +2699,7 @@ Public Class MainWindow
     'LED_RF_EN        7 //VBWord bit 15   &H8000
 
 
-    Private Sub PublishAbortCode()
-        Dim ResponseLen As Integer
-        Dim StrVar As String
-
-        WriteCommand("$8B%", 4) 'GETSET_ABORT_CODE  $8B%; resp [!8Bcccc#] cccc = Base10 Abort Code
-        ResponseLen = ReadResponse(0)
-        If ResponseLen > 3 Then 'it got the command OK
-            StrVar = st_RCV.Substring(3, 4)
-            If AbortCodeMessages.ContainsKey(StrVar) Then
-                Dim errorMessage As String = AbortCodeMessages(StrVar)
-                ' Inform the user of the abort code message here
-                MsgBox(errorMessage)
-            Else
-                ' Handle the case when the ErrorCode is not found in the dictionary
-                ' It might indicate an unexpected situation, and you can handle it accordingly
-            End If
-        Else
-            ClearAbortbtn.Visible = False
-        End If
-    End Sub
-    Private Sub PublishAbortCode()
+    Public Sub PublishAbortCode()
         Dim ResponseLen As Integer
         Dim StrVar As String
 
