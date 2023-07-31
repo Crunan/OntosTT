@@ -2698,7 +2698,6 @@ Public Class MainWindow
     'LED_VLV_7        6 //VBWord bit 14   &H4000
     'LED_RF_EN        7 //VBWord bit 15   &H8000
 
-
     Public Sub PublishAbortCode()
         Dim ResponseLen As Integer
         WriteCommand("$8B%", 4) 'GETSET_ABORT_CODE  $8B%; resp [!8Bcccc#] cccc = Base10 Abort Code
