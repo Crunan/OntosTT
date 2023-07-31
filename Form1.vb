@@ -2701,24 +2701,21 @@ Public Class MainWindow
 
     Public Sub PublishAbortCode()
         Dim ResponseLen As Integer
-        Dim StrVar As String
-
         WriteCommand("$8B%", 4) 'GETSET_ABORT_CODE  $8B%; resp [!8Bcccc#] cccc = Base10 Abort Code
-        ResponseLen = ReadResponse(0)
-        If ResponseLen > 3 Then 'it got the command OK
+        ReadResponse(0)
+        ParseAbortCode(ResponseLen)
+    End Sub
+    Public Sub ParseAbortCode(length As Integer)
+        Dim StrVar As String
+        Dim errorMessage As String
+        If length > 7 Then
             StrVar = st_RCV.Substring(3, 4)
             If AbortCodeMessages.ContainsKey(StrVar) Then
-                Dim errorMessage As String = AbortCodeMessages(StrVar)
-                ' Inform the user of the abort code message here
+                errorMessage = AbortCodeMessages(StrVar)
                 MsgBox(errorMessage)
             Else
-                ' Handle the case when the ErrorCode is not found in the dictionary
-                ' It might indicate an unexpected situation, and you can handle it accordingly
                 MsgBox("Abort occurred, no corresponding abort code found.")
             End If
-        Else
-            ClearAbortbtn.Visible = False
-            MsgBox("Unable to retrieve abort code from the controller.")
         End If
     End Sub
 
