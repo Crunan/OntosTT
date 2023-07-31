@@ -8,10 +8,6 @@
 *.lib
 /.vs/OTT
 /.vs/OntosTT
-/My Project/Application.Designer.vb
-/My Project/Application.myapp
-/My Project/Resources.Designer.vb
-/My Project/Settings.Designer.vb
 /bin/Debug
 /bin/Release
 /bin/OTT_PLUS_EXE - V1.2.6 (Cascading Recipes Update).zip
