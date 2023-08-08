@@ -44,8 +44,6 @@ Partial Class MainWindow
         Me.BuildRecipeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.OpenCascadeRecipeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.OpenToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.CustomRecipeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.SetActiveRecipesFolderToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.toolStripSeparator = New System.Windows.Forms.ToolStripSeparator()
         Me.EnableServiceMenuToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.SaveToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -69,6 +67,7 @@ Partial Class MainWindow
         Me.EngineerModeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.OperatorModeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ControllerStatusLEDSToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.EnableLEDBarToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MFC_1_Loaded_Flow = New System.Windows.Forms.TextBox()
         Me.MFC_2_Loaded_Flow = New System.Windows.Forms.TextBox()
         Me.MFC_3_Loaded_Flow = New System.Windows.Forms.TextBox()
@@ -78,7 +77,6 @@ Partial Class MainWindow
         Me.RecipeTunerTxt = New System.Windows.Forms.TextBox()
         Me.LoadedTunerTxt = New System.Windows.Forms.TextBox()
         Me.ActTunerTxt = New System.Windows.Forms.TextBox()
-        Me.PL_SIM_NOTICE = New System.Windows.Forms.Label()
         Me.MB_Left_Arrow = New System.Windows.Forms.PictureBox()
         Me.MB_Right_Arrow = New System.Windows.Forms.PictureBox()
         Me.MB_Big_Step_Button = New System.Windows.Forms.PictureBox()
@@ -241,6 +239,8 @@ Partial Class MainWindow
         Me.Label21 = New System.Windows.Forms.Label()
         Me.AutoManBtn = New Guna.UI2.WinForms.Guna2ToggleSwitch()
         Me.auto_tune_label = New System.Windows.Forms.Label()
+        Me.LEDTrackBar = New Guna.UI2.WinForms.Guna2TrackBar()
+        Me.Label6 = New System.Windows.Forms.Label()
         Me.MenuStrip1.SuspendLayout()
         CType(Me.MB_Left_Arrow, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.MB_Right_Arrow, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -454,13 +454,13 @@ Partial Class MainWindow
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
         Me.MenuStrip1.Name = "MenuStrip1"
         Me.MenuStrip1.Padding = New System.Windows.Forms.Padding(4, 2, 0, 2)
-        Me.MenuStrip1.Size = New System.Drawing.Size(1686, 48)
+        Me.MenuStrip1.Size = New System.Drawing.Size(1680, 48)
         Me.MenuStrip1.TabIndex = 22
         Me.MenuStrip1.Text = "MenuStrip1"
         '
         'FileToolStripMenuItem
         '
-        Me.FileToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.BuildRecipeToolStripMenuItem, Me.OpenCascadeRecipeToolStripMenuItem, Me.OpenToolStripMenuItem, Me.CustomRecipeToolStripMenuItem, Me.SetActiveRecipesFolderToolStripMenuItem, Me.toolStripSeparator, Me.EnableServiceMenuToolStripMenuItem, Me.SaveToolStripMenuItem, Me.SaveAsToolStripMenuItem, Me.LoadToolStripMenuItem, Me.SetDefaultToolStripMenuItem, Me.ExitToolStripMenuItem})
+        Me.FileToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.BuildRecipeToolStripMenuItem, Me.OpenCascadeRecipeToolStripMenuItem, Me.OpenToolStripMenuItem, Me.toolStripSeparator, Me.EnableServiceMenuToolStripMenuItem, Me.SaveToolStripMenuItem, Me.SaveAsToolStripMenuItem, Me.LoadToolStripMenuItem, Me.SetDefaultToolStripMenuItem, Me.ExitToolStripMenuItem})
         Me.FileToolStripMenuItem.Name = "FileToolStripMenuItem"
         Me.FileToolStripMenuItem.Size = New System.Drawing.Size(112, 44)
         Me.FileToolStripMenuItem.Text = "&Recipe"
@@ -468,14 +468,14 @@ Partial Class MainWindow
         'BuildRecipeToolStripMenuItem
         '
         Me.BuildRecipeToolStripMenuItem.Name = "BuildRecipeToolStripMenuItem"
-        Me.BuildRecipeToolStripMenuItem.Size = New System.Drawing.Size(415, 44)
+        Me.BuildRecipeToolStripMenuItem.Size = New System.Drawing.Size(372, 44)
         Me.BuildRecipeToolStripMenuItem.Text = "Build Cascade Recipe"
         Me.BuildRecipeToolStripMenuItem.Visible = False
         '
         'OpenCascadeRecipeToolStripMenuItem
         '
         Me.OpenCascadeRecipeToolStripMenuItem.Name = "OpenCascadeRecipeToolStripMenuItem"
-        Me.OpenCascadeRecipeToolStripMenuItem.Size = New System.Drawing.Size(415, 44)
+        Me.OpenCascadeRecipeToolStripMenuItem.Size = New System.Drawing.Size(372, 44)
         Me.OpenCascadeRecipeToolStripMenuItem.Text = "Open Cascade Recipe"
         '
         'OpenToolStripMenuItem
@@ -484,30 +484,18 @@ Partial Class MainWindow
         Me.OpenToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta
         Me.OpenToolStripMenuItem.Name = "OpenToolStripMenuItem"
         Me.OpenToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.O), System.Windows.Forms.Keys)
-        Me.OpenToolStripMenuItem.Size = New System.Drawing.Size(415, 44)
+        Me.OpenToolStripMenuItem.Size = New System.Drawing.Size(372, 44)
         Me.OpenToolStripMenuItem.Text = "&Open"
-        '
-        'CustomRecipeToolStripMenuItem
-        '
-        Me.CustomRecipeToolStripMenuItem.Name = "CustomRecipeToolStripMenuItem"
-        Me.CustomRecipeToolStripMenuItem.Size = New System.Drawing.Size(415, 44)
-        Me.CustomRecipeToolStripMenuItem.Text = "Add Recipe Folder"
-        '
-        'SetActiveRecipesFolderToolStripMenuItem
-        '
-        Me.SetActiveRecipesFolderToolStripMenuItem.Name = "SetActiveRecipesFolderToolStripMenuItem"
-        Me.SetActiveRecipesFolderToolStripMenuItem.Size = New System.Drawing.Size(415, 44)
-        Me.SetActiveRecipesFolderToolStripMenuItem.Text = "Set Active Recipes Folder"
         '
         'toolStripSeparator
         '
         Me.toolStripSeparator.Name = "toolStripSeparator"
-        Me.toolStripSeparator.Size = New System.Drawing.Size(412, 6)
+        Me.toolStripSeparator.Size = New System.Drawing.Size(369, 6)
         '
         'EnableServiceMenuToolStripMenuItem
         '
         Me.EnableServiceMenuToolStripMenuItem.Name = "EnableServiceMenuToolStripMenuItem"
-        Me.EnableServiceMenuToolStripMenuItem.Size = New System.Drawing.Size(415, 44)
+        Me.EnableServiceMenuToolStripMenuItem.Size = New System.Drawing.Size(372, 44)
         Me.EnableServiceMenuToolStripMenuItem.Text = "Enable Service Menu"
         '
         'SaveToolStripMenuItem
@@ -517,21 +505,21 @@ Partial Class MainWindow
         Me.SaveToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta
         Me.SaveToolStripMenuItem.Name = "SaveToolStripMenuItem"
         Me.SaveToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.S), System.Windows.Forms.Keys)
-        Me.SaveToolStripMenuItem.Size = New System.Drawing.Size(415, 44)
+        Me.SaveToolStripMenuItem.Size = New System.Drawing.Size(372, 44)
         Me.SaveToolStripMenuItem.Text = "&Save"
         '
         'SaveAsToolStripMenuItem
         '
         Me.SaveAsToolStripMenuItem.Enabled = False
         Me.SaveAsToolStripMenuItem.Name = "SaveAsToolStripMenuItem"
-        Me.SaveAsToolStripMenuItem.Size = New System.Drawing.Size(415, 44)
+        Me.SaveAsToolStripMenuItem.Size = New System.Drawing.Size(372, 44)
         Me.SaveAsToolStripMenuItem.Text = "Save &As"
         '
         'LoadToolStripMenuItem
         '
         Me.LoadToolStripMenuItem.Enabled = False
         Me.LoadToolStripMenuItem.Name = "LoadToolStripMenuItem"
-        Me.LoadToolStripMenuItem.Size = New System.Drawing.Size(415, 44)
+        Me.LoadToolStripMenuItem.Size = New System.Drawing.Size(372, 44)
         Me.LoadToolStripMenuItem.Text = "Load to Controller"
         Me.LoadToolStripMenuItem.Visible = False
         '
@@ -539,13 +527,13 @@ Partial Class MainWindow
         '
         Me.SetDefaultToolStripMenuItem.Enabled = False
         Me.SetDefaultToolStripMenuItem.Name = "SetDefaultToolStripMenuItem"
-        Me.SetDefaultToolStripMenuItem.Size = New System.Drawing.Size(415, 44)
+        Me.SetDefaultToolStripMenuItem.Size = New System.Drawing.Size(372, 44)
         Me.SetDefaultToolStripMenuItem.Text = "Set Default"
         '
         'ExitToolStripMenuItem
         '
         Me.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem"
-        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(415, 44)
+        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(372, 44)
         Me.ExitToolStripMenuItem.Text = "E&xit"
         '
         'HelpToolStripMenuItem
@@ -576,7 +564,7 @@ Partial Class MainWindow
         '
         'ServiceToolStripMenuItem
         '
-        Me.ServiceToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.RestartAllToolStripMenuItem, Me.SetCTLToPLSimModeToolStripMenuItem, Me.MBScanToolStripMenuItem, Me.StageTestToolStripMenuItem, Me.EngineerModeToolStripMenuItem, Me.OperatorModeToolStripMenuItem, Me.ControllerStatusLEDSToolStripMenuItem})
+        Me.ServiceToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.RestartAllToolStripMenuItem, Me.SetCTLToPLSimModeToolStripMenuItem, Me.MBScanToolStripMenuItem, Me.StageTestToolStripMenuItem, Me.EngineerModeToolStripMenuItem, Me.OperatorModeToolStripMenuItem, Me.ControllerStatusLEDSToolStripMenuItem, Me.EnableLEDBarToolStripMenuItem})
         Me.ServiceToolStripMenuItem.Name = "ServiceToolStripMenuItem"
         Me.ServiceToolStripMenuItem.Size = New System.Drawing.Size(118, 44)
         Me.ServiceToolStripMenuItem.Text = "Service"
@@ -656,6 +644,12 @@ Partial Class MainWindow
         Me.ControllerStatusLEDSToolStripMenuItem.Size = New System.Drawing.Size(442, 44)
         Me.ControllerStatusLEDSToolStripMenuItem.Text = "Controller Status LEDS: OFF"
         Me.ControllerStatusLEDSToolStripMenuItem.Visible = False
+        '
+        'EnableLEDBarToolStripMenuItem
+        '
+        Me.EnableLEDBarToolStripMenuItem.Name = "EnableLEDBarToolStripMenuItem"
+        Me.EnableLEDBarToolStripMenuItem.Size = New System.Drawing.Size(442, 44)
+        Me.EnableLEDBarToolStripMenuItem.Text = "Enable LED Bar"
         '
         'MFC_1_Loaded_Flow
         '
@@ -798,19 +792,6 @@ Partial Class MainWindow
         Me.ActTunerTxt.Text = "0"
         Me.ActTunerTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         Me.ActTunerTxt.WordWrap = False
-        '
-        'PL_SIM_NOTICE
-        '
-        Me.PL_SIM_NOTICE.AutoSize = True
-        Me.PL_SIM_NOTICE.BackColor = System.Drawing.Color.White
-        Me.PL_SIM_NOTICE.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.PL_SIM_NOTICE.ForeColor = System.Drawing.Color.Red
-        Me.PL_SIM_NOTICE.Location = New System.Drawing.Point(274, 111)
-        Me.PL_SIM_NOTICE.Name = "PL_SIM_NOTICE"
-        Me.PL_SIM_NOTICE.Size = New System.Drawing.Size(171, 20)
-        Me.PL_SIM_NOTICE.TabIndex = 13
-        Me.PL_SIM_NOTICE.Text = "Simulate Plasma Mode"
-        Me.PL_SIM_NOTICE.Visible = False
         '
         'MB_Left_Arrow
         '
@@ -1402,7 +1383,7 @@ Partial Class MainWindow
         Me.Com_Port_Label.AutoSize = True
         Me.Com_Port_Label.BackColor = System.Drawing.Color.White
         Me.Com_Port_Label.Font = New System.Drawing.Font("Microsoft Sans Serif", 18.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Com_Port_Label.Location = New System.Drawing.Point(1134, 63)
+        Me.Com_Port_Label.Location = New System.Drawing.Point(423, 8)
         Me.Com_Port_Label.Name = "Com_Port_Label"
         Me.Com_Port_Label.Size = New System.Drawing.Size(114, 29)
         Me.Com_Port_Label.TabIndex = 13
@@ -1415,7 +1396,7 @@ Partial Class MainWindow
         Me.Start_Stop_Toggle.BackColor = System.Drawing.Color.Red
         Me.Start_Stop_Toggle.Cursor = System.Windows.Forms.Cursors.Arrow
         Me.Start_Stop_Toggle.Font = New System.Drawing.Font("Arial", 11.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Start_Stop_Toggle.Location = New System.Drawing.Point(1385, 60)
+        Me.Start_Stop_Toggle.Location = New System.Drawing.Point(674, 5)
         Me.Start_Stop_Toggle.Margin = New System.Windows.Forms.Padding(2)
         Me.Start_Stop_Toggle.Name = "Start_Stop_Toggle"
         Me.Start_Stop_Toggle.Size = New System.Drawing.Size(121, 37)
@@ -1431,7 +1412,7 @@ Partial Class MainWindow
         Me.com_portBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.com_portBox.Font = New System.Drawing.Font("Microsoft Sans Serif", 18.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.com_portBox.FormattingEnabled = True
-        Me.com_portBox.Location = New System.Drawing.Point(1254, 60)
+        Me.com_portBox.Location = New System.Drawing.Point(543, 5)
         Me.com_portBox.Name = "com_portBox"
         Me.com_portBox.Size = New System.Drawing.Size(126, 37)
         Me.com_portBox.TabIndex = 3
@@ -2785,7 +2766,7 @@ Partial Class MainWindow
         Me.BatchLoggingBTN.ForeColor = System.Drawing.Color.White
         Me.BatchLoggingBTN.HoverState.FillColor = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.BatchLoggingBTN.HoverState.Parent = Me.BatchLoggingBTN
-        Me.BatchLoggingBTN.Location = New System.Drawing.Point(598, 56)
+        Me.BatchLoggingBTN.Location = New System.Drawing.Point(661, 56)
         Me.BatchLoggingBTN.Name = "BatchLoggingBTN"
         Me.BatchLoggingBTN.ShadowDecoration.BorderRadius = 27
         Me.BatchLoggingBTN.ShadowDecoration.Color = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
@@ -2799,7 +2780,7 @@ Partial Class MainWindow
         '
         Me.BatchIDTextBox.BackColor = System.Drawing.Color.FromArgb(CType(CType(213, Byte), Integer), CType(CType(218, Byte), Integer), CType(CType(223, Byte), Integer))
         Me.BatchIDTextBox.Font = New System.Drawing.Font("Arial", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.BatchIDTextBox.Location = New System.Drawing.Point(728, 60)
+        Me.BatchIDTextBox.Location = New System.Drawing.Point(791, 60)
         Me.BatchIDTextBox.Margin = New System.Windows.Forms.Padding(2)
         Me.BatchIDTextBox.MinimumSize = New System.Drawing.Size(38, 20)
         Me.BatchIDTextBox.Name = "BatchIDTextBox"
@@ -2824,7 +2805,7 @@ Partial Class MainWindow
         Me.SettingsBtn.HoverState.Parent = Me.SettingsBtn
         Me.SettingsBtn.Image = CType(resources.GetObject("SettingsBtn.Image"), System.Drawing.Image)
         Me.SettingsBtn.ImageSize = New System.Drawing.Size(50, 50)
-        Me.SettingsBtn.Location = New System.Drawing.Point(526, 707)
+        Me.SettingsBtn.Location = New System.Drawing.Point(517, 706)
         Me.SettingsBtn.Name = "SettingsBtn"
         Me.SettingsBtn.ShadowDecoration.BorderRadius = 27
         Me.SettingsBtn.ShadowDecoration.Color = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
@@ -2837,7 +2818,7 @@ Partial Class MainWindow
         Me.Label17.AutoSize = True
         Me.Label17.BackColor = System.Drawing.Color.White
         Me.Label17.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.8!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label17.Location = New System.Drawing.Point(1414, 358)
+        Me.Label17.Location = New System.Drawing.Point(1411, 358)
         Me.Label17.Name = "Label17"
         Me.Label17.Size = New System.Drawing.Size(111, 18)
         Me.Label17.TabIndex = 225
@@ -3397,14 +3378,39 @@ Partial Class MainWindow
         Me.auto_tune_label.Text = "Auto Tune"
         Me.auto_tune_label.Visible = False
         '
+        'LEDTrackBar
+        '
+        Me.LEDTrackBar.Cursor = System.Windows.Forms.Cursors.Default
+        Me.LEDTrackBar.FillColor = System.Drawing.Color.FromArgb(CType(CType(193, Byte), Integer), CType(CType(200, Byte), Integer), CType(CType(207, Byte), Integer))
+        Me.LEDTrackBar.HoverState.Parent = Me.LEDTrackBar
+        Me.LEDTrackBar.IndicateFocus = False
+        Me.LEDTrackBar.Location = New System.Drawing.Point(1198, 75)
+        Me.LEDTrackBar.Name = "LEDTrackBar"
+        Me.LEDTrackBar.Size = New System.Drawing.Size(305, 23)
+        Me.LEDTrackBar.TabIndex = 271
+        Me.LEDTrackBar.ThumbColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.LEDTrackBar.Value = 0
+        '
+        'Label6
+        '
+        Me.Label6.AutoSize = True
+        Me.Label6.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label6.Location = New System.Drawing.Point(1246, 54)
+        Me.Label6.Name = "Label6"
+        Me.Label6.Size = New System.Drawing.Size(176, 20)
+        Me.Label6.TabIndex = 272
+        Me.Label6.Text = "LED Brightness Control"
+        '
         'MainWindow
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.White
         Me.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
-        Me.ClientSize = New System.Drawing.Size(1686, 857)
+        Me.ClientSize = New System.Drawing.Size(1680, 845)
         Me.ControlBox = False
+        Me.Controls.Add(Me.Label6)
+        Me.Controls.Add(Me.LEDTrackBar)
         Me.Controls.Add(Me.auto_tune_label)
         Me.Controls.Add(Me.AutoManBtn)
         Me.Controls.Add(Me.Label21)
@@ -3541,7 +3547,6 @@ Partial Class MainWindow
         Me.Controls.Add(Me.MFC_3_Label)
         Me.Controls.Add(Me.MFC_2_Label)
         Me.Controls.Add(Me.MFC_1_Label)
-        Me.Controls.Add(Me.PL_SIM_NOTICE)
         Me.Controls.Add(Me.AxesZActual)
         Me.Controls.Add(Me.AxesYActual)
         Me.Controls.Add(Me.AxesXActual)
@@ -3655,7 +3660,6 @@ Partial Class MainWindow
     Friend WithEvents RestartAllToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents EnableServiceMenuToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents SetCTLToPLSimModeToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents PL_SIM_NOTICE As System.Windows.Forms.Label
     Friend WithEvents MB_Left_Arrow As System.Windows.Forms.PictureBox
     Friend WithEvents MB_Right_Arrow As System.Windows.Forms.PictureBox
     Friend WithEvents MB_Big_Step_Button As System.Windows.Forms.PictureBox
@@ -3847,6 +3851,7 @@ Partial Class MainWindow
     Friend WithEvents ControllerStatusLEDSToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents AutoManBtn As Guna.UI2.WinForms.Guna2ToggleSwitch
     Friend WithEvents auto_tune_label As Label
-    Friend WithEvents CustomRecipeToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents SetActiveRecipesFolderToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents EnableLEDBarToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents LEDTrackBar As Guna.UI2.WinForms.Guna2TrackBar
+    Friend WithEvents Label6 As Label
 End Class

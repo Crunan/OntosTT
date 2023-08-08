@@ -366,7 +366,7 @@ Public Class MainWindow
             db_ActualFlow = flow
         End Sub
 
-        Public Sub f(ByVal flow As String)
+        Public Sub SetActualFlowFromString(ByVal flow As String)
             Dim convertedFlow As Double
             If Double.TryParse(flow, convertedFlow) Then
                 db_ActualFlow = convertedFlow
@@ -465,6 +465,7 @@ Public Class MainWindow
     Structure ASTAT
         Dim LEDStates As Integer
 
+        Dim b_LEDBarOn As Boolean
         Dim b_DoorsOpen As Boolean 'This checks the 3-Axis PCB during GetAxesStatus() to check an LED state for doors open
         Dim b_LEDJoyBtnOn As Boolean 'is the joystick button depressed?        
         Dim b_XYZSameState As Boolean 'all three axes Same state?
@@ -481,6 +482,14 @@ Public Class MainWindow
         Dim ZState As Integer
         Dim ZError As Integer
         Dim db_ZPos As Double
+
+        Public Sub ToggleLEDBar() '
+            b_LEDBarOn = Not b_LEDBarOn
+        End Sub
+
+        Public Function getLEDBarState() As Boolean
+            Return b_LEDBarOn
+        End Function
 
         Public Sub setLEDJoyBtnOn(state As Boolean)
             b_LEDJoyBtnOn = state
@@ -1260,20 +1269,20 @@ Public Class MainWindow
 
             'Reset the controller PCB and give it time to do so
             WriteCommand("$90%", 4)  'SOFT_RESET   $90% ; resp[!90#] Resets CTL PCB
-                responseLen = ReadResponse(0)
-                CTLResetTimeOut = 2500 / Timer1.Interval  'interval in milliseconds, so get close to 2.5 second wait
+            responseLen = ReadResponse(0)
+            CTLResetTimeOut = 2500 / Timer1.Interval  'interval in milliseconds, so get close to 2.5 second wait
 
-                SM_State = STARTUP
-                'start up the log file
-                OpenLogFile()
+            SM_State = STARTUP
+            'start up the log file
+            OpenLogFile()
 
 
-                'Set the Dropdown to have the known port 
-                com_portBox.Items.Add(st_KnownComPort)
-                com_portBox.Text = st_KnownComPort
-            Else
-                'set-up the comm port drop-box 
-                com_portBox.Items.AddRange(ar_myPort)
+            'Set the Dropdown to have the known port 
+            com_portBox.Items.Add(st_KnownComPort)
+            com_portBox.Text = st_KnownComPort
+        Else
+            'set-up the comm port drop-box 
+            com_portBox.Items.AddRange(ar_myPort)
             com_portBox.Visible = True
             Com_Port_Label.Visible = True
         End If
@@ -1763,7 +1772,7 @@ Public Class MainWindow
         End If
 
         'If GetBoughtorNot() = False Then CinderellaCode()
-        PL_SIM_NOTICE.Visible = False 'just in case
+
 
         'First things first, log the CTL & Axis firmware. 
         WriteCommand("$8F%", 4) 'GET FW VERSION $8F%; resp[!8Fxx#]; xx = hard coded FW rev in Hex
@@ -2232,7 +2241,6 @@ Public Class MainWindow
         SetRecipeWattsBtn.Visible = False
         RunRcpBtn.Visible = False
         AutoManBtn.Visible = False
-        PL_SIM_NOTICE.Visible = False
         SetRecipeTunerBtn.Visible = False
 
         'SetHeaterButton.Visible = False
@@ -3038,71 +3046,7 @@ Public Class MainWindow
         WriteLogLine("Saved " + st_RecipeFileName + " : " + st_RecipeString.Replace(vbCr, "").Replace(vbLf, "")) 'Log this recipe entry
 
     End Sub
-    Private Sub SetCustomRecipesFolder() Handles CustomRecipeToolStripMenuItem.Click
-        Dim folderBrowser As New FolderBrowserDialog()
-        folderBrowser.Description = "Select the custom recipe folder"
-        folderBrowser.RootFolder = Environment.SpecialFolder.MyComputer
-        folderBrowser.SelectedPath = "C:\OTT_PLUS\Recipes"
-        folderBrowser.ShowNewFolderButton = True
 
-        If folderBrowser.ShowDialog() = DialogResult.OK Then
-            Dim customFolderPath As String = folderBrowser.SelectedPath
-            Dim customFolderName As String = Path.GetFileName(customFolderPath)
-
-            ' Now you can use the customFolder variable to construct the recipe path
-            st_RecipePath = customFolderPath & "\"
-
-            WriteCustomFolderToConfigFile(st_RecipePath)
-        End If
-    End Sub
-    Private Sub SetActiveRecipesFolder() Handles SetActiveRecipesFolderToolStripMenuItem.Click
-        Dim folderBrowser As New FolderBrowserDialog()
-        folderBrowser.Description = "Select a folder to be the Active recipes."
-        folderBrowser.RootFolder = Environment.SpecialFolder.MyComputer
-        folderBrowser.SelectedPath = "C:\OTT_PLUS\Recipes"
-        folderBrowser.ShowNewFolderButton = False
-
-        If folderBrowser.ShowDialog() = DialogResult.OK Then
-            Dim customFolderPath As String = folderBrowser.SelectedPath
-
-            ' Now you can use the customFolder variable to construct the recipe path
-            st_RecipePath = customFolderPath & "\"
-
-            WriteCustomFolderToConfigFile(st_RecipePath)
-        End If
-    End Sub
-    Private Sub WriteCustomFolderToConfigFile(customFolder As String)
-        Dim configFilePath As String = "C:\OTT_PLUS\Execonfig\default.cfg"
-        Dim tempFilePath As String = "C:\OTT_PLUS\Execonfig\default_temp.cfg"
-
-        ' Write the custom folder entries to the config file
-        Using inputFile As New StreamReader(configFilePath)
-            Using outputFile As New StreamWriter(tempFilePath, False)
-                Dim line As String
-                Dim updated As Boolean = False
-
-                While Not inputFile.EndOfStream
-                    line = inputFile.ReadLine()
-                    'we write everything to a temp file until we the end
-                    If line.Contains("<ACTIVE_FOLDER>") Then
-                        outputFile.WriteLine("<ACTIVE_FOLDER>" + customFolder)
-                        updated = True
-                    Else
-                        'this is just making sure we copy all other lines. 
-                        outputFile.WriteLine(line)
-                    End If
-                End While
-
-                ' If the custom folder entry doesn't exist, add it at the end of the file
-                If Not updated Then
-                    outputFile.WriteLine("<ACTIVE_FOLDER>" + customFolder)
-                End If
-            End Using
-        End Using
-        ' Replace the original config file with the updated temp file
-        File.Delete(configFilePath)
-        File.Move(tempFilePath, configFilePath)
-    End Sub
     Private Function ReadCustomFolderFromConfigFile() As String
         Dim configFilePath As String = "C:\OTT_PLUS\Execonfig\default.cfg"
 
@@ -3162,18 +3106,6 @@ Public Class MainWindow
     End Sub
     Private Sub AboutToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AboutToolStripMenuItem.Click
         AboutBox1.Show()
-    End Sub
-
-    Private Sub SetCTLToPLSimModeToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SetCTLToPLSimModeToolStripMenuItem.Click
-        Dim StrVar As String
-        Dim ResponseLen As Integer
-
-        StrVar = "$1901%"     '$190b% b=1 Plasma Simulation on
-        WriteCommand(StrVar, Len(StrVar))
-        ResponseLen = ReadResponse(0)
-        PL_SIM_NOTICE.Visible = True
-        WriteLogLine("Plasma Simulation Mode ON")
-
     End Sub
 
     Private Sub EngineerModeToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles EngineerModeToolStripMenuItem.Click
@@ -4707,6 +4639,15 @@ Public Class MainWindow
 
     Private Sub AutoManBtn_CheckedChanged(sender As Object, e As EventArgs) Handles AutoManBtn.Click
         b_ToggleAutoMode = True
+    End Sub
+
+    Private Sub setLEDBar(sender As Object, e As EventArgs) Handles LEDTrackBar.MouseUp
+        '$C9pp.p% resp[!C9pp.p#] Percent power to Illumination
+        If SerialPort1.IsOpen() Then
+            Dim value As Integer = LEDTrackBar.Value
+            Dim LEDCommand As String = "$C9" & value & ".0%"
+            WriteCommand(LEDCommand, LEDCommand.Length)
+        End If
     End Sub
 
 
