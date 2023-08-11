@@ -1,13 +1,8 @@
-﻿Imports System
-Imports System.Threading
+﻿
 Imports System.IO.Ports
-Imports System.ComponentModel
 Imports System.IO
-Imports System.String
 Imports System.Runtime.InteropServices
-Imports System.Drawing
 Imports System.Runtime.Serialization
-Imports Guna.UI2.AnimatorNS
 Imports Guna.UI2.WinForms
 
 Public Class MainWindow
@@ -46,7 +41,7 @@ Public Class MainWindow
     Dim WaferDiameter As Integer = 0
     'Recipe file management stuff
     Dim CasRecipeNumber As Integer = 0 'The # associated with the order for a recipe within a cascaded recipe (0 index based)
-    Dim st_RecipePath As String = ReadCustomFolderFromConfigFile()
+    Dim st_RecipePath As String = "C:\OTT_PLUS\Recipes\"
     Dim st_RecipePathFileName As String 'Recipe filename with path information
     Public Shared st_RecipeFileName As String = "none_entered" 'Recipe filename for display
     Dim st_RecipeString As String 'Recipe file contents as continuous string
@@ -317,8 +312,6 @@ Public Class MainWindow
         Public Function isEstopActive() As Boolean
             Return _estopLed IsNot Nothing AndAlso _estopLed.IsOn()
         End Function
-
-
         Private Function LEDStateChanged() As Boolean
             Return _statusBits <> _statusBitsWas
         End Function
@@ -329,7 +322,6 @@ Public Class MainWindow
         Private Sub LogLEDChange()
             MainWindow.WriteLogLine("Status Bits Change from " & BinaryIntegerToString(StatusBitsWas) & " to " & BinaryIntegerToString(Statusbits))
         End Sub
-
     End Class
     Dim CTL As New ControlBoard
 
@@ -762,7 +754,6 @@ Public Class MainWindow
 
     Dim b_AutoModeOn As Boolean
 
-    Dim b_Owned As Boolean = True 'the tool is paid for    
     Dim b_N2PurgeRecipe As Boolean 'For turning Recipe Purge on/off during Stage movements
     Dim b_N2PurgeON As Boolean 'For setting the substrate purge on/Off
     Dim st_HasPurgeSave As String = 0 'For saving the substrate purge state
@@ -1105,594 +1096,98 @@ Public Class MainWindow
 
     '------------------------- Load the form
     Private Sub Form1_Load(sender As System.Object, e As System.EventArgs) Handles MyBase.Load
-        Dim i As Integer
-        Dim ar_myPort As String()
-        Dim responseLen As Integer
-
-
+        Dim ports As String() = IO.Ports.SerialPort.GetPortNames()
         DateTimeLabel1.Text = DateTime.Now.ToString("hh:mm dddd, dd MMMM yyyy")
-
-        'friend the collections with existing display objects to enable array indexing
-        MFCActualFlow.Add(MFC_1_Read_Flow)
-        MFCActualFlow.Add(MFC_2_Read_Flow)
-        MFCActualFlow.Add(MFC_3_Read_Flow)
-        MFCActualFlow.Add(MFC_4_Read_Flow)
-
-        MFCRecipeFlow.Add(MFC_1_Recipe_Flow)
-        MFCRecipeFlow.Add(MFC_2_Recipe_Flow)
-        MFCRecipeFlow.Add(MFC_3_Recipe_Flow)
-        MFCRecipeFlow.Add(MFC_4_Recipe_Flow)
-
-        MFCLoadedFlow.Add(MFC_1_Loaded_Flow)
-        MFCLoadedFlow.Add(MFC_2_Loaded_Flow)
-        MFCLoadedFlow.Add(MFC_3_Loaded_Flow)
-        MFCLoadedFlow.Add(MFC_4_Loaded_Flow)
-
-        MFCRange.Add(MFC_1_Read_Range)
-        MFCRange.Add(MFC_2_Read_Range)
-        MFCRange.Add(MFC_3_Read_Range)
-        MFCRange.Add(MFC_4_Read_Range)
-
-        MFCTextButton.Add(Set_MFC_1_Recipe_Button)
-        MFCTextButton.Add(Set_MFC_2_Recipe_Button)
-        MFCTextButton.Add(Set_MFC_3_Recipe_Button)
-        MFCTextButton.Add(Set_MFC_4_Recipe_Button)
-
-        MFCProgressValue.Add(ProgressBar1)
-        MFCProgressValue.Add(ProgressBar2)
-        MFCProgressValue.Add(ProgressBar3)
-        MFCProgressValue.Add(ProgressBar4)
-
-        MFCLoadedProgressValue.Add(Loaded_Progress_1)
-        MFCLoadedProgressValue.Add(Loaded_Progress_2)
-        MFCLoadedProgressValue.Add(Loaded_Progress_3)
-        MFCLoadedProgressValue.Add(Loaded_Progress_4)
-
-        MFC1LoadedProgressText.Add(Loaded_Progress_1_100)
-        MFC1LoadedProgressText.Add(Loaded_Progress_1_75)
-        MFC1LoadedProgressText.Add(Loaded_Progress_1_50)
-        MFC1LoadedProgressText.Add(Loaded_Progress_1_25)
-
-        MFC2LoadedProgressText.Add(Loaded_Progress_2_100)
-        MFC2LoadedProgressText.Add(Loaded_Progress_2_75)
-        MFC2LoadedProgressText.Add(Loaded_Progress_2_50)
-        MFC2LoadedProgressText.Add(Loaded_Progress_2_25)
-
-        MFC3LoadedProgressText.Add(Loaded_Progress_3_100)
-        MFC3LoadedProgressText.Add(Loaded_Progress_3_75)
-        MFC3LoadedProgressText.Add(Loaded_Progress_3_50)
-        MFC3LoadedProgressText.Add(Loaded_Progress_3_25)
-
-        MFC4LoadedProgressText.Add(Loaded_Progress_4_100)
-        MFC4LoadedProgressText.Add(Loaded_Progress_4_75)
-        MFC4LoadedProgressText.Add(Loaded_Progress_4_50)
-        MFC4LoadedProgressText.Add(Loaded_Progress_4_25)
-
-        StageButtons.Add(Vacbtn)
-        StageButtons.Add(RecipeButtonPins)
-        StageButtons.Add(InitAxesBtn)
-        StageButtons.Add(HomeAxesBtn)
-        StageButtons.Add(SetTwoSpotBtn)
-        StageButtons.Add(SetDiameterBtn)
-        StageButtons.Add(RunScanBtn)
-        StageButtons.Add(ClearAbortbtn)
-        StageButtons.Add(N2Purgebtn)
-        'StageButtons.Add(AutoScanbtn)
-
-        EnterButtons.Add(Set_MFC_1_Recipe_Button)
-        EnterButtons.Add(Set_MFC_2_Recipe_Button)
-        EnterButtons.Add(Set_MFC_3_Recipe_Button)
-        EnterButtons.Add(Set_MFC_4_Recipe_Button)
-        EnterButtons.Add(SetRecipeWattsBtn)
-        EnterButtons.Add(SetRecipeTunerBtn)
-
-        StageEnterButtons.Add(SetThicknessBtn)
-        StageEnterButtons.Add(SetGapBtn)
-        StageEnterButtons.Add(SetOverlapBtn)
-        StageEnterButtons.Add(SetSpeedBtn)
-        StageEnterButtons.Add(SetCyclesBtn)
-        StageEnterButtons.Add(SetXMinBtn)
-        StageEnterButtons.Add(SetXMaxBtn)
-        StageEnterButtons.Add(SetYMinBtn)
-        StageEnterButtons.Add(SetYMaxBtn)
-
-        RecipeValues.Add(MFC_1_Recipe_Flow)
-        RecipeValues.Add(MFC_2_Recipe_Flow)
-        RecipeValues.Add(MFC_3_Recipe_Flow)
-        RecipeValues.Add(MFC_4_Recipe_Flow)
-        RecipeValues.Add(RecipeWattsTxt)
-        RecipeValues.Add(RecipeTunerTxt)
-        RecipeValues.Add(RecipeThicknessTxt)
-        RecipeValues.Add(RecipeGapTxt)
-        RecipeValues.Add(RecipeOverLapTxt)
-        RecipeValues.Add(RecipeSpeedTxt)
-        RecipeValues.Add(RecipeCyclesTxt)
-        RecipeValues.Add(RecipeXMinTxt)
-        RecipeValues.Add(RecipeXMaxTxt)
-        RecipeValues.Add(RecipeYMinTxt)
-        RecipeValues.Add(RecipeYMaxTxt)
-
-        GUI_CTL_LEDS.Add(Guna2TextBox9)
-        GUI_CTL_LEDS.Add(Guna2TextBox10)
-        GUI_CTL_LEDS.Add(Guna2TextBox11)
-        GUI_CTL_LEDS.Add(Guna2TextBox12)
-        GUI_CTL_LEDS.Add(Guna2TextBox13)
-        GUI_CTL_LEDS.Add(Guna2TextBox14)
-        GUI_CTL_LEDS.Add(Guna2TextBox15)
-        GUI_CTL_LEDS.Add(Guna2TextBox16)
-        GUI_CTL_LEDS.Add(Guna2TextBox1)
-        GUI_CTL_LEDS.Add(Guna2TextBox2)
-        GUI_CTL_LEDS.Add(Guna2TextBox3)
-        GUI_CTL_LEDS.Add(Guna2TextBox4)
-        GUI_CTL_LEDS.Add(Guna2TextBox5)
-        GUI_CTL_LEDS.Add(Guna2TextBox6)
-        GUI_CTL_LEDS.Add(Guna2TextBox7)
-        GUI_CTL_LEDS.Add(Guna2TextBox8)
-
-        'Make sure we check the Configuration for a known Port
-        GetExeCfg()  ' get the exe config parameters
-
-        'Calls to the system for a list of ports
-        ar_myPort = IO.Ports.SerialPort.GetPortNames()
-
-        'If you recognise the com Port from what is stored in EXE_CONFIG, set a flag that we found it
-        For i = 0 To UBound(ar_myPort)
-            If ar_myPort(i) = st_KnownComPort Then b_foundKnownComPort = True
-        Next
-
-        'If you found a recognised port, connect to it NOW.
-        If b_foundKnownComPort = True Then
-            'Start up the serial port
-            SerialPort1.Parity = Parity.None
-            SerialPort1.StopBits = StopBits.One
-            SerialPort1.DataBits = 8
-            SerialPort1.BaudRate = "57600"
-            SerialPort1.PortName = st_KnownComPort
-            SerialPort1.ReadTimeout = SERIAL_RESPONSE_TIMEOUT            'serial port timeout default is 500
-            SerialPort1.Open()
-
-            'Ensure the Comms button is set because we AUTO CONNECTED
-            b_Start_Stop_ON_OFF = True 'This is true so that if we click the button, it will shut down comms
-            Start_Stop_Toggle.BackColor = Color.Green
-            Start_Stop_Toggle.Text = "CONNECTED"
-            RunRcpBtn.Visible = True
-            If b_ENG_mode Then
-                AutoManBtn.Visible = True
-            End If
-
-            If (st_has3AxisBoard = "1") Then
-                'Reset the controller PCB and give it time to do so
-                WriteCommand("$A9%", 4)  'SOFT_RESET   $A9%; resp[!A9#]; causes Aux PCB Soft Reset
-                responseLen = ReadResponse(0)
-                AUXResetTimeOut = 2500 / Timer1.Interval  'interval in milliseconds, so get close to 2.5 second wait
-            End If
-
-            'Reset the controller PCB and give it time to do so
-            WriteCommand("$90%", 4)  'SOFT_RESET   $90% ; resp[!90#] Resets CTL PCB
-            responseLen = ReadResponse(0)
-            CTLResetTimeOut = 2500 / Timer1.Interval  'interval in milliseconds, so get close to 2.5 second wait
-
-            SM_State = STARTUP
-            'start up the log file
-            OpenLogFile()
-
-
-            'Set the Dropdown to have the known port 
-            com_portBox.Items.Add(st_KnownComPort)
-            com_portBox.Text = st_KnownComPort
-        Else
+        friendGUICollections()
+        GetExeCfg()
+        checkExeForKnownPorts(ports)
+        If b_foundKnownComPort Then openComPort()
+        If b_foundKnownComPort = False Then
             'set-up the comm port drop-box 
-            com_portBox.Items.AddRange(ar_myPort)
+            com_portBox.Items.AddRange(ports)
             com_portBox.Visible = True
             Com_Port_Label.Visible = True
         End If
-
-
-
     End Sub
+    Private Sub checkExeForKnownPorts(ByRef ports As String())
+        For i = 0 To UBound(ports)
+            If ports(i) = st_KnownComPort Then b_foundKnownComPort = True
+        Next
+    End Sub
+    Private Sub openComPort()
+        'Start up the serial port
+        SerialPort1.Parity = Parity.None
+        SerialPort1.StopBits = StopBits.One
+        SerialPort1.DataBits = 8
+        SerialPort1.BaudRate = "57600"
+        SerialPort1.PortName = st_KnownComPort
+        SerialPort1.ReadTimeout = SERIAL_RESPONSE_TIMEOUT            'serial port timeout default is 500
+        SerialPort1.Open()
+
+        'Ensure the Comms button is set because we AUTO CONNECTED
+        b_Start_Stop_ON_OFF = True 'This is true so that if we click the button, it will shut down comms
+        Start_Stop_Toggle.BackColor = Color.Green
+        Start_Stop_Toggle.Text = "CONNECTED"
+        RunRcpBtn.Visible = True
+        If b_ENG_mode Then
+            AutoManBtn.Visible = True
+        End If
+
+        CTLReset()
+        CTLResetTimeOut = 2500 / Timer1.Interval  'interval in milliseconds, so get close to 2.5 second wait
+
+        SM_State = STARTUP
+        OpenLogFile()
+
+        com_portBox.Items.Add(st_KnownComPort)
+        com_portBox.Text = st_KnownComPort
+    End Sub
+    Private Sub CTLReset()
+        Try
+            WriteCommand("$90%", 4)
+            ReadResponse(0)
+        Catch ex As Exception
+            MsgBox("CTL Reset failed to reset.")
+        End Try
+    End Sub
+    Private Sub AuxReset()
+        If (st_has3AxisBoard = "1") Then
+            Try
+                WriteCommand("$A9%", 4)  'SOFT_RESET   $A9%; resp[!A9#]; causes Aux PCB Soft Reset
+                ReadResponse(0)
+            Catch ex As Exception
+                MsgBox("AUX Reset failed to reset.")
+            End Try
+        End If
+    End Sub
+    Private Sub GetTemp()
+        Try
+            WriteCommand("$8c%", 4)  'GET_TEMP  $8C%: resp[!8Cxx.xx#]; xx.xx = head temp degrees C base 10
+            ReadResponse(0)
+        Catch ex As Exception
+            MsgBox("CTL Reset failed to reset.")
+        End Try
+    End Sub
+
     '------------------------ comm port selection makes the Start-Stop toggle button visible
     Private Sub com_portBox_SelectionChangeCommitted(sender As Object, e As EventArgs) Handles com_portBox.SelectionChangeCommitted
         'We don't want COMMS to show up if a blank value is selected
         If com_portBox.Text <> "" And b_foundKnownComPort = False Then Start_Stop_Toggle.Visible = True
     End Sub
     Private Sub Start_Stop_CheckedChanged(sender As Object, e As EventArgs) Handles Start_Stop_Toggle.Click
-        Dim ResponseLen As Integer
-
         b_Start_Stop_ON_OFF = Not b_Start_Stop_ON_OFF 'keeps track of what the button is doing.
-
-        If b_Start_Stop_ON_OFF Then
-            SerialPort1.Parity = Parity.None
-            SerialPort1.StopBits = StopBits.One
-            SerialPort1.DataBits = 8
-            SerialPort1.BaudRate = "57600"
-            SerialPort1.PortName = com_portBox.Text()
-            SerialPort1.ReadTimeout = SERIAL_RESPONSE_TIMEOUT            'serial port timeout default is 500
-            SerialPort1.Open()
-
-            Start_Stop_Toggle.BackColor = Color.Green
-            Start_Stop_Toggle.Text = "CONNECTED"
-            RunRcpBtn.Visible = True
-            If b_ENG_mode Then
-                AutoManBtn.Visible = True
-            End If
-            If (st_has3AxisBoard = "1") Then
-                'Reset the controller PCB and give it time to do so
-                WriteCommand("$A9%", 4)  'SOFT_RESET   $A9%; resp[!A9#]; causes Aux PCB Soft Reset
-                ResponseLen = ReadResponse(0)
-                AUXResetTimeOut = 2500 / Timer1.Interval  'interval in milliseconds, so get close to 2.5 second wait
-            End If
-
-            'Reset the controller PCB and give it time to do so
-            WriteCommand("$90%", 4)  'SOFT_RESET   $90% ; resp[!90#] Resets CTL PCB
-            ResponseLen = ReadResponse(0)
-            CTLResetTimeOut = 2500 / Timer1.Interval  'interval in milliseconds, so get close to 2.5 second wait
-
-            SM_State = STARTUP
-            'start up the log file
-            OpenLogFile()
-
-        Else
-            Start_Stop_Toggle.BackColor = Color.Red
-            Start_Stop_Toggle.Text = "CONNECT"
-
-            b_ShutDownComms = True
-        End If
-
-
+        If b_Start_Stop_ON_OFF Then openComPort()
     End Sub
-    Private Sub WriteCommand(CMD_Str As String, CMD_Len As Integer)
-        Dim Index As Integer
 
-        If SerialPort1.IsOpen Then 'if the connection is closed, dont run the code
-            st_LastCMD = CMD_Str    'for debug, esp when have read timeout
-            SerialPort1.DiscardInBuffer() 'clear receive buffer
-            If (CMD_Len > 90) Then CMD_Len = 90 'don't overrun CTLer input buffers
-            For Index = 0 To (CMD_Len - 1) 'one char at a time
-                'Threading.Thread.Sleep(2) '<<EMMETT.. do we need this?
-                SerialPort1.Write(CMD_Str, Index, 1)
-            Next
-        Else
-            b_ErrorStateActive = True
-        End If
-
-        If b_ErrorStateActive = True Then
-            Timer1.Enabled = False 'gotta shut off main while user processes message
-            MsgBox("Error: The port has been closed: Exit")
-            If b_LogOpen = True Then
-                LogLineOut.Close()
-            End If
-            Me.Close()
-            Application.Exit()
-            End
-        End If
-
-
-    End Sub
-    Private Function ReadChar() As Integer
-        Dim ReturnValue As Integer = 0
-
-        If b_ErrorStateActive = False Then
-            Try
-                ReturnValue = SerialPort1.ReadByte
-            Catch ex As TimeoutException
-                b_ErrorStateActive = True
-            Finally
-                'If SerialPort1 IsNot Nothing Then SerialPort1.Close()
-            End Try
-        End If
-        If b_ErrorStateActive = True Then
-            Timer1.Enabled = False 'gotta shut off main while user processes message            
-            MsgBox("Error: Read timeout on command " + st_LastCMD + "  Exit")
-
-            If b_LogOpen = True Then
-                LogLineOut.Close()
-            End If
-            Me.Close()
-            Application.Exit()
-            End
-        End If
-        Return ReturnValue
-    End Function
-
-    Private Function ReadResponse(b_LogIt As Boolean) As Integer
-        Dim ResponseVal As Integer = 0
-        Dim ResponseLen As Integer = 0
-
-        st_RCV = "" 'reset st_RCV as null string
-        While ResponseVal <> Asc("#") ' all this so I can see the # terminator
-            ResponseVal = ReadChar()
-            If (ResponseVal > 31) And (ResponseVal < 127) Then 'only process ascii chars
-                ResponseLen += 1
-                st_RCV &= Chr(ResponseVal)
-                If ResponseLen > 100 Then Exit While 'protect against loss of "#"
-            End If
-        End While
-        If b_LogIt = True Then
-            WriteLogLine(st_RCV)
-        End If
-        Return ResponseLen
-    End Function
     Private Sub Main_Loop_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
         Dim ResponseLen As Integer
-
         Static b_Main_Running As Boolean
         If b_Main_Running Then Exit Sub 'skip this tick if Main_Loop still running
         b_Main_Running = True
-
         ResponseLen = 0
-        If b_ShutDownComms Then
-            WriteCommand("$90%", 4) 'SOFT_RESET  $90% ; resp[!90#] Resets CTL PCB
-            ResponseLen = ReadResponse(0)
-            SerialPort1.Close() 'close the port
-            b_ShutDownComms = False
-            SM_State = SHUTDOWN
-        End If
-
+        If b_ShutDownComms Then shutDownComms()
         StateMachine()         'enter the state machine
-
         b_Main_Running = False 'jump on next Timer1.Tick
-    End Sub
-
-    Private Sub MFC_1_Text_In_Button_Click(sender As Object, e As EventArgs) Handles Set_MFC_1_Recipe_Button.Click
-        Dim StrVar As String
-        Dim DoubVal As Double
-        Dim range As Double = MFC(1).GetRange()
-
-        'st_Was = MFCRecipeFlow(1).Text
-        StrVar = InputBox("Format xx.yy (max value: " & range & ")", "MFC_1 Enter Flow Value", "")
-        If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
-            If StrVar = "" Or StrVar.Length > 6 Then Return
-            DoubVal = Convert.ToDouble(StrVar) 'Convert the string value to a floating point
-            If DoubVal > MFC(1).GetRange() Or DoubVal < 0 Then Return
-            SetGUILoadProgressBars(1, DoubVal)
-            MFCRecipeFlow(1).Text = DoubVal.ToString("F")
-            MFC(1).b_MFCLoadRecipeFlow = True
-        Else
-            Return
-        End If
-
-    End Sub
-    Private Sub MFC_2_Text_In_Button_Click(sender As Object, e As EventArgs) Handles Set_MFC_2_Recipe_Button.Click
-        Dim StrVar As String
-        Dim DoubVal As Double
-        Dim range As Double = MFC(2).GetRange()
-
-        StrVar = InputBox("Format xx.yy (max value: " & range & ")", "MFC_2 Enter Flow Value", "")
-        If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
-            If StrVar = "" Or StrVar.Length > 6 Then Return
-            DoubVal = Convert.ToDouble(StrVar) 'Convert the string value to a floating point
-            If DoubVal > MFC(2).GetRange() Or DoubVal < 0 Then Return
-            SetGUILoadProgressBars(2, DoubVal)
-            MFCRecipeFlow(2).Text = DoubVal.ToString("F")
-            MFC(2).b_MFCLoadRecipeFlow = True
-        Else
-            Return
-        End If
-
-    End Sub
-    Private Sub MFC_3_Text_In_Button_Click(sender As Object, e As EventArgs) Handles Set_MFC_3_Recipe_Button.Click
-        Dim StrVar As String
-        Dim DoubVal As Double
-        Dim range As Double = MFC(3).GetRange()
-
-        StrVar = InputBox("Format x.xxx (max value: " & range & ")", "MFC_3 Enter Flow Value", "")
-        If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
-            If StrVar = "" Or StrVar.Length > 5 Then Return
-            DoubVal = Convert.ToDouble(StrVar) 'Convert the string value to a floating point
-            If DoubVal > MFC(3).GetRange() Or DoubVal < 0 Then Return
-            SetGUILoadProgressBars(3, DoubVal)
-            MFCRecipeFlow(3).Text = DoubVal.ToString("F3")
-            MFC(3).b_MFCLoadRecipeFlow = True
-        Else
-            Return
-        End If
-
-    End Sub
-    Private Sub MFC_4_Text_In_Button_Click(sender As Object, e As EventArgs) Handles Set_MFC_4_Recipe_Button.Click
-        Dim StrVar As String
-        Dim DoubVal As Double
-        Dim range As Double = MFC(4).GetRange()
-
-        StrVar = InputBox("Format x.xxx (max value: " & range & ")", "MFC_4 Enter Flow Value", "")
-        If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
-            If StrVar = "" Or StrVar.Length > 5 Then Return
-            DoubVal = Convert.ToDouble(StrVar) 'Convert the string value to a floating point
-            If DoubVal > MFC(4).GetRange() Or DoubVal < 0 Then Return
-            SetGUILoadProgressBars(4, DoubVal)
-            MFCRecipeFlow(4).Text = DoubVal.ToString("F3")
-            MFC(4).b_MFCLoadRecipeFlow = True
-        Else
-            Return
-        End If
-
-    End Sub
-    Private Sub SetRecipeWattsBtn_Click(sender As Object, e As EventArgs) Handles SetRecipeWattsBtn.Click
-        Dim StrVar As String
-        Dim IntVal As Integer
-
-        StrVar = InputBox("Format xxx (max value: " & MAXRF_PF_WATTS & ")", "RF Power Enter Value", "")
-        If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
-            If StrVar = "" Or StrVar.Length > 3 Then Return
-            IntVal = Convert.ToInt32(StrVar)
-            If IntVal > MAXRF_PF_WATTS Or IntVal < 0 Then Return
-            RecipeWattsTxt.Text = IntVal
-            RF.b_LoadRecipePower = True
-        Else
-            Return
-        End If
-
-    End Sub
-    Private Sub SetRecipeTunerBtn_Click(sender As Object, e As EventArgs) Handles SetRecipeTunerBtn.Click
-        Dim StrVar As String
-        Dim DoubVal As Double
-
-        StrVar = InputBox("Format xxx (max value: 100)", "Tuner Position Enter Percentage Value", "")
-        If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
-            If StrVar = "" Or StrVar.Length > 6 Then Return
-            DoubVal = Convert.ToDouble(StrVar)
-            If DoubVal > 100 Or DoubVal < 0 Then Return
-            RecipeTunerTxt.Text = DoubVal.ToString("F")
-            TUNER.b_LoadTunerPos = True
-        Else
-            Return
-        End If
-
-    End Sub
-    Private Sub SetThicknessBtn_Click(sender As Object, e As EventArgs) Handles SetThicknessBtn.Click
-        Dim StrVar, st_ThicSubtractGap As String
-        Dim DoubVal, db_ThicSubtractGap As Double
-
-        'This is helpful for determining how much spacing is available under the Plasma head
-        st_ThicSubtractGap = CoordParam.db_Zp_2_Base.ToString("F") - RecipeGapTxt.Text
-        db_ThicSubtractGap = Convert.ToDouble(st_ThicSubtractGap)
-
-        StrVar = InputBox("Format xx.yyy (max value: " & st_ThicSubtractGap & ")", "Substrate Thickness Enter mm Value", "")
-        If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
-            If StrVar = "" Or StrVar.Length > 6 Then Return
-            DoubVal = Convert.ToDouble(StrVar)
-            If DoubVal > db_ThicSubtractGap Or DoubVal < 0 Then Return
-            RecipeThicknessTxt.Text = DoubVal.ToString("F")
-        Else
-            Return
-        End If
-    End Sub
-    Private Sub RecipeGapTxt_TextChanged(sender As Object, e As EventArgs) Handles SetGapBtn.Click
-        Dim StrVar, st_GapSubtractThic As String
-        Dim DoubVal, db_GapSubtractThic As Double
-
-        'This is helpful for determining how much spacing is available under the Plasma head
-        st_GapSubtractThic = CoordParam.db_Zp_2_Base.ToString("F") - RecipeThicknessTxt.Text
-        db_GapSubtractThic = Convert.ToDouble(st_GapSubtractThic)
-
-        StrVar = InputBox("Format xx.yy (min Value: 0.5) (max value: " & st_GapSubtractThic & ")", "Plasma Z Gap Enter mm Value", "")
-        If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
-            If StrVar = "" Or StrVar.Length > 5 Then Return
-            DoubVal = Convert.ToDouble(StrVar)
-            If DoubVal > db_GapSubtractThic Or DoubVal < 0.5 Then Return
-
-            RecipeGapTxt.Text = DoubVal.ToString("F")
-        Else
-            Return
-        End If
-
-    End Sub
-    Private Sub RecipeOverLapTxt_TextChanged(sender As Object, e As EventArgs) Handles SetOverlapBtn.Click
-        Dim StrVar As String
-        Dim DoubVal As Double
-
-        StrVar = InputBox("Format xx.yy (max value: " & CoordParam.db_PlasmaHeadSlitLength & ")", "")
-        If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
-            If StrVar = "" Or StrVar.Length > 5 Then Return
-            DoubVal = Convert.ToDouble(StrVar)
-            If DoubVal > CoordParam.db_PlasmaHeadSlitLength Or DoubVal < -CoordParam.db_PlasmaHeadSlitLength Then Return
-            RecipeOverLapTxt.Text = DoubVal.ToString("F")
-        Else
-            Return
-        End If
-
-    End Sub
-    Private Sub RecipeSpeedTxt_TextChanged(sender As Object, e As EventArgs) Handles SetSpeedBtn.Click
-        Dim StrVar As String
-        Dim DoubVal As Double
-
-        StrVar = InputBox("Format xx.yy (max value: " & Param.db_Y_Max_Speed & ")", "Scan Speed Enter mm/sec Value", "")
-        If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
-            If StrVar = "" Or StrVar.Length > 5 Then Return
-            DoubVal = Convert.ToDouble(StrVar)
-            If DoubVal > Param.db_Y_Max_Speed Or DoubVal <= 0 Then Return
-            RecipeSpeedTxt.Text = DoubVal.ToString("F")
-        Else
-            Return
-        End If
-
-    End Sub
-    Private Sub RecipeCyclesTxt_TextChanged(sender As Object, e As EventArgs) Handles SetCyclesBtn.Click
-        Dim StrVar As String
-        Dim IntVal As Integer
-
-        StrVar = InputBox("Format xxx (max value: 100)", "Scan Cycles Enter Integer Value", "")
-        If b_IsStringValid(StrVar, st_IntChars, "Invalid Entry") Then
-            If StrVar = "" Or StrVar.Length > 3 Then Return
-            IntVal = Convert.ToInt32(StrVar)
-            If IntVal > 100 Or IntVal <= 0 Then Return
-            RecipeCyclesTxt.Text = IntVal
-        Else
-            Return
-        End If
-
-    End Sub
-    Private Sub RecipeXMinTxt_TextChanged(sender As Object, e As EventArgs) Handles SetXMinBtn.Click
-        Dim StrVar As String
-        Dim DoubVal As Double ' CoordParam.db_Xp_2Base is half the total stage size for X
-
-        StrVar = InputBox("Format +/- xxx.yy (max value: " & CoordParam.db_Xp_2_Base & ")", "Scan Box X MIN Enter mm Value", "")
-        If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
-            If StrVar = "" Or StrVar.Length > 6 Then Return
-            DoubVal = Convert.ToDouble(StrVar)
-            If DoubVal > CoordParam.db_Xp_2_Base Or DoubVal < -CoordParam.db_Xp_2_Base Then Return
-            RecipeXMinTxt.Text = DoubVal.ToString("F")
-        Else
-            Return
-        End If
-
-    End Sub
-    Private Sub RecipeXMaxTxt_TextChanged(sender As Object, e As EventArgs) Handles SetXMaxBtn.Click
-        Dim StrVar As String
-        Dim DoubVal As Double ' CoordParam.db_Xp_2_Base is half the total stage size for X
-
-        StrVar = InputBox("Format +/- xxx.yy (max value: " & CoordParam.db_Xp_2_Base & ")", "Scan Box X MAX Enter mm Value", "")
-        If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
-            If StrVar = "" Or StrVar.Length > 6 Then Return
-            DoubVal = Convert.ToDouble(StrVar)
-            If DoubVal > CoordParam.db_Xp_2_Base Or DoubVal < -CoordParam.db_Xp_2_Base Then Return
-            RecipeXMaxTxt.Text = DoubVal.ToString("F")
-        Else
-            Return
-        End If
-    End Sub
-    Private Sub RecipeYMinTxt_TextChanged(sender As Object, e As EventArgs) Handles SetYMinBtn.Click
-        Dim StrVar As String
-        Dim DoubVal As Double ' CoordParam.db_Yp_2_Base is half the total stage size for X
-
-        StrVar = InputBox("Format +/- xxx.yy (max value: " & CoordParam.db_Yp_2_Base & ")", "Scan Box Y MIN Enter mm Value", "")
-        If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
-            If StrVar = "" Or StrVar.Length > 6 Then Return
-            DoubVal = Convert.ToDouble(StrVar)
-            If DoubVal > CoordParam.db_Yp_2_Base Or DoubVal < -CoordParam.db_Yp_2_Base Then Return
-            RecipeYMinTxt.Text = DoubVal.ToString("F")
-        Else
-            Return
-        End If
-    End Sub
-    Private Sub RecipeYMaxTxt_TextChanged(sender As Object, e As EventArgs) Handles SetYMaxBtn.Click
-        Dim StrVar As String
-        Dim DoubVal As Double ' CoordParam.db_Yp_2_Base is half the total stage size for X
-
-        StrVar = InputBox("Format +/- xxx.yy (max value: " & CoordParam.db_Yp_2_Base & ")", "Scan Box Y MAX Enter mm Value", "")
-        If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
-            If StrVar = "" Or StrVar.Length > 6 Then Return
-            DoubVal = Convert.ToDouble(StrVar)
-            If DoubVal > CoordParam.db_Yp_2_Base Or DoubVal < -CoordParam.db_Yp_2_Base Then Return
-            RecipeYMaxTxt.Text = DoubVal.ToString("F")
-        Else
-            Return
-        End If
-
-    End Sub
-
-
-
-    Private Sub RunRcpBtn_Click(sender As Object, e As EventArgs) Handles RunRcpBtn.Click
-        If b_HasCollision = True And b_autoScanActive And Not CTL.isPlasmaActive() Then
-            b_PlannedAutoStart = True 'this will make sure we dont accidently start plasma when just clicking RUN SCAN button
-            If SMScan.State = SCSM_IDLE Then
-                SMScan.ExternalNewState = SCSM_START_UP
-                SMScan.b_ExternalStateChange = True  'Start Collision test while auto scan is ON
-            End If
-        Else
-            b_ToggleRunRecipe = True
-        End If
-
     End Sub
 
 
@@ -1712,21 +1207,11 @@ Public Class MainWindow
 
             Case POLLING
                 RunCheckInput() 'checks for operator input
-
-                'Check whether we need to go full pumpkin
-                If b_Owned = False Then
-                    SM_CinderellaCounter += 1 'increment until Pumpkin check
-                    If SM_CinderellaCounter >= SM_POLL_CINDERELLA Then
-                        CinderellaCode() '60 minutes till we turn into a pumpkin (unless you have your glass slippers).
-                        SM_CinderellaCounter = 0
-                    End If
-                End If
-
                 SM_PollCounter += 1 'increment every main tick loop (100 msec period)
                 If SM_PollCounter >= SM_POLL_PERIOD Then
                     SM_PollCounter = 0
                     RunPolling() 'poll the main PCB
-                    If st_has3AxisBoard Then
+                    If (st_has3AxisBoard = "1") Then
                         RunInitAxesSM() 'run the Initialize Axes state machine
                         RunTwoSpotSM() 'run the Two Spot state machine                                   
                         RunScanSM() 'run the Scan state machine
@@ -1770,9 +1255,6 @@ Public Class MainWindow
                 WriteLogLine("Controller is connected")
             End If
         End If
-
-        'If GetBoughtorNot() = False Then CinderellaCode()
-
 
         'First things first, log the CTL & Axis firmware. 
         WriteCommand("$8F%", 4) 'GET FW VERSION $8F%; resp[!8Fxx#]; xx = hard coded FW rev in Hex
@@ -2114,8 +1596,6 @@ Public Class MainWindow
         Operator_Mode()
     End Sub
 
-
-
     Private Sub GetAxesStatus() 'update the AxesStatus data structure
         Dim ResponseLen As Integer
         Dim StrVar As String
@@ -2231,7 +1711,12 @@ Public Class MainWindow
             WriteLogLine(LogStr)
         End If
     End Sub
-
+    Private Sub shutDownComms()
+        CTLReset()
+        SerialPort1.Close() 'close the port
+        b_ShutDownComms = False
+        SM_State = SHUTDOWN
+    End Sub
     Private Sub RunShutDown()
 
         MFCTextButton(1).Visible = False
@@ -2250,27 +1735,15 @@ Public Class MainWindow
 
     Private Sub RunPolling() 'Poll the Control and Axis PCBs for status (every 1 second)
         Dim Index As Integer
-        Dim IntVal As Integer
-        Dim DoubVal As Double
         Dim StrVar As String
         Dim ResponseLen As Integer
         Dim ar_CTL_ParamVals As Array
         Dim b_StatusChanged As Boolean = False
 
-        'Get Controller Status        
-        If gamepad IsNot Nothing Then
-            If gamepad.isConnected() = False Then
-                contollerONSquare.BackColor = Color.Gainsboro
-            End If
-        End If
-
-
-
+        getXBOXControllerStatus()
         WriteCommand("$91%", 4) 'GET_STATUS    $91% ; resp[!91LLRR#] LL = left LEDS, RR = right LEDS
         ResponseLen = ReadResponse(0)
         If ResponseLen < 50 Then Return 'EMMETT.. this happens sometimes FIX IT!
-
-
         st_RCV = st_RCV.Substring(3) 'lop off the first three chars
         If st_CTLPCBStatus <> st_RCV Then 'only write log line if status has changed
             b_StatusChanged = True
@@ -2279,18 +1752,55 @@ Public Class MainWindow
         ar_CTL_ParamVals = st_RCV.Split(New Char() {";"c})
 
         StrVar = ar_CTL_ParamVals(0)
-        b_IsStringANumber(StrVar, st_HexChars, "CTL Status Bits") 'restarts if = False
-        'CTL LEDS is reliant on these 4 (nibbles) characters (16 bits, 4nibbles). 
-        CTL.Statusbits = Convert.ToInt32(StrVar, 16) 'parse status bits to boolean
-
+        setCTLLEDS(StrVar)
 
         StrVar = ar_CTL_ParamVals(1) 'MB Motor Position (to update slider bar)
-        b_IsStringANumber(StrVar, st_DoubleChars, "MB Motor Pos")
-        MB_Pos_Bar.Value = CInt(StrVar)
-        DoubVal = CDbl(StrVar) 'Convert the string value to a floating point
+        setTuner(StrVar)
+        setTunerButtonsFromLimits()
+
+        StrVar = ar_CTL_ParamVals(2) 'RF Power Forward A/D        
+        setRFPower(StrVar)
+        setInterfaceReflectedWattsDuringRun()
+
+        StrVar = ar_CTL_ParamVals(3) 'RF Power reflected A/D
+        setRFReflectedPower(StrVar)
+        setInterfaceWattsDuringRun()
+
+        StrVar = ar_CTL_ParamVals(4) 'Plasma Status
+        setPlasmaStatus(StrVar)
+
+        StrVar = ar_CTL_ParamVals(Index + 4)
+        getMFCFlows(StrVar)
+
+        getPlasmaheadTemp()
+        shouldClearAbortButtonFlash()
+        isPlasmaRunning()
+        isBatchIDLoggingOn()
+        logStatusOnStatusChange(b_StatusChanged)
+        checkEstopLED()
+        If CTL.isAbortActive() Then PublishAbortCode()
+    End Sub
+    Private Sub setCTLLEDS(ByRef CTLResponse As String)
+        Me.b_IsStringANumber(CTLResponse, st_HexChars, "CTL Status Bits") 'restarts if = False
+        'CTL LEDS is reliant on these 4 (nibbles) characters (16 bits, 4nibbles). 
+        CTL.Statusbits = Convert.ToInt32(CTLResponse, 16) 'parse status bits to boolean
+    End Sub
+    Private Sub getXBOXControllerStatus()
+        If gamepad IsNot Nothing Then
+            If gamepad.isConnected() = False Then
+                contollerONSquare.BackColor = Color.Gainsboro
+            End If
+        End If
+    End Sub
+    Private Sub setTuner(ByRef CTLResponse As String)
+        Me.b_IsStringANumber(CTLResponse, st_DoubleChars, "MB Motor Pos")
+        MB_Pos_Bar.Value = CInt(CTLResponse)
+        Dim DoubVal As Double = CDbl(CTLResponse) 'Convert the string value to a floating point
         TUNER.db_ActualPos = DoubVal
         TUNER.db_ActualPosPct = DoubVal
-
+        ActTunerTxt.Text = TUNER.db_ActualPosPct.ToString("F") '2 decimal points
+    End Sub
+    Private Sub setTunerButtonsFromLimits()
         If (b_AutoModeOn = False) Or (b_RunRecipeOn = False) Then 'watch for end limits when in manual MB Motor control
             If TUNER.db_ActualPosPct > 98 Then
                 MB_Right_Arrow.Visible = False
@@ -2301,12 +1811,16 @@ Public Class MainWindow
                 'MB_Left_Arrow.Visible = True
             End If
         End If
-        ActTunerTxt.Text = TUNER.db_ActualPosPct.ToString("F") '2 decimal points
-        'MB_Pos_Bar.Value = CStr(ActTunerTxt.Text)
-
-        StrVar = ar_CTL_ParamVals(2) 'RF Power Forward A/D
-        b_IsStringANumber(StrVar, st_IntChars, "RF Pwr Fwd")
-        RF.ActualPForward = Convert.ToInt32(StrVar, 10)
+    End Sub
+    Private Sub setRFPower(ByRef CTLResponse As String)
+        b_IsStringANumber(CTLResponse, st_IntChars, "RF Pwr Fwd")
+        RF.ActualPForward = Convert.ToInt32(CTLResponse, 10)
+    End Sub
+    Private Sub setRFReflectedPower(ByRef CTLResponse As String)
+        Me.b_IsStringANumber(CTLResponse, st_IntChars, "RF Pwr Ref")
+        RF.ActualPReflected = Convert.ToInt32(CTLResponse, 10)
+    End Sub
+    Private Sub setInterfaceReflectedWattsDuringRun()
         If b_RunRecipeOn = True Then
             ActWattsTxt.Text = CStr(RF.ActualPForward)
             RF_Radial.Value = RF.ActualPForward / 2 'For Operator Mode Radial (divide by 2 since max watts is 200 and radial max is 100)
@@ -2314,9 +1828,9 @@ Public Class MainWindow
             ActWattsTxt.Text = "0"
             RF_Radial.Value = 0
         End If
-        StrVar = ar_CTL_ParamVals(3) 'RF Power reflected A/D
-        b_IsStringANumber(StrVar, st_IntChars, "RF Pwr Ref")
-        RF.ActualPReflected = Convert.ToInt32(StrVar, 10)
+    End Sub
+
+    Private Sub setInterfaceWattsDuringRun()
         If b_RunRecipeOn = True Then
             RflWattsTxt.Text = CStr(RF.ActualPReflected)
             RF_Reflected_Radial.Value = RF.ActualPReflected * 3.3  'For Operator Mode Radial (multiply by 3.3 since reflected max is 30 and dial max is 100)
@@ -2324,10 +1838,10 @@ Public Class MainWindow
             RflWattsTxt.Text = "0"
             RF_Reflected_Radial.Value = 0
         End If
-
-        StrVar = ar_CTL_ParamVals(4) 'Plasma Status
-        b_IsStringANumber(StrVar, st_HexChars, "Plasma Status") 'restarts if = False
-        IntVal = Convert.ToInt32(StrVar, 16)
+    End Sub
+    Private Sub setPlasmaStatus(ByVal CTLResponse As String)
+        Me.b_IsStringANumber(CTLResponse, st_HexChars, "Plasma Status") 'restarts if = False
+        Dim IntVal As Integer = Convert.ToInt32(CTLResponse, 16)
         'watch for CTL PCB changes in ExecRecipe status
         If ((b_RunRecipeOn = False) And (IntVal > 0)) Then 'have inconsistent condition
             b_RunRecipeOn = True
@@ -2335,86 +1849,63 @@ Public Class MainWindow
         If ((b_RunRecipeOn = True) And (IntVal = 0)) Then 'have inconsistent condition
             b_RunRecipeOn = False
         End If
-
-        'Get MFC FLows
+    End Sub
+    Private Sub getMFCFlows(ByRef CTLResponse As String)
         For Index = 1 To NumMFC
-            StrVar = ar_CTL_ParamVals(Index + 4)
-            If b_IsStringANumber(StrVar, st_DoubleChars, "MFC Flow") Then
-                MFC(Index).SetActualFlow(StrVar)
+            If b_IsStringANumber(CTLResponse, st_DoubleChars, "MFC Flow") Then
+                MFC(Index).SetActualFlow(CTLResponse)
                 SetGUIFlowBars(Index)
                 SetGUITextFlow(Index)
             Else
                 WriteLogLine("Unable to retrieve poll of MFC" + Index + " actual flow.")
             End If
         Next 'For Index = 1 To NumMFC
-
-
-        'Get Plasma Head Temperature
-        'WriteCommand("$8c%", 4)  'GET_TEMP  $8C%: resp[!8Cxx.xx#]; xx.xx = head temp degrees C base 10
-        'ResponseLen = ReadResponse(0)
-        'If ResponseLen > 3 Then
-        '    StrVar = st_RCV.Substring(3, 7)
-        '    If b_IsStringANumber(StrVar, st_DoubleChars, st_EmptyChars) = True Then 'st_EmptyChars
-        '        DoubVal = Convert.ToDouble(StrVar)
-        '        IntVal = Math.Ceiling(DoubVal)
-        '        StrVar = IntVal.ToString()
-        '        Temp_Radial.Value = IntVal 'Set the Temperature Radial for Operator
-        '        PHTempTxt.Text = StrVar 'Display the val in deg C
-        '        If Temp_Radial.Value < 50 Then
-        '            Temp_Radial.ProgressColor = Color.DodgerBlue
-        '            Temp_Radial.ProgressColor2 = Color.DodgerBlue
-        '        ElseIf Temp_Radial.Value < 60 Then
-        '            Temp_Radial.ProgressColor = Color.Yellow
-        '            Temp_Radial.ProgressColor2 = Color.Yellow
-        '        Else
-        '            Temp_Radial.ProgressColor = Color.Red
-        '            Temp_Radial.ProgressColor2 = Color.Red
-        '        End If
-
-        '    Else
-        '        PHTempTxt.Text = "???" 'allow for disconnected or bad temperature probe
-        '    End If
-        'End If
-
-        'Check Abort flag and if active, flash Abort Clear button
-        If b_ClearAbort Then
-            RunRcpBtn.Enabled = False
-            If b_toggleClearAbort = True Then
-                ClearAbortbtn.FillColor = Color.Black
-            Else
-                ClearAbortbtn.FillColor = Color.FromArgb(201, 42, 38)
-            End If
-            b_toggleClearAbort = Not b_toggleClearAbort
+    End Sub
+    Private Sub checkEstopLED()
+        If CTL.isEstopActive() Then
+            WriteLogLine("ESTOP active, application shutting down.")
+            Application.Exit()
         End If
-
-        'Get Doors Open status 
-        If AxesStatus.b_DoorsOpen = True Then 'Toggle the Doors open label to Accentuate doors open
-            'Disable the stage buttons
-            If InitAxesBtn.Enabled = True Then 'Disable the butons once, not every Poll period
-                For Each element In StageButtons
-                    element.enabled = False
-                Next
-            End If
-
-            'display label for Doors Open and make it flash
-            Door_Open_Label.Visible = True
-            If b_toggleDoorsOpen = True Then
-                Door_Open_Label.ForeColor = Color.Red
-            Else
-                Door_Open_Label.ForeColor = Color.Black
-            End If
-            b_toggleDoorsOpen = Not b_toggleDoorsOpen
-        Else
-            If Door_Open_Label.Visible = True Then 'Enable the butons once, not every Poll period
-                Door_Open_Label.Visible = False
-                For Each element In StageButtons
-                    element.enabled = True
-                Next
-            End If
-
+    End Sub
+    Private Sub logStatusOnStatusChange(ByRef StatusChanged As Boolean)
+        If (StatusChanged) And (b_RunRecipeOn) Then
+            WriteLogLine("Tuner: " & ActTunerTxt.Text & " Temp: " & PHTempTxt.Text _
+                & " MFC1: " & MFCActualFlow(1).Text & " MFC2: " & MFCActualFlow(2).Text & " MFC3: " & MFCActualFlow(3).Text & " MFC4: " & MFCActualFlow(4).Text _
+                & " Pfwd: " & ActWattsTxt.Text & " Pref: " & RflWattsTxt.Text)
         End If
+    End Sub
+    Private Sub getPlasmaheadTemp()
+        Dim ResponseLen As Integer
+        Dim StrVar As String
+        Dim IntVal As Integer
+        Dim DoubVal As double
+        WriteCommand("$8c%", 4)  'GET_TEMP  $8C%: resp[!8Cxx.xx#]; xx.xx = head temp degrees C base 10
+        ResponseLen = ReadResponse(0)
+        If ResponseLen > 3 Then
+            StrVar = st_RCV.Substring(3, 7)
+            If b_IsStringANumber(StrVar, st_DoubleChars, st_EmptyChars) = True Then 'st_EmptyChars
+                DoubVal = Convert.ToDouble(StrVar)
+                IntVal = Math.Ceiling(DoubVal)
+                StrVar = IntVal.ToString()
+                Temp_Radial.Value = IntVal 'Set the Temperature Radial for Operator
+                PHTempTxt.Text = StrVar 'Display the val in deg C
+                If Temp_Radial.Value < 135 Then
+                    Temp_Radial.ProgressColor = Color.DodgerBlue
+                    Temp_Radial.ProgressColor2 = Color.DodgerBlue
+                ElseIf Temp_Radial.Value < 145 Then
+                    Temp_Radial.ProgressColor = Color.Yellow
+                    Temp_Radial.ProgressColor2 = Color.Yellow
+                Else
+                    Temp_Radial.ProgressColor = Color.Red
+                    Temp_Radial.ProgressColor2 = Color.Red
+                End If
 
-        'Plasma running or not
+            Else
+                PHTempTxt.Text = "???" 'allow for disconnected or bad temperature probe
+            End If
+        End If
+    End Sub
+    Private Sub isPlasmaRunning()
         If b_RunRecipeOn = True Then 'Toggle the Button Color to Accentuate Recipe Running
             RunRcpBtn.Text = "TURN PLASMA OFF"
             If b_RunRcpBtnColor = True Then
@@ -2423,18 +1914,14 @@ Public Class MainWindow
                 RunRcpBtn.FillColor = Color.LightSteelBlue
             End If
             b_RunRcpBtnColor = Not b_RunRcpBtnColor
-            If b_ENG_mode = False And RunScanBtn.Enabled = False And AxesStatus.b_DoorsOpen = False Then 'Enable the Run Scan button for operators while plasma is on
-                RunScanBtn.Enabled = True
-            End If
         Else
             RunRcpBtn.FillColor = Color.BlueViolet
             RunRcpBtn.Text = "START PLASMA"
-
         End If
-
+    End Sub
+    Private Sub isBatchIDLoggingOn()
         If b_togglebatchIDLogging = True Then 'Settings button
             b_togglebatchIDLogging = False
-
             If b_batchActive = True Then
                 WriteCommand("$28011;1%", 9) ' $28xxx;vv..vv%, xxxx = any length index number, vv..vv = value; =>resp [!28xxxx;vv..vv#]            
                 ReadResponse(0)
@@ -2449,63 +1936,16 @@ Public Class MainWindow
                 WriteLogLine("Batch ID logging toggled OFF")
             End If
         End If
-
-
-        'This controls the AUTO START SCAN setting 
-        If CTL.isPlasmaActive() And b_autoScanActive = True And b_toggleAutoScan = True Then
-            If SMScan.State = SCSM_IDLE Then 'IDLE, so must want me to start up
-                'Are my axis initialized
-                If AxesStatus.XState >= ASM_IDLE And AxesStatus.YState >= ASM_IDLE And AxesStatus.ZState >= ASM_IDLE And RunScanBtn.Visible = True Then
-                    SMScan.ExternalNewState = SCSM_START_UP
-                    SMScan.b_ExternalStateChange = True
-                End If
-            End If
-            b_toggleAutoScan = False
-        End If
-
-
-        'Get Axes Status
-        If (st_has3AxisBoard = "1") Then
-            GetAxesStatus() 'Update AxesStatus Data Structure
-            'Manage Axes Status Message
-            If AxesStatus.b_XYZSameState = True And AxesStatus.XState < ASM_IDLE Then
-                CurrentStepTxtBox.Text = "Stage Not Initialized"
-            End If
-
-
-            'Manage Actual Position Windows
-            If AxesStatus.XState >= ASM_IDLE Then
-                DoubVal = db_C_XPos_RefB_2_RefPH(AxesStatus.db_XPos)
-                AxesXActual.Text = DoubVal.ToString("F") '2 decimal point
+    End Sub
+    Private Sub shouldClearAbortButtonFlash()
+        If b_ClearAbort Then
+            RunRcpBtn.Enabled = False
+            If b_toggleClearAbort = True Then
+                ClearAbortbtn.FillColor = Color.Black
             Else
-                AxesXActual.Text = "???"
+                ClearAbortbtn.FillColor = Color.FromArgb(201, 42, 38)
             End If
-            If AxesStatus.YState >= ASM_IDLE Then
-                DoubVal = db_C_YPos_RefB_2_RefPH(AxesStatus.db_YPos)
-                AxesYActual.Text = DoubVal.ToString("F") '2 decimal point
-            Else
-                AxesYActual.Text = "???"
-            End If
-            If AxesStatus.ZState >= ASM_IDLE Then
-                DoubVal = db_C_ZPos_RefB_2_RefPH(AxesStatus.db_ZPos)
-                AxesZActual.Text = DoubVal.ToString("F") '2 decimal point
-            Else
-                AxesZActual.Text = "???"
-            End If
-        End If
-
-
-        If (b_StatusChanged = True) And (b_RunRecipeOn = True) Then
-            WriteLogLine("Tuner: " & ActTunerTxt.Text & " Temp: " & PHTempTxt.Text _
-                & " MFC1: " & MFCActualFlow(1).Text & " MFC2: " & MFCActualFlow(2).Text & " MFC3: " & MFCActualFlow(3).Text & " MFC4: " & MFCActualFlow(4).Text _
-                & " Pfwd: " & ActWattsTxt.Text & " Pref: " & RflWattsTxt.Text)
-        End If
-
-        If CTL.isAbortActive() Then PublishAbortCode()
-
-        If CTL.isEstopActive() Then
-            WriteLogLine("ESTOP active, application shutting down.")
-            Application.Exit()
+            b_toggleClearAbort = Not b_toggleClearAbort
         End If
     End Sub
     Public Sub SetGUIFlowBars(index As Integer)
@@ -2696,16 +2136,6 @@ Public Class MainWindow
 
         Return DecStr
     End Function
-    'UPdateStatus bit patterns =>
-    'LED_GAS_1        0 //VBWord bit 8    &H0100
-    'LED_GAS_2        1 //VBWord bit 9    &H0200
-    'LED_GAS_3        2 //VBWord bit 10   &H0400
-    'LED_GAS_4        3 //VBWord bit 11   &H0800
-    'LED_VLV_5        4 //VBWord bit 12   &H1000 - R12 (not used here)
-    'LED_VLV_6        5 //VBWord bit 13   &H2000 - R12 (not used here)
-    'LED_VLV_7        6 //VBWord bit 14   &H4000
-    'LED_RF_EN        7 //VBWord bit 15   &H8000
-
     Public Sub PublishAbortCode()
         Dim ResponseLen As Integer
         WriteCommand("$8B%", 4) 'GETSET_ABORT_CODE  $8B%; resp [!8Bcccc#] cccc = Base10 Abort Code
@@ -2738,14 +2168,12 @@ Public Class MainWindow
         If b_LogOpen Then
             LogLineOut.WriteLine(st_TimeStamp + st_Line)  'Log File Line
         End If
-
     End Sub
     Private Sub CloseLogFile()
         b_LogOpen = False
         LogLineOut.Close()
     End Sub
     Private Sub GetExeCfg()
-
         ExeConfigPathFileName = ExeConfigPath + ExeConfigFileName + ".cfg"
         ' Open the file using a stream reader.
         Using sr As New StreamReader(ExeConfigPathFileName)
@@ -2783,15 +2211,11 @@ Public Class MainWindow
                 Case "HANDSHAKE"
                     Exe_Cfg.KNOWN_COM_PORT = ExeConfigParamValue
                     st_hasHandshake = Exe_Cfg.KNOWN_COM_PORT
-
-
                 Case "LED1", "LED2", "LED3", "LED4", "LED5", "LED6", "LED7", "LED8", "LED9", "LED10", "LED11", "LED12", "LED13", "LED14", "LED15", "LED16"
                     CTL.LEDS.CreateLED(ExeConfigParamValue)
                 Case Else
             End Select
-
         Next
-
     End Sub
 
     Private Sub LoadToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles LoadToolStripMenuItem.Click
@@ -2809,7 +2233,6 @@ Public Class MainWindow
         ClearAbortbtn.Visible = False
         b_ClearAbort = False
         RunRcpBtn.Enabled = True 're-enable the Start Plasma button
-
         If CLaser.State = CLSM_TRIPPED Then
             RunScanBtn.Text = "RUN SCAN"
             CLaser.State = CLSM_DEACTIVATE
@@ -3006,19 +2429,13 @@ Public Class MainWindow
     End Sub
     Private Sub btnExit_Click(sender As Object, e As EventArgs) Handles ExitToolStripMenuItem.Click
         Dim Response As Integer
-
-
         Response = MessageBox.Show("Do you really want to exit?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
         If Response = vbYes Then
-            'Reset the Auxiliary PCB before exit
-            WriteCommand("$A9%", 4)  'SOFT_RESET   $A9%; resp[!A9#]; causes Aux PCB Soft Reset
-            ReadResponse(0)
-
-            'Reset the controller PCB before exit
-            WriteCommand("$90%", 4)  'SOFT_RESET   $90% ; resp[!90#] Resets CTL PCB and AUX PCB
-            ReadResponse(0)
-
-            SerialPort1.Close()
+            If SerialPort1.IsOpen Then
+                AuxReset()
+                CTLReset()
+                SerialPort1.Close()
+            End If
             Me.Close()
             Application.Exit()
             End
@@ -3046,25 +2463,6 @@ Public Class MainWindow
         WriteLogLine("Saved " + st_RecipeFileName + " : " + st_RecipeString.Replace(vbCr, "").Replace(vbLf, "")) 'Log this recipe entry
 
     End Sub
-
-    Private Function ReadCustomFolderFromConfigFile() As String
-        Dim configFilePath As String = "C:\OTT_PLUS\Execonfig\default.cfg"
-
-        ' Read the config file and search for custom folder entries
-        Using configFile As New StreamReader(configFilePath)
-            Dim line As String
-            While Not configFile.EndOfStream
-                line = configFile.ReadLine()
-                If line.Contains("<ACTIVE_FOLDER>") Then
-                    st_RecipePath = line.Substring(line.IndexOf("<ACTIVE_FOLDER>") + "<ACTIVE_FOLDER>".Length)
-                    Exit While
-                End If
-            End While
-        End Using
-
-        Return st_RecipePath
-    End Function
-
     Private Sub SaveAsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SaveAsToolStripMenuItem.Click
         st_RecipeFileName = InputBox("No extension", "Enter Recipe Name", st_RecipeFileName)
         ActiveRecipeName.Text = st_RecipeFileName
@@ -3092,7 +2490,7 @@ Public Class MainWindow
         b_SetDefaultRecipe = True
     End Sub
     Private Sub RestartAllToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles RestartAllToolStripMenuItem.Click
-        WriteCommand("$90%", 4)         'SOFT_RESET  $90% ; resp[!90#]
+        CTLReset()     'SOFT_RESET  $90% ; resp[!90#]
         Application.Restart()
     End Sub
     Private Sub EnableServiceMenuToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles EnableServiceMenuToolStripMenuItem.Click
@@ -3330,234 +2728,7 @@ Public Class MainWindow
 
     End Sub
 
-    Private Sub CodeToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CodeToolStripMenuItem.Click
-        AuthorizeCode(1)
-    End Sub
-    Function GetBoughtorNot() As Boolean
-        Dim responseLen As Integer
-        Dim st_bought As String
 
-        'Uncomment out for CINDERELLACODE - Also need to adjust the days/dates in authorize.
-        WriteCommand("$22007F%", 8) 'GET_PARAM_VAL
-        responseLen = ReadResponse(0)
-        st_bought = st_RCV.Substring(7, 1)
-        If st_bought = "1" Then
-            CodeToolStripMenuItem.Visible = False
-            b_Owned = True
-            Return True
-        Else
-            Return False
-        End If
-    End Function
-    Function GetExt1() As Boolean 'Extension yes/no
-        Dim responseLen As Integer
-        Dim st_extension1 As String
-
-        WriteCommand("$22007E%", 8) 'GET_PARAM_VAL
-        responseLen = ReadResponse(0)
-        st_extension1 = st_RCV.Substring(7, 1)
-        If st_extension1 = "1" Then
-            Return True
-        Else
-            Return False
-        End If
-    End Function
-    Function GetExt2() As Boolean 'Extension yes/no
-        Dim responseLen As Integer
-        Dim st_extension2 As String
-
-        WriteCommand("$22007D%", 8) 'GET_PARAM_VAL
-        responseLen = ReadResponse(0)
-        st_extension2 = st_RCV.Substring(7, 1)
-        If st_extension2 = "1" Then
-            Return True
-        Else
-            Return False
-        End If
-    End Function
-    Private Sub AuthorizeCode(EnterCodeOrTimerUp As Integer)
-        Dim StrVar As String
-        Dim responseLen As Integer
-        Dim CodeB As String
-        Dim CodeE1 As String
-        Dim CodeE2 As String
-        Dim b_Authorized As Boolean
-        Dim dt_Today As DateTime = DateTime.Now
-        Dim st_Today As String = dt_Today.ToString("ddMMyyyy")
-
-        'SM_State = SHUTDOWN 'Shut'r down!
-
-        WriteCommand("$23007F%", 8) 'GET_PARAM_DESC
-        responseLen = ReadResponse(0)
-        CodeB = st_RCV.Substring(8, 10)
-        WriteCommand("$23007E%", 8)
-        responseLen = ReadResponse(0)
-        CodeE1 = st_RCV.Substring(8, 10)
-        WriteCommand("$23007D%", 8)
-        responseLen = ReadResponse(0)
-        CodeE2 = st_RCV.Substring(8, 10)
-
-        'gather pumpkins 
-        If EnterCodeOrTimerUp = 1 Then '1 is Enter Code was selected, as opposed to time expiring
-            StrVar = InputBox("ENTER CODE" & vbCrLf & vbCrLf & "CONTACT SERVICE@SET-NA.COM FOR CODE", "ENTER CODE", "")
-        Else
-            StrVar = InputBox("TEMPORARY CODE HAS EXPIRED" & vbCrLf & vbCrLf & "PLEASE CONTACT SERVICE@SET-NA.COM FOR PAYMENT AND CODE", "TERM EXPIRATION", "")
-        End If
-
-
-        Select Case StrVar
-            Case CodeB
-                WriteCommand("$20007F1%", 9) 'SET_PARAM_DESC
-                responseLen = ReadResponse(0)
-                MsgBox("Congratulations! Payment has been authorized. Please restart the software")
-            Case CodeE1
-                WriteCommand("$20007E1%", 9)
-                responseLen = ReadResponse(0)
-                WriteCommand("$21007E;0000000000%", 19) 'Need a new password 
-                responseLen = ReadResponse(0)
-                StrVar = "$21007B" & st_Today & "%"
-                WriteCommand(StrVar, StrVar.Length)
-                responseLen = ReadResponse(0)
-                MsgBox("Temporary Code Extension authorized. Please restart the software to configure")
-            Case CodeE2
-                WriteCommand("$20007D1%", 9)
-                responseLen = ReadResponse(0)
-                WriteCommand("$21007D;0000000000%", 19)
-                responseLen = ReadResponse(0)
-                StrVar = "$21007A" & st_Today & "%"
-                WriteCommand(StrVar, StrVar.Length)
-                responseLen = ReadResponse(0)
-                MsgBox("Temporary Code Extension authorized. Please restart the software to configure")
-            Case Else
-                MsgBox("Incorrect Code")
-
-        End Select
-
-        If EnterCodeOrTimerUp = 1 Then
-            'do nothing
-        Else
-            b_ShutDownComms = True
-            Me.Close()
-            Application.Exit()
-        End If
-
-
-    End Sub
-    Function GetToolDate(ToolDate As Integer) As String
-        Dim responseLen As Integer
-        Dim strVar As String
-        Dim dt_shipDate As DateTime
-        Dim dt_ExtensionDate As DateTime
-        Dim dt_Today As DateTime = DateTime.Now
-        Dim st_Today As String = dt_Today.ToString("ddMMyyyy")
-
-        Select Case ToolDate
-            Case 1  'Ship date 
-                WriteCommand("$23007C%", 8)
-                responseLen = ReadResponse(0)
-                strVar = st_RCV.Substring(7, 8)
-                Try
-                    dt_shipDate = DateTime.ParseExact(strVar, "ddMMyyyy",
-                      System.Globalization.DateTimeFormatInfo.InvariantInfo)
-                Catch ex As Exception
-                    dt_shipDate = st_Today
-                End Try
-
-
-                Return dt_shipDate
-
-            Case 2  'temp code 1 date
-                WriteCommand("$23007B%", 8)
-                responseLen = ReadResponse(0)
-                strVar = st_RCV.Substring(7, 8)
-                dt_ExtensionDate = DateTime.ParseExact(strVar, "ddMMyyyy",
-                      System.Globalization.DateTimeFormatInfo.InvariantInfo)
-                dt_ExtensionDate = dt_ExtensionDate.AddDays(28)
-                Return dt_ExtensionDate
-            Case 3  'temp code 2 date
-                WriteCommand("$23007A%", 8)
-                responseLen = ReadResponse(0)
-                strVar = st_RCV.Substring(7, 8)
-                dt_ExtensionDate = DateTime.ParseExact(strVar, "ddMMyyyy",
-                System.Globalization.DateTimeFormatInfo.InvariantInfo)
-                dt_ExtensionDate = dt_ExtensionDate.AddDays(89)
-                Return dt_ExtensionDate
-            Case Else
-
-        End Select
-
-    End Function
-
-    Private Sub CinderellaCode()
-        Dim dt_todayDate As DateTime
-        Dim dt_ShipDate As DateTime
-        Dim dt_halfpumpkinDate As DateTime
-        Dim dt_fullpumpkinDate As DateTime
-        Dim dt_Extension1Date As DateTime
-        Dim dt_Extension2Date As DateTime
-        Dim DaysRemaining As Long
-
-        'Retreive Status from tool
-        dt_ShipDate = GetToolDate(1)
-        dt_todayDate = DateTime.Now
-        dt_halfpumpkinDate = dt_ShipDate.AddDays(34)
-        dt_fullpumpkinDate = dt_ShipDate.AddDays(68) ' expiry date
-
-        'Tool Due Dates: 
-        If dt_todayDate < dt_ShipDate Then 'The date was tampered
-            MsgBox("PLEASE CONTACT SERVICE@SET-NA.COM - ᓵᔑℸ ̣ ᔑᓭℸ ̣ ∷𝙹!¡⍑╎ᓵ ⎓ᔑ╎ꖎ⚍∷ᒷ:  ∴ᒷ ᔑ∷ᒷ ꖎ𝙹𝙹ꖌ╎リ⊣ ⎓𝙹∷ ||𝙹⚍")
-            b_ShutDownComms = True
-            Me.Close()
-            Application.Exit()
-        End If
-
-        If GetExt1() And GetExt2() Then
-            dt_Extension1Date = GetToolDate(2) 'returns first extension date
-            dt_Extension2Date = GetToolDate(3) 'returns Second extension date
-            If dt_Extension1Date > dt_Extension2Date Then 'this is because we dont know which extension came first...
-                If dt_todayDate > dt_Extension1Date Then
-                    AuthorizeCode(0)
-                Else
-                    DaysRemaining = DateDiff(DateInterval.Day, dt_todayDate, dt_Extension1Date) 'how many days betwen today and pumpkin date
-                    MsgBox("WARNING: LICENSE WILL EXPIRE IN " & DaysRemaining & " DAYS.")
-                End If
-            Else
-                If dt_todayDate > dt_Extension2Date Then '
-                    AuthorizeCode(0)
-                Else
-                    DaysRemaining = DateDiff(DateInterval.Day, dt_todayDate, dt_Extension2Date) 'how many days betwen today and pumpkin date
-                    MsgBox("WARNING: LICENSE WILL EXPIRE IN " & DaysRemaining & " DAYS.")
-                End If
-            End If
-        Else
-            If GetExt1() Then
-                dt_Extension1Date = GetToolDate(2) 'returns first extension date
-                If dt_todayDate > dt_Extension1Date Then ' Extension 1 is up...
-                    AuthorizeCode(0)
-                Else
-                    DaysRemaining = DateDiff(DateInterval.Day, dt_todayDate, dt_Extension1Date) 'how many days betwen today and pumpkin date
-                    MsgBox("WARNING: LICENSE WILL EXPIRE IN " & DaysRemaining & " DAYS.")
-                End If
-            ElseIf GetExt2() Then 'returns Second extension date
-                dt_Extension2Date = GetToolDate(3)
-                If dt_todayDate > dt_Extension2Date Then ' Extension 1 is up...
-                    AuthorizeCode(0)
-                Else
-                    DaysRemaining = DateDiff(DateInterval.Day, dt_todayDate, dt_Extension2Date) 'how many days betwen today and pumpkin date
-                    MsgBox("WARNING: LICENSE WILL EXPIRE IN " & DaysRemaining & " DAYS.")
-                End If
-            Else
-                If dt_todayDate > dt_fullpumpkinDate Then 'Payment is due
-                    AuthorizeCode(0)
-                Else
-                    If dt_todayDate > dt_halfpumpkinDate Then 'We're halfway there...WOAHHHHH
-                        DaysRemaining = DateDiff(DateInterval.Day, dt_todayDate, dt_fullpumpkinDate) 'how many days betwen today and pumpkin date
-                        MsgBox("WARNING: LICENSE WILL EXPIRE IN " & DaysRemaining & " DAYS.")
-                    End If
-                End If
-            End If
-        End If
-    End Sub
     Private Sub Operator_Mode() 'Size 1540x940
         'Operator Mode 
         b_ENG_mode = False 'Running Operator Mode
@@ -4637,10 +3808,6 @@ Public Class MainWindow
         CTL.ToggleDisplayStatus()
     End Sub
 
-    Private Sub AutoManBtn_CheckedChanged(sender As Object, e As EventArgs) Handles AutoManBtn.Click
-        b_ToggleAutoMode = True
-    End Sub
-
     Private Sub setLEDBar(sender As Object, e As EventArgs) Handles LEDTrackBar.MouseUp
         '$C9pp.p% resp[!C9pp.p#] Percent power to Illumination
         If SerialPort1.IsOpen() Then
@@ -4650,5 +3817,419 @@ Public Class MainWindow
         End If
     End Sub
 
+    Private Sub AutoManBtn_CheckedChanged(sender As Object, e As EventArgs) Handles AutoManBtn.Click
+        b_ToggleAutoMode = True
+    End Sub
+    Private Sub Set_MFC_Recipe_Button_Click(sender As Object, e As EventArgs, index As Integer, formatString As String, maxDigits As Integer)
+        Dim StrVar As String
+        Dim DoubVal As Double
+        Dim range As Double = MFC(index).GetRange()
+
+        StrVar = InputBox("Format " & formatString & " (max value: " & range & ")", "MFC_" & index & " Enter Flow Value", "")
+        If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
+            If StrVar = "" Or StrVar.Length > maxDigits Then Return
+            DoubVal = Convert.ToDouble(StrVar) 'Convert the string value to a floating point
+            If DoubVal > MFC(index).GetRange() Or DoubVal < 0 Then Return
+            SetGUILoadProgressBars(index, DoubVal)
+            MFCRecipeFlow(index).Text = DoubVal.ToString(formatString)
+            MFC(index).b_MFCLoadRecipeFlow = True
+        Else
+            Return
+        End If
+    End Sub
+    Private Sub MFC_1_Text_In_Button_Click(sender As Object, e As EventArgs) Handles Set_MFC_1_Recipe_Button.Click
+        Set_MFC_Recipe_Button_Click(sender, e, 1, "F", 6)
+    End Sub
+
+    Private Sub MFC_2_Text_In_Button_Click(sender As Object, e As EventArgs) Handles Set_MFC_2_Recipe_Button.Click
+        Set_MFC_Recipe_Button_Click(sender, e, 2, "F", 6)
+    End Sub
+
+    Private Sub MFC_3_Text_In_Button_Click(sender As Object, e As EventArgs) Handles Set_MFC_3_Recipe_Button.Click
+        Set_MFC_Recipe_Button_Click(sender, e, 3, "F3", 5)
+    End Sub
+
+    Private Sub MFC_4_Text_In_Button_Click(sender As Object, e As EventArgs) Handles Set_MFC_4_Recipe_Button.Click
+        Set_MFC_Recipe_Button_Click(sender, e, 4, "F3", 5)
+    End Sub
+
+    Private Sub SetRecipeWattsBtn_Click(sender As Object, e As EventArgs) Handles SetRecipeWattsBtn.Click
+        Dim StrVar As String
+        Dim IntVal As Integer
+
+        StrVar = InputBox("Format xxx (max value: " & MAXRF_PF_WATTS & ")", "RF Power Enter Value", "")
+        If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
+            If StrVar = "" Or StrVar.Length > 3 Then Return
+            IntVal = Convert.ToInt32(StrVar)
+            If IntVal > MAXRF_PF_WATTS Or IntVal < 0 Then Return
+            RecipeWattsTxt.Text = IntVal
+            RF.b_LoadRecipePower = True
+        Else
+            Return
+        End If
+
+    End Sub
+    Private Sub SetRecipeTunerBtn_Click(sender As Object, e As EventArgs) Handles SetRecipeTunerBtn.Click
+        Dim StrVar As String
+        Dim DoubVal As Double
+
+        StrVar = InputBox("Format xxx (max value: 100)", "Tuner Position Enter Percentage Value", "")
+        If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
+            If StrVar = "" Or StrVar.Length > 6 Then Return
+            DoubVal = Convert.ToDouble(StrVar)
+            If DoubVal > 100 Or DoubVal < 0 Then Return
+            RecipeTunerTxt.Text = DoubVal.ToString("F")
+            TUNER.b_LoadTunerPos = True
+        Else
+            Return
+        End If
+
+    End Sub
+    Private Sub SetThicknessBtn_Click(sender As Object, e As EventArgs) Handles SetThicknessBtn.Click
+        Dim StrVar, st_ThicSubtractGap As String
+        Dim DoubVal, db_ThicSubtractGap As Double
+
+        'This is helpful for determining how much spacing is available under the Plasma head
+        'st_ThicSubtractGap = CoordParam.db_Zp_2_Base.ToString("F") - RecipeGapTxt.Text
+        db_ThicSubtractGap = Convert.ToDouble(st_ThicSubtractGap)
+
+        StrVar = InputBox("Format xx.yyy (max value: " & st_ThicSubtractGap & ")", "Substrate Thickness Enter mm Value", "")
+        If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
+            If StrVar = "" Or StrVar.Length > 6 Then Return
+            DoubVal = Convert.ToDouble(StrVar)
+            If DoubVal > db_ThicSubtractGap Or DoubVal < 0 Then Return
+            RecipeThicknessTxt.Text = DoubVal.ToString("F")
+        Else
+            Return
+        End If
+    End Sub
+    Private Sub RecipeGapTxt_TextChanged(sender As Object, e As EventArgs) Handles SetGapBtn.Click
+        Dim StrVar, st_GapSubtractThic As String
+        Dim DoubVal, db_GapSubtractThic As Double
+
+        'This is helpful for determining how much spacing is available under the Plasma head
+        'st_GapSubtractThic = CoordParam.db_Zp_2_Base.ToString("F") - RecipeThicknessTxt.Text
+        db_GapSubtractThic = Convert.ToDouble(st_GapSubtractThic)
+
+        StrVar = InputBox("Format xx.yy (min Value: 0.5) (max value: " & st_GapSubtractThic & ")", "Plasma Z Gap Enter mm Value", "")
+        If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
+            If StrVar = "" Or StrVar.Length > 5 Then Return
+            DoubVal = Convert.ToDouble(StrVar)
+            If DoubVal > db_GapSubtractThic Or DoubVal < 0.5 Then Return
+
+            RecipeGapTxt.Text = DoubVal.ToString("F")
+        Else
+            Return
+        End If
+
+    End Sub
+    Private Sub RecipeOverLapTxt_TextChanged(sender As Object, e As EventArgs) Handles SetOverlapBtn.Click
+        Dim StrVar As String
+        Dim DoubVal As Double
+
+        'TODO: StrVar = InputBox("Format xx.yy (max value: " & CoordParam.db_PlasmaHeadSlitLength & ")", "")
+        If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
+            If StrVar = "" Or StrVar.Length > 5 Then Return
+            DoubVal = Convert.ToDouble(StrVar)
+            'TODO: If DoubVal > CoordParam.db_PlasmaHeadSlitLength Or DoubVal < -CoordParam.db_PlasmaHeadSlitLength Then Return
+            RecipeOverLapTxt.Text = DoubVal.ToString("F")
+        Else
+            Return
+        End If
+
+    End Sub
+    Private Sub RecipeSpeedTxt_TextChanged(sender As Object, e As EventArgs) Handles SetSpeedBtn.Click
+        Dim StrVar As String
+        Dim DoubVal As Double
+
+        'TODO: StrVar = InputBox("Format xx.yy (max value: " & Param.db_Y_Max_Speed & ")", "Scan Speed Enter mm/sec Value", "")
+        If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
+            If StrVar = "" Or StrVar.Length > 5 Then Return
+            DoubVal = Convert.ToDouble(StrVar)
+            'TODO: If DoubVal > Param.db_Y_Max_Speed Or DoubVal <= 0 Then Return
+            RecipeSpeedTxt.Text = DoubVal.ToString("F")
+        Else
+            Return
+        End If
+
+    End Sub
+    Private Sub RecipeCyclesTxt_TextChanged(sender As Object, e As EventArgs) Handles SetCyclesBtn.Click
+        Dim StrVar As String
+        Dim IntVal As Integer
+
+        StrVar = InputBox("Format xxx (max value: 100)", "Scan Cycles Enter Integer Value", "")
+        If b_IsStringValid(StrVar, st_IntChars, "Invalid Entry") Then
+            If StrVar = "" Or StrVar.Length > 3 Then Return
+            IntVal = Convert.ToInt32(StrVar)
+            If IntVal > 100 Or IntVal <= 0 Then Return
+            RecipeCyclesTxt.Text = IntVal
+        Else
+            Return
+        End If
+
+    End Sub
+    Private Sub RecipeXMinTxt_TextChanged(sender As Object, e As EventArgs) Handles SetXMinBtn.Click
+        Dim StrVar As String
+        Dim DoubVal As Double ' CoordParam.db_Xp_2Base is half the total stage size for X
+
+        ' StrVar = InputBox("Format +/- xxx.yy (max value: " & CoordParam.db_Xp_2_Base & ")", "Scan Box X MIN Enter mm Value", "")
+        If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
+            If StrVar = "" Or StrVar.Length > 6 Then Return
+            DoubVal = Convert.ToDouble(StrVar)
+            '    If DoubVal > CoordParam.db_Xp_2_Base Or DoubVal < -CoordParam.db_Xp_2_Base Then Return
+            RecipeXMinTxt.Text = DoubVal.ToString("F")
+        Else
+            Return
+        End If
+
+    End Sub
+    Private Sub RecipeXMaxTxt_TextChanged(sender As Object, e As EventArgs) Handles SetXMaxBtn.Click
+        Dim StrVar As String
+        Dim DoubVal As Double ' CoordParam.db_Xp_2_Base is half the total stage size for X
+
+        ' StrVar = InputBox("Format +/- xxx.yy (max value: " & CoordParam.db_Xp_2_Base & ")", "Scan Box X MAX Enter mm Value", "")
+        If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
+            If StrVar = "" Or StrVar.Length > 6 Then Return
+            DoubVal = Convert.ToDouble(StrVar)
+            '   If DoubVal > CoordParam.db_Xp_2_Base Or DoubVal < -CoordParam.db_Xp_2_Base Then Return
+            RecipeXMaxTxt.Text = DoubVal.ToString("F")
+        Else
+            Return
+        End If
+    End Sub
+    Private Sub RecipeYMinTxt_TextChanged(sender As Object, e As EventArgs) Handles SetYMinBtn.Click
+        Dim StrVar As String
+        Dim DoubVal As Double ' CoordParam.db_Yp_2_Base is half the total stage size for X
+
+        '  StrVar = InputBox("Format +/- xxx.yy (max value: " & CoordParam.db_Yp_2_Base & ")", "Scan Box Y MIN Enter mm Value", "")
+        If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
+            If StrVar = "" Or StrVar.Length > 6 Then Return
+            DoubVal = Convert.ToDouble(StrVar)
+            '     If DoubVal > CoordParam.db_Yp_2_Base Or DoubVal < -CoordParam.db_Yp_2_Base Then Return
+            RecipeYMinTxt.Text = DoubVal.ToString("F")
+        Else
+            Return
+        End If
+    End Sub
+    Private Sub RecipeYMaxTxt_TextChanged(sender As Object, e As EventArgs) Handles SetYMaxBtn.Click
+        Dim StrVar As String
+        Dim DoubVal As Double ' CoordParam.db_Yp_2_Base is half the total stage size for X
+        '  StrVar = InputBox("Format +/- xxx.yy (max value: " & CoordParam.db_Yp_2_Base & ")", "Scan Box Y MAX Enter mm Value", "")
+        If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
+            If StrVar = "" Or StrVar.Length > 6 Then Return
+            DoubVal = Convert.ToDouble(StrVar)
+            '      If DoubVal > CoordParam.db_Yp_2_Base Or DoubVal < -CoordParam.db_Yp_2_Base Then Return
+            RecipeYMaxTxt.Text = DoubVal.ToString("F")
+        Else
+            Return
+        End If
+    End Sub
+
+    Private Sub RunRcpBtn_Click(sender As Object, e As EventArgs) Handles RunRcpBtn.Click
+        If b_HasCollision = True And b_autoScanActive And Not CTL.isPlasmaActive() Then
+            b_PlannedAutoStart = True 'this will make sure we dont accidently start plasma when just clicking RUN SCAN button
+            If SMScan.State = SCSM_IDLE Then
+                SMScan.ExternalNewState = SCSM_START_UP
+                SMScan.b_ExternalStateChange = True  'Start Collision test while auto scan is ON
+            End If
+        Else
+            b_ToggleRunRecipe = True
+        End If
+
+    End Sub
+    Private Sub WriteCommand(CMD_Str As String, CMD_Len As Integer)
+        Dim Index As Integer
+        Try
+            st_LastCMD = CMD_Str    'for debug, esp when have read timeout
+            SerialPort1.DiscardInBuffer() 'clear receive buffer
+            If (CMD_Len > 90) Then CMD_Len = 90 'don't overrun CTLer input buffers
+            For Index = 0 To (CMD_Len - 1) 'one char at a time
+                SerialPort1.Write(CMD_Str, Index, 1)
+            Next
+        Catch ex As Exception
+            Timer1.Enabled = False 'gotta shut off main while user processes message
+            MsgBox("Error on write command : The port has been closed.")
+            If SerialPort1.IsOpen() Then SerialPort1.Close()
+            If b_LogOpen = True Then
+                WriteLogLine("failed to write command " & CMD_Str)
+                LogLineOut.Close()
+            End If
+        End Try
+    End Sub
+
+    Private Function ReadChar() As Integer
+        Dim ReturnValue As Integer = 0
+        Try
+            ReturnValue = SerialPort1.ReadByte
+        Catch ex As Exception
+            Timer1.Enabled = False 'gotta shut off main while user processes message
+            MsgBox("Error: Read timeout on command : The port has been closed.")
+            If SerialPort1.IsOpen() Then SerialPort1.Close()
+            If b_LogOpen = True Then
+                WriteLogLine("Error: Read timeout on command " + st_LastCMD)
+                LogLineOut.Close()
+            End If
+        End Try
+        Return ReturnValue
+    End Function
+
+    Private Function ReadResponse(b_LogIt As Boolean) As Integer
+        Dim ResponseVal As Integer = 0
+        Dim ResponseLen As Integer = 0
+
+        st_RCV = "" 'reset st_RCV as null string
+        While ResponseVal <> Asc("#") ' all this so I can see the # terminator
+            ResponseVal = ReadChar()
+            If (ResponseVal > 31) And (ResponseVal < 127) Then 'only process ascii chars
+                ResponseLen += 1
+                st_RCV &= Chr(ResponseVal)
+                If ResponseLen > 100 Then Exit While 'protect against loss of "#"
+            End If
+        End While
+        If b_LogIt = True Then
+            WriteLogLine(st_RCV)
+        End If
+        Return ResponseLen
+    End Function
+
+    Private Sub friendGUICollections()
+        guiCollectionMFCActualFlow()
+        guiCollectionMFCRecipeFlow()
+        guiCollectionMFCLoadedFlow()
+        guiCollectionMFCRange()
+        guiCollectionMFCRecipe()
+        guiCollectionMFCProgress()
+        guiCollectionStageButtons()
+        guiCollectionPlasmaParameters()
+        guiCollectionStageParameters()
+        guiCollectionRecipeValues()
+        guiCollectionLEDS()
+    End Sub
+    Private Sub guiCollectionMFCActualFlow()
+        MFCActualFlow.Add(MFC_1_Read_Flow)
+        MFCActualFlow.Add(MFC_2_Read_Flow)
+        MFCActualFlow.Add(MFC_3_Read_Flow)
+        MFCActualFlow.Add(MFC_4_Read_Flow)
+    End Sub
+    Private Sub guiCollectionMFCRecipeFlow()
+        MFCRecipeFlow.Add(MFC_1_Recipe_Flow)
+        MFCRecipeFlow.Add(MFC_2_Recipe_Flow)
+        MFCRecipeFlow.Add(MFC_3_Recipe_Flow)
+        MFCRecipeFlow.Add(MFC_4_Recipe_Flow)
+    End Sub
+    Private Sub guiCollectionMFCLoadedFlow()
+        MFCLoadedFlow.Add(MFC_1_Loaded_Flow)
+        MFCLoadedFlow.Add(MFC_2_Loaded_Flow)
+        MFCLoadedFlow.Add(MFC_3_Loaded_Flow)
+        MFCLoadedFlow.Add(MFC_4_Loaded_Flow)
+    End Sub
+    Private Sub guiCollectionMFCRange()
+        MFCRange.Add(MFC_1_Read_Range)
+        MFCRange.Add(MFC_2_Read_Range)
+        MFCRange.Add(MFC_3_Read_Range)
+        MFCRange.Add(MFC_4_Read_Range)
+    End Sub
+    Private Sub guiCollectionMFCRecipe()
+        MFCTextButton.Add(Set_MFC_1_Recipe_Button)
+        MFCTextButton.Add(Set_MFC_2_Recipe_Button)
+        MFCTextButton.Add(Set_MFC_3_Recipe_Button)
+        MFCTextButton.Add(Set_MFC_4_Recipe_Button)
+    End Sub
+    Private Sub guiCollectionMFCProgress()
+        MFCProgressValue.Add(ProgressBar1)
+        MFCProgressValue.Add(ProgressBar2)
+        MFCProgressValue.Add(ProgressBar3)
+        MFCProgressValue.Add(ProgressBar4)
+
+        MFCLoadedProgressValue.Add(Loaded_Progress_1)
+        MFCLoadedProgressValue.Add(Loaded_Progress_2)
+        MFCLoadedProgressValue.Add(Loaded_Progress_3)
+        MFCLoadedProgressValue.Add(Loaded_Progress_4)
+
+        MFC1LoadedProgressText.Add(Loaded_Progress_1_100)
+        MFC1LoadedProgressText.Add(Loaded_Progress_1_75)
+        MFC1LoadedProgressText.Add(Loaded_Progress_1_50)
+        MFC1LoadedProgressText.Add(Loaded_Progress_1_25)
+
+        MFC2LoadedProgressText.Add(Loaded_Progress_2_100)
+        MFC2LoadedProgressText.Add(Loaded_Progress_2_75)
+        MFC2LoadedProgressText.Add(Loaded_Progress_2_50)
+        MFC2LoadedProgressText.Add(Loaded_Progress_2_25)
+
+        MFC3LoadedProgressText.Add(Loaded_Progress_3_100)
+        MFC3LoadedProgressText.Add(Loaded_Progress_3_75)
+        MFC3LoadedProgressText.Add(Loaded_Progress_3_50)
+        MFC3LoadedProgressText.Add(Loaded_Progress_3_25)
+
+        MFC4LoadedProgressText.Add(Loaded_Progress_4_100)
+        MFC4LoadedProgressText.Add(Loaded_Progress_4_75)
+        MFC4LoadedProgressText.Add(Loaded_Progress_4_50)
+        MFC4LoadedProgressText.Add(Loaded_Progress_4_25)
+    End Sub
+    Private Sub guiCollectionStageButtons()
+        StageButtons.Add(Vacbtn)
+        StageButtons.Add(RecipeButtonPins)
+        StageButtons.Add(InitAxesBtn)
+        StageButtons.Add(HomeAxesBtn)
+        StageButtons.Add(SetTwoSpotBtn)
+        StageButtons.Add(SetDiameterBtn)
+        StageButtons.Add(RunScanBtn)
+        StageButtons.Add(ClearAbortbtn)
+        StageButtons.Add(N2Purgebtn)
+    End Sub
+    Private Sub guiCollectionPlasmaParameters()
+        EnterButtons.Add(Set_MFC_1_Recipe_Button)
+        EnterButtons.Add(Set_MFC_2_Recipe_Button)
+        EnterButtons.Add(Set_MFC_3_Recipe_Button)
+        EnterButtons.Add(Set_MFC_4_Recipe_Button)
+        EnterButtons.Add(SetRecipeWattsBtn)
+        EnterButtons.Add(SetRecipeTunerBtn)
+    End Sub
+    Private Sub guiCollectionStageParameters()
+        StageEnterButtons.Add(SetThicknessBtn)
+        StageEnterButtons.Add(SetGapBtn)
+        StageEnterButtons.Add(SetOverlapBtn)
+        StageEnterButtons.Add(SetSpeedBtn)
+        StageEnterButtons.Add(SetCyclesBtn)
+        StageEnterButtons.Add(SetXMinBtn)
+        StageEnterButtons.Add(SetXMaxBtn)
+        StageEnterButtons.Add(SetYMinBtn)
+        StageEnterButtons.Add(SetYMaxBtn)
+    End Sub
+    Private Sub guiCollectionRecipeValues()
+        RecipeValues.Add(MFC_1_Recipe_Flow)
+        RecipeValues.Add(MFC_2_Recipe_Flow)
+        RecipeValues.Add(MFC_3_Recipe_Flow)
+        RecipeValues.Add(MFC_4_Recipe_Flow)
+        RecipeValues.Add(RecipeWattsTxt)
+        RecipeValues.Add(RecipeTunerTxt)
+        RecipeValues.Add(RecipeThicknessTxt)
+        RecipeValues.Add(RecipeGapTxt)
+        RecipeValues.Add(RecipeOverLapTxt)
+        RecipeValues.Add(RecipeSpeedTxt)
+        RecipeValues.Add(RecipeCyclesTxt)
+        RecipeValues.Add(RecipeXMinTxt)
+        RecipeValues.Add(RecipeXMaxTxt)
+        RecipeValues.Add(RecipeYMinTxt)
+        RecipeValues.Add(RecipeYMaxTxt)
+    End Sub
+    Private Sub guiCollectionLEDS()
+        GUI_CTL_LEDS.Add(Guna2TextBox9)
+        GUI_CTL_LEDS.Add(Guna2TextBox10)
+        GUI_CTL_LEDS.Add(Guna2TextBox11)
+        GUI_CTL_LEDS.Add(Guna2TextBox12)
+        GUI_CTL_LEDS.Add(Guna2TextBox13)
+        GUI_CTL_LEDS.Add(Guna2TextBox14)
+        GUI_CTL_LEDS.Add(Guna2TextBox15)
+        GUI_CTL_LEDS.Add(Guna2TextBox16)
+        GUI_CTL_LEDS.Add(Guna2TextBox1)
+        GUI_CTL_LEDS.Add(Guna2TextBox2)
+        GUI_CTL_LEDS.Add(Guna2TextBox3)
+        GUI_CTL_LEDS.Add(Guna2TextBox4)
+        GUI_CTL_LEDS.Add(Guna2TextBox5)
+        GUI_CTL_LEDS.Add(Guna2TextBox6)
+        GUI_CTL_LEDS.Add(Guna2TextBox7)
+        GUI_CTL_LEDS.Add(Guna2TextBox8)
+    End Sub
 
 End Class
