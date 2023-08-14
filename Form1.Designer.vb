@@ -54,7 +54,6 @@ Partial Class MainWindow
         Me.HelpToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.toolStripSeparator5 = New System.Windows.Forms.ToolStripSeparator()
         Me.AboutToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.CodeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ServiceToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.RestartAllToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.SetCTLToPLSimModeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -258,7 +257,7 @@ Partial Class MainWindow
         Me.Door_Open_Label.Font = New System.Drawing.Font("Microsoft Sans Serif", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Door_Open_Label.Location = New System.Drawing.Point(1249, 520)
         Me.Door_Open_Label.Name = "Door_Open_Label"
-        Me.Door_Open_Label.Size = New System.Drawing.Size(153, 25)
+        Me.Door_Open_Label.Size = New System.Drawing.Size(198, 31)
         Me.Door_Open_Label.TabIndex = 147
         Me.Door_Open_Label.Text = "DOORS OPEN"
         Me.Door_Open_Label.TextAlign = System.Drawing.ContentAlignment.MiddleRight
@@ -278,7 +277,7 @@ Partial Class MainWindow
         Me.MFC_1_Read_Flow.Margin = New System.Windows.Forms.Padding(2)
         Me.MFC_1_Read_Flow.Name = "MFC_1_Read_Flow"
         Me.MFC_1_Read_Flow.ReadOnly = True
-        Me.MFC_1_Read_Flow.Size = New System.Drawing.Size(59, 25)
+        Me.MFC_1_Read_Flow.Size = New System.Drawing.Size(59, 31)
         Me.MFC_1_Read_Flow.TabIndex = 16
         Me.MFC_1_Read_Flow.Text = "0.00"
         Me.MFC_1_Read_Flow.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -293,7 +292,7 @@ Partial Class MainWindow
         Me.MFC_1_Read_Range.Margin = New System.Windows.Forms.Padding(2)
         Me.MFC_1_Read_Range.Name = "MFC_1_Read_Range"
         Me.MFC_1_Read_Range.ReadOnly = True
-        Me.MFC_1_Read_Range.Size = New System.Drawing.Size(76, 23)
+        Me.MFC_1_Read_Range.Size = New System.Drawing.Size(76, 27)
         Me.MFC_1_Read_Range.TabIndex = 16
         Me.MFC_1_Read_Range.Text = "???"
         Me.MFC_1_Read_Range.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
@@ -313,7 +312,7 @@ Partial Class MainWindow
         Me.MFC_2_Read_Range.Margin = New System.Windows.Forms.Padding(2)
         Me.MFC_2_Read_Range.Name = "MFC_2_Read_Range"
         Me.MFC_2_Read_Range.ReadOnly = True
-        Me.MFC_2_Read_Range.Size = New System.Drawing.Size(76, 23)
+        Me.MFC_2_Read_Range.Size = New System.Drawing.Size(76, 27)
         Me.MFC_2_Read_Range.TabIndex = 16
         Me.MFC_2_Read_Range.Text = "???"
         Me.MFC_2_Read_Range.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
@@ -329,7 +328,7 @@ Partial Class MainWindow
         Me.MFC_3_Read_Range.Margin = New System.Windows.Forms.Padding(2)
         Me.MFC_3_Read_Range.Name = "MFC_3_Read_Range"
         Me.MFC_3_Read_Range.ReadOnly = True
-        Me.MFC_3_Read_Range.Size = New System.Drawing.Size(76, 23)
+        Me.MFC_3_Read_Range.Size = New System.Drawing.Size(76, 27)
         Me.MFC_3_Read_Range.TabIndex = 16
         Me.MFC_3_Read_Range.Text = "???"
         Me.MFC_3_Read_Range.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
@@ -345,7 +344,7 @@ Partial Class MainWindow
         Me.MFC_4_Read_Range.Margin = New System.Windows.Forms.Padding(2)
         Me.MFC_4_Read_Range.Name = "MFC_4_Read_Range"
         Me.MFC_4_Read_Range.ReadOnly = True
-        Me.MFC_4_Read_Range.Size = New System.Drawing.Size(76, 23)
+        Me.MFC_4_Read_Range.Size = New System.Drawing.Size(76, 27)
         Me.MFC_4_Read_Range.TabIndex = 16
         Me.MFC_4_Read_Range.Text = "???"
         Me.MFC_4_Read_Range.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
@@ -362,7 +361,7 @@ Partial Class MainWindow
         Me.ActWattsTxt.Margin = New System.Windows.Forms.Padding(2)
         Me.ActWattsTxt.Name = "ActWattsTxt"
         Me.ActWattsTxt.ReadOnly = True
-        Me.ActWattsTxt.Size = New System.Drawing.Size(104, 56)
+        Me.ActWattsTxt.Size = New System.Drawing.Size(104, 69)
         Me.ActWattsTxt.TabIndex = 16
         Me.ActWattsTxt.Text = "0"
         Me.ActWattsTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -375,7 +374,7 @@ Partial Class MainWindow
         Me.RF_Label.Font = New System.Drawing.Font("Microsoft Sans Serif", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.RF_Label.Location = New System.Drawing.Point(721, 360)
         Me.RF_Label.Name = "RF_Label"
-        Me.RF_Label.Size = New System.Drawing.Size(125, 25)
+        Me.RF_Label.Size = New System.Drawing.Size(160, 31)
         Me.RF_Label.TabIndex = 13
         Me.RF_Label.Text = "RF POWER"
         '
@@ -389,7 +388,7 @@ Partial Class MainWindow
         Me.RflWattsTxt.Margin = New System.Windows.Forms.Padding(2)
         Me.RflWattsTxt.Name = "RflWattsTxt"
         Me.RflWattsTxt.ReadOnly = True
-        Me.RflWattsTxt.Size = New System.Drawing.Size(104, 56)
+        Me.RflWattsTxt.Size = New System.Drawing.Size(104, 69)
         Me.RflWattsTxt.TabIndex = 16
         Me.RflWattsTxt.Text = "0"
         Me.RflWattsTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -402,7 +401,7 @@ Partial Class MainWindow
         Me.Watts_Label.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Watts_Label.Location = New System.Drawing.Point(754, 269)
         Me.Watts_Label.Name = "Watts_Label"
-        Me.Watts_Label.Size = New System.Drawing.Size(51, 20)
+        Me.Watts_Label.Size = New System.Drawing.Size(63, 25)
         Me.Watts_Label.TabIndex = 13
         Me.Watts_Label.Text = "Watts"
         '
@@ -416,7 +415,7 @@ Partial Class MainWindow
         Me.PHTempTxt.MinimumSize = New System.Drawing.Size(38, 20)
         Me.PHTempTxt.Name = "PHTempTxt"
         Me.PHTempTxt.ReadOnly = True
-        Me.PHTempTxt.Size = New System.Drawing.Size(104, 56)
+        Me.PHTempTxt.Size = New System.Drawing.Size(104, 69)
         Me.PHTempTxt.TabIndex = 21
         Me.PHTempTxt.Text = "???"
         Me.PHTempTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -429,7 +428,7 @@ Partial Class MainWindow
         Me.C_Label.Font = New System.Drawing.Font("Microsoft Sans Serif", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.C_Label.Location = New System.Drawing.Point(1013, 511)
         Me.C_Label.Name = "C_Label"
-        Me.C_Label.Size = New System.Drawing.Size(27, 25)
+        Me.C_Label.Size = New System.Drawing.Size(34, 31)
         Me.C_Label.TabIndex = 13
         Me.C_Label.Text = "C"
         '
@@ -440,7 +439,7 @@ Partial Class MainWindow
         Me.PH_Temp_Label.Font = New System.Drawing.Font("Microsoft Sans Serif", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.PH_Temp_Label.Location = New System.Drawing.Point(951, 585)
         Me.PH_Temp_Label.Name = "PH_Temp_Label"
-        Me.PH_Temp_Label.Size = New System.Drawing.Size(171, 25)
+        Me.PH_Temp_Label.Size = New System.Drawing.Size(220, 31)
         Me.PH_Temp_Label.TabIndex = 13
         Me.PH_Temp_Label.Text = "TEMPERATURE"
         '
@@ -449,11 +448,11 @@ Partial Class MainWindow
         Me.MenuStrip1.BackColor = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.MenuStrip1.Font = New System.Drawing.Font("Segoe UI", 21.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.MenuStrip1.ImageScalingSize = New System.Drawing.Size(20, 20)
-        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FileToolStripMenuItem, Me.HelpToolStripMenuItem, Me.CodeToolStripMenuItem, Me.ServiceToolStripMenuItem})
+        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FileToolStripMenuItem, Me.HelpToolStripMenuItem, Me.ServiceToolStripMenuItem})
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
         Me.MenuStrip1.Name = "MenuStrip1"
         Me.MenuStrip1.Padding = New System.Windows.Forms.Padding(4, 2, 0, 2)
-        Me.MenuStrip1.Size = New System.Drawing.Size(1540, 48)
+        Me.MenuStrip1.Size = New System.Drawing.Size(1540, 58)
         Me.MenuStrip1.TabIndex = 22
         Me.MenuStrip1.Text = "MenuStrip1"
         '
@@ -461,20 +460,20 @@ Partial Class MainWindow
         '
         Me.FileToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.BuildRecipeToolStripMenuItem, Me.OpenCascadeRecipeToolStripMenuItem, Me.OpenToolStripMenuItem, Me.toolStripSeparator, Me.EnableServiceMenuToolStripMenuItem, Me.SaveToolStripMenuItem, Me.SaveAsToolStripMenuItem, Me.LoadToolStripMenuItem, Me.SetDefaultToolStripMenuItem, Me.ExitToolStripMenuItem})
         Me.FileToolStripMenuItem.Name = "FileToolStripMenuItem"
-        Me.FileToolStripMenuItem.Size = New System.Drawing.Size(112, 44)
+        Me.FileToolStripMenuItem.Size = New System.Drawing.Size(143, 54)
         Me.FileToolStripMenuItem.Text = "&Recipe"
         '
         'BuildRecipeToolStripMenuItem
         '
         Me.BuildRecipeToolStripMenuItem.Name = "BuildRecipeToolStripMenuItem"
-        Me.BuildRecipeToolStripMenuItem.Size = New System.Drawing.Size(372, 44)
+        Me.BuildRecipeToolStripMenuItem.Size = New System.Drawing.Size(470, 54)
         Me.BuildRecipeToolStripMenuItem.Text = "Build Cascade Recipe"
         Me.BuildRecipeToolStripMenuItem.Visible = False
         '
         'OpenCascadeRecipeToolStripMenuItem
         '
         Me.OpenCascadeRecipeToolStripMenuItem.Name = "OpenCascadeRecipeToolStripMenuItem"
-        Me.OpenCascadeRecipeToolStripMenuItem.Size = New System.Drawing.Size(372, 44)
+        Me.OpenCascadeRecipeToolStripMenuItem.Size = New System.Drawing.Size(470, 54)
         Me.OpenCascadeRecipeToolStripMenuItem.Text = "Open Cascade Recipe"
         '
         'OpenToolStripMenuItem
@@ -483,18 +482,18 @@ Partial Class MainWindow
         Me.OpenToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta
         Me.OpenToolStripMenuItem.Name = "OpenToolStripMenuItem"
         Me.OpenToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.O), System.Windows.Forms.Keys)
-        Me.OpenToolStripMenuItem.Size = New System.Drawing.Size(372, 44)
+        Me.OpenToolStripMenuItem.Size = New System.Drawing.Size(470, 54)
         Me.OpenToolStripMenuItem.Text = "&Open"
         '
         'toolStripSeparator
         '
         Me.toolStripSeparator.Name = "toolStripSeparator"
-        Me.toolStripSeparator.Size = New System.Drawing.Size(369, 6)
+        Me.toolStripSeparator.Size = New System.Drawing.Size(467, 6)
         '
         'EnableServiceMenuToolStripMenuItem
         '
         Me.EnableServiceMenuToolStripMenuItem.Name = "EnableServiceMenuToolStripMenuItem"
-        Me.EnableServiceMenuToolStripMenuItem.Size = New System.Drawing.Size(372, 44)
+        Me.EnableServiceMenuToolStripMenuItem.Size = New System.Drawing.Size(470, 54)
         Me.EnableServiceMenuToolStripMenuItem.Text = "Enable Service Menu"
         '
         'SaveToolStripMenuItem
@@ -504,21 +503,21 @@ Partial Class MainWindow
         Me.SaveToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta
         Me.SaveToolStripMenuItem.Name = "SaveToolStripMenuItem"
         Me.SaveToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.S), System.Windows.Forms.Keys)
-        Me.SaveToolStripMenuItem.Size = New System.Drawing.Size(372, 44)
+        Me.SaveToolStripMenuItem.Size = New System.Drawing.Size(470, 54)
         Me.SaveToolStripMenuItem.Text = "&Save"
         '
         'SaveAsToolStripMenuItem
         '
         Me.SaveAsToolStripMenuItem.Enabled = False
         Me.SaveAsToolStripMenuItem.Name = "SaveAsToolStripMenuItem"
-        Me.SaveAsToolStripMenuItem.Size = New System.Drawing.Size(372, 44)
+        Me.SaveAsToolStripMenuItem.Size = New System.Drawing.Size(470, 54)
         Me.SaveAsToolStripMenuItem.Text = "Save &As"
         '
         'LoadToolStripMenuItem
         '
         Me.LoadToolStripMenuItem.Enabled = False
         Me.LoadToolStripMenuItem.Name = "LoadToolStripMenuItem"
-        Me.LoadToolStripMenuItem.Size = New System.Drawing.Size(372, 44)
+        Me.LoadToolStripMenuItem.Size = New System.Drawing.Size(470, 54)
         Me.LoadToolStripMenuItem.Text = "Load to Controller"
         Me.LoadToolStripMenuItem.Visible = False
         '
@@ -526,60 +525,53 @@ Partial Class MainWindow
         '
         Me.SetDefaultToolStripMenuItem.Enabled = False
         Me.SetDefaultToolStripMenuItem.Name = "SetDefaultToolStripMenuItem"
-        Me.SetDefaultToolStripMenuItem.Size = New System.Drawing.Size(372, 44)
+        Me.SetDefaultToolStripMenuItem.Size = New System.Drawing.Size(470, 54)
         Me.SetDefaultToolStripMenuItem.Text = "Set Default"
         '
         'ExitToolStripMenuItem
         '
         Me.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem"
-        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(372, 44)
+        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(470, 54)
         Me.ExitToolStripMenuItem.Text = "E&xit"
         '
         'HelpToolStripMenuItem
         '
         Me.HelpToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.toolStripSeparator5, Me.AboutToolStripMenuItem})
         Me.HelpToolStripMenuItem.Name = "HelpToolStripMenuItem"
-        Me.HelpToolStripMenuItem.Size = New System.Drawing.Size(89, 44)
+        Me.HelpToolStripMenuItem.Size = New System.Drawing.Size(112, 54)
         Me.HelpToolStripMenuItem.Text = "&Help"
         Me.HelpToolStripMenuItem.Visible = False
         '
         'toolStripSeparator5
         '
         Me.toolStripSeparator5.Name = "toolStripSeparator5"
-        Me.toolStripSeparator5.Size = New System.Drawing.Size(188, 6)
+        Me.toolStripSeparator5.Size = New System.Drawing.Size(241, 6)
         '
         'AboutToolStripMenuItem
         '
         Me.AboutToolStripMenuItem.Name = "AboutToolStripMenuItem"
-        Me.AboutToolStripMenuItem.Size = New System.Drawing.Size(191, 44)
+        Me.AboutToolStripMenuItem.Size = New System.Drawing.Size(244, 54)
         Me.AboutToolStripMenuItem.Text = "&About..."
-        '
-        'CodeToolStripMenuItem
-        '
-        Me.CodeToolStripMenuItem.Name = "CodeToolStripMenuItem"
-        Me.CodeToolStripMenuItem.Size = New System.Drawing.Size(170, 44)
-        Me.CodeToolStripMenuItem.Text = "Enter Code"
-        Me.CodeToolStripMenuItem.Visible = False
         '
         'ServiceToolStripMenuItem
         '
         Me.ServiceToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.RestartAllToolStripMenuItem, Me.SetCTLToPLSimModeToolStripMenuItem, Me.MBScanToolStripMenuItem, Me.StageTestToolStripMenuItem, Me.EngineerModeToolStripMenuItem, Me.OperatorModeToolStripMenuItem, Me.ControllerStatusLEDSToolStripMenuItem})
         Me.ServiceToolStripMenuItem.Name = "ServiceToolStripMenuItem"
-        Me.ServiceToolStripMenuItem.Size = New System.Drawing.Size(118, 44)
+        Me.ServiceToolStripMenuItem.Size = New System.Drawing.Size(151, 54)
         Me.ServiceToolStripMenuItem.Text = "Service"
         Me.ServiceToolStripMenuItem.Visible = False
         '
         'RestartAllToolStripMenuItem
         '
         Me.RestartAllToolStripMenuItem.Name = "RestartAllToolStripMenuItem"
-        Me.RestartAllToolStripMenuItem.Size = New System.Drawing.Size(442, 44)
+        Me.RestartAllToolStripMenuItem.Size = New System.Drawing.Size(567, 54)
         Me.RestartAllToolStripMenuItem.Text = "Restart All"
         Me.RestartAllToolStripMenuItem.Visible = False
         '
         'SetCTLToPLSimModeToolStripMenuItem
         '
         Me.SetCTLToPLSimModeToolStripMenuItem.Name = "SetCTLToPLSimModeToolStripMenuItem"
-        Me.SetCTLToPLSimModeToolStripMenuItem.Size = New System.Drawing.Size(442, 44)
+        Me.SetCTLToPLSimModeToolStripMenuItem.Size = New System.Drawing.Size(567, 54)
         Me.SetCTLToPLSimModeToolStripMenuItem.Text = "Set CTL to PL Sim Mode"
         Me.SetCTLToPLSimModeToolStripMenuItem.Visible = False
         '
@@ -587,7 +579,7 @@ Partial Class MainWindow
         '
         Me.MBScanToolStripMenuItem.Enabled = False
         Me.MBScanToolStripMenuItem.Name = "MBScanToolStripMenuItem"
-        Me.MBScanToolStripMenuItem.Size = New System.Drawing.Size(442, 44)
+        Me.MBScanToolStripMenuItem.Size = New System.Drawing.Size(567, 54)
         Me.MBScanToolStripMenuItem.Text = "MB Scan"
         Me.MBScanToolStripMenuItem.Visible = False
         '
@@ -595,52 +587,52 @@ Partial Class MainWindow
         '
         Me.StageTestToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.StartToolStripMenuItem, Me.StopToolStripMenuItem, Me.DetailedLogToolStripMenuItem, Me.TestZToolStripMenuItem})
         Me.StageTestToolStripMenuItem.Name = "StageTestToolStripMenuItem"
-        Me.StageTestToolStripMenuItem.Size = New System.Drawing.Size(442, 44)
+        Me.StageTestToolStripMenuItem.Size = New System.Drawing.Size(567, 54)
         Me.StageTestToolStripMenuItem.Text = "Stage Test"
         Me.StageTestToolStripMenuItem.Visible = False
         '
         'StartToolStripMenuItem
         '
         Me.StartToolStripMenuItem.Name = "StartToolStripMenuItem"
-        Me.StartToolStripMenuItem.Size = New System.Drawing.Size(320, 44)
+        Me.StartToolStripMenuItem.Size = New System.Drawing.Size(407, 54)
         Me.StartToolStripMenuItem.Text = "Start"
         '
         'StopToolStripMenuItem
         '
         Me.StopToolStripMenuItem.Name = "StopToolStripMenuItem"
-        Me.StopToolStripMenuItem.Size = New System.Drawing.Size(320, 44)
+        Me.StopToolStripMenuItem.Size = New System.Drawing.Size(407, 54)
         Me.StopToolStripMenuItem.Text = "Stop"
         '
         'DetailedLogToolStripMenuItem
         '
         Me.DetailedLogToolStripMenuItem.BackColor = System.Drawing.SystemColors.Control
         Me.DetailedLogToolStripMenuItem.Name = "DetailedLogToolStripMenuItem"
-        Me.DetailedLogToolStripMenuItem.Size = New System.Drawing.Size(320, 44)
+        Me.DetailedLogToolStripMenuItem.Size = New System.Drawing.Size(407, 54)
         Me.DetailedLogToolStripMenuItem.Text = "Detailed Log: OFF"
         '
         'TestZToolStripMenuItem
         '
         Me.TestZToolStripMenuItem.BackColor = System.Drawing.SystemColors.Control
         Me.TestZToolStripMenuItem.Name = "TestZToolStripMenuItem"
-        Me.TestZToolStripMenuItem.Size = New System.Drawing.Size(320, 44)
+        Me.TestZToolStripMenuItem.Size = New System.Drawing.Size(407, 54)
         Me.TestZToolStripMenuItem.Text = "Test Z: OFF"
         '
         'EngineerModeToolStripMenuItem
         '
         Me.EngineerModeToolStripMenuItem.Name = "EngineerModeToolStripMenuItem"
-        Me.EngineerModeToolStripMenuItem.Size = New System.Drawing.Size(442, 44)
+        Me.EngineerModeToolStripMenuItem.Size = New System.Drawing.Size(567, 54)
         Me.EngineerModeToolStripMenuItem.Text = "Engineer Mode"
         '
         'OperatorModeToolStripMenuItem
         '
         Me.OperatorModeToolStripMenuItem.Name = "OperatorModeToolStripMenuItem"
-        Me.OperatorModeToolStripMenuItem.Size = New System.Drawing.Size(442, 44)
+        Me.OperatorModeToolStripMenuItem.Size = New System.Drawing.Size(567, 54)
         Me.OperatorModeToolStripMenuItem.Text = "Operator Mode"
         '
         'ControllerStatusLEDSToolStripMenuItem
         '
         Me.ControllerStatusLEDSToolStripMenuItem.Name = "ControllerStatusLEDSToolStripMenuItem"
-        Me.ControllerStatusLEDSToolStripMenuItem.Size = New System.Drawing.Size(442, 44)
+        Me.ControllerStatusLEDSToolStripMenuItem.Size = New System.Drawing.Size(567, 54)
         Me.ControllerStatusLEDSToolStripMenuItem.Text = "Controller Status LEDS: OFF"
         Me.ControllerStatusLEDSToolStripMenuItem.Visible = False
         '
@@ -653,7 +645,7 @@ Partial Class MainWindow
         Me.MFC_1_Loaded_Flow.MinimumSize = New System.Drawing.Size(38, 20)
         Me.MFC_1_Loaded_Flow.Name = "MFC_1_Loaded_Flow"
         Me.MFC_1_Loaded_Flow.ReadOnly = True
-        Me.MFC_1_Loaded_Flow.Size = New System.Drawing.Size(66, 23)
+        Me.MFC_1_Loaded_Flow.Size = New System.Drawing.Size(66, 27)
         Me.MFC_1_Loaded_Flow.TabIndex = 15
         Me.MFC_1_Loaded_Flow.Text = "0.0"
         Me.MFC_1_Loaded_Flow.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
@@ -670,7 +662,7 @@ Partial Class MainWindow
         Me.MFC_2_Loaded_Flow.MinimumSize = New System.Drawing.Size(38, 20)
         Me.MFC_2_Loaded_Flow.Name = "MFC_2_Loaded_Flow"
         Me.MFC_2_Loaded_Flow.ReadOnly = True
-        Me.MFC_2_Loaded_Flow.Size = New System.Drawing.Size(66, 23)
+        Me.MFC_2_Loaded_Flow.Size = New System.Drawing.Size(66, 27)
         Me.MFC_2_Loaded_Flow.TabIndex = 15
         Me.MFC_2_Loaded_Flow.Text = "0.0"
         Me.MFC_2_Loaded_Flow.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
@@ -687,7 +679,7 @@ Partial Class MainWindow
         Me.MFC_3_Loaded_Flow.MinimumSize = New System.Drawing.Size(38, 20)
         Me.MFC_3_Loaded_Flow.Name = "MFC_3_Loaded_Flow"
         Me.MFC_3_Loaded_Flow.ReadOnly = True
-        Me.MFC_3_Loaded_Flow.Size = New System.Drawing.Size(66, 23)
+        Me.MFC_3_Loaded_Flow.Size = New System.Drawing.Size(66, 27)
         Me.MFC_3_Loaded_Flow.TabIndex = 15
         Me.MFC_3_Loaded_Flow.Text = "0.0"
         Me.MFC_3_Loaded_Flow.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
@@ -704,7 +696,7 @@ Partial Class MainWindow
         Me.MFC_4_Loaded_Flow.MinimumSize = New System.Drawing.Size(38, 20)
         Me.MFC_4_Loaded_Flow.Name = "MFC_4_Loaded_Flow"
         Me.MFC_4_Loaded_Flow.ReadOnly = True
-        Me.MFC_4_Loaded_Flow.Size = New System.Drawing.Size(66, 23)
+        Me.MFC_4_Loaded_Flow.Size = New System.Drawing.Size(66, 27)
         Me.MFC_4_Loaded_Flow.TabIndex = 15
         Me.MFC_4_Loaded_Flow.Text = "0.0"
         Me.MFC_4_Loaded_Flow.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
@@ -720,7 +712,7 @@ Partial Class MainWindow
         Me.LoadedWattsTxt.Margin = New System.Windows.Forms.Padding(2)
         Me.LoadedWattsTxt.Name = "LoadedWattsTxt"
         Me.LoadedWattsTxt.ReadOnly = True
-        Me.LoadedWattsTxt.Size = New System.Drawing.Size(66, 23)
+        Me.LoadedWattsTxt.Size = New System.Drawing.Size(66, 27)
         Me.LoadedWattsTxt.TabIndex = 16
         Me.LoadedWattsTxt.Text = "0"
         Me.LoadedWattsTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
@@ -734,7 +726,7 @@ Partial Class MainWindow
         Me.MB_Tune_Label.Font = New System.Drawing.Font("Microsoft Sans Serif", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.MB_Tune_Label.Location = New System.Drawing.Point(963, 363)
         Me.MB_Tune_Label.Name = "MB_Tune_Label"
-        Me.MB_Tune_Label.Size = New System.Drawing.Size(128, 25)
+        Me.MB_Tune_Label.Size = New System.Drawing.Size(163, 31)
         Me.MB_Tune_Label.TabIndex = 13
         Me.MB_Tune_Label.Text = "MB TUNER "
         '
@@ -748,7 +740,7 @@ Partial Class MainWindow
         Me.RecipeTunerTxt.Margin = New System.Windows.Forms.Padding(2)
         Me.RecipeTunerTxt.Name = "RecipeTunerTxt"
         Me.RecipeTunerTxt.ReadOnly = True
-        Me.RecipeTunerTxt.Size = New System.Drawing.Size(82, 28)
+        Me.RecipeTunerTxt.Size = New System.Drawing.Size(82, 35)
         Me.RecipeTunerTxt.TabIndex = 16
         Me.RecipeTunerTxt.Text = "???"
         Me.RecipeTunerTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -763,7 +755,7 @@ Partial Class MainWindow
         Me.LoadedTunerTxt.Margin = New System.Windows.Forms.Padding(2)
         Me.LoadedTunerTxt.Name = "LoadedTunerTxt"
         Me.LoadedTunerTxt.ReadOnly = True
-        Me.LoadedTunerTxt.Size = New System.Drawing.Size(66, 23)
+        Me.LoadedTunerTxt.Size = New System.Drawing.Size(66, 27)
         Me.LoadedTunerTxt.TabIndex = 16
         Me.LoadedTunerTxt.Text = "0"
         Me.LoadedTunerTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
@@ -780,7 +772,7 @@ Partial Class MainWindow
         Me.ActTunerTxt.Margin = New System.Windows.Forms.Padding(2)
         Me.ActTunerTxt.Name = "ActTunerTxt"
         Me.ActTunerTxt.ReadOnly = True
-        Me.ActTunerTxt.Size = New System.Drawing.Size(91, 41)
+        Me.ActTunerTxt.Size = New System.Drawing.Size(91, 51)
         Me.ActTunerTxt.TabIndex = 16
         Me.ActTunerTxt.Text = "0"
         Me.ActTunerTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -849,7 +841,7 @@ Partial Class MainWindow
         Me.HeaterPwrBox.MinimumSize = New System.Drawing.Size(38, 20)
         Me.HeaterPwrBox.Name = "HeaterPwrBox"
         Me.HeaterPwrBox.ReadOnly = True
-        Me.HeaterPwrBox.Size = New System.Drawing.Size(112, 48)
+        Me.HeaterPwrBox.Size = New System.Drawing.Size(112, 58)
         Me.HeaterPwrBox.TabIndex = 21
         Me.HeaterPwrBox.Text = "00"
         Me.HeaterPwrBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
@@ -891,7 +883,7 @@ Partial Class MainWindow
         Me.HeaterLabelPCT.Font = New System.Drawing.Font("Microsoft Sans Serif", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.HeaterLabelPCT.Location = New System.Drawing.Point(2116, 505)
         Me.HeaterLabelPCT.Name = "HeaterLabelPCT"
-        Me.HeaterLabelPCT.Size = New System.Drawing.Size(31, 25)
+        Me.HeaterLabelPCT.Size = New System.Drawing.Size(38, 31)
         Me.HeaterLabelPCT.TabIndex = 13
         Me.HeaterLabelPCT.Text = "%"
         Me.HeaterLabelPCT.Visible = False
@@ -906,7 +898,7 @@ Partial Class MainWindow
         Me.AxesXActual.Margin = New System.Windows.Forms.Padding(2)
         Me.AxesXActual.Name = "AxesXActual"
         Me.AxesXActual.ReadOnly = True
-        Me.AxesXActual.Size = New System.Drawing.Size(104, 32)
+        Me.AxesXActual.Size = New System.Drawing.Size(104, 39)
         Me.AxesXActual.TabIndex = 25
         Me.AxesXActual.Text = "???"
         Me.AxesXActual.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -922,7 +914,7 @@ Partial Class MainWindow
         Me.AxesYActual.Margin = New System.Windows.Forms.Padding(2)
         Me.AxesYActual.Name = "AxesYActual"
         Me.AxesYActual.ReadOnly = True
-        Me.AxesYActual.Size = New System.Drawing.Size(107, 32)
+        Me.AxesYActual.Size = New System.Drawing.Size(107, 39)
         Me.AxesYActual.TabIndex = 25
         Me.AxesYActual.Text = "???"
         Me.AxesYActual.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -938,7 +930,7 @@ Partial Class MainWindow
         Me.AxesZActual.Margin = New System.Windows.Forms.Padding(2)
         Me.AxesZActual.Name = "AxesZActual"
         Me.AxesZActual.ReadOnly = True
-        Me.AxesZActual.Size = New System.Drawing.Size(107, 32)
+        Me.AxesZActual.Size = New System.Drawing.Size(107, 39)
         Me.AxesZActual.TabIndex = 25
         Me.AxesZActual.Text = "???"
         Me.AxesZActual.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -954,7 +946,7 @@ Partial Class MainWindow
         Me.RecipeThicknessTxt.Margin = New System.Windows.Forms.Padding(2)
         Me.RecipeThicknessTxt.Name = "RecipeThicknessTxt"
         Me.RecipeThicknessTxt.ReadOnly = True
-        Me.RecipeThicknessTxt.Size = New System.Drawing.Size(66, 25)
+        Me.RecipeThicknessTxt.Size = New System.Drawing.Size(66, 31)
         Me.RecipeThicknessTxt.TabIndex = 16
         Me.RecipeThicknessTxt.Text = "1"
         Me.RecipeThicknessTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -970,7 +962,7 @@ Partial Class MainWindow
         Me.RecipeGapTxt.Margin = New System.Windows.Forms.Padding(2)
         Me.RecipeGapTxt.Name = "RecipeGapTxt"
         Me.RecipeGapTxt.ReadOnly = True
-        Me.RecipeGapTxt.Size = New System.Drawing.Size(66, 25)
+        Me.RecipeGapTxt.Size = New System.Drawing.Size(66, 31)
         Me.RecipeGapTxt.TabIndex = 16
         Me.RecipeGapTxt.Text = "1"
         Me.RecipeGapTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -986,7 +978,7 @@ Partial Class MainWindow
         Me.RecipeOverLapTxt.Margin = New System.Windows.Forms.Padding(2)
         Me.RecipeOverLapTxt.Name = "RecipeOverLapTxt"
         Me.RecipeOverLapTxt.ReadOnly = True
-        Me.RecipeOverLapTxt.Size = New System.Drawing.Size(66, 25)
+        Me.RecipeOverLapTxt.Size = New System.Drawing.Size(66, 31)
         Me.RecipeOverLapTxt.TabIndex = 16
         Me.RecipeOverLapTxt.Text = "0"
         Me.RecipeOverLapTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -1002,7 +994,7 @@ Partial Class MainWindow
         Me.RecipeSpeedTxt.Margin = New System.Windows.Forms.Padding(2)
         Me.RecipeSpeedTxt.Name = "RecipeSpeedTxt"
         Me.RecipeSpeedTxt.ReadOnly = True
-        Me.RecipeSpeedTxt.Size = New System.Drawing.Size(66, 25)
+        Me.RecipeSpeedTxt.Size = New System.Drawing.Size(66, 31)
         Me.RecipeSpeedTxt.TabIndex = 16
         Me.RecipeSpeedTxt.Text = "1"
         Me.RecipeSpeedTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -1018,7 +1010,7 @@ Partial Class MainWindow
         Me.RecipeCyclesTxt.Margin = New System.Windows.Forms.Padding(2)
         Me.RecipeCyclesTxt.Name = "RecipeCyclesTxt"
         Me.RecipeCyclesTxt.ReadOnly = True
-        Me.RecipeCyclesTxt.Size = New System.Drawing.Size(66, 25)
+        Me.RecipeCyclesTxt.Size = New System.Drawing.Size(66, 31)
         Me.RecipeCyclesTxt.TabIndex = 16
         Me.RecipeCyclesTxt.Text = "1"
         Me.RecipeCyclesTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -1033,7 +1025,7 @@ Partial Class MainWindow
         Me.NextStepTxtBox.Margin = New System.Windows.Forms.Padding(2)
         Me.NextStepTxtBox.Name = "NextStepTxtBox"
         Me.NextStepTxtBox.ReadOnly = True
-        Me.NextStepTxtBox.Size = New System.Drawing.Size(652, 32)
+        Me.NextStepTxtBox.Size = New System.Drawing.Size(652, 38)
         Me.NextStepTxtBox.TabIndex = 16
         Me.NextStepTxtBox.Text = "Initialize Stage"
         Me.NextStepTxtBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -1048,7 +1040,7 @@ Partial Class MainWindow
         Me.CurrentStepTxtBox.Margin = New System.Windows.Forms.Padding(2)
         Me.CurrentStepTxtBox.Name = "CurrentStepTxtBox"
         Me.CurrentStepTxtBox.ReadOnly = True
-        Me.CurrentStepTxtBox.Size = New System.Drawing.Size(652, 32)
+        Me.CurrentStepTxtBox.Size = New System.Drawing.Size(652, 38)
         Me.CurrentStepTxtBox.TabIndex = 16
         Me.CurrentStepTxtBox.Text = "Stage Not Initialized"
         Me.CurrentStepTxtBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -1061,7 +1053,7 @@ Partial Class MainWindow
         Me.MFC_4_Label.Font = New System.Drawing.Font("Microsoft Sans Serif", 18.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.MFC_4_Label.Location = New System.Drawing.Point(549, 138)
         Me.MFC_4_Label.Name = "MFC_4_Label"
-        Me.MFC_4_Label.Size = New System.Drawing.Size(91, 29)
+        Me.MFC_4_Label.Size = New System.Drawing.Size(113, 36)
         Me.MFC_4_Label.TabIndex = 13
         Me.MFC_4_Label.Text = "MFC#4"
         '
@@ -1072,7 +1064,7 @@ Partial Class MainWindow
         Me.MFC_3_Label.Font = New System.Drawing.Font("Microsoft Sans Serif", 18.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.MFC_3_Label.Location = New System.Drawing.Point(396, 138)
         Me.MFC_3_Label.Name = "MFC_3_Label"
-        Me.MFC_3_Label.Size = New System.Drawing.Size(91, 29)
+        Me.MFC_3_Label.Size = New System.Drawing.Size(113, 36)
         Me.MFC_3_Label.TabIndex = 13
         Me.MFC_3_Label.Text = "MFC#3"
         '
@@ -1083,7 +1075,7 @@ Partial Class MainWindow
         Me.MFC_2_Label.Font = New System.Drawing.Font("Microsoft Sans Serif", 18.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.MFC_2_Label.Location = New System.Drawing.Point(244, 138)
         Me.MFC_2_Label.Name = "MFC_2_Label"
-        Me.MFC_2_Label.Size = New System.Drawing.Size(91, 29)
+        Me.MFC_2_Label.Size = New System.Drawing.Size(113, 36)
         Me.MFC_2_Label.TabIndex = 13
         Me.MFC_2_Label.Text = "MFC#2"
         '
@@ -1094,7 +1086,7 @@ Partial Class MainWindow
         Me.MFC_1_Label.Font = New System.Drawing.Font("Microsoft Sans Serif", 18.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.MFC_1_Label.Location = New System.Drawing.Point(88, 138)
         Me.MFC_1_Label.Name = "MFC_1_Label"
-        Me.MFC_1_Label.Size = New System.Drawing.Size(91, 29)
+        Me.MFC_1_Label.Size = New System.Drawing.Size(113, 36)
         Me.MFC_1_Label.TabIndex = 13
         Me.MFC_1_Label.Text = "MFC#1"
         '
@@ -1104,7 +1096,7 @@ Partial Class MainWindow
         Me.Label4.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label4.Location = New System.Drawing.Point(663, 622)
         Me.Label4.Name = "Label4"
-        Me.Label4.Size = New System.Drawing.Size(200, 20)
+        Me.Label4.Size = New System.Drawing.Size(242, 25)
         Me.Label4.TabIndex = 70
         Me.Label4.Text = "Stage Status / Information "
         '
@@ -1180,7 +1172,7 @@ Partial Class MainWindow
         Me.Label1.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label1.Location = New System.Drawing.Point(23, 116)
         Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(103, 20)
+        Me.Label1.Size = New System.Drawing.Size(129, 25)
         Me.Label1.TabIndex = 63
         Me.Label1.Text = "Gas / Plasma"
         '
@@ -1190,7 +1182,7 @@ Partial Class MainWindow
         Me.Label2.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label2.Location = New System.Drawing.Point(663, 116)
         Me.Label2.Name = "Label2"
-        Me.Label2.Size = New System.Drawing.Size(213, 20)
+        Me.Label2.Size = New System.Drawing.Size(268, 25)
         Me.Label2.TabIndex = 64
         Me.Label2.Text = "Power / Tuner / Temperature "
         '
@@ -1200,7 +1192,7 @@ Partial Class MainWindow
         Me.Label3.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label3.Location = New System.Drawing.Point(1161, 116)
         Me.Label3.Name = "Label3"
-        Me.Label3.Size = New System.Drawing.Size(119, 20)
+        Me.Label3.Size = New System.Drawing.Size(147, 25)
         Me.Label3.TabIndex = 65
         Me.Label3.Text = "Stage Controls "
         '
@@ -1289,7 +1281,7 @@ Partial Class MainWindow
         Me.ActiveRecipeName.MinimumSize = New System.Drawing.Size(38, 20)
         Me.ActiveRecipeName.Name = "ActiveRecipeName"
         Me.ActiveRecipeName.ReadOnly = True
-        Me.ActiveRecipeName.Size = New System.Drawing.Size(422, 35)
+        Me.ActiveRecipeName.Size = New System.Drawing.Size(422, 42)
         Me.ActiveRecipeName.TabIndex = 15
         Me.ActiveRecipeName.Text = "Active Recipe"
         Me.ActiveRecipeName.WordWrap = False
@@ -1301,7 +1293,7 @@ Partial Class MainWindow
         Me.RF_Reflected_Label.Font = New System.Drawing.Font("Microsoft Sans Serif", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.RF_Reflected_Label.Location = New System.Drawing.Point(698, 585)
         Me.RF_Reflected_Label.Name = "RF_Reflected_Label"
-        Me.RF_Reflected_Label.Size = New System.Drawing.Size(171, 25)
+        Me.RF_Reflected_Label.Size = New System.Drawing.Size(221, 31)
         Me.RF_Reflected_Label.TabIndex = 73
         Me.RF_Reflected_Label.Text = "RF REFLECTED"
         '
@@ -1330,7 +1322,7 @@ Partial Class MainWindow
         Me.Watts2_Label.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Watts2_Label.Location = New System.Drawing.Point(754, 515)
         Me.Watts2_Label.Name = "Watts2_Label"
-        Me.Watts2_Label.Size = New System.Drawing.Size(51, 20)
+        Me.Watts2_Label.Size = New System.Drawing.Size(63, 25)
         Me.Watts2_Label.TabIndex = 77
         Me.Watts2_Label.Text = "Watts"
         '
@@ -1377,7 +1369,7 @@ Partial Class MainWindow
         Me.Com_Port_Label.Font = New System.Drawing.Font("Microsoft Sans Serif", 18.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Com_Port_Label.Location = New System.Drawing.Point(423, 8)
         Me.Com_Port_Label.Name = "Com_Port_Label"
-        Me.Com_Port_Label.Size = New System.Drawing.Size(114, 29)
+        Me.Com_Port_Label.Size = New System.Drawing.Size(139, 36)
         Me.Com_Port_Label.TabIndex = 13
         Me.Com_Port_Label.Text = "Com Port"
         Me.Com_Port_Label.Visible = False
@@ -1406,7 +1398,7 @@ Partial Class MainWindow
         Me.com_portBox.FormattingEnabled = True
         Me.com_portBox.Location = New System.Drawing.Point(543, 5)
         Me.com_portBox.Name = "com_portBox"
-        Me.com_portBox.Size = New System.Drawing.Size(126, 37)
+        Me.com_portBox.Size = New System.Drawing.Size(126, 44)
         Me.com_portBox.TabIndex = 3
         Me.com_portBox.Visible = False
         '
@@ -1420,7 +1412,7 @@ Partial Class MainWindow
         Me.RecipeWattsTxt.Margin = New System.Windows.Forms.Padding(2)
         Me.RecipeWattsTxt.Name = "RecipeWattsTxt"
         Me.RecipeWattsTxt.ReadOnly = True
-        Me.RecipeWattsTxt.Size = New System.Drawing.Size(71, 28)
+        Me.RecipeWattsTxt.Size = New System.Drawing.Size(71, 35)
         Me.RecipeWattsTxt.TabIndex = 16
         Me.RecipeWattsTxt.Text = "???"
         Me.RecipeWattsTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -1437,7 +1429,7 @@ Partial Class MainWindow
         Me.MFC_1_Recipe_Flow.MinimumSize = New System.Drawing.Size(38, 20)
         Me.MFC_1_Recipe_Flow.Name = "MFC_1_Recipe_Flow"
         Me.MFC_1_Recipe_Flow.ReadOnly = True
-        Me.MFC_1_Recipe_Flow.Size = New System.Drawing.Size(59, 25)
+        Me.MFC_1_Recipe_Flow.Size = New System.Drawing.Size(59, 31)
         Me.MFC_1_Recipe_Flow.TabIndex = 15
         Me.MFC_1_Recipe_Flow.Text = "???"
         Me.MFC_1_Recipe_Flow.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -1521,7 +1513,7 @@ Partial Class MainWindow
         Me.Loaded_Progress_4_100.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Loaded_Progress_4_100.Location = New System.Drawing.Point(495, 175)
         Me.Loaded_Progress_4_100.Name = "Loaded_Progress_4_100"
-        Me.Loaded_Progress_4_100.Size = New System.Drawing.Size(34, 13)
+        Me.Loaded_Progress_4_100.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_4_100.TabIndex = 87
         Me.Loaded_Progress_4_100.Text = "0.000"
         '
@@ -1531,7 +1523,7 @@ Partial Class MainWindow
         Me.Loaded_Progress_4_50.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Loaded_Progress_4_50.Location = New System.Drawing.Point(495, 395)
         Me.Loaded_Progress_4_50.Name = "Loaded_Progress_4_50"
-        Me.Loaded_Progress_4_50.Size = New System.Drawing.Size(34, 13)
+        Me.Loaded_Progress_4_50.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_4_50.TabIndex = 88
         Me.Loaded_Progress_4_50.Text = "0.000"
         '
@@ -1541,7 +1533,7 @@ Partial Class MainWindow
         Me.Label7.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label7.Location = New System.Drawing.Point(467, 612)
         Me.Label7.Name = "Label7"
-        Me.Label7.Size = New System.Drawing.Size(66, 13)
+        Me.Label7.Size = New System.Drawing.Size(85, 17)
         Me.Label7.TabIndex = 92
         Me.Label7.Text = "0.000 SLPM"
         '
@@ -1562,7 +1554,7 @@ Partial Class MainWindow
         Me.Loaded_Progress_3_100.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Loaded_Progress_3_100.Location = New System.Drawing.Point(342, 175)
         Me.Loaded_Progress_3_100.Name = "Loaded_Progress_3_100"
-        Me.Loaded_Progress_3_100.Size = New System.Drawing.Size(34, 13)
+        Me.Loaded_Progress_3_100.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_3_100.TabIndex = 95
         Me.Loaded_Progress_3_100.Text = "0.000"
         '
@@ -1572,7 +1564,7 @@ Partial Class MainWindow
         Me.Loaded_Progress_3_50.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Loaded_Progress_3_50.Location = New System.Drawing.Point(342, 395)
         Me.Loaded_Progress_3_50.Name = "Loaded_Progress_3_50"
-        Me.Loaded_Progress_3_50.Size = New System.Drawing.Size(34, 13)
+        Me.Loaded_Progress_3_50.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_3_50.TabIndex = 96
         Me.Loaded_Progress_3_50.Text = "0.000"
         '
@@ -1582,7 +1574,7 @@ Partial Class MainWindow
         Me.Label10.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label10.Location = New System.Drawing.Point(314, 612)
         Me.Label10.Name = "Label10"
-        Me.Label10.Size = New System.Drawing.Size(66, 13)
+        Me.Label10.Size = New System.Drawing.Size(85, 17)
         Me.Label10.TabIndex = 97
         Me.Label10.Text = "0.000 SLPM"
         '
@@ -1603,7 +1595,7 @@ Partial Class MainWindow
         Me.Loaded_Progress_2_100.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Loaded_Progress_2_100.Location = New System.Drawing.Point(189, 175)
         Me.Loaded_Progress_2_100.Name = "Loaded_Progress_2_100"
-        Me.Loaded_Progress_2_100.Size = New System.Drawing.Size(34, 13)
+        Me.Loaded_Progress_2_100.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_2_100.TabIndex = 100
         Me.Loaded_Progress_2_100.Text = "0.000"
         '
@@ -1613,7 +1605,7 @@ Partial Class MainWindow
         Me.Loaded_Progress_2_50.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Loaded_Progress_2_50.Location = New System.Drawing.Point(189, 395)
         Me.Loaded_Progress_2_50.Name = "Loaded_Progress_2_50"
-        Me.Loaded_Progress_2_50.Size = New System.Drawing.Size(34, 13)
+        Me.Loaded_Progress_2_50.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_2_50.TabIndex = 101
         Me.Loaded_Progress_2_50.Text = "0.000"
         '
@@ -1623,7 +1615,7 @@ Partial Class MainWindow
         Me.Label13.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label13.Location = New System.Drawing.Point(182, 612)
         Me.Label13.Name = "Label13"
-        Me.Label13.Size = New System.Drawing.Size(45, 13)
+        Me.Label13.Size = New System.Drawing.Size(57, 17)
         Me.Label13.TabIndex = 102
         Me.Label13.Text = "0 SLPM"
         '
@@ -1644,7 +1636,7 @@ Partial Class MainWindow
         Me.Loaded_Progress_1_100.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Loaded_Progress_1_100.Location = New System.Drawing.Point(41, 175)
         Me.Loaded_Progress_1_100.Name = "Loaded_Progress_1_100"
-        Me.Loaded_Progress_1_100.Size = New System.Drawing.Size(34, 13)
+        Me.Loaded_Progress_1_100.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_1_100.TabIndex = 105
         Me.Loaded_Progress_1_100.Text = "0.000"
         '
@@ -1654,7 +1646,7 @@ Partial Class MainWindow
         Me.Loaded_Progress_1_50.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Loaded_Progress_1_50.Location = New System.Drawing.Point(40, 395)
         Me.Loaded_Progress_1_50.Name = "Loaded_Progress_1_50"
-        Me.Loaded_Progress_1_50.Size = New System.Drawing.Size(34, 13)
+        Me.Loaded_Progress_1_50.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_1_50.TabIndex = 106
         Me.Loaded_Progress_1_50.Text = "0.000"
         '
@@ -1664,7 +1656,7 @@ Partial Class MainWindow
         Me.Label16.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label16.Location = New System.Drawing.Point(33, 612)
         Me.Label16.Name = "Label16"
-        Me.Label16.Size = New System.Drawing.Size(45, 13)
+        Me.Label16.Size = New System.Drawing.Size(57, 17)
         Me.Label16.TabIndex = 107
         Me.Label16.Text = "0 SLPM"
         '
@@ -1678,7 +1670,7 @@ Partial Class MainWindow
         Me.MFC_2_Read_Flow.Margin = New System.Windows.Forms.Padding(2)
         Me.MFC_2_Read_Flow.Name = "MFC_2_Read_Flow"
         Me.MFC_2_Read_Flow.ReadOnly = True
-        Me.MFC_2_Read_Flow.Size = New System.Drawing.Size(59, 25)
+        Me.MFC_2_Read_Flow.Size = New System.Drawing.Size(59, 31)
         Me.MFC_2_Read_Flow.TabIndex = 116
         Me.MFC_2_Read_Flow.Text = "0.00"
         Me.MFC_2_Read_Flow.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -1695,7 +1687,7 @@ Partial Class MainWindow
         Me.MFC_2_Recipe_Flow.MinimumSize = New System.Drawing.Size(38, 20)
         Me.MFC_2_Recipe_Flow.Name = "MFC_2_Recipe_Flow"
         Me.MFC_2_Recipe_Flow.ReadOnly = True
-        Me.MFC_2_Recipe_Flow.Size = New System.Drawing.Size(59, 25)
+        Me.MFC_2_Recipe_Flow.Size = New System.Drawing.Size(59, 31)
         Me.MFC_2_Recipe_Flow.TabIndex = 115
         Me.MFC_2_Recipe_Flow.Text = "???"
         Me.MFC_2_Recipe_Flow.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -1711,7 +1703,7 @@ Partial Class MainWindow
         Me.MFC_3_Read_Flow.Margin = New System.Windows.Forms.Padding(2)
         Me.MFC_3_Read_Flow.Name = "MFC_3_Read_Flow"
         Me.MFC_3_Read_Flow.ReadOnly = True
-        Me.MFC_3_Read_Flow.Size = New System.Drawing.Size(59, 25)
+        Me.MFC_3_Read_Flow.Size = New System.Drawing.Size(59, 31)
         Me.MFC_3_Read_Flow.TabIndex = 119
         Me.MFC_3_Read_Flow.Text = "0.00"
         Me.MFC_3_Read_Flow.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -1728,7 +1720,7 @@ Partial Class MainWindow
         Me.MFC_3_Recipe_Flow.MinimumSize = New System.Drawing.Size(38, 20)
         Me.MFC_3_Recipe_Flow.Name = "MFC_3_Recipe_Flow"
         Me.MFC_3_Recipe_Flow.ReadOnly = True
-        Me.MFC_3_Recipe_Flow.Size = New System.Drawing.Size(59, 25)
+        Me.MFC_3_Recipe_Flow.Size = New System.Drawing.Size(59, 31)
         Me.MFC_3_Recipe_Flow.TabIndex = 118
         Me.MFC_3_Recipe_Flow.Text = "???"
         Me.MFC_3_Recipe_Flow.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -1744,7 +1736,7 @@ Partial Class MainWindow
         Me.MFC_4_Read_Flow.Margin = New System.Windows.Forms.Padding(2)
         Me.MFC_4_Read_Flow.Name = "MFC_4_Read_Flow"
         Me.MFC_4_Read_Flow.ReadOnly = True
-        Me.MFC_4_Read_Flow.Size = New System.Drawing.Size(59, 25)
+        Me.MFC_4_Read_Flow.Size = New System.Drawing.Size(59, 31)
         Me.MFC_4_Read_Flow.TabIndex = 122
         Me.MFC_4_Read_Flow.Text = "0.00"
         Me.MFC_4_Read_Flow.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -1761,7 +1753,7 @@ Partial Class MainWindow
         Me.MFC_4_Recipe_Flow.MinimumSize = New System.Drawing.Size(38, 20)
         Me.MFC_4_Recipe_Flow.Name = "MFC_4_Recipe_Flow"
         Me.MFC_4_Recipe_Flow.ReadOnly = True
-        Me.MFC_4_Recipe_Flow.Size = New System.Drawing.Size(59, 25)
+        Me.MFC_4_Recipe_Flow.Size = New System.Drawing.Size(59, 31)
         Me.MFC_4_Recipe_Flow.TabIndex = 121
         Me.MFC_4_Recipe_Flow.Text = "???"
         Me.MFC_4_Recipe_Flow.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -1802,7 +1794,7 @@ Partial Class MainWindow
         Me.AC_CODE.Font = New System.Drawing.Font("Microsoft Sans Serif", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.AC_CODE.Location = New System.Drawing.Point(1279, 545)
         Me.AC_CODE.Name = "AC_CODE"
-        Me.AC_CODE.Size = New System.Drawing.Size(83, 25)
+        Me.AC_CODE.Size = New System.Drawing.Size(106, 31)
         Me.AC_CODE.TabIndex = 13
         Me.AC_CODE.Text = "AC_OK"
         Me.AC_CODE.TextAlign = System.Drawing.ContentAlignment.MiddleRight
@@ -1818,7 +1810,7 @@ Partial Class MainWindow
         Me.RecipeCyclesTxt_OPER.Margin = New System.Windows.Forms.Padding(2)
         Me.RecipeCyclesTxt_OPER.Name = "RecipeCyclesTxt_OPER"
         Me.RecipeCyclesTxt_OPER.ReadOnly = True
-        Me.RecipeCyclesTxt_OPER.Size = New System.Drawing.Size(66, 25)
+        Me.RecipeCyclesTxt_OPER.Size = New System.Drawing.Size(66, 31)
         Me.RecipeCyclesTxt_OPER.TabIndex = 137
         Me.RecipeCyclesTxt_OPER.Text = "0"
         Me.RecipeCyclesTxt_OPER.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -1835,7 +1827,7 @@ Partial Class MainWindow
         Me.RecipeSpeedTxt_OPER.Margin = New System.Windows.Forms.Padding(2)
         Me.RecipeSpeedTxt_OPER.Name = "RecipeSpeedTxt_OPER"
         Me.RecipeSpeedTxt_OPER.ReadOnly = True
-        Me.RecipeSpeedTxt_OPER.Size = New System.Drawing.Size(66, 25)
+        Me.RecipeSpeedTxt_OPER.Size = New System.Drawing.Size(66, 31)
         Me.RecipeSpeedTxt_OPER.TabIndex = 138
         Me.RecipeSpeedTxt_OPER.Text = "0"
         Me.RecipeSpeedTxt_OPER.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -1852,7 +1844,7 @@ Partial Class MainWindow
         Me.RecipeOverLapTxt_OPER.Margin = New System.Windows.Forms.Padding(2)
         Me.RecipeOverLapTxt_OPER.Name = "RecipeOverLapTxt_OPER"
         Me.RecipeOverLapTxt_OPER.ReadOnly = True
-        Me.RecipeOverLapTxt_OPER.Size = New System.Drawing.Size(66, 25)
+        Me.RecipeOverLapTxt_OPER.Size = New System.Drawing.Size(66, 31)
         Me.RecipeOverLapTxt_OPER.TabIndex = 139
         Me.RecipeOverLapTxt_OPER.Text = "0"
         Me.RecipeOverLapTxt_OPER.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -1869,7 +1861,7 @@ Partial Class MainWindow
         Me.RecipeGapTxt_OPER.Margin = New System.Windows.Forms.Padding(2)
         Me.RecipeGapTxt_OPER.Name = "RecipeGapTxt_OPER"
         Me.RecipeGapTxt_OPER.ReadOnly = True
-        Me.RecipeGapTxt_OPER.Size = New System.Drawing.Size(66, 25)
+        Me.RecipeGapTxt_OPER.Size = New System.Drawing.Size(66, 31)
         Me.RecipeGapTxt_OPER.TabIndex = 140
         Me.RecipeGapTxt_OPER.Text = "0"
         Me.RecipeGapTxt_OPER.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -1886,7 +1878,7 @@ Partial Class MainWindow
         Me.RecipeThicknessTxt_OPER.Margin = New System.Windows.Forms.Padding(2)
         Me.RecipeThicknessTxt_OPER.Name = "RecipeThicknessTxt_OPER"
         Me.RecipeThicknessTxt_OPER.ReadOnly = True
-        Me.RecipeThicknessTxt_OPER.Size = New System.Drawing.Size(66, 25)
+        Me.RecipeThicknessTxt_OPER.Size = New System.Drawing.Size(66, 31)
         Me.RecipeThicknessTxt_OPER.TabIndex = 141
         Me.RecipeThicknessTxt_OPER.Text = "0"
         Me.RecipeThicknessTxt_OPER.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -1900,7 +1892,7 @@ Partial Class MainWindow
         Me.Label22.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label22.Location = New System.Drawing.Point(1346, 750)
         Me.Label22.Name = "Label22"
-        Me.Label22.Size = New System.Drawing.Size(23, 20)
+        Me.Label22.Size = New System.Drawing.Size(30, 25)
         Me.Label22.TabIndex = 142
         Me.Label22.Text = "Z:"
         '
@@ -1911,7 +1903,7 @@ Partial Class MainWindow
         Me.Label23.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label23.Location = New System.Drawing.Point(1347, 707)
         Me.Label23.Name = "Label23"
-        Me.Label23.Size = New System.Drawing.Size(24, 20)
+        Me.Label23.Size = New System.Drawing.Size(31, 25)
         Me.Label23.TabIndex = 143
         Me.Label23.Text = "Y:"
         '
@@ -1922,7 +1914,7 @@ Partial Class MainWindow
         Me.Label24.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label24.Location = New System.Drawing.Point(1346, 662)
         Me.Label24.Name = "Label24"
-        Me.Label24.Size = New System.Drawing.Size(24, 20)
+        Me.Label24.Size = New System.Drawing.Size(32, 25)
         Me.Label24.TabIndex = 144
         Me.Label24.Text = "X:"
         '
@@ -1955,7 +1947,7 @@ Partial Class MainWindow
         Me.PinsSquare.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.PinsSquare.Location = New System.Drawing.Point(1184, 215)
         Me.PinsSquare.Name = "PinsSquare"
-        Me.PinsSquare.Size = New System.Drawing.Size(19, 18)
+        Me.PinsSquare.Size = New System.Drawing.Size(26, 22)
         Me.PinsSquare.TabIndex = 146
         Me.PinsSquare.Text = "   "
         Me.PinsSquare.Visible = False
@@ -2281,7 +2273,7 @@ Partial Class MainWindow
         Me.Label26.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label26.Location = New System.Drawing.Point(1158, 518)
         Me.Label26.Name = "Label26"
-        Me.Label26.Size = New System.Drawing.Size(94, 20)
+        Me.Label26.Size = New System.Drawing.Size(117, 25)
         Me.Label26.TabIndex = 172
         Me.Label26.Text = "Error Codes"
         '
@@ -2292,7 +2284,7 @@ Partial Class MainWindow
         Me.Label30.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label30.Location = New System.Drawing.Point(1014, 269)
         Me.Label30.Name = "Label30"
-        Me.Label30.Size = New System.Drawing.Size(23, 20)
+        Me.Label30.Size = New System.Drawing.Size(30, 25)
         Me.Label30.TabIndex = 174
         Me.Label30.Text = "%"
         '
@@ -2302,7 +2294,7 @@ Partial Class MainWindow
         Me.LabelLock.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.LabelLock.Location = New System.Drawing.Point(1163, 385)
         Me.LabelLock.Name = "LabelLock"
-        Me.LabelLock.Size = New System.Drawing.Size(77, 20)
+        Me.LabelLock.Size = New System.Drawing.Size(96, 25)
         Me.LabelLock.TabIndex = 176
         Me.LabelLock.Text = "Controller"
         '
@@ -2316,7 +2308,7 @@ Partial Class MainWindow
         Me.RecipeXMaxTxt.Margin = New System.Windows.Forms.Padding(2)
         Me.RecipeXMaxTxt.Name = "RecipeXMaxTxt"
         Me.RecipeXMaxTxt.ReadOnly = True
-        Me.RecipeXMaxTxt.Size = New System.Drawing.Size(101, 32)
+        Me.RecipeXMaxTxt.Size = New System.Drawing.Size(101, 39)
         Me.RecipeXMaxTxt.TabIndex = 181
         Me.RecipeXMaxTxt.Text = "0"
         Me.RecipeXMaxTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -2332,7 +2324,7 @@ Partial Class MainWindow
         Me.RecipeXMinTxt.Margin = New System.Windows.Forms.Padding(2)
         Me.RecipeXMinTxt.Name = "RecipeXMinTxt"
         Me.RecipeXMinTxt.ReadOnly = True
-        Me.RecipeXMinTxt.Size = New System.Drawing.Size(83, 32)
+        Me.RecipeXMinTxt.Size = New System.Drawing.Size(83, 39)
         Me.RecipeXMinTxt.TabIndex = 182
         Me.RecipeXMinTxt.Text = "0"
         Me.RecipeXMinTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -2348,7 +2340,7 @@ Partial Class MainWindow
         Me.RecipeYMaxTxt.Margin = New System.Windows.Forms.Padding(2)
         Me.RecipeYMaxTxt.Name = "RecipeYMaxTxt"
         Me.RecipeYMaxTxt.ReadOnly = True
-        Me.RecipeYMaxTxt.Size = New System.Drawing.Size(101, 32)
+        Me.RecipeYMaxTxt.Size = New System.Drawing.Size(101, 39)
         Me.RecipeYMaxTxt.TabIndex = 183
         Me.RecipeYMaxTxt.Text = "0"
         Me.RecipeYMaxTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -2364,7 +2356,7 @@ Partial Class MainWindow
         Me.RecipeYMinTxt.Margin = New System.Windows.Forms.Padding(2)
         Me.RecipeYMinTxt.Name = "RecipeYMinTxt"
         Me.RecipeYMinTxt.ReadOnly = True
-        Me.RecipeYMinTxt.Size = New System.Drawing.Size(83, 32)
+        Me.RecipeYMinTxt.Size = New System.Drawing.Size(83, 39)
         Me.RecipeYMinTxt.TabIndex = 184
         Me.RecipeYMinTxt.Text = "0"
         Me.RecipeYMinTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -2461,7 +2453,7 @@ Partial Class MainWindow
         Me.Label29.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label29.Location = New System.Drawing.Point(1466, 661)
         Me.Label29.Name = "Label29"
-        Me.Label29.Size = New System.Drawing.Size(35, 20)
+        Me.Label29.Size = New System.Drawing.Size(44, 25)
         Me.Label29.TabIndex = 189
         Me.Label29.Text = "mm"
         '
@@ -2472,7 +2464,7 @@ Partial Class MainWindow
         Me.Label33.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label33.Location = New System.Drawing.Point(1466, 749)
         Me.Label33.Name = "Label33"
-        Me.Label33.Size = New System.Drawing.Size(35, 20)
+        Me.Label33.Size = New System.Drawing.Size(44, 25)
         Me.Label33.TabIndex = 190
         Me.Label33.Text = "mm"
         '
@@ -2483,7 +2475,7 @@ Partial Class MainWindow
         Me.Label34.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label34.Location = New System.Drawing.Point(1466, 707)
         Me.Label34.Name = "Label34"
-        Me.Label34.Size = New System.Drawing.Size(35, 20)
+        Me.Label34.Size = New System.Drawing.Size(44, 25)
         Me.Label34.TabIndex = 191
         Me.Label34.Text = "mm"
         '
@@ -2514,7 +2506,7 @@ Partial Class MainWindow
         Me.Loaded_Progress_3_25.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Loaded_Progress_3_25.Location = New System.Drawing.Point(342, 509)
         Me.Loaded_Progress_3_25.Name = "Loaded_Progress_3_25"
-        Me.Loaded_Progress_3_25.Size = New System.Drawing.Size(34, 13)
+        Me.Loaded_Progress_3_25.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_3_25.TabIndex = 193
         Me.Loaded_Progress_3_25.Text = "0.000"
         '
@@ -2524,7 +2516,7 @@ Partial Class MainWindow
         Me.Loaded_Progress_4_25.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Loaded_Progress_4_25.Location = New System.Drawing.Point(495, 509)
         Me.Loaded_Progress_4_25.Name = "Loaded_Progress_4_25"
-        Me.Loaded_Progress_4_25.Size = New System.Drawing.Size(34, 13)
+        Me.Loaded_Progress_4_25.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_4_25.TabIndex = 194
         Me.Loaded_Progress_4_25.Text = "0.000"
         '
@@ -2534,7 +2526,7 @@ Partial Class MainWindow
         Me.Loaded_Progress_3_75.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Loaded_Progress_3_75.Location = New System.Drawing.Point(342, 288)
         Me.Loaded_Progress_3_75.Name = "Loaded_Progress_3_75"
-        Me.Loaded_Progress_3_75.Size = New System.Drawing.Size(34, 13)
+        Me.Loaded_Progress_3_75.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_3_75.TabIndex = 195
         Me.Loaded_Progress_3_75.Text = "0.000"
         '
@@ -2544,7 +2536,7 @@ Partial Class MainWindow
         Me.Loaded_Progress_4_75.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Loaded_Progress_4_75.Location = New System.Drawing.Point(495, 288)
         Me.Loaded_Progress_4_75.Name = "Loaded_Progress_4_75"
-        Me.Loaded_Progress_4_75.Size = New System.Drawing.Size(34, 13)
+        Me.Loaded_Progress_4_75.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_4_75.TabIndex = 196
         Me.Loaded_Progress_4_75.Text = "0.000"
         '
@@ -2554,7 +2546,7 @@ Partial Class MainWindow
         Me.Loaded_Progress_2_25.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Loaded_Progress_2_25.Location = New System.Drawing.Point(190, 508)
         Me.Loaded_Progress_2_25.Name = "Loaded_Progress_2_25"
-        Me.Loaded_Progress_2_25.Size = New System.Drawing.Size(34, 13)
+        Me.Loaded_Progress_2_25.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_2_25.TabIndex = 197
         Me.Loaded_Progress_2_25.Text = "0.000"
         '
@@ -2564,7 +2556,7 @@ Partial Class MainWindow
         Me.Loaded_Progress_1_25.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Loaded_Progress_1_25.Location = New System.Drawing.Point(40, 509)
         Me.Loaded_Progress_1_25.Name = "Loaded_Progress_1_25"
-        Me.Loaded_Progress_1_25.Size = New System.Drawing.Size(34, 13)
+        Me.Loaded_Progress_1_25.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_1_25.TabIndex = 198
         Me.Loaded_Progress_1_25.Text = "0.000"
         '
@@ -2574,7 +2566,7 @@ Partial Class MainWindow
         Me.Loaded_Progress_1_75.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Loaded_Progress_1_75.Location = New System.Drawing.Point(40, 286)
         Me.Loaded_Progress_1_75.Name = "Loaded_Progress_1_75"
-        Me.Loaded_Progress_1_75.Size = New System.Drawing.Size(34, 13)
+        Me.Loaded_Progress_1_75.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_1_75.TabIndex = 200
         Me.Loaded_Progress_1_75.Text = "0.000"
         '
@@ -2584,7 +2576,7 @@ Partial Class MainWindow
         Me.Loaded_Progress_2_75.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Loaded_Progress_2_75.Location = New System.Drawing.Point(189, 285)
         Me.Loaded_Progress_2_75.Name = "Loaded_Progress_2_75"
-        Me.Loaded_Progress_2_75.Size = New System.Drawing.Size(34, 13)
+        Me.Loaded_Progress_2_75.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_2_75.TabIndex = 199
         Me.Loaded_Progress_2_75.Text = "0.000"
         '
@@ -2596,7 +2588,7 @@ Partial Class MainWindow
         Me.ChuckVacSquare.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.ChuckVacSquare.Location = New System.Drawing.Point(1165, 360)
         Me.ChuckVacSquare.Name = "ChuckVacSquare"
-        Me.ChuckVacSquare.Size = New System.Drawing.Size(19, 18)
+        Me.ChuckVacSquare.Size = New System.Drawing.Size(26, 22)
         Me.ChuckVacSquare.TabIndex = 205
         Me.ChuckVacSquare.Text = "   "
         '
@@ -2607,7 +2599,7 @@ Partial Class MainWindow
         Me.Label18.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.8!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label18.Location = New System.Drawing.Point(1180, 358)
         Me.Label18.Name = "Label18"
-        Me.Label18.Size = New System.Drawing.Size(95, 18)
+        Me.Label18.Size = New System.Drawing.Size(119, 24)
         Me.Label18.TabIndex = 206
         Me.Label18.Text = "CHUCK VAC"
         '
@@ -2619,7 +2611,7 @@ Partial Class MainWindow
         Me.AutoVacSquare.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.AutoVacSquare.Location = New System.Drawing.Point(1362, 216)
         Me.AutoVacSquare.Name = "AutoVacSquare"
-        Me.AutoVacSquare.Size = New System.Drawing.Size(19, 18)
+        Me.AutoVacSquare.Size = New System.Drawing.Size(26, 22)
         Me.AutoVacSquare.TabIndex = 46
         Me.AutoVacSquare.Text = "   "
         Me.AutoVacSquare.Visible = False
@@ -2630,7 +2622,7 @@ Partial Class MainWindow
         Me.DateTimeLabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 26.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.DateTimeLabel.Location = New System.Drawing.Point(1353, 8)
         Me.DateTimeLabel.Name = "DateTimeLabel"
-        Me.DateTimeLabel.Size = New System.Drawing.Size(0, 39)
+        Me.DateTimeLabel.Size = New System.Drawing.Size(0, 52)
         Me.DateTimeLabel.TabIndex = 207
         '
         'DateTimeLabel1
@@ -2640,7 +2632,7 @@ Partial Class MainWindow
         Me.DateTimeLabel1.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.DateTimeLabel1.Location = New System.Drawing.Point(1280, 15)
         Me.DateTimeLabel1.Name = "DateTimeLabel1"
-        Me.DateTimeLabel1.Size = New System.Drawing.Size(237, 16)
+        Me.DateTimeLabel1.Size = New System.Drawing.Size(296, 20)
         Me.DateTimeLabel1.TabIndex = 208
         Me.DateTimeLabel1.Text = "02:22 Wednesday, September 24 2020"
         '
@@ -2673,7 +2665,7 @@ Partial Class MainWindow
         Me.HeatLabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.HeatLabel.Location = New System.Drawing.Point(991, 557)
         Me.HeatLabel.Name = "HeatLabel"
-        Me.HeatLabel.Size = New System.Drawing.Size(18, 17)
+        Me.HeatLabel.Size = New System.Drawing.Size(22, 20)
         Me.HeatLabel.TabIndex = 210
         Me.HeatLabel.Text = "   "
         '
@@ -2685,7 +2677,7 @@ Partial Class MainWindow
         Me.EngLabel.ForeColor = System.Drawing.Color.White
         Me.EngLabel.Location = New System.Drawing.Point(805, 9)
         Me.EngLabel.Name = "EngLabel"
-        Me.EngLabel.Size = New System.Drawing.Size(178, 30)
+        Me.EngLabel.Size = New System.Drawing.Size(225, 37)
         Me.EngLabel.TabIndex = 213
         Me.EngLabel.Text = "ENGINEER MODE"
         Me.EngLabel.Visible = False
@@ -2698,7 +2690,7 @@ Partial Class MainWindow
         Me.N2Purgelabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.N2Purgelabel.Location = New System.Drawing.Point(1362, 162)
         Me.N2Purgelabel.Name = "N2Purgelabel"
-        Me.N2Purgelabel.Size = New System.Drawing.Size(19, 18)
+        Me.N2Purgelabel.Size = New System.Drawing.Size(26, 22)
         Me.N2Purgelabel.TabIndex = 215
         Me.N2Purgelabel.Text = "   "
         Me.N2Purgelabel.Visible = False
@@ -2731,7 +2723,7 @@ Partial Class MainWindow
         Me.PurgeOnLabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.8!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.PurgeOnLabel.Location = New System.Drawing.Point(1300, 358)
         Me.PurgeOnLabel.Name = "PurgeOnLabel"
-        Me.PurgeOnLabel.Size = New System.Drawing.Size(89, 18)
+        Me.PurgeOnLabel.Size = New System.Drawing.Size(109, 24)
         Me.PurgeOnLabel.TabIndex = 217
         Me.PurgeOnLabel.Text = "PURGE ON"
         '
@@ -2743,7 +2735,7 @@ Partial Class MainWindow
         Me.N2PurgeSquare.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.N2PurgeSquare.Location = New System.Drawing.Point(1281, 360)
         Me.N2PurgeSquare.Name = "N2PurgeSquare"
-        Me.N2PurgeSquare.Size = New System.Drawing.Size(19, 18)
+        Me.N2PurgeSquare.Size = New System.Drawing.Size(26, 22)
         Me.N2PurgeSquare.TabIndex = 216
         Me.N2PurgeSquare.Text = "   "
         '
@@ -2777,7 +2769,7 @@ Partial Class MainWindow
         Me.BatchIDTextBox.MinimumSize = New System.Drawing.Size(38, 20)
         Me.BatchIDTextBox.Name = "BatchIDTextBox"
         Me.BatchIDTextBox.ReadOnly = True
-        Me.BatchIDTextBox.Size = New System.Drawing.Size(338, 29)
+        Me.BatchIDTextBox.Size = New System.Drawing.Size(338, 35)
         Me.BatchIDTextBox.TabIndex = 221
         Me.BatchIDTextBox.Text = "Batch ID "
         Me.BatchIDTextBox.Visible = False
@@ -2812,7 +2804,7 @@ Partial Class MainWindow
         Me.Label17.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.8!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label17.Location = New System.Drawing.Point(1411, 358)
         Me.Label17.Name = "Label17"
-        Me.Label17.Size = New System.Drawing.Size(111, 18)
+        Me.Label17.Size = New System.Drawing.Size(140, 24)
         Me.Label17.TabIndex = 225
         Me.Label17.Text = "LASER SENSE"
         '
@@ -2824,7 +2816,7 @@ Partial Class MainWindow
         Me.LaserSenseSquare.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.LaserSenseSquare.Location = New System.Drawing.Point(1394, 360)
         Me.LaserSenseSquare.Name = "LaserSenseSquare"
-        Me.LaserSenseSquare.Size = New System.Drawing.Size(19, 18)
+        Me.LaserSenseSquare.Size = New System.Drawing.Size(26, 22)
         Me.LaserSenseSquare.TabIndex = 224
         Me.LaserSenseSquare.Text = "   "
         '
@@ -2835,7 +2827,7 @@ Partial Class MainWindow
         Me.ControllerLabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.8!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.ControllerLabel.Location = New System.Drawing.Point(1300, 385)
         Me.ControllerLabel.Name = "ControllerLabel"
-        Me.ControllerLabel.Size = New System.Drawing.Size(138, 18)
+        Me.ControllerLabel.Size = New System.Drawing.Size(172, 24)
         Me.ControllerLabel.TabIndex = 229
         Me.ControllerLabel.Text = "CONTROLLER ON"
         '
@@ -2847,7 +2839,7 @@ Partial Class MainWindow
         Me.contollerONSquare.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.contollerONSquare.Location = New System.Drawing.Point(1281, 387)
         Me.contollerONSquare.Name = "contollerONSquare"
-        Me.contollerONSquare.Size = New System.Drawing.Size(19, 18)
+        Me.contollerONSquare.Size = New System.Drawing.Size(26, 22)
         Me.contollerONSquare.TabIndex = 228
         Me.contollerONSquare.Text = "   "
         '
@@ -2857,7 +2849,7 @@ Partial Class MainWindow
         Me.CTLStatusLabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.CTLStatusLabel.Location = New System.Drawing.Point(1562, 116)
         Me.CTLStatusLabel.Name = "CTLStatusLabel"
-        Me.CTLStatusLabel.Size = New System.Drawing.Size(89, 20)
+        Me.CTLStatusLabel.Size = New System.Drawing.Size(112, 25)
         Me.CTLStatusLabel.TabIndex = 231
         Me.CTLStatusLabel.Text = "CTL Status"
         Me.CTLStatusLabel.Visible = False
@@ -3365,7 +3357,7 @@ Partial Class MainWindow
         Me.auto_tune_label.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.auto_tune_label.Location = New System.Drawing.Point(989, 91)
         Me.auto_tune_label.Name = "auto_tune_label"
-        Me.auto_tune_label.Size = New System.Drawing.Size(74, 17)
+        Me.auto_tune_label.Size = New System.Drawing.Size(85, 20)
         Me.auto_tune_label.TabIndex = 266
         Me.auto_tune_label.Text = "Auto Tune"
         Me.auto_tune_label.Visible = False
@@ -3389,7 +3381,7 @@ Partial Class MainWindow
         Me.Label6.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label6.Location = New System.Drawing.Point(1246, 54)
         Me.Label6.Name = "Label6"
-        Me.Label6.Size = New System.Drawing.Size(176, 20)
+        Me.Label6.Size = New System.Drawing.Size(215, 25)
         Me.Label6.TabIndex = 272
         Me.Label6.Text = "LED Brightness Control"
         '
@@ -3807,7 +3799,6 @@ Partial Class MainWindow
     Friend WithEvents N2Purgebtn As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents PurgeOnLabel As Label
     Friend WithEvents N2PurgeSquare As Label
-    Friend WithEvents CodeToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents BatchLoggingBTN As Guna.UI2.WinForms.Guna2Button
     Public WithEvents BatchIDTextBox As TextBox
     Friend WithEvents Label17 As Label
