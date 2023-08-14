@@ -67,7 +67,6 @@ Partial Class MainWindow
         Me.EngineerModeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.OperatorModeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ControllerStatusLEDSToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.EnableLEDBarToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MFC_1_Loaded_Flow = New System.Windows.Forms.TextBox()
         Me.MFC_2_Loaded_Flow = New System.Windows.Forms.TextBox()
         Me.MFC_3_Loaded_Flow = New System.Windows.Forms.TextBox()
@@ -454,7 +453,7 @@ Partial Class MainWindow
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
         Me.MenuStrip1.Name = "MenuStrip1"
         Me.MenuStrip1.Padding = New System.Windows.Forms.Padding(4, 2, 0, 2)
-        Me.MenuStrip1.Size = New System.Drawing.Size(1680, 48)
+        Me.MenuStrip1.Size = New System.Drawing.Size(1540, 48)
         Me.MenuStrip1.TabIndex = 22
         Me.MenuStrip1.Text = "MenuStrip1"
         '
@@ -564,7 +563,7 @@ Partial Class MainWindow
         '
         'ServiceToolStripMenuItem
         '
-        Me.ServiceToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.RestartAllToolStripMenuItem, Me.SetCTLToPLSimModeToolStripMenuItem, Me.MBScanToolStripMenuItem, Me.StageTestToolStripMenuItem, Me.EngineerModeToolStripMenuItem, Me.OperatorModeToolStripMenuItem, Me.ControllerStatusLEDSToolStripMenuItem, Me.EnableLEDBarToolStripMenuItem})
+        Me.ServiceToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.RestartAllToolStripMenuItem, Me.SetCTLToPLSimModeToolStripMenuItem, Me.MBScanToolStripMenuItem, Me.StageTestToolStripMenuItem, Me.EngineerModeToolStripMenuItem, Me.OperatorModeToolStripMenuItem, Me.ControllerStatusLEDSToolStripMenuItem})
         Me.ServiceToolStripMenuItem.Name = "ServiceToolStripMenuItem"
         Me.ServiceToolStripMenuItem.Size = New System.Drawing.Size(118, 44)
         Me.ServiceToolStripMenuItem.Text = "Service"
@@ -644,12 +643,6 @@ Partial Class MainWindow
         Me.ControllerStatusLEDSToolStripMenuItem.Size = New System.Drawing.Size(442, 44)
         Me.ControllerStatusLEDSToolStripMenuItem.Text = "Controller Status LEDS: OFF"
         Me.ControllerStatusLEDSToolStripMenuItem.Visible = False
-        '
-        'EnableLEDBarToolStripMenuItem
-        '
-        Me.EnableLEDBarToolStripMenuItem.Name = "EnableLEDBarToolStripMenuItem"
-        Me.EnableLEDBarToolStripMenuItem.Size = New System.Drawing.Size(442, 44)
-        Me.EnableLEDBarToolStripMenuItem.Text = "Enable LED Bar"
         '
         'MFC_1_Loaded_Flow
         '
@@ -1217,7 +1210,6 @@ Partial Class MainWindow
         Me.InitAxesBtn.BorderRadius = 24
         Me.InitAxesBtn.CheckedState.Parent = Me.InitAxesBtn
         Me.InitAxesBtn.CustomImages.Parent = Me.InitAxesBtn
-        Me.InitAxesBtn.Enabled = False
         Me.InitAxesBtn.FillColor = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.InitAxesBtn.Font = New System.Drawing.Font("Segoe UI", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.InitAxesBtn.ForeColor = System.Drawing.Color.White
@@ -3407,7 +3399,7 @@ Partial Class MainWindow
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.White
         Me.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
-        Me.ClientSize = New System.Drawing.Size(1680, 845)
+        Me.ClientSize = New System.Drawing.Size(1540, 845)
         Me.ControlBox = False
         Me.Controls.Add(Me.Label6)
         Me.Controls.Add(Me.LEDTrackBar)
@@ -3851,7 +3843,6 @@ Partial Class MainWindow
     Friend WithEvents ControllerStatusLEDSToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents AutoManBtn As Guna.UI2.WinForms.Guna2ToggleSwitch
     Friend WithEvents auto_tune_label As Label
-    Friend WithEvents EnableLEDBarToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents LEDTrackBar As Guna.UI2.WinForms.Guna2TrackBar
     Friend WithEvents Label6 As Label
 End Class

@@ -393,41 +393,7 @@ Public Class MainWindow
     End Structure
     Dim CLaser As CLASERSM
 
-    Enum DoorAbortStates
-        IDLE
-        DOOR_OPENED_NON_PROCESS
-        DOORS_CLOSED
-        WAIT_INITIALIZE
-        GO_TO_LOAD
-    End Enum
 
-    Structure DoorAbortHandler
-        Private _state As DoorAbortStates
-        Private _active As Boolean
-
-        Public Sub New(state As DoorAbortStates, active As Boolean)
-            _state = state
-            _active = active
-        End Sub
-        Public Property State As DoorAbortStates
-            Get
-                Return _state
-            End Get
-            Set(value As DoorAbortStates)
-                _state = value
-            End Set
-        End Property
-
-        Public Property Active As Boolean
-            Get
-                Return _active
-            End Get
-            Set(value As Boolean)
-                _active = value
-            End Set
-        End Property
-    End Structure
-    Dim DoorAbort As New DoorAbortHandler(DoorAbortStates.IDLE, False)
 
     Const CLSM_IDLE = 0
     Const CLSM_TRIPPED = 1 'Laser COLLISION DETECTED
@@ -1220,7 +1186,6 @@ Public Class MainWindow
                         CollisionLaser() 'run the Collision Laser System state machine
                         RunHomeAxesSM() 'run Home Axes state machine
                         SetLightTower() 'run the Light Tower state machine
-                        HandleDoorAbort() 'run the Door Abort state machine
                     End If
                 End If
 
@@ -2820,8 +2785,6 @@ Public Class MainWindow
             element.enabled = True
         Next
 
-
-
         If SMInitAxes.State = IASM_INITIALIZED Then
             SetTwoSpotBtn.Visible = True
             SetDiameterBtn.Visible = True
@@ -2864,49 +2827,7 @@ Public Class MainWindow
             Return False
         End If
     End Function
-    Private Sub HandleDoorAbort()
-        If DoorAbort.Active = True Then
-            DoorAbort.State = DoorAbortStates.DOORS_CLOSED
-        ElseIf AxesStatus.b_DoorsOpen = True AndAlso isAnyAxisStateMachinesActive() Then
-            DoorAbort.State = DoorAbortStates.DOOR_OPENED_NON_PROCESS
-        End If
 
-
-        Select Case DoorAbort.State
-
-            Case DoorAbortStates.DOOR_OPENED_NON_PROCESS
-                MsgBox("Door opened while stage was moving. Stage position has been lost, close the doors and click OK to initialize the stage and send stage to the Load position.", , "DOORS OPENED: STAGE MOVEMENT LOST")
-                DoorAbort.State = DoorAbortStates.DOORS_CLOSED
-
-            Case DoorAbortStates.DOORS_CLOSED
-                If AxesStatus.b_DoorsOpen = False Then
-                    WriteLogLine("Stage position lost : doors opened.")
-                    DoorAbort.Active = False
-                    SMScan.State = SCSM_IDLE
-                    SMScan.SubState = SCSM_SUB_IDLE
-                    StageTestSM.SetState(STSM_IDLE)
-                    SMHomeAxes.State = HASM_IDLE
-                    SMTwoSpot.State = TSSM_IDLE
-                    SMInitAxes.State = IASM_START_UP
-                    DoorAbort.State = DoorAbortStates.WAIT_INITIALIZE
-                End If
-
-            Case DoorAbortStates.WAIT_INITIALIZE
-                If SMInitAxes.State = IASM_INITIALIZED Then
-                    DoorAbort.State = DoorAbortStates.GO_TO_LOAD
-                End If
-
-            Case DoorAbortStates.GO_TO_LOAD
-                If b_ClearAbort = False Then
-                    SMHomeAxes.State = HASM_START
-                    DoorAbort.State = DoorAbortStates.IDLE
-                End If
-
-            Case DoorAbortStates.IDLE
-                'DO NOTHING
-        End Select
-
-    End Sub
 
     Private Sub CollisionLaser()
         Dim ResponseLen As Integer
