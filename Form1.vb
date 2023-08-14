@@ -3330,7 +3330,7 @@ Public Class MainWindow
 
     End Sub
 
-    Private Sub CodeToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CodeToolStripMenuItem.Click
+    Private Sub CodeToolStripMenuItem_Click(sender As Object, e As EventArgs)
         AuthorizeCode(1)
     End Sub
     Function GetBoughtorNot() As Boolean
