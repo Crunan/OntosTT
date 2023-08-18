@@ -892,10 +892,6 @@ Public Class MainWindow
                 Return (Buttons And CUShort(button)) <> 0
             End Function
 
-            Public Function LeftThumbMagnitude() As Single
-                Return CSng(Math.Sqrt(Math.Pow(LeftThumbX, 2) + Math.Pow(LeftThumbY, 2)))
-            End Function
-
             Public Function LeftThumbIsDiagonal() As Boolean
                 Dim leftThumb As New PointF(LeftThumbX, LeftThumbY)
 
@@ -911,6 +907,16 @@ Public Class MainWindow
 
                 Dim lThumbXPercent As Integer = CInt(range / total * LeftThumbX + offset)
                 Dim lThumbYPercent As Integer = CInt(range / total * LeftThumbY + offset)
+
+                Return (lThumbXPercent.ToString(), lThumbYPercent.ToString())
+            End Function
+            Public Function CalculateRThumbPercent() As (String, String)
+                Dim total As Integer = 65535
+                Dim range As Integer = 200
+                Dim offset As Integer = 0 '
+
+                Dim lThumbXPercent As Integer = CInt(range / total * RightThumbX + offset)
+                Dim lThumbYPercent As Integer = CInt(range / total * RightThumbY + offset)
 
                 Return (lThumbXPercent.ToString(), lThumbYPercent.ToString())
             End Function
@@ -930,6 +936,15 @@ Public Class MainWindow
                     End If
                 End If
                 Return leftThumb
+            End Function
+            Public Function RightThumbNormalized() As PointF
+                Dim rightThumb As New PointF(RightThumbX, RightThumbY)
+                Dim length As Single = CSng(Math.Sqrt(Math.Pow(rightThumb.X, 2) + Math.Pow(rightThumb.Y, 2)))
+                If length > 0 Then
+                    rightThumb.X /= length
+                    rightThumb.Y /= length
+                End If
+                Return rightThumb
             End Function
         End Structure
 
@@ -967,6 +982,7 @@ Public Class MainWindow
         End Function
 
         Private previousJoystickLThumbstick As PointF
+        Private previousJoystickRThumbstick As PointF
 
 
         Public Function LeftThumbstickValueChanged() As Boolean
@@ -978,8 +994,20 @@ Public Class MainWindow
                 Return False
             End If
         End Function
+        Public Function RigtThumbstickValueChanged() As Boolean
+            Dim currentThumbstick As PointF = currentState.Gamepad.RightThumbNormalized()
+            If currentThumbstick <> previousJoystickRThumbstick Then
+                previousJoystickRThumbstick = currentThumbstick
+                Return True
+            Else
+                Return False
+            End If
+        End Function
         Public Function GetLeftThumbstickPercentages() As (xPercent As String, yPercent As String)
             Return currentState.Gamepad.CalculateLThumbPercent()
+        End Function
+        Public Function GetRightThumbstickPercentages() As (xPercent As String, yPercent As String)
+            Return currentState.Gamepad.CalculateRThumbPercent()
         End Function
         Public Sub Update()
             XInputGetState(playerIndex, currentState)
@@ -995,6 +1023,9 @@ Public Class MainWindow
 
         Public Function GetLeftThumbstick() As PointF
             Return currentState.Gamepad.LeftThumbNormalized()
+        End Function
+        Public Function GetRightThumbstick() As PointF
+            Return currentState.Gamepad.RightThumbNormalized()
         End Function
     End Class
     Public Function isTwoSpotOn() As Boolean
@@ -1033,11 +1064,17 @@ Public Class MainWindow
     End Function
     Public Function MoveStageWithJoy() As PointF
         Dim result As (xPercent As String, yPercent As String) = gamepad.GetLeftThumbstickPercentages()
+        Dim result2 As (xPercent As String, yPercent As String) = gamepad.GetRightThumbstickPercentages()
 
         If gamepad.LeftThumbstickValueChanged() Then
             VirtualJoyMove(Axis.X, result.xPercent)
             VirtualJoyMove(Axis.Y, flipMySign(result.yPercent))
         End If
+
+        If gamepad.RigtThumbstickValueChanged() Then
+            VirtualJoyMove(Axis.Z, result2.yPercent)
+        End If
+
     End Function
 
     Private Sub SetGUILoadedProgressNumbers(index As Integer)
@@ -2304,31 +2341,31 @@ Public Class MainWindow
 
 
         'Get Plasma Head Temperature
-        'WriteCommand("$8c%", 4)  'GET_TEMP  $8C%: resp[!8Cxx.xx#]; xx.xx = head temp degrees C base 10
-        'ResponseLen = ReadResponse(0)
-        'If ResponseLen > 3 Then
-        '    StrVar = st_RCV.Substring(3, 7)
-        '    If b_IsStringANumber(StrVar, st_DoubleChars, st_EmptyChars) = True Then 'st_EmptyChars
-        '        DoubVal = Convert.ToDouble(StrVar)
-        '        IntVal = Math.Ceiling(DoubVal)
-        '        StrVar = IntVal.ToString()
-        '        Temp_Radial.Value = IntVal 'Set the Temperature Radial for Operator
-        '        PHTempTxt.Text = StrVar 'Display the val in deg C
-        '        If Temp_Radial.Value < 50 Then
-        '            Temp_Radial.ProgressColor = Color.DodgerBlue
-        '            Temp_Radial.ProgressColor2 = Color.DodgerBlue
-        '        ElseIf Temp_Radial.Value < 60 Then
-        '            Temp_Radial.ProgressColor = Color.Yellow
-        '            Temp_Radial.ProgressColor2 = Color.Yellow
-        '        Else
-        '            Temp_Radial.ProgressColor = Color.Red
-        '            Temp_Radial.ProgressColor2 = Color.Red
-        '        End If
+        WriteCommand("$8c%", 4)  'GET_TEMP  $8C%: resp[!8Cxx.xx#]; xx.xx = head temp degrees C base 10
+        ResponseLen = ReadResponse(0)
+        If ResponseLen > 3 Then
+            StrVar = st_RCV.Substring(3, 7)
+            If b_IsStringANumber(StrVar, st_DoubleChars, st_EmptyChars) = True Then 'st_EmptyChars
+                DoubVal = Convert.ToDouble(StrVar)
+                IntVal = Math.Ceiling(DoubVal)
+                StrVar = IntVal.ToString()
+                Temp_Radial.Value = IntVal 'Set the Temperature Radial for Operator
+                PHTempTxt.Text = StrVar 'Display the val in deg C
+                If Temp_Radial.Value < 135 Then
+                    Temp_Radial.ProgressColor = Color.DodgerBlue
+                    Temp_Radial.ProgressColor2 = Color.DodgerBlue
+                ElseIf Temp_Radial.Value < 145 Then
+                    Temp_Radial.ProgressColor = Color.Yellow
+                    Temp_Radial.ProgressColor2 = Color.Yellow
+                Else
+                    Temp_Radial.ProgressColor = Color.Red
+                    Temp_Radial.ProgressColor2 = Color.Red
+                End If
 
-        '    Else
-        '        PHTempTxt.Text = "???" 'allow for disconnected or bad temperature probe
-        '    End If
-        'End If
+            Else
+                PHTempTxt.Text = "???" 'allow for disconnected or bad temperature probe
+            End If
+        End If
 
         'Check Abort flag and if active, flash Abort Clear button
         If b_ClearAbort Then
