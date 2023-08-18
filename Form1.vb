@@ -33,7 +33,7 @@ Public Class MainWindow
 
 
     'Controller stuff    
-    Dim gamepad As GamepadInput = searchForGamepad()
+    Dim gamepad As Controller = searchForGamepad()
 
     '    Serial Port Stuff
     Dim CR As String = Chr(13)
@@ -855,23 +855,63 @@ Public Class MainWindow
 
     End Structure
     Dim CoordParam As COORD_SYS
-    Public Function searchForGamepad() As GamepadInput
+    Public Function searchForGamepad() As Controller
         Dim maxPlayers As Integer = 4 ' the maximum number of players to check
-        Dim connectedControllers As New List(Of Integer)()
-
+        Dim nullgamepad As New NullGamepad()
         For i As Integer = 0 To maxPlayers - 1
             Dim gamepad As New GamepadInput(i)
             If gamepad.isConnected() Then
                 Return gamepad
             End If
         Next
+        Return nullgamepad
     End Function
-    Public Class GamepadInput
+    Public MustInherit Class Controller
+        Public MustOverride Function IsConnected() As Boolean
+        Public MustOverride Sub Update()
 
+        Public MustOverride Function LeftThumbstickValueChanged() As Boolean
+        Public MustOverride Function RightThumbstickValueChanged() As Boolean
+        Public MustOverride Function GetLeftThumbstickPercentages() As (xPercent As String, yPercent As String)
+        Public MustOverride Function GetRightThumbstickPercentages() As (xPercent As String, yPercent As String)
+        Public MustOverride Function getInputButtonPress() As Boolean
+
+    End Class
+    Public Class NullGamepad
+        Inherits Controller
+        Public Overrides Function IsConnected() As Boolean
+            Return False
+        End Function
+
+        Public Overrides Sub Update()
+            ' This space intentionally left blank
+            ' No implementation required in the NullGamepad
+        End Sub
+
+        Public Overrides Function LeftThumbstickValueChanged() As Boolean
+            Return False
+        End Function
+
+        Public Overrides Function RightThumbstickValueChanged() As Boolean
+            Return False
+        End Function
+
+        Public Overrides Function GetLeftThumbstickPercentages() As (xPercent As String, yPercent As String)
+            Return ("0", "0")
+        End Function
+        Public Overrides Function GetRightThumbstickPercentages() As (xPercent As String, yPercent As String)
+            Return ("0", "0")
+        End Function
+        Public Overrides Function getInputButtonPress() As Boolean
+            Return MainWindow.AxesStatus.getLEDJoyBtnOn()
+        End Function
+    End Class
+
+    Public Class GamepadInput
+        Inherits Controller
         <DllImport("xinput1_4.dll", EntryPoint:="XInputGetState")>
         Private Shared Function XInputGetState(dwUserIndex As Integer, ByRef pState As XInputState) As Integer
         End Function
-
         Private Const MaxDiagonal As Single = 0.6F 'Set your max diagonal threshold here
 
         Public Structure XInputState
@@ -975,7 +1015,7 @@ Public Class MainWindow
             Me.playerIndex = playerIndex
         End Sub
 
-        Public Function isConnected() As Boolean
+        Public Overrides Function isConnected() As Boolean
             Dim state As XInputState = New XInputState()
             Dim result As Integer = XInputGetState(playerIndex, state)
             Return (result = 0)
@@ -985,7 +1025,7 @@ Public Class MainWindow
         Private previousJoystickRThumbstick As PointF
 
 
-        Public Function LeftThumbstickValueChanged() As Boolean
+        Public Overrides Function LeftThumbstickValueChanged() As Boolean
             Dim currentThumbstick As PointF = currentState.Gamepad.LeftThumbNormalized()
             If currentThumbstick <> previousJoystickLThumbstick Then
                 previousJoystickLThumbstick = currentThumbstick
@@ -994,7 +1034,7 @@ Public Class MainWindow
                 Return False
             End If
         End Function
-        Public Function RigtThumbstickValueChanged() As Boolean
+        Public Overrides Function RightThumbstickValueChanged() As Boolean
             Dim currentThumbstick As PointF = currentState.Gamepad.RightThumbNormalized()
             If currentThumbstick <> previousJoystickRThumbstick Then
                 previousJoystickRThumbstick = currentThumbstick
@@ -1003,16 +1043,18 @@ Public Class MainWindow
                 Return False
             End If
         End Function
-        Public Function GetLeftThumbstickPercentages() As (xPercent As String, yPercent As String)
+        Public Overrides Function GetLeftThumbstickPercentages() As (xPercent As String, yPercent As String)
             Return currentState.Gamepad.CalculateLThumbPercent()
         End Function
-        Public Function GetRightThumbstickPercentages() As (xPercent As String, yPercent As String)
+        Public Overrides Function GetRightThumbstickPercentages() As (xPercent As String, yPercent As String)
             Return currentState.Gamepad.CalculateRThumbPercent()
         End Function
-        Public Sub Update()
+        Public Overrides Sub Update()
             XInputGetState(playerIndex, currentState)
         End Sub
-
+        Public Overrides Function getInputButtonPress() As Boolean
+            Return IsButtonDown(GamepadInput.GamepadButtonFlags.A)
+        End Function
         Public Function IsButtonDown(button As GamepadButtonFlags) As Boolean
             Return currentState.Gamepad.IsPressed(button)
         End Function
@@ -1052,6 +1094,7 @@ Public Class MainWindow
         WriteLogLine("Joystick Stage Control disabled.")
     End Function
 
+
     Public Function VirtualJoyMove(axis As String, speed As String) As String
         Dim setSoftJoy As String
         '$AB0xss.s%; resp [!AB0xss.s#] where 0x = axis number, ss.s is plus/minus percent of max joy speed.
@@ -1071,7 +1114,7 @@ Public Class MainWindow
             VirtualJoyMove(Axis.Y, flipMySign(result.yPercent))
         End If
 
-        If gamepad.RigtThumbstickValueChanged() Then
+        If gamepad.RightThumbstickValueChanged() Then
             VirtualJoyMove(Axis.Z, result2.yPercent)
         End If
 
@@ -1763,9 +1806,6 @@ Public Class MainWindow
             End If
         End If
 
-        'If GetBoughtorNot() = False Then CinderellaCode()
-
-
         'First things first, log the CTL & Axis firmware. 
         WriteCommand("$8F%", 4) 'GET FW VERSION $8F%; resp[!8Fxx#]; xx = hard coded FW rev in Hex
         ResponseLen = ReadResponse(0)
@@ -2349,7 +2389,7 @@ Public Class MainWindow
                 DoubVal = Convert.ToDouble(StrVar)
                 IntVal = Math.Ceiling(DoubVal)
                 StrVar = IntVal.ToString()
-                Temp_Radial.Value = IntVal 'Set the Temperature Radial for Operator
+                Temp_Radial.Value = (IntVal / Temp_Radial.Maximum) * 100 'Set the Temperature Radial for Operator
                 PHTempTxt.Text = StrVar 'Display the val in deg C
                 If Temp_Radial.Value < 135 Then
                     Temp_Radial.ProgressColor = Color.DodgerBlue
@@ -2536,12 +2576,11 @@ Public Class MainWindow
         Dim CMDIndex() As String = {"0", "01", "02", "03", "04"}
 
         'controller update
-        If gamepad IsNot Nothing Then
-            If isTwoSpotOn() Then
-                gamepad.Update()
-                MoveStageWithJoy()
-            End If
+        If isTwoSpotOn() Then
+            gamepad.Update()
+            MoveStageWithJoy()
         End If
+
 
 
         If (b_Step_MB_SM_Left = True) Then
@@ -3874,13 +3913,7 @@ Public Class MainWindow
         End Select
 
     End Sub
-    Public Function getInputButtonPress() As Boolean
-        If gamepad IsNot Nothing Then
-            Return gamepad.IsButtonDown(GamepadInput.GamepadButtonFlags.A)
-        Else
-            Return AxesStatus.getLEDJoyBtnOn()
-        End If
-    End Function
+
     Private Sub RunTwoSpotSM() 'the two spot marker state machine. In polling loop, so can send commands
         Dim ResponseLen As Integer
 
@@ -3902,7 +3935,7 @@ Public Class MainWindow
                 NextStepTxtBox.Text = ("Spot First Point")
                 SMTwoSpot.State = TSSM_GET_FIRST
             Case TSSM_GET_FIRST
-                If getInputButtonPress() Then
+                If gamepad.getInputButtonPress() Then
                     WriteLogLine("TwoSpotSM Got First")
                     NextStepTxtBox.Text = ("Got First Point")
                     SMTwoSpot.db_FirstXPos = db_C_XPos_RefB_2_RefPH(AxesStatus.db_XPos) 'translate into PH coords
@@ -3915,7 +3948,7 @@ Public Class MainWindow
                 SMTwoSpot.State = TSSM_GET_SECOND
 
             Case TSSM_GET_SECOND
-                If getInputButtonPress() Then
+                If gamepad.getInputButtonPress() Then
                     SMTwoSpot.db_SecondXPos = db_C_XPos_RefB_2_RefPH(AxesStatus.db_XPos) 'translate into PH coords
                     SMTwoSpot.db_SecondYPos = db_Ys_2_PH(AxesStatus.db_YPos) 'translate into PH coords
                     'determine box orientation and corners
@@ -3955,7 +3988,6 @@ Public Class MainWindow
                 AutoVacSquare.Visible = True
                 Vacbtn.Visible = True
                 SetTwoSpotBtn.Text = "SET TWO SPOT"
-
 
             Case TSSM_IDLE 'do nothing
 
