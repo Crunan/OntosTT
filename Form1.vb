@@ -870,10 +870,12 @@ Public Class MainWindow
         Public MustOverride Function IsConnected() As Boolean
         Public MustOverride Sub Update()
 
-        Public MustOverride Function LeftThumbstickValueChanged() As Boolean
+        Public MustOverride Function LeftThumbstickXValueChanged() As Boolean
+        Public MustOverride Function LeftThumbstickYValueChanged() As Boolean
         Public MustOverride Function RightThumbstickValueChanged() As Boolean
-        Public MustOverride Function GetLeftThumbstickPercentages() As (xPercent As String, yPercent As String)
-        Public MustOverride Function GetRightThumbstickPercentages() As (xPercent As String, yPercent As String)
+        Public MustOverride Function GetLeftThumbstickXPercentage() As String
+        Public MustOverride Function GetLeftThumbstickYPercentage() As String
+        Public MustOverride Function GetRightThumbstickPercentage() As String
         Public MustOverride Function getInputButtonPress() As Boolean
 
     End Class
@@ -888,7 +890,10 @@ Public Class MainWindow
             ' No implementation required in the NullGamepad
         End Sub
 
-        Public Overrides Function LeftThumbstickValueChanged() As Boolean
+        Public Overrides Function LeftThumbstickXValueChanged() As Boolean
+            Return False
+        End Function
+        Public Overrides Function LeftThumbstickYValueChanged() As Boolean
             Return False
         End Function
 
@@ -896,11 +901,14 @@ Public Class MainWindow
             Return False
         End Function
 
-        Public Overrides Function GetLeftThumbstickPercentages() As (xPercent As String, yPercent As String)
-            Return ("0", "0")
+        Public Overrides Function GetLeftThumbstickXPercentage() As String
+            Return "0"
         End Function
-        Public Overrides Function GetRightThumbstickPercentages() As (xPercent As String, yPercent As String)
-            Return ("0", "0")
+        Public Overrides Function GetLeftThumbstickYPercentage() As String
+            Return "0"
+        End Function
+        Public Overrides Function GetRightThumbstickPercentage() As String
+            Return "0"
         End Function
         Public Overrides Function getInputButtonPress() As Boolean
             Return MainWindow.AxesStatus.getLEDJoyBtnOn()
@@ -931,61 +939,22 @@ Public Class MainWindow
             Public Function IsPressed(button As GamepadButtonFlags) As Boolean
                 Return (Buttons And CUShort(button)) <> 0
             End Function
-
-            Public Function LeftThumbIsDiagonal() As Boolean
-                Dim leftThumb As New PointF(LeftThumbX, LeftThumbY)
-
-                Dim x As Single = Math.Abs(leftThumb.X)
-                Dim y As Single = Math.Abs(leftThumb.Y)
-                Return (x > MaxDiagonal AndAlso y > MaxDiagonal)
+            Public Function CalculateLThumbXPercent() As Integer
+                Dim total As Integer = 32767
+                Dim lThumbXPercent As Integer = CInt(LeftThumbX / total * 100)
+                Return lThumbXPercent
             End Function
-
-            Public Function CalculateLThumbPercent() As (String, String)
+            Public Function CalculateLThumbYPercent() As Integer
+                Dim total As Integer = 32767
+                Dim lThumbYPercent As Integer = CInt(LeftThumbY / total * 100)
+                Return lThumbYPercent
+            End Function
+            Public Function CalculateRThumbPercent() As Integer
                 Dim total As Integer = 65535
-                Dim range As Integer = 200
-                Dim offset As Integer = 0 '
-
-                Dim lThumbXPercent As Integer = CInt(range / total * LeftThumbX + offset)
-                Dim lThumbYPercent As Integer = CInt(range / total * LeftThumbY + offset)
-
-                Return (lThumbXPercent.ToString(), lThumbYPercent.ToString())
-            End Function
-            Public Function CalculateRThumbPercent() As (String, String)
-                Dim total As Integer = 65535
-                Dim range As Integer = 200
-                Dim offset As Integer = 0 '
-
-                Dim lThumbXPercent As Integer = CInt(range / total * RightThumbX + offset)
-                Dim lThumbYPercent As Integer = CInt(range / total * RightThumbY + offset)
-
-                Return (lThumbXPercent.ToString(), lThumbYPercent.ToString())
+                Dim rThumbYPercent As Integer = CInt(RightThumbY / total * 100)
+                Return rThumbYPercent
             End Function
 
-            Public Function LeftThumbNormalized() As PointF
-                Dim leftThumb As New PointF(LeftThumbX, LeftThumbY)
-                Dim length As Single = CSng(Math.Sqrt(Math.Pow(leftThumb.X, 2) + Math.Pow(leftThumb.Y, 2)))
-                If length > 0 Then
-                    If LeftThumbIsDiagonal() Then
-                        leftThumb.X /= length
-                        leftThumb.Y /= length
-                        leftThumb.X *= MaxDiagonal
-                        leftThumb.Y *= MaxDiagonal
-                    Else
-                        leftThumb.X /= length
-                        leftThumb.Y /= length
-                    End If
-                End If
-                Return leftThumb
-            End Function
-            Public Function RightThumbNormalized() As PointF
-                Dim rightThumb As New PointF(RightThumbX, RightThumbY)
-                Dim length As Single = CSng(Math.Sqrt(Math.Pow(rightThumb.X, 2) + Math.Pow(rightThumb.Y, 2)))
-                If length > 0 Then
-                    rightThumb.X /= length
-                    rightThumb.Y /= length
-                End If
-                Return rightThumb
-            End Function
         End Structure
 
         <Flags>
@@ -1021,32 +990,45 @@ Public Class MainWindow
             Return (result = 0)
         End Function
 
-        Private previousJoystickLThumbstick As PointF
-        Private previousJoystickRThumbstick As PointF
+        Private previousJoystickLThumbstickX As Short
+        Private previousJoystickLThumbstickY As Short
+        Private previousJoystickRPercent As Short
 
 
-        Public Overrides Function LeftThumbstickValueChanged() As Boolean
-            Dim currentThumbstick As PointF = currentState.Gamepad.LeftThumbNormalized()
-            If currentThumbstick <> previousJoystickLThumbstick Then
-                previousJoystickLThumbstick = currentThumbstick
+        Public Overrides Function LeftThumbstickXValueChanged() As Boolean
+            Dim currentThumbstickX As Short = currentState.Gamepad.CalculateLThumbXPercent
+            If currentThumbstickX <> previousJoystickLThumbstickX Then
+                previousJoystickLThumbstickX = currentThumbstickX
+                Return True
+            Else
+                Return False
+            End If
+        End Function
+        Public Overrides Function LeftThumbstickYValueChanged() As Boolean
+            Dim currentThumbstickY As Short = currentState.Gamepad.CalculateLThumbYPercent
+            If currentThumbstickY <> previousJoystickLThumbstickY Then
+                previousJoystickLThumbstickY = currentThumbstickY
                 Return True
             Else
                 Return False
             End If
         End Function
         Public Overrides Function RightThumbstickValueChanged() As Boolean
-            Dim currentThumbstick As PointF = currentState.Gamepad.RightThumbNormalized()
-            If currentThumbstick <> previousJoystickRThumbstick Then
-                previousJoystickRThumbstick = currentThumbstick
+            Dim currentThumbstick As Short = currentState.Gamepad.CalculateRThumbPercent()
+            If currentThumbstick <> previousJoystickRPercent Then
+                previousJoystickRPercent = currentThumbstick
                 Return True
             Else
                 Return False
             End If
         End Function
-        Public Overrides Function GetLeftThumbstickPercentages() As (xPercent As String, yPercent As String)
-            Return currentState.Gamepad.CalculateLThumbPercent()
+        Public Overrides Function GetLeftThumbstickXPercentage() As String
+            Return currentState.Gamepad.CalculateLThumbXPercent()
         End Function
-        Public Overrides Function GetRightThumbstickPercentages() As (xPercent As String, yPercent As String)
+        Public Overrides Function GetLeftThumbstickYPercentage() As String
+            Return currentState.Gamepad.CalculateLThumbYPercent()
+        End Function
+        Public Overrides Function GetRightThumbstickPercentage() As String
             Return currentState.Gamepad.CalculateRThumbPercent()
         End Function
         Public Overrides Sub Update()
@@ -1063,12 +1045,6 @@ Public Class MainWindow
             Return (IsButtonDown(button) AndAlso Not IsButtonDown(button))
         End Function
 
-        Public Function GetLeftThumbstick() As PointF
-            Return currentState.Gamepad.LeftThumbNormalized()
-        End Function
-        Public Function GetRightThumbstick() As PointF
-            Return currentState.Gamepad.RightThumbNormalized()
-        End Function
     End Class
     Public Function isTwoSpotOn() As Boolean
         If SMTwoSpot.State > TSSM_IDLE Then
@@ -1106,16 +1082,21 @@ Public Class MainWindow
         Return (-1 * CInt(valueToFlip)).ToString()
     End Function
     Public Function MoveStageWithJoy() As PointF
-        Dim result As (xPercent As String, yPercent As String) = gamepad.GetLeftThumbstickPercentages()
-        Dim result2 As (xPercent As String, yPercent As String) = gamepad.GetRightThumbstickPercentages()
+        Dim resultX As String = gamepad.GetLeftThumbstickXPercentage()
+        Dim resultY As String = gamepad.GetLeftThumbstickYPercentage()
+        Dim resultz As String = gamepad.GetRightThumbstickPercentage()
 
-        If gamepad.LeftThumbstickValueChanged() Then
-            VirtualJoyMove(Axis.X, result.xPercent)
-            VirtualJoyMove(Axis.Y, flipMySign(result.yPercent))
+        If gamepad.LeftThumbstickXValueChanged() Then
+            VirtualJoyMove(Axis.X, resultX)
         End If
 
+        If gamepad.LeftThumbstickYValueChanged() Then
+            VirtualJoyMove(Axis.Y, flipMySign(resultY))
+        End If
+
+
         If gamepad.RightThumbstickValueChanged() Then
-            VirtualJoyMove(Axis.Z, result2.yPercent)
+            VirtualJoyMove(Axis.Z, resultz)
         End If
 
     End Function
@@ -2183,7 +2164,6 @@ Public Class MainWindow
 
         'Check the 3-Axis LED states to determine if: doors are open, Joystick button is depressed, Valve 2 is open (Substrate Purge).
         AxesStatus.b_DoorsOpen = b_IsBitSet(AxesStatus.LEDStates, 6) '//VBWord bit 6 (STOP LED)
-        AxesStatus.setLEDJoyBtnOn(b_IsBitSet(AxesStatus.LEDStates, 14)) '//VBWord bit 14 (NO LED) 
         AxesStatus.b_LEDVacOn = b_IsBitSet(AxesStatus.LEDStates, 12) 'LED_VALVE_3
         AxesStatus.b_LEDN2PurgeOn = b_IsBitSet(AxesStatus.LEDStates, 11) 'LED_VALVE_2
         'if CLaser.State = CLSM_ACTIVATE then AxesStatus.b_CollisionActive = b_IsBitSet(AxesStatus.LEDStates, 8) 'EXT_IN_2
