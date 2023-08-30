@@ -1864,7 +1864,7 @@ Public Class MainWindow
             If b_batchActive = True Then
                 BatchIDTextBox.Visible = True
                 BatchLoggingBTN.Visible = True
-                Form4.BatchChkBox.Checked = True
+                SettingsWindow.BatchChkBox.Checked = True
                 b_togglebatchIDLogging = True 'this is the flag to set Batch ID on/off 
             End If
         End If
@@ -2310,7 +2310,7 @@ Public Class MainWindow
 
         'Get Controller Status        
         If gamepad IsNot Nothing Then
-            If gamepad.isConnected() = False Then
+            If gamepad.IsConnected() = False Then
                 contollerONSquare.BackColor = Color.Gainsboro
             End If
         End If
@@ -3030,20 +3030,20 @@ Public Class MainWindow
                     st_AutoScanSave = st_RecipeParamValue
                     If st_AutoScanSave = "1" Then
                         b_autoScanActive = True
-                        Form4.AutoScanChkBox.Checked = True
+                        SettingsWindow.AutoScanChkBox.Checked = True
                         b_toggleAutoScan = True
                     Else
                         b_autoScanActive = False
-                        Form4.AutoScanChkBox.Checked = False
+                        SettingsWindow.AutoScanChkBox.Checked = False
                     End If
                 Case "HEATER"
                     st_HasHeatSave = st_RecipeParamValue
                     If st_HasHeatSave = "1" Then
                         b_heaterActive = True
                         b_toggleHeater = True
-                        Form4.PreheatChkBox.Checked = True
+                        SettingsWindow.PreheatChkBox.Checked = True
                     Else
-                        Form4.PreheatChkBox.Checked = False
+                        SettingsWindow.PreheatChkBox.Checked = False
                     End If
                 Case Else
 
@@ -3253,7 +3253,7 @@ Public Class MainWindow
 
     Private Sub Launch_Settings(sender As Object, e As EventArgs) Handles SettingsBtn.Click
         'All recipe settings, except for Batchlogging which is set on the tool.
-        Form4.ShowDialog()
+        SettingsWindow.ShowDialog()
     End Sub
 
     Private Function b_IsBitSet(TestInt As Integer, BitPos As Integer) As Boolean
@@ -3439,8 +3439,8 @@ Public Class MainWindow
         N2Purgebtn.Visible = False
 
         'Recipe Settings TURN OFF 
-        Form4.AutoScanChkBox.Enabled = False
-        Form4.CollisionCheckbox.Enabled = False
+        SettingsWindow.AutoScanChkBox.Enabled = False
+        SettingsWindow.CollisionCheckbox.Enabled = False
 
         'Com Port
         Com_Port_Label.Visible = False
@@ -3501,7 +3501,7 @@ Public Class MainWindow
         N2Purgebtn.Visible = True
 
         'Recipe Settings TURN ON 
-        Form4.AutoScanChkBox.Enabled = True
+        SettingsWindow.AutoScanChkBox.Enabled = True
         'form4.CollisionCheckBox.enabled = true 'disabled for amazon shipment 
 
         'Com Port

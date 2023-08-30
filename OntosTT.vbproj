@@ -125,10 +125,10 @@
     <Compile Include="DiameterWindow.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form4.Designer.vb">
-      <DependentUpon>Form4.vb</DependentUpon>
+    <Compile Include="SettingsWindow.Designer.vb">
+      <DependentUpon>SettingsWindow.vb</DependentUpon>
     </Compile>
-    <Compile Include="Form4.vb">
+    <Compile Include="SettingsWindow.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="CascadingRecipesDialog.Designer.vb">
@@ -165,12 +165,6 @@
     <Compile Include="picture box.vb">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Timer.Designer.vb">
-      <DependentUpon>Timer.vb</DependentUpon>
-    </Compile>
-    <Compile Include="Timer.vb">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="UserControl1.Designer.vb">
       <DependentUpon>UserControl1.vb</DependentUpon>
     </Compile>
@@ -204,8 +198,8 @@
     <EmbeddedResource Include="DiameterWindow.resx">
       <DependentUpon>DiameterWindow.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form4.resx">
-      <DependentUpon>Form4.vb</DependentUpon>
+    <EmbeddedResource Include="SettingsWindow.resx">
+      <DependentUpon>SettingsWindow.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CascadingRecipesDialog.resx">
       <DependentUpon>CascadingRecipesDialog.vb</DependentUpon>
