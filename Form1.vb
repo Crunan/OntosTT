@@ -2881,7 +2881,7 @@ Public Class MainWindow
     End Sub
     Private Sub BuildRecipeToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles BuildRecipeToolStripMenuItem.Click
         'All recipe settings, except for Batchlogging which is set on the tool.
-        CascadingRecipesDialog.ShowDialog()
+        CascadingRecipesWindow.ShowDialog()
     End Sub
     Private Sub OpenCascadeRecipeToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles OpenCascadeRecipeToolStripMenuItem.Click
         ' Displays an OpenFileDialog so the user can select a Recipe       
@@ -2896,7 +2896,7 @@ Public Class MainWindow
         ' a .crcp file was selected, open it.
         If openCascadeRecipeFileDialog1.ShowDialog() = DialogResult.OK Then
             'New cascade recipe loaded, clear recipes in box if any exist and reset casrecipenumber.
-            CascadingRecipesDialog.CascadeRecipeListBox.Items.Clear()
+            CascadingRecipesWindow.CascadeRecipeListBox.Items.Clear()
             CasRecipeNumber = 0
             'Get selected recipe and store info
             st_CascadeRecipeFileName = openCascadeRecipeFileDialog1.SafeFileName
@@ -2912,7 +2912,7 @@ Public Class MainWindow
                 line = sr.ReadLine
 
                 While line <> ""
-                    CascadingRecipesDialog.CascadeRecipeListBox.Items.Add(line)
+                    CascadingRecipesWindow.CascadeRecipeListBox.Items.Add(line)
                     line = sr.ReadLine
                 End While
                 sr.Close()
@@ -2936,7 +2936,7 @@ Public Class MainWindow
         If openFileDialog1.ShowDialog() = DialogResult.OK Then
 
             'Clear the Cascade list because we assume user doesnt want cascade recipe now
-            CascadingRecipesDialog.CascadeRecipeListBox.Items.Clear()
+            CascadingRecipesWindow.CascadeRecipeListBox.Items.Clear()
             CasRecipeNumber = 0
             st_RecipeFileName = openFileDialog1.SafeFileName
             st_RecipeFileName = st_RecipeFileName.Substring(0, st_RecipeFileName.Length - 4) 'strip off '.rcp'            
@@ -2952,9 +2952,9 @@ Public Class MainWindow
         Dim intval As Integer
 
         'If we have a value in the cascade list, then we are RUNNING CASCADED RECIPES
-        If CascadingRecipesDialog.CascadeRecipeListBox.Items.Count > 1 Then
-            st_RecipeFileName = CascadingRecipesDialog.CascadeRecipeListBox.Items(CasRecipeNumber)
-            st_RecipePathFileName = st_RecipePath & CascadingRecipesDialog.CascadeRecipeListBox.Items(CasRecipeNumber) & ".rcp"
+        If CascadingRecipesWindow.CascadeRecipeListBox.Items.Count > 1 Then
+            st_RecipeFileName = CascadingRecipesWindow.CascadeRecipeListBox.Items(CasRecipeNumber)
+            st_RecipePathFileName = st_RecipePath & CascadingRecipesWindow.CascadeRecipeListBox.Items(CasRecipeNumber) & ".rcp"
         End If
 
         ' Open the file using a stream reader.
@@ -4253,7 +4253,7 @@ Public Class MainWindow
                     End If
 
                     'If a cascaded recipe was used then run the next recipe
-                    If CascadingRecipesDialog.CascadeRecipeListBox.Items.Count - 1 > CasRecipeNumber Then
+                    If CascadingRecipesWindow.CascadeRecipeListBox.Items.Count - 1 > CasRecipeNumber Then
                         'This increments in order to keep track of which recipe we are on in the cascade recipe.
                         CasRecipeNumber += 1
                         'This is to make sure we start the scan automatically
