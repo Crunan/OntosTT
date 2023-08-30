@@ -81,6 +81,8 @@ Public Class MainWindow
         Dim MFC_LABEL_2 As String
         Dim MFC_LABEL_3 As String
         Dim MFC_LABEL_4 As String
+        Dim MFC_LABEL_5 As String
+        Dim MFC_LABEL_6 As String
         Dim KNOWN_COM_PORT As String 'stores the last known com port
 
     End Structure
@@ -1209,6 +1211,8 @@ Public Class MainWindow
         EnterButtons.Add(Set_MFC_2_Recipe_Button)
         EnterButtons.Add(Set_MFC_3_Recipe_Button)
         EnterButtons.Add(Set_MFC_4_Recipe_Button)
+        EnterButtons.Add(Set_MFC_5_Recipe_Button)
+        EnterButtons.Add(Set_MFC_6_Recipe_Button)
         EnterButtons.Add(SetRecipeWattsBtn)
         EnterButtons.Add(SetRecipeTunerBtn)
 
@@ -1527,6 +1531,42 @@ Public Class MainWindow
             SetGUILoadProgressBars(4, DoubVal)
             MFCRecipeFlow(4).Text = DoubVal.ToString("F3")
             MFC(4).b_MFCLoadRecipeFlow = True
+        Else
+            Return
+        End If
+
+    End Sub
+    Private Sub MFC_5_Text_In_Button_Click(sender As Object, e As EventArgs) Handles Set_MFC_5_Recipe_Button.Click
+        Dim StrVar As String
+        Dim DoubVal As Double
+        Dim range As Double = MFC(5).GetRange()
+
+        StrVar = InputBox("Format x.xxx (max value: " & range & ")", "MFC_5 Enter Flow Value", "")
+        If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
+            If StrVar = "" Or StrVar.Length > 5 Then Return
+            DoubVal = Convert.ToDouble(StrVar) 'Convert the string value to a floating point
+            If DoubVal > MFC(5).GetRange() Or DoubVal < 0 Then Return
+            SetGUILoadProgressBars(5, DoubVal)
+            MFCRecipeFlow(5).Text = DoubVal.ToString("F")
+            MFC(5).b_MFCLoadRecipeFlow = True
+        Else
+            Return
+        End If
+
+    End Sub
+    Private Sub MFC_6_Text_In_Button_Click(sender As Object, e As EventArgs) Handles Set_MFC_6_Recipe_Button.Click
+        Dim StrVar As String
+        Dim DoubVal As Double
+        Dim range As Double = MFC(6).GetRange()
+
+        StrVar = InputBox("Format x.xxx (max value: " & range & ")", "MFC_6 Enter Flow Value", "")
+        If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
+            If StrVar = "" Or StrVar.Length > 5 Then Return
+            DoubVal = Convert.ToDouble(StrVar) 'Convert the string value to a floating point
+            If DoubVal > MFC(6).GetRange() Or DoubVal < 0 Then Return
+            SetGUILoadProgressBars(6, DoubVal)
+            MFCRecipeFlow(6).Text = DoubVal.ToString("F")
+            MFC(6).b_MFCLoadRecipeFlow = True
         Else
             Return
         End If
@@ -2575,7 +2615,7 @@ Public Class MainWindow
             b_Step_MB_SM_Right = False
         End If
 
-        For Index = 1 To 4 'check to see if new Recipe Flows are Entered
+        For Index = 1 To NumMFC 'check to see if new Recipe Flows are Entered
             If MFC(Index).b_MFCLoadRecipeFlow = True Then
                 FltVar = CDbl(MFCRecipeFlow(Index).Text) 'convert the contents of the text-box to float
                 If FltVar < 0.0 Then                           'Or FltVar > MFC(Index).db_Range Then
@@ -2781,6 +2821,12 @@ Public Class MainWindow
                 Case "MFC_LABEL_4"
                     Exe_Cfg.MFC_LABEL_4 = ExeConfigParamValue
                     MFC_4_Label.Text = Exe_Cfg.MFC_LABEL_4
+                Case "MFC_LABEL_5"
+                    Exe_Cfg.MFC_LABEL_5 = ExeConfigParamValue
+                    MFC_5_Label.Text = Exe_Cfg.MFC_LABEL_5
+                Case "MFC_LABEL_6"
+                    Exe_Cfg.MFC_LABEL_6 = ExeConfigParamValue
+                    MFC_6_Label.Text = Exe_Cfg.MFC_LABEL_6
                 Case "KNOWN_COM_PORT"
                     Exe_Cfg.KNOWN_COM_PORT = ExeConfigParamValue
                     st_KnownComPort = Exe_Cfg.KNOWN_COM_PORT
@@ -2941,6 +2987,12 @@ Public Class MainWindow
                 Case "MFC4"
                     MFC_4_Recipe_Flow.Text = st_RecipeParamValue
                     SetGUILoadProgressBars(4, st_RecipeParamValue)
+                Case "MFC5"
+                    MFC_5_Recipe_Flow.Text = st_RecipeParamValue
+                    SetGUILoadProgressBars(5, st_RecipeParamValue)
+                Case "MFC6"
+                    MFC_6_Recipe_Flow.Text = st_RecipeParamValue
+                    SetGUILoadProgressBars(6, st_RecipeParamValue)
                 Case "PWR"
                     RecipeWattsTxt.Text = st_RecipeParamValue
                 Case "TUNER"
@@ -3004,6 +3056,8 @@ Public Class MainWindow
         MFC(2).b_MFCLoadRecipeFlow = True
         MFC(3).b_MFCLoadRecipeFlow = True
         MFC(4).b_MFCLoadRecipeFlow = True
+        MFC(5).b_MFCLoadRecipeFlow = True
+        MFC(6).b_MFCLoadRecipeFlow = True
         RF.b_LoadRecipePower = True 'signal main loop to load the new RF Power
         TUNER.b_LoadTunerPos = True 'signal main loop to load the new Tuner Start Position
         'Enable the Plasma button since we HAVE A RECIPE NOW
@@ -3040,6 +3094,7 @@ Public Class MainWindow
         'build the Recipe from current data
         st_RecipeString = "<MFC1>" + MFC_1_Recipe_Flow.Text + vbCrLf + "<MFC2>" + MFC_2_Recipe_Flow.Text + vbCrLf +
                        "<MFC3>" + MFC_3_Recipe_Flow.Text + vbCrLf + "<MFC4>" + MFC_4_Recipe_Flow.Text + vbCrLf +
+                       "<MFC5>" + MFC_5_Recipe_Flow.Text + vbCrLf + "<MFC6>" + MFC_6_Recipe_Flow.Text + vbCrLf +
                        "<PWR>" + RecipeWattsTxt.Text + vbCrLf + "<TUNER>" + RecipeTunerTxt.Text + vbCrLf +
                        "<THICKNESS>" + RecipeThicknessTxt.Text + vbCrLf + "<GAP>" + RecipeGapTxt.Text + vbCrLf +
                        "<OVERLAP>" + RecipeOverLapTxt.Text + vbCrLf + "<SPEED>" + RecipeSpeedTxt.Text + vbCrLf +
@@ -3082,6 +3137,7 @@ Public Class MainWindow
         'build the Recipe from current data
         st_RecipeString = "<MFC1>" + MFC_1_Recipe_Flow.Text + vbCrLf + "<MFC2>" + MFC_2_Recipe_Flow.Text + vbCrLf +
                        "<MFC3>" + MFC_3_Recipe_Flow.Text + vbCrLf + "<MFC4>" + MFC_4_Recipe_Flow.Text + vbCrLf +
+                       "<MFC5>" + MFC_5_Recipe_Flow.Text + vbCrLf + "<MFC6>" + MFC_6_Recipe_Flow.Text + vbCrLf +
                        "<PWR>" + RecipeWattsTxt.Text + vbCrLf + "<TUNER>" + RecipeTunerTxt.Text + vbCrLf +
                        "<THICKNESS>" + RecipeThicknessTxt.Text + vbCrLf + "<GAP>" + RecipeGapTxt.Text + vbCrLf +
                        "<OVERLAP>" + RecipeOverLapTxt.Text + vbCrLf + "<SPEED>" + RecipeSpeedTxt.Text + vbCrLf +
@@ -3113,9 +3169,6 @@ Public Class MainWindow
             ServiceToolStripMenuItem.Visible = False
             EnableServiceMenuToolStripMenuItem.Text = "Enable Service Menu"
         End If
-    End Sub
-    Private Sub AboutToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AboutToolStripMenuItem.Click
-        AboutBox1.Show()
     End Sub
 
     Private Sub EngineerModeToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles EngineerModeToolStripMenuItem.Click
