@@ -165,30 +165,6 @@
     <Compile Include="picture box.vb">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UserControl1.Designer.vb">
-      <DependentUpon>UserControl1.vb</DependentUpon>
-    </Compile>
-    <Compile Include="UserControl1.vb">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UserControl2.Designer.vb">
-      <DependentUpon>UserControl2.vb</DependentUpon>
-    </Compile>
-    <Compile Include="UserControl2.vb">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UserControl4.Designer.vb">
-      <DependentUpon>UserControl4.vb</DependentUpon>
-    </Compile>
-    <Compile Include="UserControl4.vb">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UserControl5.Designer.vb">
-      <DependentUpon>UserControl5.vb</DependentUpon>
-    </Compile>
-    <Compile Include="UserControl5.vb">
-      <SubType>UserControl</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Form1.resx">
