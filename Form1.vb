@@ -81,6 +81,8 @@ Public Class MainWindow
         Dim MFC_LABEL_2 As String
         Dim MFC_LABEL_3 As String
         Dim MFC_LABEL_4 As String
+        Dim MFC_LABEL_5 As String
+        Dim MFC_LABEL_6 As String
         Dim KNOWN_COM_PORT As String 'stores the last known com port
 
     End Structure
@@ -1209,6 +1211,8 @@ Public Class MainWindow
         EnterButtons.Add(Set_MFC_2_Recipe_Button)
         EnterButtons.Add(Set_MFC_3_Recipe_Button)
         EnterButtons.Add(Set_MFC_4_Recipe_Button)
+        EnterButtons.Add(Set_MFC_5_Recipe_Button)
+        EnterButtons.Add(Set_MFC_6_Recipe_Button)
         EnterButtons.Add(SetRecipeWattsBtn)
         EnterButtons.Add(SetRecipeTunerBtn)
 
@@ -1532,6 +1536,42 @@ Public Class MainWindow
         End If
 
     End Sub
+    Private Sub MFC_5_Text_In_Button_Click(sender As Object, e As EventArgs) Handles Set_MFC_5_Recipe_Button.Click
+        Dim StrVar As String
+        Dim DoubVal As Double
+        Dim range As Double = MFC(5).GetRange()
+
+        StrVar = InputBox("Format x.xxx (max value: " & range & ")", "MFC_5 Enter Flow Value", "")
+        If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
+            If StrVar = "" Or StrVar.Length > 5 Then Return
+            DoubVal = Convert.ToDouble(StrVar) 'Convert the string value to a floating point
+            If DoubVal > MFC(5).GetRange() Or DoubVal < 0 Then Return
+            SetGUILoadProgressBars(5, DoubVal)
+            MFCRecipeFlow(5).Text = DoubVal.ToString("F")
+            MFC(5).b_MFCLoadRecipeFlow = True
+        Else
+            Return
+        End If
+
+    End Sub
+    Private Sub MFC_6_Text_In_Button_Click(sender As Object, e As EventArgs) Handles Set_MFC_6_Recipe_Button.Click
+        Dim StrVar As String
+        Dim DoubVal As Double
+        Dim range As Double = MFC(6).GetRange()
+
+        StrVar = InputBox("Format x.xxx (max value: " & range & ")", "MFC_6 Enter Flow Value", "")
+        If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
+            If StrVar = "" Or StrVar.Length > 5 Then Return
+            DoubVal = Convert.ToDouble(StrVar) 'Convert the string value to a floating point
+            If DoubVal > MFC(6).GetRange() Or DoubVal < 0 Then Return
+            SetGUILoadProgressBars(6, DoubVal)
+            MFCRecipeFlow(6).Text = DoubVal.ToString("F")
+            MFC(6).b_MFCLoadRecipeFlow = True
+        Else
+            Return
+        End If
+
+    End Sub
     Private Sub SetRecipeWattsBtn_Click(sender As Object, e As EventArgs) Handles SetRecipeWattsBtn.Click
         Dim StrVar As String
         Dim IntVal As Integer
@@ -1824,7 +1864,7 @@ Public Class MainWindow
             If b_batchActive = True Then
                 BatchIDTextBox.Visible = True
                 BatchLoggingBTN.Visible = True
-                Form4.BatchChkBox.Checked = True
+                SettingsWindow.BatchChkBox.Checked = True
                 b_togglebatchIDLogging = True 'this is the flag to set Batch ID on/off 
             End If
         End If
@@ -2270,7 +2310,7 @@ Public Class MainWindow
 
         'Get Controller Status        
         If gamepad IsNot Nothing Then
-            If gamepad.isConnected() = False Then
+            If gamepad.IsConnected() = False Then
                 contollerONSquare.BackColor = Color.Gainsboro
             End If
         End If
@@ -2575,7 +2615,7 @@ Public Class MainWindow
             b_Step_MB_SM_Right = False
         End If
 
-        For Index = 1 To 4 'check to see if new Recipe Flows are Entered
+        For Index = 1 To NumMFC 'check to see if new Recipe Flows are Entered
             If MFC(Index).b_MFCLoadRecipeFlow = True Then
                 FltVar = CDbl(MFCRecipeFlow(Index).Text) 'convert the contents of the text-box to float
                 If FltVar < 0.0 Then                           'Or FltVar > MFC(Index).db_Range Then
@@ -2781,6 +2821,12 @@ Public Class MainWindow
                 Case "MFC_LABEL_4"
                     Exe_Cfg.MFC_LABEL_4 = ExeConfigParamValue
                     MFC_4_Label.Text = Exe_Cfg.MFC_LABEL_4
+                Case "MFC_LABEL_5"
+                    Exe_Cfg.MFC_LABEL_5 = ExeConfigParamValue
+                    MFC_5_Label.Text = Exe_Cfg.MFC_LABEL_5
+                Case "MFC_LABEL_6"
+                    Exe_Cfg.MFC_LABEL_6 = ExeConfigParamValue
+                    MFC_6_Label.Text = Exe_Cfg.MFC_LABEL_6
                 Case "KNOWN_COM_PORT"
                     Exe_Cfg.KNOWN_COM_PORT = ExeConfigParamValue
                     st_KnownComPort = Exe_Cfg.KNOWN_COM_PORT
@@ -2835,7 +2881,7 @@ Public Class MainWindow
     End Sub
     Private Sub BuildRecipeToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles BuildRecipeToolStripMenuItem.Click
         'All recipe settings, except for Batchlogging which is set on the tool.
-        CascadingRecipesDialog.ShowDialog()
+        CascadingRecipesWindow.ShowDialog()
     End Sub
     Private Sub OpenCascadeRecipeToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles OpenCascadeRecipeToolStripMenuItem.Click
         ' Displays an OpenFileDialog so the user can select a Recipe       
@@ -2850,7 +2896,7 @@ Public Class MainWindow
         ' a .crcp file was selected, open it.
         If openCascadeRecipeFileDialog1.ShowDialog() = DialogResult.OK Then
             'New cascade recipe loaded, clear recipes in box if any exist and reset casrecipenumber.
-            CascadingRecipesDialog.CascadeRecipeListBox.Items.Clear()
+            CascadingRecipesWindow.CascadeRecipeListBox.Items.Clear()
             CasRecipeNumber = 0
             'Get selected recipe and store info
             st_CascadeRecipeFileName = openCascadeRecipeFileDialog1.SafeFileName
@@ -2866,7 +2912,7 @@ Public Class MainWindow
                 line = sr.ReadLine
 
                 While line <> ""
-                    CascadingRecipesDialog.CascadeRecipeListBox.Items.Add(line)
+                    CascadingRecipesWindow.CascadeRecipeListBox.Items.Add(line)
                     line = sr.ReadLine
                 End While
                 sr.Close()
@@ -2890,7 +2936,7 @@ Public Class MainWindow
         If openFileDialog1.ShowDialog() = DialogResult.OK Then
 
             'Clear the Cascade list because we assume user doesnt want cascade recipe now
-            CascadingRecipesDialog.CascadeRecipeListBox.Items.Clear()
+            CascadingRecipesWindow.CascadeRecipeListBox.Items.Clear()
             CasRecipeNumber = 0
             st_RecipeFileName = openFileDialog1.SafeFileName
             st_RecipeFileName = st_RecipeFileName.Substring(0, st_RecipeFileName.Length - 4) 'strip off '.rcp'            
@@ -2906,9 +2952,9 @@ Public Class MainWindow
         Dim intval As Integer
 
         'If we have a value in the cascade list, then we are RUNNING CASCADED RECIPES
-        If CascadingRecipesDialog.CascadeRecipeListBox.Items.Count > 1 Then
-            st_RecipeFileName = CascadingRecipesDialog.CascadeRecipeListBox.Items(CasRecipeNumber)
-            st_RecipePathFileName = st_RecipePath & CascadingRecipesDialog.CascadeRecipeListBox.Items(CasRecipeNumber) & ".rcp"
+        If CascadingRecipesWindow.CascadeRecipeListBox.Items.Count > 1 Then
+            st_RecipeFileName = CascadingRecipesWindow.CascadeRecipeListBox.Items(CasRecipeNumber)
+            st_RecipePathFileName = st_RecipePath & CascadingRecipesWindow.CascadeRecipeListBox.Items(CasRecipeNumber) & ".rcp"
         End If
 
         ' Open the file using a stream reader.
@@ -2941,6 +2987,12 @@ Public Class MainWindow
                 Case "MFC4"
                     MFC_4_Recipe_Flow.Text = st_RecipeParamValue
                     SetGUILoadProgressBars(4, st_RecipeParamValue)
+                Case "MFC5"
+                    MFC_5_Recipe_Flow.Text = st_RecipeParamValue
+                    SetGUILoadProgressBars(5, st_RecipeParamValue)
+                Case "MFC6"
+                    MFC_6_Recipe_Flow.Text = st_RecipeParamValue
+                    SetGUILoadProgressBars(6, st_RecipeParamValue)
                 Case "PWR"
                     RecipeWattsTxt.Text = st_RecipeParamValue
                 Case "TUNER"
@@ -2978,20 +3030,20 @@ Public Class MainWindow
                     st_AutoScanSave = st_RecipeParamValue
                     If st_AutoScanSave = "1" Then
                         b_autoScanActive = True
-                        Form4.AutoScanChkBox.Checked = True
+                        SettingsWindow.AutoScanChkBox.Checked = True
                         b_toggleAutoScan = True
                     Else
                         b_autoScanActive = False
-                        Form4.AutoScanChkBox.Checked = False
+                        SettingsWindow.AutoScanChkBox.Checked = False
                     End If
                 Case "HEATER"
                     st_HasHeatSave = st_RecipeParamValue
                     If st_HasHeatSave = "1" Then
                         b_heaterActive = True
                         b_toggleHeater = True
-                        Form4.PreheatChkBox.Checked = True
+                        SettingsWindow.PreheatChkBox.Checked = True
                     Else
-                        Form4.PreheatChkBox.Checked = False
+                        SettingsWindow.PreheatChkBox.Checked = False
                     End If
                 Case Else
 
@@ -3004,6 +3056,8 @@ Public Class MainWindow
         MFC(2).b_MFCLoadRecipeFlow = True
         MFC(3).b_MFCLoadRecipeFlow = True
         MFC(4).b_MFCLoadRecipeFlow = True
+        MFC(5).b_MFCLoadRecipeFlow = True
+        MFC(6).b_MFCLoadRecipeFlow = True
         RF.b_LoadRecipePower = True 'signal main loop to load the new RF Power
         TUNER.b_LoadTunerPos = True 'signal main loop to load the new Tuner Start Position
         'Enable the Plasma button since we HAVE A RECIPE NOW
@@ -3040,6 +3094,7 @@ Public Class MainWindow
         'build the Recipe from current data
         st_RecipeString = "<MFC1>" + MFC_1_Recipe_Flow.Text + vbCrLf + "<MFC2>" + MFC_2_Recipe_Flow.Text + vbCrLf +
                        "<MFC3>" + MFC_3_Recipe_Flow.Text + vbCrLf + "<MFC4>" + MFC_4_Recipe_Flow.Text + vbCrLf +
+                       "<MFC5>" + MFC_5_Recipe_Flow.Text + vbCrLf + "<MFC6>" + MFC_6_Recipe_Flow.Text + vbCrLf +
                        "<PWR>" + RecipeWattsTxt.Text + vbCrLf + "<TUNER>" + RecipeTunerTxt.Text + vbCrLf +
                        "<THICKNESS>" + RecipeThicknessTxt.Text + vbCrLf + "<GAP>" + RecipeGapTxt.Text + vbCrLf +
                        "<OVERLAP>" + RecipeOverLapTxt.Text + vbCrLf + "<SPEED>" + RecipeSpeedTxt.Text + vbCrLf +
@@ -3082,6 +3137,7 @@ Public Class MainWindow
         'build the Recipe from current data
         st_RecipeString = "<MFC1>" + MFC_1_Recipe_Flow.Text + vbCrLf + "<MFC2>" + MFC_2_Recipe_Flow.Text + vbCrLf +
                        "<MFC3>" + MFC_3_Recipe_Flow.Text + vbCrLf + "<MFC4>" + MFC_4_Recipe_Flow.Text + vbCrLf +
+                       "<MFC5>" + MFC_5_Recipe_Flow.Text + vbCrLf + "<MFC6>" + MFC_6_Recipe_Flow.Text + vbCrLf +
                        "<PWR>" + RecipeWattsTxt.Text + vbCrLf + "<TUNER>" + RecipeTunerTxt.Text + vbCrLf +
                        "<THICKNESS>" + RecipeThicknessTxt.Text + vbCrLf + "<GAP>" + RecipeGapTxt.Text + vbCrLf +
                        "<OVERLAP>" + RecipeOverLapTxt.Text + vbCrLf + "<SPEED>" + RecipeSpeedTxt.Text + vbCrLf +
@@ -3196,7 +3252,7 @@ Public Class MainWindow
 
     Private Sub Launch_Settings(sender As Object, e As EventArgs) Handles SettingsBtn.Click
         'All recipe settings, except for Batchlogging which is set on the tool.
-        Form4.ShowDialog()
+        SettingsWindow.ShowDialog()
     End Sub
 
     Private Function b_IsBitSet(TestInt As Integer, BitPos As Integer) As Boolean
@@ -3382,8 +3438,8 @@ Public Class MainWindow
         N2Purgebtn.Visible = False
 
         'Recipe Settings TURN OFF 
-        Form4.AutoScanChkBox.Enabled = False
-        Form4.CollisionCheckbox.Enabled = False
+        SettingsWindow.AutoScanChkBox.Enabled = False
+        SettingsWindow.CollisionCheckbox.Enabled = False
 
         'Com Port
         Com_Port_Label.Visible = False
@@ -3444,7 +3500,7 @@ Public Class MainWindow
         N2Purgebtn.Visible = True
 
         'Recipe Settings TURN ON 
-        Form4.AutoScanChkBox.Enabled = True
+        SettingsWindow.AutoScanChkBox.Enabled = True
         'form4.CollisionCheckBox.enabled = true 'disabled for amazon shipment 
 
         'Com Port
@@ -4196,7 +4252,7 @@ Public Class MainWindow
                     End If
 
                     'If a cascaded recipe was used then run the next recipe
-                    If CascadingRecipesDialog.CascadeRecipeListBox.Items.Count - 1 > CasRecipeNumber Then
+                    If CascadingRecipesWindow.CascadeRecipeListBox.Items.Count - 1 > CasRecipeNumber Then
                         'This increments in order to keep track of which recipe we are on in the cascade recipe.
                         CasRecipeNumber += 1
                         'This is to make sure we start the scan automatically
