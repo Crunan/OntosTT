@@ -3114,10 +3114,6 @@ Public Class MainWindow
             EnableServiceMenuToolStripMenuItem.Text = "Enable Service Menu"
         End If
     End Sub
-    Private Sub AboutToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AboutToolStripMenuItem.Click
-        AboutBox1.Show()
-    End Sub
-
     Private Sub EngineerModeToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles EngineerModeToolStripMenuItem.Click
         Dim StrVar As String
 
