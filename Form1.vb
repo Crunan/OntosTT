@@ -359,11 +359,13 @@ Public Class MainWindow
     Dim NumMFC As Integer = 0
     Structure MFController
         Dim db_ActualFlow As Double
-        Dim db_RecipeFlow As Double
         Dim db_LoadedFlow As Double
         Dim db_Range As Double
         Dim b_MFCLoadRecipeFlow As Boolean
 
+        Public Sub SetRange(value As Double)
+            db_Range = value
+        End Sub
         Public Sub SetActualFlow(ByVal flow As Double)
             db_ActualFlow = flow
         End Sub
@@ -396,7 +398,7 @@ Public Class MainWindow
         End Function
 
     End Structure
-    Dim MFC(4) As MFController
+    Dim MFC(6) As MFController
     'Collision Laser Management
     Structure CLASERSM
         Dim State As Integer
@@ -772,11 +774,12 @@ Public Class MainWindow
     Dim MFC2LoadedProgressText As New Collection
     Dim MFC3LoadedProgressText As New Collection
     Dim MFC4LoadedProgressText As New Collection
+    Dim MFC5LoadedProgressText As New Collection
+    Dim MFC6LoadedProgressText As New Collection
 
     Dim MFCActualFlow As New Collection
     Dim MFCRecipeFlow As New Collection
     Dim MFCLoadedFlow As New Collection
-    Dim MFCRange As New Collection
     Dim MFCTextButton As New Collection
 
     ' State Machine Cases
@@ -1145,36 +1148,36 @@ Public Class MainWindow
         MFCActualFlow.Add(MFC_2_Read_Flow)
         MFCActualFlow.Add(MFC_3_Read_Flow)
         MFCActualFlow.Add(MFC_4_Read_Flow)
+        MFCActualFlow.Add(MFC_5_Read_Flow)
+        MFCActualFlow.Add(MFC_6_Read_Flow)
 
         MFCRecipeFlow.Add(MFC_1_Recipe_Flow)
         MFCRecipeFlow.Add(MFC_2_Recipe_Flow)
         MFCRecipeFlow.Add(MFC_3_Recipe_Flow)
         MFCRecipeFlow.Add(MFC_4_Recipe_Flow)
-
-        MFCLoadedFlow.Add(MFC_1_Loaded_Flow)
-        MFCLoadedFlow.Add(MFC_2_Loaded_Flow)
-        MFCLoadedFlow.Add(MFC_3_Loaded_Flow)
-        MFCLoadedFlow.Add(MFC_4_Loaded_Flow)
-
-        MFCRange.Add(MFC_1_Read_Range)
-        MFCRange.Add(MFC_2_Read_Range)
-        MFCRange.Add(MFC_3_Read_Range)
-        MFCRange.Add(MFC_4_Read_Range)
+        MFCRecipeFlow.Add(MFC_5_Recipe_Flow)
+        MFCRecipeFlow.Add(MFC_6_Recipe_Flow)
 
         MFCTextButton.Add(Set_MFC_1_Recipe_Button)
         MFCTextButton.Add(Set_MFC_2_Recipe_Button)
         MFCTextButton.Add(Set_MFC_3_Recipe_Button)
         MFCTextButton.Add(Set_MFC_4_Recipe_Button)
+        MFCTextButton.Add(Set_MFC_5_Recipe_Button)
+        MFCTextButton.Add(Set_MFC_6_Recipe_Button)
 
         MFCProgressValue.Add(ProgressBar1)
         MFCProgressValue.Add(ProgressBar2)
         MFCProgressValue.Add(ProgressBar3)
         MFCProgressValue.Add(ProgressBar4)
+        MFCProgressValue.Add(ProgressBar5)
+        MFCProgressValue.Add(ProgressBar6)
 
         MFCLoadedProgressValue.Add(Loaded_Progress_1)
         MFCLoadedProgressValue.Add(Loaded_Progress_2)
         MFCLoadedProgressValue.Add(Loaded_Progress_3)
         MFCLoadedProgressValue.Add(Loaded_Progress_4)
+        MFCLoadedProgressValue.Add(Loaded_Progress_5)
+        MFCLoadedProgressValue.Add(Loaded_Progress_6)
 
         MFC1LoadedProgressText.Add(Loaded_Progress_1_100)
         MFC1LoadedProgressText.Add(Loaded_Progress_1_75)
@@ -1195,6 +1198,16 @@ Public Class MainWindow
         MFC4LoadedProgressText.Add(Loaded_Progress_4_75)
         MFC4LoadedProgressText.Add(Loaded_Progress_4_50)
         MFC4LoadedProgressText.Add(Loaded_Progress_4_25)
+
+        MFC5LoadedProgressText.Add(Loaded_Progress_5_100)
+        MFC5LoadedProgressText.Add(Loaded_Progress_5_75)
+        MFC5LoadedProgressText.Add(Loaded_Progress_5_50)
+        MFC5LoadedProgressText.Add(Loaded_Progress_5_25)
+
+        MFC6LoadedProgressText.Add(Loaded_Progress_6_100)
+        MFC6LoadedProgressText.Add(Loaded_Progress_6_75)
+        MFC6LoadedProgressText.Add(Loaded_Progress_6_50)
+        MFC6LoadedProgressText.Add(Loaded_Progress_6_25)
 
         StageButtons.Add(Vacbtn)
         StageButtons.Add(RecipeButtonPins)
@@ -1813,7 +1826,7 @@ Public Class MainWindow
         Dim IntVar As Integer
         Dim DblVar As Double
         Dim ResponseLen As Integer
-        Dim CMDIndex() As String = {"0", "01%", "02%", "03%", "04%"}
+        Dim CMDIndex() As String = {"0", "01%", "02%", "03%", "04%", "05%", "06%"}
 
         'Set initial stageTest values
         StageTestSM.SetDetailedLog(True)
@@ -1876,12 +1889,9 @@ Public Class MainWindow
                 StrVar = st_RCV.Substring(5, ResponseLen - 6)
                 If (IsNumeric(StrVar) = True) Then
                     DblVar = CDbl(StrVar)
-                    'If (DblVar > MFCRangeMAX) And (Index > 2) Then DblVar = MFCRangeMAX
-                    MFC(Index).db_Range = DblVar
-                    MFCRange(Index).Text = MFC(Index).db_Range.ToString("F")
-                    SetGUILoadedProgressNumbers(Index)
+                    MFC(Index).SetRange(DblVar)
                 Else
-                    MFCRange(Index).Text = "NO RS485"
+                    MsgBox("NO RS485, unable to get MFC Range: check MFC connections")
                 End If
             End If
         Next
@@ -1904,14 +1914,12 @@ Public Class MainWindow
             StrVar = st_RCV.Substring(7, 4)
             b_IsStringANumber(StrVar, st_IntChars, "$2A%")
             RF.LoadedSetPoint = Convert.ToInt32(StrVar, 10)
-            LoadedWattsTxt.Text = CStr(RF.LoadedSetPoint)
             RecipeWattsTxt.Text = CStr(RF.LoadedSetPoint) 'this is for the New GUI to view Loaded values
         End If
         WriteCommand("$2A604%", 7) 'GET RECIPE MFC4 Flow (SLPM) $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
         ResponseLen = ReadResponse(0)
         If ResponseLen > 7 Then
             MFC(4).db_LoadedFlow = CDbl(st_RCV.Substring(7, ResponseLen - 8))
-            MFCLoadedFlow(4).Text = MFC(4).db_LoadedFlow.ToString("F3")
             MFCRecipeFlow(4).Text = MFC(4).db_LoadedFlow.ToString("F3") 'this is for the New GUI to view Loaded values
             SetGUILoadProgressBars(4, MFCRecipeFlow(4).Text)
         End If
@@ -1919,7 +1927,6 @@ Public Class MainWindow
         ResponseLen = ReadResponse(0)
         If ResponseLen > 7 Then
             MFC(3).db_LoadedFlow = CDbl(st_RCV.Substring(7, ResponseLen - 8))
-            MFCLoadedFlow(3).Text = MFC(3).db_LoadedFlow.ToString("F3")
             MFCRecipeFlow(3).Text = MFC(3).db_LoadedFlow.ToString("F3") 'this is for the New GUI to view Loaded values        
             SetGUILoadProgressBars(3, MFCRecipeFlow(3).Text)
         End If
@@ -1927,7 +1934,6 @@ Public Class MainWindow
         ResponseLen = ReadResponse(0)
         If ResponseLen > 7 Then
             MFC(2).db_LoadedFlow = CDbl(st_RCV.Substring(7, ResponseLen - 8))
-            MFCLoadedFlow(2).Text = MFC(2).db_LoadedFlow.ToString("F")
             MFCRecipeFlow(2).Text = MFC(2).db_LoadedFlow.ToString("F")
             SetGUILoadProgressBars(2, MFCRecipeFlow(2).Text)
         End If
@@ -1935,12 +1941,9 @@ Public Class MainWindow
         ResponseLen = ReadResponse(0)
         If ResponseLen > 7 Then
             MFC(1).db_LoadedFlow = CDbl(st_RCV.Substring(7, ResponseLen - 8))
-            MFCLoadedFlow(1).Text = MFC(1).db_LoadedFlow.ToString("F")
             MFCRecipeFlow(1).Text = MFC(1).db_LoadedFlow.ToString("F")
             SetGUILoadProgressBars(1, MFCRecipeFlow(1).Text)
         End If
-
-
 
         WriteCommand("$2A705%", 7)  'Get Max RF power forward  $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
         ResponseLen = ReadResponse(0)
@@ -2627,7 +2630,6 @@ Public Class MainWindow
                     ResponseLen = ReadResponse(0)
                     If ResponseLen > 6 Then 'use transmitted value rather than parse the response
                         MFC(Index).db_LoadedFlow = FltVar
-                        MFCLoadedFlow(Index).Text = FltVar.ToString("F")
                     End If
                 End If
                 MFC(Index).b_MFCLoadRecipeFlow = False
