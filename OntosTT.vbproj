@@ -112,10 +112,11 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ISerialPortManager.vb" />
     <Compile Include="TestCommunicator.vb" />
     <Compile Include="MicrocontrollerCommunicator.vb" />
     <Compile Include="IControllerCommunicator.vb" />
-    <Compile Include="SerialPort.vb" />
+    <Compile Include="SerialPortManager.vb" />
     <Compile Include="Form1.vb">
       <SubType>Form</SubType>
     </Compile>
@@ -169,6 +170,7 @@
     <Compile Include="picture box.vb">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="TestSerialPortManager.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Form1.resx">
