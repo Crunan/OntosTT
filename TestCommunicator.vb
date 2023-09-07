@@ -2,7 +2,7 @@
 ''' Represents a class for testing communication with a microcontroller.
 ''' </summary>
 Public Class TestCommunicator
-    Implements IControllerCommunicator
+    Implements IDeviceCommunicator
 
     Private lastSentCommand As String
     Private command As String
@@ -15,14 +15,14 @@ Public Class TestCommunicator
     Public Function getLastSentCommand()
         Return lastSentCommand
     End Function
-    Public Sub WriteData(command As String) Implements IControllerCommunicator.WriteData
+    Public Sub WriteData(command As String) Implements IDeviceCommunicator.WriteData
         ' Simulate sending the command for testing purposes.
         ' This can be a placeholder for testing without actual communication.
         Throw New NotImplementedException()
     End Sub
 
 
-    Public Function ReadResponse() As String Implements IControllerCommunicator.ReadResponse
+    Public Function ReadResponse() As String Implements IDeviceCommunicator.ReadResponse
         ' Simulate sending the command for testing purposes.
         ' This can be a placeholder for testing without actual communication.
         Return "Test response"

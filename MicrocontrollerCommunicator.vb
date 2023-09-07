@@ -2,29 +2,34 @@
 ''' Represents a class that communicates with a microcontroller.
 ''' </summary>
 Public Class MicrocontrollerCommunicator
-    Implements IControllerCommunicator
+    Implements IDeviceCommunicator
 
-    Private ReadOnly lastSentCommand As String
-    Private ReadOnly receiver As String
+    Public Property PortManager As IPortManager Implements IDeviceCommunicator.PortManager
+        Get
+            Throw New NotImplementedException()
+        End Get
+        Set(value As IPortManager)
+            Throw New NotImplementedException()
+        End Set
+    End Property
 
-    ''' <summary>
-    ''' Gets the last command that was sent to the microcontroller.
-    ''' </summary>
-    ''' <returns>The last command sent to the microcontroller as a string.</returns>
-    Public Function getLastSentCommand()
-        Return lastSentCommand
-    End Function
+    Public ReadOnly Property ResponseData As String Implements IDeviceCommunicator.ResponseData
+        Get
+            Throw New NotImplementedException()
+        End Get
+    End Property
 
-    Public Sub WriteData(command As String) Implements IControllerCommunicator.WriteData
-        ' Write the command to the microcontroller
-        ' Implementation specific to your microcontroller communication. 
+    Public ReadOnly Property LastCommandSent As String Implements IDeviceCommunicator.LastCommandSent
+        Get
+            Throw New NotImplementedException()
+        End Get
+    End Property
+
+    Public Sub WriteData(command As String) Implements IDeviceCommunicator.WriteData
         Throw New NotImplementedException()
     End Sub
 
-    Public Function ReadResponse() As String Implements IControllerCommunicator.ReadResponse
-        ' Read the response from the microcontroller.
-        ' Implementation specific to your microcontroller communication.
-        Return receiver
+    Public Sub ReadResponse() Implements IDeviceCommunicator.ReadResponse
         Throw New NotImplementedException()
-    End Function
+    End Sub
 End Class

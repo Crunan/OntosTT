@@ -1,19 +1,21 @@
 ﻿Public Class TestSerialPortManager
-    Implements ISerialPortManager
-
-    Public Sub OpenPort() Implements ISerialPortManager.OpenPort
+    Implements IPortManager
+    Public Sub SetPort(name As String) Implements IPortManager.SetPort
+        Throw New NotImplementedException()
+    End Sub
+    Public Sub OpenPort() Implements IPortManager.OpenPort
         Throw New NotImplementedException()
     End Sub
 
-    Public Sub ClosePort() Implements ISerialPortManager.ClosePort
+    Public Sub ClosePort() Implements IPortManager.ClosePort
         Throw New NotImplementedException()
     End Sub
 
-    Public Sub WriteData(data As String) Implements ISerialPortManager.WriteData
+    Public Sub WriteData(data As String) Implements IPortManager.WriteData
         Throw New NotImplementedException()
     End Sub
 
-    Public Function ReadData() As String Implements ISerialPortManager.ReadData
+    Public Function ReadData() As String Implements IPortManager.ReadData
         Throw New NotImplementedException()
     End Function
 End Class
