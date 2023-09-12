@@ -4,6 +4,7 @@ Public Class SerialPortManager
     Implements IPortManager
 
     Private ReadOnly Serial As New SerialPort()
+    Private ResponseData As String = ""
 
     Public Sub SetPortName(name As String) Implements IPortManager.SetPortName
         Serial.PortName = name
@@ -21,7 +22,9 @@ Public Class SerialPortManager
 
     Public Sub OpenPort() Implements IPortManager.OpenPort
         Try
-            If Not Serial.IsOpen Then Serial.Open()
+            If Not Serial.IsOpen Then
+                Serial.Open()
+            End If
         Catch ex As Exception
             Throw New Exception("An error occurred while opening the serial port:" & ex.Message, ex)
         End Try
@@ -33,5 +36,14 @@ Public Class SerialPortManager
         Catch ex As Exception
             Throw New Exception("An error occurred while trying to close the serial port:" & ex.Message, ex)
         End Try
+    End Sub
+
+
+    Public Sub ReadData() Implements IPortManager.ReadData
+
+    End Sub
+
+    Public Sub WriteData(data As String) Implements IPortManager.WriteData
+        Serial.Write(data)
     End Sub
 End Class
