@@ -22,5 +22,80 @@ OTT_PLUS
   resource lookups using this strongly typed resource class.
 </summary>
 </member>
+<member name="T:WindowsApplication1.IPortManager">
+ <summary>
+ Represents an interface for managing the port of a device.
+ </summary>
+</member>
+<member name="M:WindowsApplication1.IPortManager.ReadData">
+ <summary>
+ Reads all data from the port.
+ </summary>
+</member>
+<member name="M:WindowsApplication1.IPortManager.WriteData(System.String)">
+ <summary>
+ Allows the port to write data as a parameter.
+ </summary>
+ <param name="data">The data that gets send to the port.</param>
+</member>
+<member name="M:WindowsApplication1.IPortManager.SetPortSettings">
+ <summary>
+ Sets the port settings.
+ </summary>
+</member>
+<member name="M:WindowsApplication1.IPortManager.SetPortName(System.String)">
+ <summary>
+ Attempts to set the port name.
+ </summary>
+ <param name="name">The name of the port.</param>
+</member>
+<member name="M:WindowsApplication1.IPortManager.OpenPort">
+ <summary>
+ Attempts to open the port connection.
+ </summary>
+</member>
+<member name="M:WindowsApplication1.IPortManager.ClosePort">
+ <summary>
+ Attempts to close the port connection.
+ </summary>
+</member>
+<member name="T:WindowsApplication1.TestCommunicator">
+ <summary>
+ Represents a class for testing the IDeviceCommunication protocols.
+ </summary>
+</member>
+<member name="T:WindowsApplication1.MicrocontrollerCommunicator">
+ <summary>
+ Represents a class that communicates with a microcontroller.
+ </summary>
+</member>
+<member name="T:WindowsApplication1.IDeviceCommunicator">
+ <summary>
+ Represents an interface for communicating with a device.
+ </summary>
+</member>
+<member name="P:WindowsApplication1.IDeviceCommunicator.ResponseData">
+ <summary>
+ The data that was read from ReadResponse().
+ </summary>
+ <returns>The response from the device as a string.</returns>
+</member>
+<member name="P:WindowsApplication1.IDeviceCommunicator.LastCommandSent">
+ <summary>
+ The data that was sent from the 
+ </summary>
+ <returns>The last command that was sent to the device as a string.</returns>
+</member>
+<member name="M:WindowsApplication1.IDeviceCommunicator.WriteData(System.String)">
+ <summary>
+ Writes a command to the device.
+ </summary>
+ <param name="command">The command to send as a string.</param>
+</member>
+<member name="M:WindowsApplication1.IDeviceCommunicator.ReadResponse">
+ <summary>
+ Reads the response from the device and stores the data.
+ </summary>
+</member>
 </members>
 </doc>
