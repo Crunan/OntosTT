@@ -14,3 +14,7 @@
 /obj/Release
 /obj/Debug
 /OntosTT.vbproj.user
+/packages/
+/bin/
+/UnitTestsOntosCLEAN/bin/
+/UnitTestsOntosCLEAN/obj/
