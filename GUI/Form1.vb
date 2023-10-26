@@ -1,26 +1,15 @@
-﻿Imports System
-Imports System.Threading
-Imports System.IO.Ports
-Imports System.ComponentModel
+﻿Imports System.IO.Ports
 Imports System.IO
-Imports System.String
 Imports System.Runtime.InteropServices
-Imports System.Drawing
 Imports System.Runtime.Serialization
-Imports Guna.UI2.AnimatorNS
 Imports Guna.UI2.WinForms
 
 Public Class MainWindow
 
     Public Shared SelectedWaferSize As Integer = 0 'Public to be shared between OTTForm and DiameterEntryDialog
 
-    'Public to be shared between OTTForm and SettingsDialog
-    Public Shared b_toggleHeater As Boolean = False ' This is the flag for toggle heater
-    Public Shared b_heaterActive As Boolean = False
-    Public Shared st_HasHeatSave As String = 0 'For saving the HEATER on/off state
-    'Batch ID Logging
-    Public Shared b_togglebatchIDLogging As Boolean = False ' This is the flag for batch ID logging
-    Public Shared b_batchActive As Boolean = False
+    Dim isPurpleLEDOn As Boolean = False
+    Dim DemoModeOn As Boolean = False
     'Auto Scan
     Public Shared b_toggleAutoScan As Boolean = True
     Public Shared b_autoScanActive As Boolean = True
@@ -36,9 +25,6 @@ Public Class MainWindow
     Dim gamepad As Controller = searchForGamepad()
 
     '    Serial Port Stuff
-    Dim CR As String = Chr(13)
-    Dim LF As String = Chr(10)
-    Dim ar_myPort As Array
     Dim st_LastCMD As String ' for debug
     Dim st_RCV As String
     Dim st_Was As String
@@ -99,7 +85,7 @@ Public Class MainWindow
     Dim b_LogOpen As Boolean = False
     'Controller related variables
 
-
+    Dim recipeDemoCount As Integer = 0
     Dim b_Step_MB_SM_Left As Boolean = False
     Dim b_Step_MB_SM_Right As Boolean = False
     Dim b_SetDefaultRecipe As Boolean = False
@@ -618,6 +604,20 @@ Public Class MainWindow
     Const STSM_MaxY = 4
     Const STSM_MinY = 5
     Const STSM_SHUTDOWN = 6
+    Structure ELLIPSEAXESSTATEMACHINE
+        Dim State As Integer
+    End Structure
+    Dim SMEllipseAxes As ELLIPSEAXESSTATEMACHINE
+    Const EASM_IDLE = 0
+    Const EASM_STARTUP = 1
+    Const EASM_PRE_MEASUREMENT = 2
+    Const EASM_POST_MEASUREMENT = 3
+    Const EASM_PRE_SCAN = 4
+    Const EASM_POST_SCAN = 5
+    Const EASM_SCAN_DATA_PRE = 6
+    Const EASM_SCAN_DATA_POST = 7
+    Const EASM_WAIT_FOR_DONE = 8
+
 
     Structure INITAXESSTATEMACHINE
         Dim State As Integer
@@ -729,7 +729,7 @@ Public Class MainWindow
 
     'for number string validation
     Dim st_EmptyChars As String = ""
-    Dim st_DoubleChars As String = ".0123456789"
+    Dim st_DoubleChars As String = "-.0123456789"
     Dim st_IntChars As String = "0123456789"
     Dim st_HexChars As String = "0123456789ABCDEF"
 
@@ -1073,7 +1073,7 @@ Public Class MainWindow
         End If
     End Function
     Public Function EnableJoystickStageControl() As Boolean
-        If gamepad IsNot Nothing Then
+        If TypeOf gamepad IsNot NullGamepad Then
             If gamepad.IsConnected() Then
                 WriteCommand("$BD%", 4)
             End If
@@ -1742,11 +1742,10 @@ Public Class MainWindow
         Dim StrVar As String
         Dim DoubVal As Double ' CoordParam.db_Xp_2Base is half the total stage size for X
 
-        StrVar = InputBox("Format +/- xxx.yy (max value: " & CoordParam.db_Xp_2_Base & ")", "Scan Box X MIN Enter mm Value", "")
+        StrVar = InputBox("Format +/- xxx.yy", "Scan Box X MIN Enter mm Value", "")
         If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
             If StrVar = "" Or StrVar.Length > 6 Then Return
             DoubVal = Convert.ToDouble(StrVar)
-            If DoubVal > CoordParam.db_Xp_2_Base Or DoubVal < -CoordParam.db_Xp_2_Base Then Return
             RecipeXMinTxt.Text = DoubVal.ToString("F")
         Else
             Return
@@ -1761,7 +1760,6 @@ Public Class MainWindow
         If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
             If StrVar = "" Or StrVar.Length > 6 Then Return
             DoubVal = Convert.ToDouble(StrVar)
-            If DoubVal > CoordParam.db_Xp_2_Base Or DoubVal < -CoordParam.db_Xp_2_Base Then Return
             RecipeXMaxTxt.Text = DoubVal.ToString("F")
         Else
             Return
@@ -1775,7 +1773,6 @@ Public Class MainWindow
         If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
             If StrVar = "" Or StrVar.Length > 6 Then Return
             DoubVal = Convert.ToDouble(StrVar)
-            If DoubVal > CoordParam.db_Yp_2_Base Or DoubVal < -CoordParam.db_Yp_2_Base Then Return
             RecipeYMinTxt.Text = DoubVal.ToString("F")
         Else
             Return
@@ -1789,7 +1786,6 @@ Public Class MainWindow
         If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
             If StrVar = "" Or StrVar.Length > 6 Then Return
             DoubVal = Convert.ToDouble(StrVar)
-            If DoubVal > CoordParam.db_Yp_2_Base Or DoubVal < -CoordParam.db_Yp_2_Base Then Return
             RecipeYMaxTxt.Text = DoubVal.ToString("F")
         Else
             Return
@@ -1809,6 +1805,18 @@ Public Class MainWindow
         End If
 
     End Sub
+    Private Sub ExecuteRunRcpLogic()
+        If b_HasCollision = True And b_autoScanActive And Not CTL.CheckForPlasmaActivation() Then
+            b_PlannedAutoStart = True 'this will make sure we don't accidentally start plasma when just clicking RUN SCAN button
+            If SMScan.State = SCSM_IDLE Then
+                SMScan.ExternalNewState = SCSM_START_UP
+                SMScan.b_ExternalStateChange = True  'Start Collision test while auto scan is ON
+            End If
+        Else
+            b_ToggleRunRecipe = True
+        End If
+    End Sub
+
 
 
     Private Sub StateMachine()
@@ -1838,6 +1846,7 @@ Public Class MainWindow
                         RunScanSM() 'run the Scan state machine
                         RunStageTest() 'run the Stage test state machine
                         RunCollisionPassSM()
+                        RunEllipseScanAxesSM()
                         CollisionLaser() 'run the Collision Laser System state machine
                         RunHomeAxesSM() 'run Home Axes state machine
                         SetLightTower() 'run the Light Tower state machine
@@ -1860,13 +1869,13 @@ Public Class MainWindow
         Dim StrVar As String
         Dim ResponseLen As Integer
         'Set initial stageTest values
-
+        SetVoltageForPurpleLEDOn()
         StageTestSM.SetDetailedLog(True)
         StageTestSM.SetTestZ(True)
         isControllerConnected()
         GetCTLFirmwareVersion()
         HowManyMFCs()
-        isBatchIDLoggingEnabled()
+        'isBatchIDLoggingEnabled()
         GetMFC1Range()
         GetMFC2Range()
         GetMFC3Range()
@@ -2151,6 +2160,24 @@ Public Class MainWindow
         Label6.Visible = True
         LEDTrackBar.Visible = True
     End Sub
+    Private Sub SetVoltageForPurpleLEDOn()
+        Dim ResponseLen As Integer
+        WriteCommand("$CF%", 4)
+        ResponseLen = ReadResponse(0)
+    End Sub
+    Private Sub SetPurpleLEDOn(status As Boolean)
+        Dim ResponseLen As Integer
+        Dim intValue As String = If(status, "1", "0")
+        WriteCommand("$C70" & intValue & "%", 6)
+        ResponseLen = ReadResponse(0)
+    End Sub
+    Private Sub RunEllipseScan()
+        If PreBox.Text = "" Or PostBox.Text <> "" Then
+            SMEllipseAxes.State = EASM_STARTUP
+        Else
+            SMEllipseAxes.State = EASM_POST_MEASUREMENT
+        End If
+    End Sub
     Private Sub isControllerConnected()
         If gamepad IsNot Nothing Then
             If gamepad.IsConnected() Then
@@ -2193,24 +2220,7 @@ Public Class MainWindow
             End If
         End If
     End Sub
-    Private Sub isBatchIDLoggingEnabled()
-        Dim ResponseLen As Integer
-        Dim StrVar As String
-        'This is for Batch Logging systems only
-        WriteCommand("$220011%", 8) 'GET BatchIDLogging $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
-        ResponseLen = ReadResponse(0)
-        If ResponseLen > 8 Then
-            StrVar = st_RCV.Substring(7)
-            StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-            If StrVar = "1" Then b_batchActive = True
-            If b_batchActive = True Then
-                BatchIDTextBox.Visible = True
-                BatchLoggingBTN.Visible = True
-                SettingsWindow.BatchChkBox.Checked = True
-                b_togglebatchIDLogging = True 'this is the flag to set Batch ID on/off 
-            End If
-        End If
-    End Sub
+
     Private Sub GetMFC1Range()
         Dim ResponseLen As Integer
         Dim StrVar As String
@@ -2364,7 +2374,6 @@ Public Class MainWindow
             TUNER.LoadedSetPoint = Convert.ToInt32(IntVar, 10) 'integer approximation to %            
             StrVar = st_RCV.Substring(7, 7)
             TUNER.db_LoadedSetPointPct = Convert.ToDouble(StrVar)
-            LoadedTunerTxt.Text = TUNER.db_LoadedSetPointPct.ToString("F") '2 decimal points
             RecipeTunerTxt.Text = TUNER.db_LoadedSetPointPct.ToString("F")
             'WriteLogLine("Initial Tuner SetPoint: " & LoadedTunerTxt.Text)
         End If
@@ -2635,19 +2644,18 @@ Public Class MainWindow
         End If
 
         'Get MFC FLows
-        If CTL.CheckForPlasmaActivation() Then
-            For Index = 1 To NumMFC
-                StrVar = ar_CTL_ParamVals(Index + 4)
-                DoubVal = CDbl(StrVar)
-                If b_IsStringANumber(DoubVal, st_DoubleChars, "MFC Flow") Then
-                    MFC(Index).SetActualFlow(StrVar)
-                    SetGUIFlowBars(Index)
-                    SetGUITextFlow(Index)
-                Else
-                    WriteLogLine("Unable to retrieve poll of MFC" + Index + " actual flow.")
-                End If
-            Next 'For Index = 1 To NumMFC
-        End If
+        For Index = 1 To NumMFC
+            StrVar = ar_CTL_ParamVals(Index + 4)
+            DoubVal = CDbl(StrVar)
+            If b_IsStringANumber(DoubVal, st_DoubleChars, "MFC Flow") Then
+                MFC(Index).SetActualFlow(StrVar)
+                SetGUIFlowBars(Index)
+                SetGUITextFlow(Index)
+            Else
+                WriteLogLine("Unable to retrieve poll of MFC" + Index + " actual flow.")
+            End If
+        Next 'For Index = 1 To NumMFC
+
 
 
 
@@ -2732,26 +2740,24 @@ Public Class MainWindow
         Else
             RunRcpBtn.FillColor = Color.BlueViolet
             RunRcpBtn.Text = "START PLASMA"
-
         End If
+        ' Define a variable to keep track of the LED state
 
-        If b_togglebatchIDLogging = True Then 'Settings button
-            b_togglebatchIDLogging = False
 
-            If b_batchActive = True Then
-                WriteCommand("$28011;1%", 9) ' $28xxx;vv..vv%, xxxx = any length index number, vv..vv = value; =>resp [!28xxxx;vv..vv#]            
-                ReadResponse(0)
-                BatchIDTextBox.Visible = True 'show the batch designs
-                BatchLoggingBTN.Visible = True
-                WriteLogLine("Batch ID logging toggled ON")
-            Else
-                WriteCommand("$28011;0%", 9) ' $28xxx;vv..vv%, xxxx = any length index number, vv..vv = value; =>resp [!28xxxx;vv..vv#]
-                ReadResponse(0)
-                BatchIDTextBox.Visible = False 'hide the batch designs
-                BatchLoggingBTN.Visible = False
-                WriteLogLine("Batch ID logging toggled OFF")
+        If CTL.CheckForPlasmaActivation() Then
+            ' Check if the LED needs to be turned on
+            If Not isPurpleLEDOn Then
+                SetPurpleLEDOn(True)
+                isPurpleLEDOn = True
+            End If
+        Else
+            ' Check if the LED needs to be turned off
+            If isPurpleLEDOn Then
+                SetPurpleLEDOn(False)
+                isPurpleLEDOn = False
             End If
         End If
+
 
 
         'This controls the AUTO START SCAN setting 
@@ -2833,6 +2839,7 @@ Public Class MainWindow
                 AC_CODE.Text = errorMessage
                 AC_CODE.Visible = True
                 ClearAbortbtn.Visible = True
+                ClearAbortbtn.Enabled = True
                 Label26.Visible = True
                 b_ClearAbort = True
                 MsgBox(errorMessage)
@@ -2867,7 +2874,7 @@ Public Class MainWindow
         Dim CMDIndex() As String = {"0", "01", "02", "03", "04"}
 
         'controller update
-        If isTwoSpotOn() Then
+        If isTwoSpotOn() And TypeOf gamepad IsNot NullGamepad Then
             gamepad.Update()
             MoveStageWithJoy()
         End If
@@ -2904,7 +2911,6 @@ Public Class MainWindow
                 StrVar = st_RCV.Substring(3, 4)
                 b_IsStringANumber(StrVar, st_IntChars, "$42%") 'restarts if = False
                 RF.LoadedSetPoint = Convert.ToInt32(StrVar, 10)
-                LoadedWattsTxt.Text = CStr(RF.LoadedSetPoint)
             End If
             RF.b_LoadRecipePower = False
         End If
@@ -2919,7 +2925,6 @@ Public Class MainWindow
                 StrVar = st_RCV.Substring(3, 4)
                 b_IsStringANumber(StrVar, st_DoubleChars, "$43%") 'restarts if = False
                 TUNER.db_LoadedSetPointPct = Convert.ToDouble(StrVar) ' int to %
-                LoadedTunerTxt.Text = TUNER.db_LoadedSetPointPct.ToString("F")
                 'StrVar = st_RCV.Substring(3, 2)
                 'TUNER.LoadedSetPoint = Convert.ToInt32(StrVar, 10)
             End If
@@ -3069,6 +3074,7 @@ Public Class MainWindow
         ClearAbortbtn.Visible = False
         b_ClearAbort = False
         Label26.Visible = False
+        ClearAbortbtn.Enabled = False
         RunRcpBtn.Enabled = True 're-enable the Start Plasma button
 
         If CLaser.State = CLSM_TRIPPED Then
@@ -3299,7 +3305,7 @@ Public Class MainWindow
                        "<CYCLES>" + RecipeCyclesTxt.Text + vbCrLf + "<XMIN>" + RecipeXMinTxt.Text + vbCrLf +
                        "<YMIN>" + RecipeYMinTxt.Text + vbCrLf + "<XMAX>" + RecipeXMaxTxt.Text + vbCrLf +
                        "<YMAX>" + RecipeYMaxTxt.Text + vbCrLf + "<PURGE>" + st_HasPurgeSave + vbCrLf +
-                       "<AUTOSCAN>" + st_AutoScanSave + vbCrLf + "<HEATER>" + st_HasHeatSave + vbCrLf
+                       "<AUTOSCAN>" + st_AutoScanSave + vbCrLf
 
         Using RecipeOut As New StreamWriter(st_RecipePathFileName)
             RecipeOut.Write(st_RecipeString)
@@ -3326,7 +3332,7 @@ Public Class MainWindow
                        "<CYCLES>" + RecipeCyclesTxt.Text + vbCrLf + "<XMIN>" + RecipeXMinTxt.Text + vbCrLf +
                        "<YMIN>" + RecipeYMinTxt.Text + vbCrLf + "<XMAX>" + RecipeXMaxTxt.Text + vbCrLf +
                        "<YMAX>" + RecipeYMaxTxt.Text + vbCrLf + "<PURGE>" + st_HasPurgeSave + vbCrLf +
-                       "<AUTOSCAN>" + st_AutoScanSave + vbCrLf + "<HEATER>" + st_HasHeatSave + vbCrLf
+                       "<AUTOSCAN>" + st_AutoScanSave + vbCrLf
 
         Using RecipeOut As New StreamWriter(st_RecipePathFileName)
             RecipeOut.Write(st_RecipeString)
@@ -3377,18 +3383,14 @@ Public Class MainWindow
     Private Sub MB_Right_Arrow_Click(sender As Object, e As EventArgs) Handles MB_Right_Arrow.Click
         b_Step_MB_SM_Right = True
     End Sub
-    Private Sub MB_Big_Step_Button_Click(sender As Object, e As EventArgs) Handles MB_Big_Step_Button.Click
+    Private Sub MB_Big_Step_Button_Click(sender As Object, e As EventArgs)
         st_MBRightSpeed = "$11010002%" '$110dxxxx%  d=1,0 xxxx = num steps; resp[!110dxxxx#] when move STARTED
         st_MBLeftSpeed = "$11000002%"
-        MB_Small_Step_Button.Visible = True
-        MB_Big_Step_Button.Visible = False
         b_MB_Big_Step_Active = False
     End Sub
-    Private Sub MB_Small_Step_Button_Click(sender As Object, e As EventArgs) Handles MB_Small_Step_Button.Click
+    Private Sub MB_Small_Step_Button_Click(sender As Object, e As EventArgs)
         st_MBRightSpeed = "$11010050%" '$110dxxxx%  d=1,0 xxxx = Base10 num steps; resp[!110dxxxx#] when move STARTED
         st_MBLeftSpeed = "$11000050%"
-        MB_Small_Step_Button.Visible = False
-        MB_Big_Step_Button.Visible = True
         b_MB_Big_Step_Active = True
     End Sub
 
@@ -3607,8 +3609,7 @@ Public Class MainWindow
 
         'For Each LED In GUI_CTL_LEDS
         'LED.visible = False
-        'Next
-        CTLStatusLabel.Visible = False
+
         'Stage Controls Buttons
         SetDiameterBtn.Visible = False
         SetTwoSpotBtn.Visible = False
@@ -3758,7 +3759,7 @@ Public Class MainWindow
         Dim ResponseLen As Integer
 
         'All Light tower Conditions
-        If (GlobalmyStatusBits And &H80) > 0 Then 'For setting the light tower red during PublishAbortCode() 
+        If (CTL.CheckForAbortActivation()) Then 'For setting the light tower red during PublishAbortCode() 
             LightTwr.State = LTSM_ERROR
         ElseIf AxesStatus.b_DoorsOpen Then 'Light Tower Red for doors open
             LightTwr.State = LTSM_ERROR
@@ -3933,7 +3934,166 @@ Public Class MainWindow
                 'nothing
         End Select
     End Sub
+    Private Sub RunEllipseScanAxesSM()
+        Dim ResponseLen As Integer
+        Dim st_Command As String
+        Dim LogStr As String
 
+        Select Case SMEllipseAxes.State
+
+            Case EASM_STARTUP
+                WriteCommand("$B3%", 4) 'Stop All Motors
+                ResponseLen = ReadResponse(0)
+
+
+                PreBox.Text = ""
+                PostBox.Text = ""
+
+                'SMScan.db_ZParkPos = 0
+                SMScan.db_ZParkPos = CoordParam.db_ZPinsBuriedPos '20200123
+                SMScan.db_ZScanPos = Param.db_Z_Head_Pos - Convert.ToDouble(RecipeThicknessTxt.Text) - Convert.ToDouble(RecipeGapTxt.Text)
+
+                'Get the Scan Row Info
+                SMScan.db_StartXPosition = CoordParam.db_Xp_2_Base
+
+                'Y scan range from start to finish positions
+                SMScan.db_StartYPosition = CoordParam.db_Yp_2_Base + 30
+                SMScan.db_ScanYSpeed = 10
+
+                SMEllipseAxes.State = EASM_PRE_MEASUREMENT
+
+            Case EASM_PRE_MEASUREMENT
+                If AxesStatus.b_XYZSameState = True And AxesStatus.XState >= ASM_IDLE Then
+                    WriteLogLine("Ellipseometer Scan PRE Measurement")
+                    CurrentStepTxtBox.Text = "Ellipseometer Scan PRE Measurement"
+                    NextStepTxtBox.Text = ""
+
+                    st_Command = "$B402" & Param.db_Z_Max_Speed.ToString("F") & "%"
+                    WriteCommand(st_Command, st_Command.Length) 'SET_SPEED  $B40xss.ss%; resp [!B40xss.ss#] 0x = axis number, ss.ss = mm/sec (float)
+                    ResponseLen = ReadResponse(0)
+                    LogStr = "Move Z Speed: " & Param.db_Z_Max_Speed.ToString("F") & " /sec "
+
+                    st_Command = "$B602" & SMScan.db_ZParkPos.ToString("F") & "%"
+                    WriteCommand(st_Command, st_Command.Length) 'ABS_MOVE $B60xaa.aa%; resp [!B60xaa.aa#] 0x = axis num, aa.aa = destination in mm (float)
+                    ResponseLen = ReadResponse(0)
+                    WriteLogLine(LogStr & "to " & SMScan.db_ZParkPos.ToString("F"))
+
+
+                    st_Command = "$B400" & Param.db_X_Max_Speed.ToString("F") & "%"
+                    WriteCommand(st_Command, st_Command.Length) 'SET_SPEED  $B40xss.ss%; resp [!B40xss.ss#] 0x = axis number, ss.ss = mm/sec (float)
+                    ResponseLen = ReadResponse(0)
+                    LogStr = "X Speed: " & Param.db_X_Max_Speed.ToString("F") & " /sec "
+
+                    st_Command = "$B401" & Param.db_Y_Max_Speed.ToString("F") & "%"
+                    WriteCommand(st_Command, st_Command.Length) 'SET_SPEED  $B40xss.ss%; resp [!B40xss.ss#] 0x = axis number, ss.ss = mm/sec (float)
+                    ResponseLen = ReadResponse(0)
+                    WriteLogLine(LogStr & "Y Speed: " & Param.db_Y_Max_Speed.ToString("F") & "/sec")
+
+
+                    st_Command = "$B600" & SMScan.db_StartXPosition.ToString("F") & "%"
+                    WriteCommand(st_Command, st_Command.Length) 'ABS_MOVE $B60xaa.aa%; resp [!B60xaa.aa#] 0x = axis num, aa.aa = destination in mm (float)
+                    ResponseLen = ReadResponse(0)
+                    LogStr = "X to: " & SMScan.db_StartXPosition.ToString("F")
+
+                    st_Command = "$B601" & SMScan.db_StartYPosition.ToString("F") & "%"
+                    WriteCommand(st_Command, st_Command.Length) 'ABS_MOVE $B60xaa.aa%; resp [!B60xaa.aa#] 0x = axis num, aa.aa = destination in mm (float)
+                    ResponseLen = ReadResponse(0)
+                    WriteLogLine(LogStr & " Y to: " & SMScan.db_StartYPosition.ToString("F"))
+
+                    SMEllipseAxes.State = EASM_PRE_SCAN
+                End If
+
+            Case EASM_POST_MEASUREMENT
+                If AxesStatus.b_XYZSameState = True And AxesStatus.XState >= ASM_IDLE Then
+                    WriteLogLine("Ellipseometer Scan POST Measurement")
+                    CurrentStepTxtBox.Text = "Ellipseometer Scan POST Measurement"
+                    NextStepTxtBox.Text = ""
+
+
+                    st_Command = "$B402" & Param.db_Z_Max_Speed.ToString("F") & "%"
+                    WriteCommand(st_Command, st_Command.Length) 'SET_SPEED  $B40xss.ss%; resp [!B40xss.ss#] 0x = axis number, ss.ss = mm/sec (float)
+                    ResponseLen = ReadResponse(0)
+                    LogStr = "Move Z Speed: " & Param.db_Z_Max_Speed.ToString("F") & " /sec "
+
+                    st_Command = "$B602" & SMScan.db_ZParkPos.ToString("F") & "%"
+                    WriteCommand(st_Command, st_Command.Length) 'ABS_MOVE $B60xaa.aa%; resp [!B60xaa.aa#] 0x = axis num, aa.aa = destination in mm (float)
+                    ResponseLen = ReadResponse(0)
+                    WriteLogLine(LogStr & "to " & SMScan.db_ZParkPos.ToString("F"))
+
+
+                    st_Command = "$B400" & Param.db_X_Max_Speed.ToString("F") & "%"
+                    WriteCommand(st_Command, st_Command.Length) 'SET_SPEED  $B40xss.ss%; resp [!B40xss.ss#] 0x = axis number, ss.ss = mm/sec (float)
+                    ResponseLen = ReadResponse(0)
+                    LogStr = "X Speed: " & Param.db_X_Max_Speed.ToString("F") & " /sec "
+
+                    st_Command = "$B401" & Param.db_Y_Max_Speed.ToString("F") & "%"
+                    WriteCommand(st_Command, st_Command.Length) 'SET_SPEED  $B40xss.ss%; resp [!B40xss.ss#] 0x = axis number, ss.ss = mm/sec (float)
+                    ResponseLen = ReadResponse(0)
+                    WriteLogLine(LogStr & "Y Speed: " & Param.db_Y_Max_Speed.ToString("F") & "/sec")
+
+
+                    st_Command = "$B600" & SMScan.db_StartXPosition.ToString("F") & "%"
+                    WriteCommand(st_Command, st_Command.Length) 'ABS_MOVE $B60xaa.aa%; resp [!B60xaa.aa#] 0x = axis num, aa.aa = destination in mm (float)
+                    ResponseLen = ReadResponse(0)
+                    LogStr = "X to: " & SMScan.db_StartXPosition.ToString("F")
+
+                    st_Command = "$B601" & SMScan.db_StartYPosition.ToString("F") & "%"
+                    WriteCommand(st_Command, st_Command.Length) 'ABS_MOVE $B60xaa.aa%; resp [!B60xaa.aa#] 0x = axis num, aa.aa = destination in mm (float)
+                    ResponseLen = ReadResponse(0)
+                    WriteLogLine(LogStr & " Y to: " & SMScan.db_StartYPosition.ToString("F"))
+
+                    SMEllipseAxes.State = EASM_POST_SCAN
+                End If
+
+            Case EASM_PRE_SCAN
+                If AxesStatus.b_XYZSameState = True And AxesStatus.XState >= ASM_IDLE Then
+                    st_Command = "$B402" & Param.db_Z_Max_Speed.ToString("F") & "%"
+                    WriteCommand(st_Command, st_Command.Length) 'SET_SPEED  $B40xss.ss%; resp [!B40xss.ss#] 0x = axis number, ss.ss = mm/sec (float)
+                    ResponseLen = ReadResponse(0)
+                    LogStr = "Move Z at: " & Param.db_Z_Max_Speed.ToString("F") & " /sec "
+                    st_Command = "$B602" & SMScan.db_ZScanPos.ToString("F") & "%"
+                    WriteCommand(st_Command, st_Command.Length) 'ABS_MOVE $B60xaa.aa%; resp [!B60xaa.aa#] 0x = axis num, aa.aa = destination in mm (float)
+                    ResponseLen = ReadResponse(0)
+                    WriteLogLine(LogStr & "to: " & SMScan.db_ZScanPos.ToString("F"))
+                    SMEllipseAxes.State = EASM_SCAN_DATA_PRE
+                End If
+
+            Case EASM_POST_SCAN
+                If AxesStatus.b_XYZSameState = True And AxesStatus.XState >= ASM_IDLE Then
+                    st_Command = "$B402" & Param.db_Z_Max_Speed.ToString("F") & "%"
+                    WriteCommand(st_Command, st_Command.Length) 'SET_SPEED  $B40xss.ss%; resp [!B40xss.ss#] 0x = axis number, ss.ss = mm/sec (float)
+                    ResponseLen = ReadResponse(0)
+                    LogStr = "Move Z at: " & Param.db_Z_Max_Speed.ToString("F") & " /sec "
+                    st_Command = "$B602" & SMScan.db_ZScanPos.ToString("F") & "%"
+                    WriteCommand(st_Command, st_Command.Length) 'ABS_MOVE $B60xaa.aa%; resp [!B60xaa.aa#] 0x = axis num, aa.aa = destination in mm (float)
+                    ResponseLen = ReadResponse(0)
+                    WriteLogLine(LogStr & "to: " & SMScan.db_ZScanPos.ToString("F"))
+                    SMEllipseAxes.State = EASM_SCAN_DATA_POST
+                End If
+
+            Case EASM_SCAN_DATA_PRE
+                If AxesStatus.b_XYZSameState = True And AxesStatus.XState >= ASM_IDLE Then
+                    PreBox.Text = ".3 red delta"
+                    SMEllipseAxes.State = EASM_WAIT_FOR_DONE
+                End If
+
+            Case EASM_SCAN_DATA_POST
+                If AxesStatus.b_XYZSameState = True And AxesStatus.XState >= ASM_IDLE Then
+                    PostBox.Text = ".1 red delta"
+                    SMEllipseAxes.State = EASM_WAIT_FOR_DONE
+                End If
+
+            Case EASM_WAIT_FOR_DONE
+                If AxesStatus.b_XYZSameState = True And AxesStatus.XState >= ASM_IDLE Then
+                    SMEllipseAxes.State = EASM_IDLE
+                    WriteLogLine("Measurement Obtained")
+                    CurrentStepTxtBox.Text = "Measurement Obtained"
+                End If
+
+            Case EASM_IDLE
+                'do nothing
+        End Select
+    End Sub
 
     Private Sub RunInitAxesSM()
         Dim ResponseLen As Integer
@@ -4088,7 +4248,9 @@ Public Class MainWindow
                     WriteLogLine("Z Homed")
                     CurrentStepTxtBox.Text = ""
                     HomeAxesBtn.Text = "LOAD POSITION"
-
+                    If DemoModeOn Then
+                        ExecuteRunRcpLogic()
+                    End If
                     RunScanBtn.Visible = True
                     If b_ENG_mode Then
                         SetTwoSpotBtn.Visible = True
@@ -4439,8 +4601,7 @@ Public Class MainWindow
                         'Now load the recipe
                         LoadRecipeValues()
                     Else
-                        SMHomeAxes.State = HASM_START 'Go to the Load position everytime you finish scanning
-                        ''Auto off will turn the recipe off and PLASMA.
+                        SMHomeAxes.State = HASM_START 'Go to the Load position everytime you finish scanning                        ''Auto off will turn the recipe off and PLASMA.
                         If b_autoScanActive = True Then
                             WriteLogLine("Plasma turned off (Auto-Off is active)")
                             WriteCommand("$8700%", 6)
@@ -4486,11 +4647,14 @@ Public Class MainWindow
                     WriteCommand(st_Command, st_Command.Length) 'ABS_MOVE $B60xaa.aa%; resp [!B60xaa.aa#] 0x = axis num, aa.aa = destination in mm (float)
                     ResponseLen = ReadResponse(0)
                     WriteLogLine(LogStr & "to: " & SMScan.db_ZParkPos.ToString("F"))
-                    SMScan.State = SCSM_IDLE
-                    SMScan.SubState = SCSM_SUB_IDLE
+
+
                     CurrentStepTxtBox.Text = ("Scanning Manually Stopped")
                     RunScanBtn.Text = "START SCAN"
                     b_CollisionPassed = False 'reset the collision flag
+
+                    SMScan.State = SCSM_IDLE
+                    SMScan.SubState = SCSM_SUB_IDLE
 
                 End If
                 HomeAxesBtn.Visible = True
@@ -4595,8 +4759,6 @@ Public Class MainWindow
         StageTestSM.SetState(STSM_SHUTDOWN)
     End Sub
 
-
-
     Private Sub AutoManBtn_CheckedChanged(sender As Object, e As EventArgs) Handles AutoManBtn.Click
         b_ToggleAutoMode = True
     End Sub
@@ -4610,5 +4772,25 @@ Public Class MainWindow
         End If
     End Sub
 
+    Private Sub PlasmaLEDToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles PlasmaLEDToolStripMenuItem.Click
+        SetPurpleLEDOn(PlasmaLEDToolStripMenuItem.Checked)
+    End Sub
 
+    Private Sub EllipseScanBtn_Click(sender As Object, e As EventArgs) Handles EllipseScanBtn.Click
+        RunEllipseScan()
+    End Sub
+
+    Private Sub DemoRecipeToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles DemoRecipeToolStripMenuItem.Click
+        DemoModeOn = Not DemoModeOn
+        paintStripMenuDisplayStatusDemoMode()
+    End Sub
+    Public Sub paintStripMenuDisplayStatusDemoMode()
+        If (DemoModeOn = True) Then
+            DemoRecipeToolStripMenuItem.Text = "Constant Demo Mode: ON"
+            DemoRecipeToolStripMenuItem.BackColor = SystemColors.Highlight
+        Else
+            DemoRecipeToolStripMenuItem.Text = "Constant Demo Mode: OFF"
+            DemoRecipeToolStripMenuItem.BackColor = SystemColors.Control
+        End If
+    End Sub
 End Class

@@ -8,13 +8,9 @@
 *.lib
 /.vs/OTT
 /.vs/OntosTT
-/bin/Debug
-/bin/Release
-/bin/OTT_PLUS_EXE - V1.2.6 (Cascading Recipes Update).zip
-/obj/Release
-/obj/Debug
 /OntosTT.vbproj.user
 /packages/
+/obj/
 /bin/
 /UnitTestsOntosCLEAN/bin/
 /UnitTestsOntosCLEAN/obj/
