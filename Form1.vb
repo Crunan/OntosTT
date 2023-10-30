@@ -1054,8 +1054,8 @@ Public Class MainWindow
         End If
     End Function
     Public Function EnableJoystickStageControl() As Boolean
-        If gamepad IsNot Nothing Then
-            If gamepad.isConnected() Then
+        If TypeOf gamepad IsNot NullGamepad Then
+            If gamepad.IsConnected() Then
                 WriteCommand("$BD%", 4)
             End If
         Else
@@ -2556,12 +2556,10 @@ Public Class MainWindow
         Dim CMDIndex() As String = {"0", "01", "02", "03", "04"}
 
         'controller update
-        If isTwoSpotOn() Then
+        If isTwoSpotOn() And TypeOf gamepad IsNot NullGamepad Then
             gamepad.Update()
             MoveStageWithJoy()
         End If
-
-
 
         If (b_Step_MB_SM_Left = True) Then
             WriteCommand(st_MBLeftSpeed, Len(st_MBLeftSpeed))
