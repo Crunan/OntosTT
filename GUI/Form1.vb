@@ -1806,7 +1806,7 @@ Public Class MainWindow
 
     End Sub
     Private Sub ExecuteRunRcpLogic()
-        If b_HasCollision = True And b_autoScanActive And Not CTL.CheckForPlasmaActivation() Then
+        If b_HasCollision = True And b_autoScanActive Then
             b_PlannedAutoStart = True 'this will make sure we don't accidentally start plasma when just clicking RUN SCAN button
             If SMScan.State = SCSM_IDLE Then
                 SMScan.ExternalNewState = SCSM_START_UP
