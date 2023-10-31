@@ -1794,7 +1794,7 @@ Public Class MainWindow
     End Sub
 
     Private Sub RunRcpBtn_Click(sender As Object, e As EventArgs) Handles RunRcpBtn.Click
-        If b_HasCollision = True And b_autoScanActive And Not CTL.CheckForPlasmaActivation() Then
+        If b_HasCollision = True And b_autoScanActive Then
             b_PlannedAutoStart = True 'this will make sure we dont accidently start plasma when just clicking RUN SCAN button
             If SMScan.State = SCSM_IDLE Then
                 SMScan.ExternalNewState = SCSM_START_UP
@@ -4539,21 +4539,23 @@ Public Class MainWindow
                             WriteLogLine(LogStr & " Y to: " & SMScan.db_StartYPosition.ToString("F"))
                             SMScan.SubState = SCSM_SUB_GO_Z_SCAN_POS
                         Case SCSM_SUB_GO_Z_SCAN_POS
+                            If CTL.CheckForPlasmaActivation() Then
+                                If b_N2PurgeRecipe = True Then 'turn on the substrate N2 Purge
+                                    WriteCommand("$C701%", 6) 'SET_VALVE_2 $C70n% resp[!C70n#] n = 0, 1 (off, on)
+                                    ResponseLen = ReadResponse(0)
+                                End If
 
-                            If b_N2PurgeRecipe = True Then 'turn on the substrate N2 Purge
-                                WriteCommand("$C701%", 6) 'SET_VALVE_2 $C70n% resp[!C70n#] n = 0, 1 (off, on)
+                                st_Command = "$B402" & Param.db_Z_Max_Speed.ToString("F") & "%"
+                                WriteCommand(st_Command, st_Command.Length) 'SET_SPEED  $B40xss.ss%; resp [!B40xss.ss#] 0x = axis number, ss.ss = mm/sec (float)
                                 ResponseLen = ReadResponse(0)
+                                LogStr = "Move Z at: " & Param.db_Z_Max_Speed.ToString("F") & " /sec "
+                                st_Command = "$B602" & SMScan.db_ZScanPos.ToString("F") & "%"
+                                WriteCommand(st_Command, st_Command.Length) 'ABS_MOVE $B60xaa.aa%; resp [!B60xaa.aa#] 0x = axis num, aa.aa = destination in mm (float)
+                                ResponseLen = ReadResponse(0)
+                                WriteLogLine(LogStr & "to: " & SMScan.db_ZScanPos.ToString("F"))
+                                SMScan.SubState = SCSM_SUB_SCAN_COL
                             End If
 
-                            st_Command = "$B402" & Param.db_Z_Max_Speed.ToString("F") & "%"
-                            WriteCommand(st_Command, st_Command.Length) 'SET_SPEED  $B40xss.ss%; resp [!B40xss.ss#] 0x = axis number, ss.ss = mm/sec (float)
-                            ResponseLen = ReadResponse(0)
-                            LogStr = "Move Z at: " & Param.db_Z_Max_Speed.ToString("F") & " /sec "
-                            st_Command = "$B602" & SMScan.db_ZScanPos.ToString("F") & "%"
-                            WriteCommand(st_Command, st_Command.Length) 'ABS_MOVE $B60xaa.aa%; resp [!B60xaa.aa#] 0x = axis num, aa.aa = destination in mm (float)
-                            ResponseLen = ReadResponse(0)
-                            WriteLogLine(LogStr & "to: " & SMScan.db_ZScanPos.ToString("F"))
-                            SMScan.SubState = SCSM_SUB_SCAN_COL
                         Case SCSM_SUB_SCAN_COL
                             st_Command = "$B401" & SMScan.db_ScanYSpeed.ToString("F") & "%"
                             WriteCommand(st_Command, st_Command.Length) 'SET_SPEED  $B40xss.ss%; resp [!B40xss.ss#] 0x = axis number, ss.ss = mm/sec (float)
