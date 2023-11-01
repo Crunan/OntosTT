@@ -1295,7 +1295,7 @@ Public Class MainWindow
 
         'Make sure we check the Configuration for a known Port
         GetExeCfg()  ' get the exe config parameters
-        has3Axis()
+
         'Calls to the system for a list of ports
         ar_myPort = IO.Ports.SerialPort.GetPortNames()
 
@@ -1324,6 +1324,7 @@ Public Class MainWindow
                 AutoManBtn.Visible = True
             End If
 
+            has3Axis()
 
             If (st_has3AxisBoard = "1") Then
                 'Reset the controller PCB and give it time to do so
@@ -1389,6 +1390,9 @@ Public Class MainWindow
             If b_ENG_mode Then
                 AutoManBtn.Visible = True
             End If
+
+            has3Axis()
+
             If (st_has3AxisBoard = "1") Then
                 'Reset the controller PCB and give it time to do so
                 WriteCommand("$A9%", 4)  'SOFT_RESET   $A9%; resp[!A9#]; causes Aux PCB Soft Reset
