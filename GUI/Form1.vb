@@ -3386,17 +3386,6 @@ Public Class MainWindow
     Private Sub MB_Right_Arrow_Click(sender As Object, e As EventArgs) Handles MB_Right_Arrow.Click
         b_Step_MB_SM_Right = True
     End Sub
-    Private Sub MB_Big_Step_Button_Click(sender As Object, e As EventArgs)
-        st_MBRightSpeed = "$11010002%" '$110dxxxx%  d=1,0 xxxx = num steps; resp[!110dxxxx#] when move STARTED
-        st_MBLeftSpeed = "$11000002%"
-        b_MB_Big_Step_Active = False
-    End Sub
-    Private Sub MB_Small_Step_Button_Click(sender As Object, e As EventArgs)
-        st_MBRightSpeed = "$11010050%" '$110dxxxx%  d=1,0 xxxx = Base10 num steps; resp[!110dxxxx#] when move STARTED
-        st_MBLeftSpeed = "$11000050%"
-        b_MB_Big_Step_Active = True
-    End Sub
-
     Private Sub Launch_SMTwoSpot(sender As Object, e As EventArgs) Handles SetTwoSpotBtn.Click
         If SMTwoSpot.State = TSSM_IDLE Then 'IDLE, so must want me to start up
             SMTwoSpot.State = TSSM_START_UP
@@ -3518,7 +3507,7 @@ Public Class MainWindow
     End Function
 
     Private Sub MBScanToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles MBScanToolStripMenuItem.Click
-        SM_State = MB_SCAN_RESET
+
     End Sub
 
     Private Sub RecipeButtonPins_Click(sender As Object, e As EventArgs) Handles RecipeButtonPins.Click
@@ -4797,5 +4786,21 @@ Public Class MainWindow
             DemoRecipeToolStripMenuItem.Text = "Constant Demo Mode: OFF"
             DemoRecipeToolStripMenuItem.BackColor = SystemColors.Control
         End If
+    End Sub
+
+    Private Sub ToolStripMenuSmallStepSize_Click(sender As Object, e As EventArgs) Handles ToolStripMenuSmallStepSize.Click
+        ChangeStepSize("50")
+    End Sub
+
+    Private Sub ToolStripMenuNormalStepSize_Click(sender As Object, e As EventArgs) Handles ToolStripMenuNormalStepSize.Click
+        ChangeStepSize("32")
+    End Sub
+
+    Private Sub ToolStripMenuBigStepSize_Click(sender As Object, e As EventArgs) Handles ToolStripMenuBigStepSize.Click
+        ChangeStepSize("02")
+    End Sub
+    Private Sub ChangeStepSize(size As String)
+        st_MBRightSpeed = "$110100" & size & "%"
+        st_MBLeftSpeed = "$110000" & size & "%"
     End Sub
 End Class
