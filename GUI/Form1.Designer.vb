@@ -54,6 +54,9 @@ Partial Class MainWindow
         Me.RestartAllToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.SetCTLToPLSimModeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MBScanToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripMenuSmallStepSize = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripMenuNormalStepSize = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripMenuBigStepSize = New System.Windows.Forms.ToolStripMenuItem()
         Me.StageTestToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.StartToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.StopToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -275,7 +278,8 @@ Partial Class MainWindow
         Me.Door_Open_Label.AutoSize = True
         Me.Door_Open_Label.BackColor = System.Drawing.Color.White
         Me.Door_Open_Label.Font = New System.Drawing.Font("Microsoft Sans Serif", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Door_Open_Label.Location = New System.Drawing.Point(71, 684)
+        Me.Door_Open_Label.Location = New System.Drawing.Point(95, 842)
+        Me.Door_Open_Label.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Door_Open_Label.Name = "Door_Open_Label"
         Me.Door_Open_Label.Size = New System.Drawing.Size(198, 31)
         Me.Door_Open_Label.TabIndex = 147
@@ -293,11 +297,11 @@ Partial Class MainWindow
         Me.MFC_1_Read_Flow.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.MFC_1_Read_Flow.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.MFC_1_Read_Flow.ForeColor = System.Drawing.Color.Red
-        Me.MFC_1_Read_Flow.Location = New System.Drawing.Point(82, 634)
-        Me.MFC_1_Read_Flow.Margin = New System.Windows.Forms.Padding(2)
+        Me.MFC_1_Read_Flow.Location = New System.Drawing.Point(109, 780)
+        Me.MFC_1_Read_Flow.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.MFC_1_Read_Flow.Name = "MFC_1_Read_Flow"
         Me.MFC_1_Read_Flow.ReadOnly = True
-        Me.MFC_1_Read_Flow.Size = New System.Drawing.Size(59, 31)
+        Me.MFC_1_Read_Flow.Size = New System.Drawing.Size(79, 31)
         Me.MFC_1_Read_Flow.TabIndex = 16
         Me.MFC_1_Read_Flow.Text = "0.00"
         Me.MFC_1_Read_Flow.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -308,11 +312,11 @@ Partial Class MainWindow
         Me.MFC_1_Read_Range.BackColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer))
         Me.MFC_1_Read_Range.Font = New System.Drawing.Font("Arial", 10.2!, System.Drawing.FontStyle.Bold)
         Me.MFC_1_Read_Range.ForeColor = System.Drawing.SystemColors.WindowText
-        Me.MFC_1_Read_Range.Location = New System.Drawing.Point(2039, 165)
-        Me.MFC_1_Read_Range.Margin = New System.Windows.Forms.Padding(2)
+        Me.MFC_1_Read_Range.Location = New System.Drawing.Point(2719, 203)
+        Me.MFC_1_Read_Range.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.MFC_1_Read_Range.Name = "MFC_1_Read_Range"
         Me.MFC_1_Read_Range.ReadOnly = True
-        Me.MFC_1_Read_Range.Size = New System.Drawing.Size(76, 27)
+        Me.MFC_1_Read_Range.Size = New System.Drawing.Size(100, 27)
         Me.MFC_1_Read_Range.TabIndex = 16
         Me.MFC_1_Read_Range.Text = "???"
         Me.MFC_1_Read_Range.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
@@ -328,11 +332,11 @@ Partial Class MainWindow
         Me.MFC_2_Read_Range.BackColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer))
         Me.MFC_2_Read_Range.Font = New System.Drawing.Font("Arial", 10.2!, System.Drawing.FontStyle.Bold)
         Me.MFC_2_Read_Range.ForeColor = System.Drawing.SystemColors.WindowText
-        Me.MFC_2_Read_Range.Location = New System.Drawing.Point(2038, 192)
-        Me.MFC_2_Read_Range.Margin = New System.Windows.Forms.Padding(2)
+        Me.MFC_2_Read_Range.Location = New System.Drawing.Point(2717, 236)
+        Me.MFC_2_Read_Range.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.MFC_2_Read_Range.Name = "MFC_2_Read_Range"
         Me.MFC_2_Read_Range.ReadOnly = True
-        Me.MFC_2_Read_Range.Size = New System.Drawing.Size(76, 27)
+        Me.MFC_2_Read_Range.Size = New System.Drawing.Size(100, 27)
         Me.MFC_2_Read_Range.TabIndex = 16
         Me.MFC_2_Read_Range.Text = "???"
         Me.MFC_2_Read_Range.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
@@ -344,11 +348,11 @@ Partial Class MainWindow
         Me.MFC_3_Read_Range.BackColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer))
         Me.MFC_3_Read_Range.Font = New System.Drawing.Font("Arial", 10.2!, System.Drawing.FontStyle.Bold)
         Me.MFC_3_Read_Range.ForeColor = System.Drawing.SystemColors.WindowText
-        Me.MFC_3_Read_Range.Location = New System.Drawing.Point(2038, 218)
-        Me.MFC_3_Read_Range.Margin = New System.Windows.Forms.Padding(2)
+        Me.MFC_3_Read_Range.Location = New System.Drawing.Point(2717, 268)
+        Me.MFC_3_Read_Range.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.MFC_3_Read_Range.Name = "MFC_3_Read_Range"
         Me.MFC_3_Read_Range.ReadOnly = True
-        Me.MFC_3_Read_Range.Size = New System.Drawing.Size(76, 27)
+        Me.MFC_3_Read_Range.Size = New System.Drawing.Size(100, 27)
         Me.MFC_3_Read_Range.TabIndex = 16
         Me.MFC_3_Read_Range.Text = "???"
         Me.MFC_3_Read_Range.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
@@ -360,11 +364,11 @@ Partial Class MainWindow
         Me.MFC_4_Read_Range.BackColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer))
         Me.MFC_4_Read_Range.Font = New System.Drawing.Font("Arial", 10.2!, System.Drawing.FontStyle.Bold)
         Me.MFC_4_Read_Range.ForeColor = System.Drawing.SystemColors.WindowText
-        Me.MFC_4_Read_Range.Location = New System.Drawing.Point(2038, 245)
-        Me.MFC_4_Read_Range.Margin = New System.Windows.Forms.Padding(2)
+        Me.MFC_4_Read_Range.Location = New System.Drawing.Point(2717, 302)
+        Me.MFC_4_Read_Range.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.MFC_4_Read_Range.Name = "MFC_4_Read_Range"
         Me.MFC_4_Read_Range.ReadOnly = True
-        Me.MFC_4_Read_Range.Size = New System.Drawing.Size(76, 27)
+        Me.MFC_4_Read_Range.Size = New System.Drawing.Size(100, 27)
         Me.MFC_4_Read_Range.TabIndex = 16
         Me.MFC_4_Read_Range.Text = "???"
         Me.MFC_4_Read_Range.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
@@ -377,11 +381,11 @@ Partial Class MainWindow
         Me.ActWattsTxt.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.ActWattsTxt.Font = New System.Drawing.Font("Arial", 36.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.ActWattsTxt.ForeColor = System.Drawing.SystemColors.WindowText
-        Me.ActWattsTxt.Location = New System.Drawing.Point(924, 210)
-        Me.ActWattsTxt.Margin = New System.Windows.Forms.Padding(2)
+        Me.ActWattsTxt.Location = New System.Drawing.Point(1232, 258)
+        Me.ActWattsTxt.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.ActWattsTxt.Name = "ActWattsTxt"
         Me.ActWattsTxt.ReadOnly = True
-        Me.ActWattsTxt.Size = New System.Drawing.Size(104, 69)
+        Me.ActWattsTxt.Size = New System.Drawing.Size(139, 69)
         Me.ActWattsTxt.TabIndex = 16
         Me.ActWattsTxt.Text = "0"
         Me.ActWattsTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -392,7 +396,8 @@ Partial Class MainWindow
         Me.RF_Label.AutoSize = True
         Me.RF_Label.BackColor = System.Drawing.Color.White
         Me.RF_Label.Font = New System.Drawing.Font("Microsoft Sans Serif", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.RF_Label.Location = New System.Drawing.Point(919, 360)
+        Me.RF_Label.Location = New System.Drawing.Point(1225, 443)
+        Me.RF_Label.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.RF_Label.Name = "RF_Label"
         Me.RF_Label.Size = New System.Drawing.Size(160, 31)
         Me.RF_Label.TabIndex = 13
@@ -404,11 +409,11 @@ Partial Class MainWindow
         Me.RflWattsTxt.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.RflWattsTxt.Font = New System.Drawing.Font("Arial", 36.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.RflWattsTxt.ForeColor = System.Drawing.SystemColors.WindowText
-        Me.RflWattsTxt.Location = New System.Drawing.Point(926, 461)
-        Me.RflWattsTxt.Margin = New System.Windows.Forms.Padding(2)
+        Me.RflWattsTxt.Location = New System.Drawing.Point(1235, 567)
+        Me.RflWattsTxt.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.RflWattsTxt.Name = "RflWattsTxt"
         Me.RflWattsTxt.ReadOnly = True
-        Me.RflWattsTxt.Size = New System.Drawing.Size(104, 69)
+        Me.RflWattsTxt.Size = New System.Drawing.Size(139, 69)
         Me.RflWattsTxt.TabIndex = 16
         Me.RflWattsTxt.Text = "0"
         Me.RflWattsTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -419,7 +424,8 @@ Partial Class MainWindow
         Me.Watts_Label.AutoSize = True
         Me.Watts_Label.BackColor = System.Drawing.Color.White
         Me.Watts_Label.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Watts_Label.Location = New System.Drawing.Point(952, 269)
+        Me.Watts_Label.Location = New System.Drawing.Point(1269, 331)
+        Me.Watts_Label.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Watts_Label.Name = "Watts_Label"
         Me.Watts_Label.Size = New System.Drawing.Size(63, 25)
         Me.Watts_Label.TabIndex = 13
@@ -430,12 +436,12 @@ Partial Class MainWindow
         Me.PHTempTxt.BackColor = System.Drawing.Color.White
         Me.PHTempTxt.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.PHTempTxt.Font = New System.Drawing.Font("Arial", 28.2!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.PHTempTxt.Location = New System.Drawing.Point(1158, 455)
-        Me.PHTempTxt.Margin = New System.Windows.Forms.Padding(2)
-        Me.PHTempTxt.MinimumSize = New System.Drawing.Size(38, 20)
+        Me.PHTempTxt.Location = New System.Drawing.Point(1544, 560)
+        Me.PHTempTxt.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
+        Me.PHTempTxt.MinimumSize = New System.Drawing.Size(51, 20)
         Me.PHTempTxt.Name = "PHTempTxt"
         Me.PHTempTxt.ReadOnly = True
-        Me.PHTempTxt.Size = New System.Drawing.Size(130, 55)
+        Me.PHTempTxt.Size = New System.Drawing.Size(173, 55)
         Me.PHTempTxt.TabIndex = 21
         Me.PHTempTxt.Text = "???"
         Me.PHTempTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -446,7 +452,8 @@ Partial Class MainWindow
         Me.C_Label.AutoSize = True
         Me.C_Label.BackColor = System.Drawing.Color.White
         Me.C_Label.Font = New System.Drawing.Font("Microsoft Sans Serif", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.C_Label.Location = New System.Drawing.Point(1211, 511)
+        Me.C_Label.Location = New System.Drawing.Point(1615, 629)
+        Me.C_Label.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.C_Label.Name = "C_Label"
         Me.C_Label.Size = New System.Drawing.Size(34, 31)
         Me.C_Label.TabIndex = 13
@@ -457,7 +464,8 @@ Partial Class MainWindow
         Me.PH_Temp_Label.AutoSize = True
         Me.PH_Temp_Label.BackColor = System.Drawing.Color.White
         Me.PH_Temp_Label.Font = New System.Drawing.Font("Microsoft Sans Serif", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.PH_Temp_Label.Location = New System.Drawing.Point(1149, 585)
+        Me.PH_Temp_Label.Location = New System.Drawing.Point(1532, 720)
+        Me.PH_Temp_Label.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.PH_Temp_Label.Name = "PH_Temp_Label"
         Me.PH_Temp_Label.Size = New System.Drawing.Size(220, 31)
         Me.PH_Temp_Label.TabIndex = 13
@@ -471,8 +479,8 @@ Partial Class MainWindow
         Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FileToolStripMenuItem, Me.ServiceToolStripMenuItem})
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
         Me.MenuStrip1.Name = "MenuStrip1"
-        Me.MenuStrip1.Padding = New System.Windows.Forms.Padding(4, 2, 0, 2)
-        Me.MenuStrip1.Size = New System.Drawing.Size(1769, 58)
+        Me.MenuStrip1.Padding = New System.Windows.Forms.Padding(5, 2, 0, 2)
+        Me.MenuStrip1.Size = New System.Drawing.Size(2359, 58)
         Me.MenuStrip1.TabIndex = 22
         Me.MenuStrip1.Text = "MenuStrip1"
         '
@@ -570,11 +578,29 @@ Partial Class MainWindow
         '
         'MBScanToolStripMenuItem
         '
-        Me.MBScanToolStripMenuItem.Enabled = False
+        Me.MBScanToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolStripMenuSmallStepSize, Me.ToolStripMenuNormalStepSize, Me.ToolStripMenuBigStepSize})
         Me.MBScanToolStripMenuItem.Name = "MBScanToolStripMenuItem"
         Me.MBScanToolStripMenuItem.Size = New System.Drawing.Size(567, 54)
-        Me.MBScanToolStripMenuItem.Text = "MB Scan"
+        Me.MBScanToolStripMenuItem.Text = "MB Step Size"
         Me.MBScanToolStripMenuItem.Visible = False
+        '
+        'ToolStripMenuSmallStepSize
+        '
+        Me.ToolStripMenuSmallStepSize.Name = "ToolStripMenuSmallStepSize"
+        Me.ToolStripMenuSmallStepSize.Size = New System.Drawing.Size(241, 54)
+        Me.ToolStripMenuSmallStepSize.Text = "Small"
+        '
+        'ToolStripMenuNormalStepSize
+        '
+        Me.ToolStripMenuNormalStepSize.Name = "ToolStripMenuNormalStepSize"
+        Me.ToolStripMenuNormalStepSize.Size = New System.Drawing.Size(241, 54)
+        Me.ToolStripMenuNormalStepSize.Text = "Normal"
+        '
+        'ToolStripMenuBigStepSize
+        '
+        Me.ToolStripMenuBigStepSize.Name = "ToolStripMenuBigStepSize"
+        Me.ToolStripMenuBigStepSize.Size = New System.Drawing.Size(241, 54)
+        Me.ToolStripMenuBigStepSize.Text = "Big"
         '
         'StageTestToolStripMenuItem
         '
@@ -633,12 +659,12 @@ Partial Class MainWindow
         '
         Me.MFC_1_Loaded_Flow.BackColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer))
         Me.MFC_1_Loaded_Flow.Font = New System.Drawing.Font("Arial", 10.2!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.MFC_1_Loaded_Flow.Location = New System.Drawing.Point(1953, 290)
-        Me.MFC_1_Loaded_Flow.Margin = New System.Windows.Forms.Padding(2)
-        Me.MFC_1_Loaded_Flow.MinimumSize = New System.Drawing.Size(38, 20)
+        Me.MFC_1_Loaded_Flow.Location = New System.Drawing.Point(2604, 357)
+        Me.MFC_1_Loaded_Flow.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
+        Me.MFC_1_Loaded_Flow.MinimumSize = New System.Drawing.Size(49, 20)
         Me.MFC_1_Loaded_Flow.Name = "MFC_1_Loaded_Flow"
         Me.MFC_1_Loaded_Flow.ReadOnly = True
-        Me.MFC_1_Loaded_Flow.Size = New System.Drawing.Size(66, 27)
+        Me.MFC_1_Loaded_Flow.Size = New System.Drawing.Size(87, 27)
         Me.MFC_1_Loaded_Flow.TabIndex = 15
         Me.MFC_1_Loaded_Flow.Text = "0.0"
         Me.MFC_1_Loaded_Flow.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
@@ -650,12 +676,12 @@ Partial Class MainWindow
         Me.MFC_2_Loaded_Flow.AcceptsReturn = True
         Me.MFC_2_Loaded_Flow.BackColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer))
         Me.MFC_2_Loaded_Flow.Font = New System.Drawing.Font("Arial", 10.2!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.MFC_2_Loaded_Flow.Location = New System.Drawing.Point(1953, 320)
-        Me.MFC_2_Loaded_Flow.Margin = New System.Windows.Forms.Padding(2)
-        Me.MFC_2_Loaded_Flow.MinimumSize = New System.Drawing.Size(38, 20)
+        Me.MFC_2_Loaded_Flow.Location = New System.Drawing.Point(2604, 394)
+        Me.MFC_2_Loaded_Flow.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
+        Me.MFC_2_Loaded_Flow.MinimumSize = New System.Drawing.Size(49, 20)
         Me.MFC_2_Loaded_Flow.Name = "MFC_2_Loaded_Flow"
         Me.MFC_2_Loaded_Flow.ReadOnly = True
-        Me.MFC_2_Loaded_Flow.Size = New System.Drawing.Size(66, 27)
+        Me.MFC_2_Loaded_Flow.Size = New System.Drawing.Size(87, 27)
         Me.MFC_2_Loaded_Flow.TabIndex = 15
         Me.MFC_2_Loaded_Flow.Text = "0.0"
         Me.MFC_2_Loaded_Flow.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
@@ -667,12 +693,12 @@ Partial Class MainWindow
         Me.MFC_3_Loaded_Flow.AcceptsReturn = True
         Me.MFC_3_Loaded_Flow.BackColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer))
         Me.MFC_3_Loaded_Flow.Font = New System.Drawing.Font("Arial", 10.2!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.MFC_3_Loaded_Flow.Location = New System.Drawing.Point(1953, 347)
-        Me.MFC_3_Loaded_Flow.Margin = New System.Windows.Forms.Padding(2)
-        Me.MFC_3_Loaded_Flow.MinimumSize = New System.Drawing.Size(38, 20)
+        Me.MFC_3_Loaded_Flow.Location = New System.Drawing.Point(2604, 427)
+        Me.MFC_3_Loaded_Flow.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
+        Me.MFC_3_Loaded_Flow.MinimumSize = New System.Drawing.Size(49, 20)
         Me.MFC_3_Loaded_Flow.Name = "MFC_3_Loaded_Flow"
         Me.MFC_3_Loaded_Flow.ReadOnly = True
-        Me.MFC_3_Loaded_Flow.Size = New System.Drawing.Size(66, 27)
+        Me.MFC_3_Loaded_Flow.Size = New System.Drawing.Size(87, 27)
         Me.MFC_3_Loaded_Flow.TabIndex = 15
         Me.MFC_3_Loaded_Flow.Text = "0.0"
         Me.MFC_3_Loaded_Flow.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
@@ -684,12 +710,12 @@ Partial Class MainWindow
         Me.MFC_4_Loaded_Flow.AcceptsReturn = True
         Me.MFC_4_Loaded_Flow.BackColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer))
         Me.MFC_4_Loaded_Flow.Font = New System.Drawing.Font("Arial", 10.2!, System.Drawing.FontStyle.Bold)
-        Me.MFC_4_Loaded_Flow.Location = New System.Drawing.Point(1953, 381)
-        Me.MFC_4_Loaded_Flow.Margin = New System.Windows.Forms.Padding(2)
-        Me.MFC_4_Loaded_Flow.MinimumSize = New System.Drawing.Size(38, 20)
+        Me.MFC_4_Loaded_Flow.Location = New System.Drawing.Point(2604, 469)
+        Me.MFC_4_Loaded_Flow.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
+        Me.MFC_4_Loaded_Flow.MinimumSize = New System.Drawing.Size(49, 20)
         Me.MFC_4_Loaded_Flow.Name = "MFC_4_Loaded_Flow"
         Me.MFC_4_Loaded_Flow.ReadOnly = True
-        Me.MFC_4_Loaded_Flow.Size = New System.Drawing.Size(66, 27)
+        Me.MFC_4_Loaded_Flow.Size = New System.Drawing.Size(87, 27)
         Me.MFC_4_Loaded_Flow.TabIndex = 15
         Me.MFC_4_Loaded_Flow.Text = "0.0"
         Me.MFC_4_Loaded_Flow.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
@@ -701,11 +727,11 @@ Partial Class MainWindow
         Me.LoadedWattsTxt.BackColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer))
         Me.LoadedWattsTxt.Font = New System.Drawing.Font("Arial", 10.2!, System.Drawing.FontStyle.Bold)
         Me.LoadedWattsTxt.ForeColor = System.Drawing.SystemColors.WindowText
-        Me.LoadedWattsTxt.Location = New System.Drawing.Point(1953, 463)
-        Me.LoadedWattsTxt.Margin = New System.Windows.Forms.Padding(2)
+        Me.LoadedWattsTxt.Location = New System.Drawing.Point(2604, 570)
+        Me.LoadedWattsTxt.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.LoadedWattsTxt.Name = "LoadedWattsTxt"
         Me.LoadedWattsTxt.ReadOnly = True
-        Me.LoadedWattsTxt.Size = New System.Drawing.Size(66, 27)
+        Me.LoadedWattsTxt.Size = New System.Drawing.Size(87, 27)
         Me.LoadedWattsTxt.TabIndex = 16
         Me.LoadedWattsTxt.Text = "0"
         Me.LoadedWattsTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
@@ -717,7 +743,8 @@ Partial Class MainWindow
         Me.MB_Tune_Label.AutoSize = True
         Me.MB_Tune_Label.BackColor = System.Drawing.Color.White
         Me.MB_Tune_Label.Font = New System.Drawing.Font("Microsoft Sans Serif", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.MB_Tune_Label.Location = New System.Drawing.Point(1161, 363)
+        Me.MB_Tune_Label.Location = New System.Drawing.Point(1548, 447)
+        Me.MB_Tune_Label.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.MB_Tune_Label.Name = "MB_Tune_Label"
         Me.MB_Tune_Label.Size = New System.Drawing.Size(163, 31)
         Me.MB_Tune_Label.TabIndex = 13
@@ -729,11 +756,11 @@ Partial Class MainWindow
         Me.RecipeTunerTxt.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.RecipeTunerTxt.Font = New System.Drawing.Font("Arial", 18.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.RecipeTunerTxt.ForeColor = System.Drawing.SystemColors.InactiveCaption
-        Me.RecipeTunerTxt.Location = New System.Drawing.Point(1180, 289)
-        Me.RecipeTunerTxt.Margin = New System.Windows.Forms.Padding(2)
+        Me.RecipeTunerTxt.Location = New System.Drawing.Point(1573, 356)
+        Me.RecipeTunerTxt.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.RecipeTunerTxt.Name = "RecipeTunerTxt"
         Me.RecipeTunerTxt.ReadOnly = True
-        Me.RecipeTunerTxt.Size = New System.Drawing.Size(82, 35)
+        Me.RecipeTunerTxt.Size = New System.Drawing.Size(109, 35)
         Me.RecipeTunerTxt.TabIndex = 16
         Me.RecipeTunerTxt.Text = "???"
         Me.RecipeTunerTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -744,11 +771,11 @@ Partial Class MainWindow
         Me.LoadedTunerTxt.BackColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer))
         Me.LoadedTunerTxt.Font = New System.Drawing.Font("Arial", 10.2!, System.Drawing.FontStyle.Bold)
         Me.LoadedTunerTxt.ForeColor = System.Drawing.SystemColors.WindowText
-        Me.LoadedTunerTxt.Location = New System.Drawing.Point(1953, 435)
-        Me.LoadedTunerTxt.Margin = New System.Windows.Forms.Padding(2)
+        Me.LoadedTunerTxt.Location = New System.Drawing.Point(2604, 535)
+        Me.LoadedTunerTxt.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.LoadedTunerTxt.Name = "LoadedTunerTxt"
         Me.LoadedTunerTxt.ReadOnly = True
-        Me.LoadedTunerTxt.Size = New System.Drawing.Size(66, 27)
+        Me.LoadedTunerTxt.Size = New System.Drawing.Size(87, 27)
         Me.LoadedTunerTxt.TabIndex = 16
         Me.LoadedTunerTxt.Text = "0"
         Me.LoadedTunerTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
@@ -761,11 +788,11 @@ Partial Class MainWindow
         Me.ActTunerTxt.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.ActTunerTxt.Font = New System.Drawing.Font("Arial", 26.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.ActTunerTxt.ForeColor = System.Drawing.Color.Black
-        Me.ActTunerTxt.Location = New System.Drawing.Point(1178, 221)
-        Me.ActTunerTxt.Margin = New System.Windows.Forms.Padding(2)
+        Me.ActTunerTxt.Location = New System.Drawing.Point(1571, 272)
+        Me.ActTunerTxt.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.ActTunerTxt.Name = "ActTunerTxt"
         Me.ActTunerTxt.ReadOnly = True
-        Me.ActTunerTxt.Size = New System.Drawing.Size(91, 51)
+        Me.ActTunerTxt.Size = New System.Drawing.Size(121, 51)
         Me.ActTunerTxt.TabIndex = 16
         Me.ActTunerTxt.Text = "0"
         Me.ActTunerTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -776,10 +803,10 @@ Partial Class MainWindow
         Me.MB_Left_Arrow.BackColor = System.Drawing.Color.White
         Me.MB_Left_Arrow.Image = CType(resources.GetObject("MB_Left_Arrow.Image"), System.Drawing.Image)
         Me.MB_Left_Arrow.InitialImage = CType(resources.GetObject("MB_Left_Arrow.InitialImage"), System.Drawing.Image)
-        Me.MB_Left_Arrow.Location = New System.Drawing.Point(1118, 317)
-        Me.MB_Left_Arrow.Margin = New System.Windows.Forms.Padding(2)
+        Me.MB_Left_Arrow.Location = New System.Drawing.Point(1491, 390)
+        Me.MB_Left_Arrow.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.MB_Left_Arrow.Name = "MB_Left_Arrow"
-        Me.MB_Left_Arrow.Size = New System.Drawing.Size(61, 48)
+        Me.MB_Left_Arrow.Size = New System.Drawing.Size(81, 59)
         Me.MB_Left_Arrow.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         Me.MB_Left_Arrow.TabIndex = 17
         Me.MB_Left_Arrow.TabStop = False
@@ -789,10 +816,10 @@ Partial Class MainWindow
         '
         Me.MB_Right_Arrow.Image = CType(resources.GetObject("MB_Right_Arrow.Image"), System.Drawing.Image)
         Me.MB_Right_Arrow.InitialImage = CType(resources.GetObject("MB_Right_Arrow.InitialImage"), System.Drawing.Image)
-        Me.MB_Right_Arrow.Location = New System.Drawing.Point(1266, 317)
-        Me.MB_Right_Arrow.Margin = New System.Windows.Forms.Padding(2)
+        Me.MB_Right_Arrow.Location = New System.Drawing.Point(1688, 390)
+        Me.MB_Right_Arrow.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.MB_Right_Arrow.Name = "MB_Right_Arrow"
-        Me.MB_Right_Arrow.Size = New System.Drawing.Size(61, 48)
+        Me.MB_Right_Arrow.Size = New System.Drawing.Size(81, 59)
         Me.MB_Right_Arrow.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         Me.MB_Right_Arrow.TabIndex = 17
         Me.MB_Right_Arrow.TabStop = False
@@ -802,10 +829,10 @@ Partial Class MainWindow
         '
         Me.MB_Big_Step_Button.Image = CType(resources.GetObject("MB_Big_Step_Button.Image"), System.Drawing.Image)
         Me.MB_Big_Step_Button.InitialImage = CType(resources.GetObject("MB_Big_Step_Button.InitialImage"), System.Drawing.Image)
-        Me.MB_Big_Step_Button.Location = New System.Drawing.Point(2267, 454)
-        Me.MB_Big_Step_Button.Margin = New System.Windows.Forms.Padding(2)
+        Me.MB_Big_Step_Button.Location = New System.Drawing.Point(3023, 559)
+        Me.MB_Big_Step_Button.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.MB_Big_Step_Button.Name = "MB_Big_Step_Button"
-        Me.MB_Big_Step_Button.Size = New System.Drawing.Size(50, 50)
+        Me.MB_Big_Step_Button.Size = New System.Drawing.Size(67, 62)
         Me.MB_Big_Step_Button.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
         Me.MB_Big_Step_Button.TabIndex = 17
         Me.MB_Big_Step_Button.TabStop = False
@@ -815,10 +842,10 @@ Partial Class MainWindow
         '
         Me.MB_Small_Step_Button.Image = CType(resources.GetObject("MB_Small_Step_Button.Image"), System.Drawing.Image)
         Me.MB_Small_Step_Button.InitialImage = Nothing
-        Me.MB_Small_Step_Button.Location = New System.Drawing.Point(2157, 454)
-        Me.MB_Small_Step_Button.Margin = New System.Windows.Forms.Padding(2)
+        Me.MB_Small_Step_Button.Location = New System.Drawing.Point(2876, 559)
+        Me.MB_Small_Step_Button.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.MB_Small_Step_Button.Name = "MB_Small_Step_Button"
-        Me.MB_Small_Step_Button.Size = New System.Drawing.Size(50, 50)
+        Me.MB_Small_Step_Button.Size = New System.Drawing.Size(67, 62)
         Me.MB_Small_Step_Button.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
         Me.MB_Small_Step_Button.TabIndex = 17
         Me.MB_Small_Step_Button.TabStop = False
@@ -829,12 +856,12 @@ Partial Class MainWindow
         Me.HeaterPwrBox.AcceptsTab = True
         Me.HeaterPwrBox.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer))
         Me.HeaterPwrBox.Font = New System.Drawing.Font("Arial", 26.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.HeaterPwrBox.Location = New System.Drawing.Point(2287, 375)
-        Me.HeaterPwrBox.Margin = New System.Windows.Forms.Padding(2)
-        Me.HeaterPwrBox.MinimumSize = New System.Drawing.Size(38, 20)
+        Me.HeaterPwrBox.Location = New System.Drawing.Point(3049, 462)
+        Me.HeaterPwrBox.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
+        Me.HeaterPwrBox.MinimumSize = New System.Drawing.Size(49, 20)
         Me.HeaterPwrBox.Name = "HeaterPwrBox"
         Me.HeaterPwrBox.ReadOnly = True
-        Me.HeaterPwrBox.Size = New System.Drawing.Size(112, 58)
+        Me.HeaterPwrBox.Size = New System.Drawing.Size(148, 58)
         Me.HeaterPwrBox.TabIndex = 21
         Me.HeaterPwrBox.Text = "00"
         Me.HeaterPwrBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
@@ -845,10 +872,10 @@ Partial Class MainWindow
         '
         Me.SetHeaterButton.BackColor = System.Drawing.Color.LawnGreen
         Me.SetHeaterButton.Font = New System.Drawing.Font("Microsoft Sans Serif", 20.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.SetHeaterButton.Location = New System.Drawing.Point(2189, 375)
-        Me.SetHeaterButton.Margin = New System.Windows.Forms.Padding(2)
+        Me.SetHeaterButton.Location = New System.Drawing.Point(2919, 462)
+        Me.SetHeaterButton.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.SetHeaterButton.Name = "SetHeaterButton"
-        Me.SetHeaterButton.Size = New System.Drawing.Size(94, 48)
+        Me.SetHeaterButton.Size = New System.Drawing.Size(125, 59)
         Me.SetHeaterButton.TabIndex = 19
         Me.SetHeaterButton.Text = "Enter"
         Me.SetHeaterButton.UseVisualStyleBackColor = False
@@ -859,10 +886,10 @@ Partial Class MainWindow
         Me.HtrOnOff.Appearance = System.Windows.Forms.Appearance.Button
         Me.HtrOnOff.BackColor = System.Drawing.Color.Gold
         Me.HtrOnOff.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.HtrOnOff.Location = New System.Drawing.Point(2209, 319)
-        Me.HtrOnOff.Margin = New System.Windows.Forms.Padding(2)
+        Me.HtrOnOff.Location = New System.Drawing.Point(2945, 393)
+        Me.HtrOnOff.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.HtrOnOff.Name = "HtrOnOff"
-        Me.HtrOnOff.Size = New System.Drawing.Size(133, 47)
+        Me.HtrOnOff.Size = New System.Drawing.Size(177, 58)
         Me.HtrOnOff.TabIndex = 14
         Me.HtrOnOff.Text = "Heater OFF"
         Me.HtrOnOff.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -874,7 +901,8 @@ Partial Class MainWindow
         Me.HeaterLabelPCT.AutoSize = True
         Me.HeaterLabelPCT.BackColor = System.Drawing.Color.White
         Me.HeaterLabelPCT.Font = New System.Drawing.Font("Microsoft Sans Serif", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.HeaterLabelPCT.Location = New System.Drawing.Point(2116, 505)
+        Me.HeaterLabelPCT.Location = New System.Drawing.Point(2821, 622)
+        Me.HeaterLabelPCT.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.HeaterLabelPCT.Name = "HeaterLabelPCT"
         Me.HeaterLabelPCT.Size = New System.Drawing.Size(38, 31)
         Me.HeaterLabelPCT.TabIndex = 13
@@ -887,11 +915,11 @@ Partial Class MainWindow
         Me.AxesXActual.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.AxesXActual.Font = New System.Drawing.Font("Arial", 20.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.AxesXActual.ForeColor = System.Drawing.SystemColors.InactiveCaption
-        Me.AxesXActual.Location = New System.Drawing.Point(1567, 653)
-        Me.AxesXActual.Margin = New System.Windows.Forms.Padding(2)
+        Me.AxesXActual.Location = New System.Drawing.Point(2089, 804)
+        Me.AxesXActual.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.AxesXActual.Name = "AxesXActual"
         Me.AxesXActual.ReadOnly = True
-        Me.AxesXActual.Size = New System.Drawing.Size(104, 39)
+        Me.AxesXActual.Size = New System.Drawing.Size(139, 39)
         Me.AxesXActual.TabIndex = 25
         Me.AxesXActual.Text = "???"
         Me.AxesXActual.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -904,11 +932,11 @@ Partial Class MainWindow
         Me.AxesYActual.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.AxesYActual.Font = New System.Drawing.Font("Arial", 20.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.AxesYActual.ForeColor = System.Drawing.SystemColors.InactiveCaption
-        Me.AxesYActual.Location = New System.Drawing.Point(1567, 698)
-        Me.AxesYActual.Margin = New System.Windows.Forms.Padding(2)
+        Me.AxesYActual.Location = New System.Drawing.Point(2089, 859)
+        Me.AxesYActual.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.AxesYActual.Name = "AxesYActual"
         Me.AxesYActual.ReadOnly = True
-        Me.AxesYActual.Size = New System.Drawing.Size(107, 39)
+        Me.AxesYActual.Size = New System.Drawing.Size(143, 39)
         Me.AxesYActual.TabIndex = 25
         Me.AxesYActual.Text = "???"
         Me.AxesYActual.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -921,11 +949,11 @@ Partial Class MainWindow
         Me.AxesZActual.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.AxesZActual.Font = New System.Drawing.Font("Arial", 20.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.AxesZActual.ForeColor = System.Drawing.SystemColors.InactiveCaption
-        Me.AxesZActual.Location = New System.Drawing.Point(1567, 742)
-        Me.AxesZActual.Margin = New System.Windows.Forms.Padding(2)
+        Me.AxesZActual.Location = New System.Drawing.Point(2089, 913)
+        Me.AxesZActual.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.AxesZActual.Name = "AxesZActual"
         Me.AxesZActual.ReadOnly = True
-        Me.AxesZActual.Size = New System.Drawing.Size(107, 39)
+        Me.AxesZActual.Size = New System.Drawing.Size(143, 39)
         Me.AxesZActual.TabIndex = 25
         Me.AxesZActual.Text = "???"
         Me.AxesZActual.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -938,11 +966,11 @@ Partial Class MainWindow
         Me.RecipeThicknessTxt.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.RecipeThicknessTxt.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.RecipeThicknessTxt.ForeColor = System.Drawing.SystemColors.InactiveCaption
-        Me.RecipeThicknessTxt.Location = New System.Drawing.Point(890, 718)
-        Me.RecipeThicknessTxt.Margin = New System.Windows.Forms.Padding(2)
+        Me.RecipeThicknessTxt.Location = New System.Drawing.Point(1187, 884)
+        Me.RecipeThicknessTxt.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.RecipeThicknessTxt.Name = "RecipeThicknessTxt"
         Me.RecipeThicknessTxt.ReadOnly = True
-        Me.RecipeThicknessTxt.Size = New System.Drawing.Size(66, 31)
+        Me.RecipeThicknessTxt.Size = New System.Drawing.Size(88, 31)
         Me.RecipeThicknessTxt.TabIndex = 16
         Me.RecipeThicknessTxt.Text = "1"
         Me.RecipeThicknessTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -955,11 +983,11 @@ Partial Class MainWindow
         Me.RecipeGapTxt.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.RecipeGapTxt.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.RecipeGapTxt.ForeColor = System.Drawing.SystemColors.InactiveCaption
-        Me.RecipeGapTxt.Location = New System.Drawing.Point(1027, 718)
-        Me.RecipeGapTxt.Margin = New System.Windows.Forms.Padding(2)
+        Me.RecipeGapTxt.Location = New System.Drawing.Point(1369, 884)
+        Me.RecipeGapTxt.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.RecipeGapTxt.Name = "RecipeGapTxt"
         Me.RecipeGapTxt.ReadOnly = True
-        Me.RecipeGapTxt.Size = New System.Drawing.Size(66, 31)
+        Me.RecipeGapTxt.Size = New System.Drawing.Size(88, 31)
         Me.RecipeGapTxt.TabIndex = 16
         Me.RecipeGapTxt.Text = "1"
         Me.RecipeGapTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -972,11 +1000,11 @@ Partial Class MainWindow
         Me.RecipeOverLapTxt.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.RecipeOverLapTxt.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.RecipeOverLapTxt.ForeColor = System.Drawing.SystemColors.InactiveCaption
-        Me.RecipeOverLapTxt.Location = New System.Drawing.Point(1163, 719)
-        Me.RecipeOverLapTxt.Margin = New System.Windows.Forms.Padding(2)
+        Me.RecipeOverLapTxt.Location = New System.Drawing.Point(1551, 885)
+        Me.RecipeOverLapTxt.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.RecipeOverLapTxt.Name = "RecipeOverLapTxt"
         Me.RecipeOverLapTxt.ReadOnly = True
-        Me.RecipeOverLapTxt.Size = New System.Drawing.Size(66, 31)
+        Me.RecipeOverLapTxt.Size = New System.Drawing.Size(88, 31)
         Me.RecipeOverLapTxt.TabIndex = 16
         Me.RecipeOverLapTxt.Text = "0"
         Me.RecipeOverLapTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -989,11 +1017,11 @@ Partial Class MainWindow
         Me.RecipeSpeedTxt.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.RecipeSpeedTxt.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.RecipeSpeedTxt.ForeColor = System.Drawing.SystemColors.InactiveCaption
-        Me.RecipeSpeedTxt.Location = New System.Drawing.Point(1302, 719)
-        Me.RecipeSpeedTxt.Margin = New System.Windows.Forms.Padding(2)
+        Me.RecipeSpeedTxt.Location = New System.Drawing.Point(1736, 885)
+        Me.RecipeSpeedTxt.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.RecipeSpeedTxt.Name = "RecipeSpeedTxt"
         Me.RecipeSpeedTxt.ReadOnly = True
-        Me.RecipeSpeedTxt.Size = New System.Drawing.Size(66, 31)
+        Me.RecipeSpeedTxt.Size = New System.Drawing.Size(88, 31)
         Me.RecipeSpeedTxt.TabIndex = 16
         Me.RecipeSpeedTxt.Text = "1"
         Me.RecipeSpeedTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -1006,11 +1034,11 @@ Partial Class MainWindow
         Me.RecipeCyclesTxt.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.RecipeCyclesTxt.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.RecipeCyclesTxt.ForeColor = System.Drawing.SystemColors.InactiveCaption
-        Me.RecipeCyclesTxt.Location = New System.Drawing.Point(1435, 717)
-        Me.RecipeCyclesTxt.Margin = New System.Windows.Forms.Padding(2)
+        Me.RecipeCyclesTxt.Location = New System.Drawing.Point(1913, 882)
+        Me.RecipeCyclesTxt.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.RecipeCyclesTxt.Name = "RecipeCyclesTxt"
         Me.RecipeCyclesTxt.ReadOnly = True
-        Me.RecipeCyclesTxt.Size = New System.Drawing.Size(66, 31)
+        Me.RecipeCyclesTxt.Size = New System.Drawing.Size(88, 31)
         Me.RecipeCyclesTxt.TabIndex = 16
         Me.RecipeCyclesTxt.Text = "1"
         Me.RecipeCyclesTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -1022,11 +1050,11 @@ Partial Class MainWindow
         Me.NextStepTxtBox.BackColor = System.Drawing.Color.White
         Me.NextStepTxtBox.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.NextStepTxtBox.ForeColor = System.Drawing.Color.Red
-        Me.NextStepTxtBox.Location = New System.Drawing.Point(867, 682)
-        Me.NextStepTxtBox.Margin = New System.Windows.Forms.Padding(2)
+        Me.NextStepTxtBox.Location = New System.Drawing.Point(1156, 839)
+        Me.NextStepTxtBox.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.NextStepTxtBox.Name = "NextStepTxtBox"
         Me.NextStepTxtBox.ReadOnly = True
-        Me.NextStepTxtBox.Size = New System.Drawing.Size(652, 38)
+        Me.NextStepTxtBox.Size = New System.Drawing.Size(868, 38)
         Me.NextStepTxtBox.TabIndex = 16
         Me.NextStepTxtBox.Text = "Initialize Stage"
         Me.NextStepTxtBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -1038,11 +1066,11 @@ Partial Class MainWindow
         Me.CurrentStepTxtBox.BackColor = System.Drawing.Color.White
         Me.CurrentStepTxtBox.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.CurrentStepTxtBox.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.CurrentStepTxtBox.Location = New System.Drawing.Point(867, 647)
-        Me.CurrentStepTxtBox.Margin = New System.Windows.Forms.Padding(2)
+        Me.CurrentStepTxtBox.Location = New System.Drawing.Point(1156, 796)
+        Me.CurrentStepTxtBox.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.CurrentStepTxtBox.Name = "CurrentStepTxtBox"
         Me.CurrentStepTxtBox.ReadOnly = True
-        Me.CurrentStepTxtBox.Size = New System.Drawing.Size(652, 38)
+        Me.CurrentStepTxtBox.Size = New System.Drawing.Size(868, 38)
         Me.CurrentStepTxtBox.TabIndex = 16
         Me.CurrentStepTxtBox.Text = "Stage Not Initialized"
         Me.CurrentStepTxtBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -1054,7 +1082,8 @@ Partial Class MainWindow
         Me.MFC_4_Label.AutoSize = True
         Me.MFC_4_Label.BackColor = System.Drawing.Color.White
         Me.MFC_4_Label.Font = New System.Drawing.Font("Microsoft Sans Serif", 18.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.MFC_4_Label.Location = New System.Drawing.Point(463, 138)
+        Me.MFC_4_Label.Location = New System.Drawing.Point(617, 170)
+        Me.MFC_4_Label.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.MFC_4_Label.Name = "MFC_4_Label"
         Me.MFC_4_Label.Size = New System.Drawing.Size(113, 36)
         Me.MFC_4_Label.TabIndex = 13
@@ -1065,7 +1094,8 @@ Partial Class MainWindow
         Me.MFC_3_Label.AutoSize = True
         Me.MFC_3_Label.BackColor = System.Drawing.Color.White
         Me.MFC_3_Label.Font = New System.Drawing.Font("Microsoft Sans Serif", 18.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.MFC_3_Label.Location = New System.Drawing.Point(329, 138)
+        Me.MFC_3_Label.Location = New System.Drawing.Point(439, 170)
+        Me.MFC_3_Label.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.MFC_3_Label.Name = "MFC_3_Label"
         Me.MFC_3_Label.Size = New System.Drawing.Size(113, 36)
         Me.MFC_3_Label.TabIndex = 13
@@ -1076,7 +1106,8 @@ Partial Class MainWindow
         Me.MFC_2_Label.AutoSize = True
         Me.MFC_2_Label.BackColor = System.Drawing.Color.White
         Me.MFC_2_Label.Font = New System.Drawing.Font("Microsoft Sans Serif", 18.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.MFC_2_Label.Location = New System.Drawing.Point(191, 138)
+        Me.MFC_2_Label.Location = New System.Drawing.Point(255, 170)
+        Me.MFC_2_Label.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.MFC_2_Label.Name = "MFC_2_Label"
         Me.MFC_2_Label.Size = New System.Drawing.Size(113, 36)
         Me.MFC_2_Label.TabIndex = 13
@@ -1087,7 +1118,8 @@ Partial Class MainWindow
         Me.MFC_1_Label.AutoSize = True
         Me.MFC_1_Label.BackColor = System.Drawing.Color.White
         Me.MFC_1_Label.Font = New System.Drawing.Font("Microsoft Sans Serif", 18.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.MFC_1_Label.Location = New System.Drawing.Point(65, 138)
+        Me.MFC_1_Label.Location = New System.Drawing.Point(87, 170)
+        Me.MFC_1_Label.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.MFC_1_Label.Name = "MFC_1_Label"
         Me.MFC_1_Label.Size = New System.Drawing.Size(113, 36)
         Me.MFC_1_Label.TabIndex = 13
@@ -1097,7 +1129,8 @@ Partial Class MainWindow
         '
         Me.Label4.AutoSize = True
         Me.Label4.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label4.Location = New System.Drawing.Point(861, 622)
+        Me.Label4.Location = New System.Drawing.Point(1148, 766)
+        Me.Label4.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label4.Name = "Label4"
         Me.Label4.Size = New System.Drawing.Size(242, 25)
         Me.Label4.TabIndex = 70
@@ -1110,11 +1143,12 @@ Partial Class MainWindow
         Me.Line_Label2.BackColor = System.Drawing.Color.White
         Me.Line_Label2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.Line_Label2.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!)
-        Me.Line_Label2.Location = New System.Drawing.Point(1351, 111)
-        Me.Line_Label2.MaximumSize = New System.Drawing.Size(1020, 2)
-        Me.Line_Label2.MinimumSize = New System.Drawing.Size(2, 505)
+        Me.Line_Label2.Location = New System.Drawing.Point(1801, 137)
+        Me.Line_Label2.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.Line_Label2.MaximumSize = New System.Drawing.Size(1359, 2)
+        Me.Line_Label2.MinimumSize = New System.Drawing.Size(2, 621)
         Me.Line_Label2.Name = "Line_Label2"
-        Me.Line_Label2.Size = New System.Drawing.Size(2, 505)
+        Me.Line_Label2.Size = New System.Drawing.Size(2, 621)
         Me.Line_Label2.TabIndex = 57
         Me.Line_Label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         Me.Line_Label2.Visible = False
@@ -1125,11 +1159,12 @@ Partial Class MainWindow
         Me.Line_Label3.BackColor = System.Drawing.Color.White
         Me.Line_Label3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.Line_Label3.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!)
-        Me.Line_Label3.Location = New System.Drawing.Point(853, 113)
-        Me.Line_Label3.MaximumSize = New System.Drawing.Size(1020, 2)
-        Me.Line_Label3.MinimumSize = New System.Drawing.Size(2, 800)
+        Me.Line_Label3.Location = New System.Drawing.Point(1137, 139)
+        Me.Line_Label3.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.Line_Label3.MaximumSize = New System.Drawing.Size(1359, 2)
+        Me.Line_Label3.MinimumSize = New System.Drawing.Size(2, 984)
         Me.Line_Label3.Name = "Line_Label3"
-        Me.Line_Label3.Size = New System.Drawing.Size(2, 800)
+        Me.Line_Label3.Size = New System.Drawing.Size(2, 984)
         Me.Line_Label3.TabIndex = 58
         Me.Line_Label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
@@ -1139,21 +1174,22 @@ Partial Class MainWindow
         Me.RF_Radial.ArrowVisible = False
         Me.RF_Radial.Font = New System.Drawing.Font("Verdana", 8.2!)
         Me.RF_Radial.ForeColor = System.Drawing.Color.FromArgb(CType(CType(139, Byte), Integer), CType(CType(152, Byte), Integer), CType(CType(166, Byte), Integer))
-        Me.RF_Radial.Location = New System.Drawing.Point(863, 136)
-        Me.RF_Radial.MinimumSize = New System.Drawing.Size(30, 30)
+        Me.RF_Radial.Location = New System.Drawing.Point(1151, 167)
+        Me.RF_Radial.Margin = New System.Windows.Forms.Padding(4)
+        Me.RF_Radial.MinimumSize = New System.Drawing.Size(40, 37)
         Me.RF_Radial.Name = "RF_Radial"
         Me.RF_Radial.ProgressColor = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.RF_Radial.ProgressColor2 = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.RF_Radial.ProgressThickness = 35
         Me.RF_Radial.ShowPercentage = False
-        Me.RF_Radial.Size = New System.Drawing.Size(224, 224)
+        Me.RF_Radial.Size = New System.Drawing.Size(299, 299)
         Me.RF_Radial.TabIndex = 59
         '
         'RunRcpBtn
         '
         Me.RunRcpBtn.AutoRoundedCorners = True
         Me.RunRcpBtn.BackColor = System.Drawing.Color.Transparent
-        Me.RunRcpBtn.BorderRadius = 48
+        Me.RunRcpBtn.BorderRadius = 60
         Me.RunRcpBtn.CheckedState.Parent = Me.RunRcpBtn
         Me.RunRcpBtn.CustomImages.Parent = Me.RunRcpBtn
         Me.RunRcpBtn.Enabled = False
@@ -1161,13 +1197,14 @@ Partial Class MainWindow
         Me.RunRcpBtn.Font = New System.Drawing.Font("Segoe UI", 27.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.RunRcpBtn.ForeColor = System.Drawing.Color.White
         Me.RunRcpBtn.HoverState.Parent = Me.RunRcpBtn
-        Me.RunRcpBtn.Location = New System.Drawing.Point(278, 687)
+        Me.RunRcpBtn.Location = New System.Drawing.Point(371, 846)
+        Me.RunRcpBtn.Margin = New System.Windows.Forms.Padding(4)
         Me.RunRcpBtn.Name = "RunRcpBtn"
         Me.RunRcpBtn.ShadowDecoration.BorderRadius = 0
         Me.RunRcpBtn.ShadowDecoration.Color = System.Drawing.Color.White
         Me.RunRcpBtn.ShadowDecoration.Enabled = True
         Me.RunRcpBtn.ShadowDecoration.Parent = Me.RunRcpBtn
-        Me.RunRcpBtn.Size = New System.Drawing.Size(312, 99)
+        Me.RunRcpBtn.Size = New System.Drawing.Size(416, 122)
         Me.RunRcpBtn.TabIndex = 61
         Me.RunRcpBtn.Text = "START PLASMA"
         '
@@ -1175,7 +1212,8 @@ Partial Class MainWindow
         '
         Me.Label1.AutoSize = True
         Me.Label1.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label1.Location = New System.Drawing.Point(23, 116)
+        Me.Label1.Location = New System.Drawing.Point(31, 143)
+        Me.Label1.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(129, 25)
         Me.Label1.TabIndex = 63
@@ -1185,7 +1223,8 @@ Partial Class MainWindow
         '
         Me.Label2.AutoSize = True
         Me.Label2.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label2.Location = New System.Drawing.Point(861, 116)
+        Me.Label2.Location = New System.Drawing.Point(1148, 143)
+        Me.Label2.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label2.Name = "Label2"
         Me.Label2.Size = New System.Drawing.Size(268, 25)
         Me.Label2.TabIndex = 64
@@ -1195,7 +1234,8 @@ Partial Class MainWindow
         '
         Me.Label3.AutoSize = True
         Me.Label3.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label3.Location = New System.Drawing.Point(1359, 116)
+        Me.Label3.Location = New System.Drawing.Point(1812, 143)
+        Me.Label3.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label3.Name = "Label3"
         Me.Label3.Size = New System.Drawing.Size(147, 25)
         Me.Label3.TabIndex = 65
@@ -1205,7 +1245,7 @@ Partial Class MainWindow
         'InitAxesBtn
         '
         Me.InitAxesBtn.AutoRoundedCorners = True
-        Me.InitAxesBtn.BorderRadius = 24
+        Me.InitAxesBtn.BorderRadius = 30
         Me.InitAxesBtn.CheckedState.Parent = Me.InitAxesBtn
         Me.InitAxesBtn.CustomImages.Parent = Me.InitAxesBtn
         Me.InitAxesBtn.Enabled = False
@@ -1214,12 +1254,13 @@ Partial Class MainWindow
         Me.InitAxesBtn.ForeColor = System.Drawing.Color.White
         Me.InitAxesBtn.HoverState.FillColor = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.InitAxesBtn.HoverState.Parent = Me.InitAxesBtn
-        Me.InitAxesBtn.Location = New System.Drawing.Point(1545, 250)
+        Me.InitAxesBtn.Location = New System.Drawing.Point(2060, 308)
+        Me.InitAxesBtn.Margin = New System.Windows.Forms.Padding(4)
         Me.InitAxesBtn.Name = "InitAxesBtn"
         Me.InitAxesBtn.ShadowDecoration.BorderRadius = 27
         Me.InitAxesBtn.ShadowDecoration.Color = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.InitAxesBtn.ShadowDecoration.Parent = Me.InitAxesBtn
-        Me.InitAxesBtn.Size = New System.Drawing.Size(167, 50)
+        Me.InitAxesBtn.Size = New System.Drawing.Size(223, 62)
         Me.InitAxesBtn.TabIndex = 66
         Me.InitAxesBtn.Text = "INITIALIZE STAGE"
         Me.InitAxesBtn.Visible = False
@@ -1227,7 +1268,7 @@ Partial Class MainWindow
         'RunScanBtn
         '
         Me.RunScanBtn.AutoRoundedCorners = True
-        Me.RunScanBtn.BorderRadius = 24
+        Me.RunScanBtn.BorderRadius = 30
         Me.RunScanBtn.CheckedState.Parent = Me.RunScanBtn
         Me.RunScanBtn.CustomImages.Parent = Me.RunScanBtn
         Me.RunScanBtn.FillColor = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
@@ -1235,12 +1276,13 @@ Partial Class MainWindow
         Me.RunScanBtn.ForeColor = System.Drawing.Color.White
         Me.RunScanBtn.HoverState.FillColor = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.RunScanBtn.HoverState.Parent = Me.RunScanBtn
-        Me.RunScanBtn.Location = New System.Drawing.Point(1367, 144)
+        Me.RunScanBtn.Location = New System.Drawing.Point(1823, 177)
+        Me.RunScanBtn.Margin = New System.Windows.Forms.Padding(4)
         Me.RunScanBtn.Name = "RunScanBtn"
         Me.RunScanBtn.ShadowDecoration.BorderRadius = 27
         Me.RunScanBtn.ShadowDecoration.Color = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.RunScanBtn.ShadowDecoration.Parent = Me.RunScanBtn
-        Me.RunScanBtn.Size = New System.Drawing.Size(174, 50)
+        Me.RunScanBtn.Size = New System.Drawing.Size(232, 62)
         Me.RunScanBtn.TabIndex = 67
         Me.RunScanBtn.Text = "RUN SCAN"
         Me.RunScanBtn.Visible = False
@@ -1248,7 +1290,7 @@ Partial Class MainWindow
         'RecipeButtonPins
         '
         Me.RecipeButtonPins.AutoRoundedCorners = True
-        Me.RecipeButtonPins.BorderRadius = 24
+        Me.RecipeButtonPins.BorderRadius = 30
         Me.RecipeButtonPins.CheckedState.Parent = Me.RecipeButtonPins
         Me.RecipeButtonPins.CustomImages.Parent = Me.RecipeButtonPins
         Me.RecipeButtonPins.FillColor = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
@@ -1256,12 +1298,13 @@ Partial Class MainWindow
         Me.RecipeButtonPins.ForeColor = System.Drawing.Color.White
         Me.RecipeButtonPins.HoverState.FillColor = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.RecipeButtonPins.HoverState.Parent = Me.RecipeButtonPins
-        Me.RecipeButtonPins.Location = New System.Drawing.Point(1367, 197)
+        Me.RecipeButtonPins.Location = New System.Drawing.Point(1823, 242)
+        Me.RecipeButtonPins.Margin = New System.Windows.Forms.Padding(4)
         Me.RecipeButtonPins.Name = "RecipeButtonPins"
         Me.RecipeButtonPins.ShadowDecoration.BorderRadius = 27
         Me.RecipeButtonPins.ShadowDecoration.Color = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.RecipeButtonPins.ShadowDecoration.Parent = Me.RecipeButtonPins
-        Me.RecipeButtonPins.Size = New System.Drawing.Size(174, 50)
+        Me.RecipeButtonPins.Size = New System.Drawing.Size(232, 62)
         Me.RecipeButtonPins.TabIndex = 69
         Me.RecipeButtonPins.Text = "  LIFT PINS"
         Me.RecipeButtonPins.Visible = False
@@ -1272,11 +1315,12 @@ Partial Class MainWindow
         Me.Line_Label4.BackColor = System.Drawing.Color.White
         Me.Line_Label4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.Line_Label4.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!)
-        Me.Line_Label4.Location = New System.Drawing.Point(854, 617)
-        Me.Line_Label4.MaximumSize = New System.Drawing.Size(700, 2)
-        Me.Line_Label4.MinimumSize = New System.Drawing.Size(900, 2)
+        Me.Line_Label4.Location = New System.Drawing.Point(1139, 759)
+        Me.Line_Label4.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.Line_Label4.MaximumSize = New System.Drawing.Size(933, 2)
+        Me.Line_Label4.MinimumSize = New System.Drawing.Size(1199, 2)
         Me.Line_Label4.Name = "Line_Label4"
-        Me.Line_Label4.Size = New System.Drawing.Size(900, 2)
+        Me.Line_Label4.Size = New System.Drawing.Size(1199, 2)
         Me.Line_Label4.TabIndex = 71
         Me.Line_Label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         Me.Line_Label4.Visible = False
@@ -1285,12 +1329,12 @@ Partial Class MainWindow
         '
         Me.ActiveRecipeName.BackColor = System.Drawing.Color.FromArgb(CType(CType(213, Byte), Integer), CType(CType(218, Byte), Integer), CType(CType(223, Byte), Integer))
         Me.ActiveRecipeName.Font = New System.Drawing.Font("Arial", 18.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.ActiveRecipeName.Location = New System.Drawing.Point(65, 63)
-        Me.ActiveRecipeName.Margin = New System.Windows.Forms.Padding(2)
-        Me.ActiveRecipeName.MinimumSize = New System.Drawing.Size(38, 20)
+        Me.ActiveRecipeName.Location = New System.Drawing.Point(87, 78)
+        Me.ActiveRecipeName.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
+        Me.ActiveRecipeName.MinimumSize = New System.Drawing.Size(49, 20)
         Me.ActiveRecipeName.Name = "ActiveRecipeName"
         Me.ActiveRecipeName.ReadOnly = True
-        Me.ActiveRecipeName.Size = New System.Drawing.Size(422, 42)
+        Me.ActiveRecipeName.Size = New System.Drawing.Size(561, 42)
         Me.ActiveRecipeName.TabIndex = 15
         Me.ActiveRecipeName.Text = "Active Recipe"
         Me.ActiveRecipeName.WordWrap = False
@@ -1300,7 +1344,8 @@ Partial Class MainWindow
         Me.RF_Reflected_Label.AutoSize = True
         Me.RF_Reflected_Label.BackColor = System.Drawing.Color.White
         Me.RF_Reflected_Label.Font = New System.Drawing.Font("Microsoft Sans Serif", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.RF_Reflected_Label.Location = New System.Drawing.Point(896, 585)
+        Me.RF_Reflected_Label.Location = New System.Drawing.Point(1195, 720)
+        Me.RF_Reflected_Label.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.RF_Reflected_Label.Name = "RF_Reflected_Label"
         Me.RF_Reflected_Label.Size = New System.Drawing.Size(221, 31)
         Me.RF_Reflected_Label.TabIndex = 73
@@ -1312,8 +1357,9 @@ Partial Class MainWindow
         Me.RF_Reflected_Radial.ArrowVisible = False
         Me.RF_Reflected_Radial.Font = New System.Drawing.Font("Verdana", 8.2!)
         Me.RF_Reflected_Radial.ForeColor = System.Drawing.Color.FromArgb(CType(CType(139, Byte), Integer), CType(CType(152, Byte), Integer), CType(CType(166, Byte), Integer))
-        Me.RF_Reflected_Radial.Location = New System.Drawing.Point(866, 379)
-        Me.RF_Reflected_Radial.MinimumSize = New System.Drawing.Size(30, 30)
+        Me.RF_Reflected_Radial.Location = New System.Drawing.Point(1155, 466)
+        Me.RF_Reflected_Radial.Margin = New System.Windows.Forms.Padding(4)
+        Me.RF_Reflected_Radial.MinimumSize = New System.Drawing.Size(40, 37)
         Me.RF_Reflected_Radial.Name = "RF_Reflected_Radial"
         Me.RF_Reflected_Radial.ProgressColor = System.Drawing.Color.Yellow
         Me.RF_Reflected_Radial.ProgressColor2 = System.Drawing.Color.Yellow
@@ -1321,7 +1367,7 @@ Partial Class MainWindow
         Me.RF_Reflected_Radial.ProgressStartCap = System.Drawing.Drawing2D.LineCap.Round
         Me.RF_Reflected_Radial.ProgressThickness = 30
         Me.RF_Reflected_Radial.ShowPercentage = False
-        Me.RF_Reflected_Radial.Size = New System.Drawing.Size(224, 224)
+        Me.RF_Reflected_Radial.Size = New System.Drawing.Size(299, 299)
         Me.RF_Reflected_Radial.TabIndex = 75
         '
         'Watts2_Label
@@ -1329,7 +1375,8 @@ Partial Class MainWindow
         Me.Watts2_Label.AutoSize = True
         Me.Watts2_Label.BackColor = System.Drawing.Color.White
         Me.Watts2_Label.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Watts2_Label.Location = New System.Drawing.Point(952, 515)
+        Me.Watts2_Label.Location = New System.Drawing.Point(1269, 634)
+        Me.Watts2_Label.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Watts2_Label.Name = "Watts2_Label"
         Me.Watts2_Label.Size = New System.Drawing.Size(63, 25)
         Me.Watts2_Label.TabIndex = 77
@@ -1338,14 +1385,15 @@ Partial Class MainWindow
         'ProgressBar4
         '
         Me.ProgressBar4.AutoRoundedCorners = True
-        Me.ProgressBar4.BorderRadius = 24
+        Me.ProgressBar4.BorderRadius = 33
         Me.ProgressBar4.GradientMode = System.Drawing.Drawing2D.LinearGradientMode.Horizontal
-        Me.ProgressBar4.Location = New System.Drawing.Point(492, 175)
+        Me.ProgressBar4.Location = New System.Drawing.Point(656, 215)
+        Me.ProgressBar4.Margin = New System.Windows.Forms.Padding(4)
         Me.ProgressBar4.Name = "ProgressBar4"
         Me.ProgressBar4.ProgressColor = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.ProgressBar4.ProgressColor2 = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.ProgressBar4.ShadowDecoration.Parent = Me.ProgressBar4
-        Me.ProgressBar4.Size = New System.Drawing.Size(51, 450)
+        Me.ProgressBar4.Size = New System.Drawing.Size(68, 554)
         Me.ProgressBar4.Style = System.Windows.Forms.ProgressBarStyle.Continuous
         Me.ProgressBar4.TabIndex = 81
         Me.ProgressBar4.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SystemDefault
@@ -1353,7 +1401,7 @@ Partial Class MainWindow
         'HomeAxesBtn
         '
         Me.HomeAxesBtn.AutoRoundedCorners = True
-        Me.HomeAxesBtn.BorderRadius = 24
+        Me.HomeAxesBtn.BorderRadius = 30
         Me.HomeAxesBtn.CheckedState.Parent = Me.HomeAxesBtn
         Me.HomeAxesBtn.CustomImages.Parent = Me.HomeAxesBtn
         Me.HomeAxesBtn.FillColor = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
@@ -1361,12 +1409,13 @@ Partial Class MainWindow
         Me.HomeAxesBtn.ForeColor = System.Drawing.Color.White
         Me.HomeAxesBtn.HoverState.FillColor = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.HomeAxesBtn.HoverState.Parent = Me.HomeAxesBtn
-        Me.HomeAxesBtn.Location = New System.Drawing.Point(1367, 250)
+        Me.HomeAxesBtn.Location = New System.Drawing.Point(1823, 308)
+        Me.HomeAxesBtn.Margin = New System.Windows.Forms.Padding(4)
         Me.HomeAxesBtn.Name = "HomeAxesBtn"
         Me.HomeAxesBtn.ShadowDecoration.BorderRadius = 27
         Me.HomeAxesBtn.ShadowDecoration.Color = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.HomeAxesBtn.ShadowDecoration.Parent = Me.HomeAxesBtn
-        Me.HomeAxesBtn.Size = New System.Drawing.Size(174, 50)
+        Me.HomeAxesBtn.Size = New System.Drawing.Size(232, 62)
         Me.HomeAxesBtn.TabIndex = 82
         Me.HomeAxesBtn.Text = "LOAD POSITION"
         Me.HomeAxesBtn.Visible = False
@@ -1376,7 +1425,8 @@ Partial Class MainWindow
         Me.Com_Port_Label.AutoSize = True
         Me.Com_Port_Label.BackColor = System.Drawing.Color.White
         Me.Com_Port_Label.Font = New System.Drawing.Font("Microsoft Sans Serif", 18.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Com_Port_Label.Location = New System.Drawing.Point(423, 8)
+        Me.Com_Port_Label.Location = New System.Drawing.Point(564, 10)
+        Me.Com_Port_Label.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Com_Port_Label.Name = "Com_Port_Label"
         Me.Com_Port_Label.Size = New System.Drawing.Size(139, 36)
         Me.Com_Port_Label.TabIndex = 13
@@ -1389,10 +1439,10 @@ Partial Class MainWindow
         Me.Start_Stop_Toggle.BackColor = System.Drawing.Color.Red
         Me.Start_Stop_Toggle.Cursor = System.Windows.Forms.Cursors.Arrow
         Me.Start_Stop_Toggle.Font = New System.Drawing.Font("Arial", 11.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Start_Stop_Toggle.Location = New System.Drawing.Point(674, 5)
-        Me.Start_Stop_Toggle.Margin = New System.Windows.Forms.Padding(2)
+        Me.Start_Stop_Toggle.Location = New System.Drawing.Point(899, 6)
+        Me.Start_Stop_Toggle.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.Start_Stop_Toggle.Name = "Start_Stop_Toggle"
-        Me.Start_Stop_Toggle.Size = New System.Drawing.Size(121, 37)
+        Me.Start_Stop_Toggle.Size = New System.Drawing.Size(161, 46)
         Me.Start_Stop_Toggle.TabIndex = 14
         Me.Start_Stop_Toggle.Text = "CONNECT"
         Me.Start_Stop_Toggle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -1405,9 +1455,10 @@ Partial Class MainWindow
         Me.com_portBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.com_portBox.Font = New System.Drawing.Font("Microsoft Sans Serif", 18.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.com_portBox.FormattingEnabled = True
-        Me.com_portBox.Location = New System.Drawing.Point(543, 5)
+        Me.com_portBox.Location = New System.Drawing.Point(724, 6)
+        Me.com_portBox.Margin = New System.Windows.Forms.Padding(4)
         Me.com_portBox.Name = "com_portBox"
-        Me.com_portBox.Size = New System.Drawing.Size(126, 44)
+        Me.com_portBox.Size = New System.Drawing.Size(167, 44)
         Me.com_portBox.TabIndex = 3
         Me.com_portBox.Visible = False
         '
@@ -1417,11 +1468,11 @@ Partial Class MainWindow
         Me.RecipeWattsTxt.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.RecipeWattsTxt.Font = New System.Drawing.Font("Arial", 18.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.RecipeWattsTxt.ForeColor = System.Drawing.SystemColors.InactiveCaption
-        Me.RecipeWattsTxt.Location = New System.Drawing.Point(941, 289)
-        Me.RecipeWattsTxt.Margin = New System.Windows.Forms.Padding(2)
+        Me.RecipeWattsTxt.Location = New System.Drawing.Point(1255, 356)
+        Me.RecipeWattsTxt.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.RecipeWattsTxt.Name = "RecipeWattsTxt"
         Me.RecipeWattsTxt.ReadOnly = True
-        Me.RecipeWattsTxt.Size = New System.Drawing.Size(71, 35)
+        Me.RecipeWattsTxt.Size = New System.Drawing.Size(95, 35)
         Me.RecipeWattsTxt.TabIndex = 16
         Me.RecipeWattsTxt.Text = "???"
         Me.RecipeWattsTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -1433,12 +1484,12 @@ Partial Class MainWindow
         Me.MFC_1_Recipe_Flow.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.MFC_1_Recipe_Flow.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.MFC_1_Recipe_Flow.ForeColor = System.Drawing.SystemColors.InactiveCaption
-        Me.MFC_1_Recipe_Flow.Location = New System.Drawing.Point(82, 659)
-        Me.MFC_1_Recipe_Flow.Margin = New System.Windows.Forms.Padding(2)
-        Me.MFC_1_Recipe_Flow.MinimumSize = New System.Drawing.Size(38, 20)
+        Me.MFC_1_Recipe_Flow.Location = New System.Drawing.Point(109, 811)
+        Me.MFC_1_Recipe_Flow.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
+        Me.MFC_1_Recipe_Flow.MinimumSize = New System.Drawing.Size(51, 20)
         Me.MFC_1_Recipe_Flow.Name = "MFC_1_Recipe_Flow"
         Me.MFC_1_Recipe_Flow.ReadOnly = True
-        Me.MFC_1_Recipe_Flow.Size = New System.Drawing.Size(59, 31)
+        Me.MFC_1_Recipe_Flow.Size = New System.Drawing.Size(79, 31)
         Me.MFC_1_Recipe_Flow.TabIndex = 15
         Me.MFC_1_Recipe_Flow.Text = "???"
         Me.MFC_1_Recipe_Flow.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -1450,13 +1501,14 @@ Partial Class MainWindow
         Me.Temp_Radial.ArrowVisible = False
         Me.Temp_Radial.Font = New System.Drawing.Font("Verdana", 8.2!)
         Me.Temp_Radial.ForeColor = System.Drawing.Color.FromArgb(CType(CType(139, Byte), Integer), CType(CType(152, Byte), Integer), CType(CType(166, Byte), Integer))
-        Me.Temp_Radial.Location = New System.Drawing.Point(1111, 379)
-        Me.Temp_Radial.MinimumSize = New System.Drawing.Size(30, 30)
+        Me.Temp_Radial.Location = New System.Drawing.Point(1481, 466)
+        Me.Temp_Radial.Margin = New System.Windows.Forms.Padding(4)
+        Me.Temp_Radial.MinimumSize = New System.Drawing.Size(40, 37)
         Me.Temp_Radial.Name = "Temp_Radial"
         Me.Temp_Radial.ProgressColor = System.Drawing.Color.DodgerBlue
         Me.Temp_Radial.ProgressColor2 = System.Drawing.Color.DodgerBlue
         Me.Temp_Radial.ShowPercentage = False
-        Me.Temp_Radial.Size = New System.Drawing.Size(224, 224)
+        Me.Temp_Radial.Size = New System.Drawing.Size(299, 299)
         Me.Temp_Radial.TabIndex = 83
         '
         'PictureBox3
@@ -1464,9 +1516,10 @@ Partial Class MainWindow
         Me.PictureBox3.BackColor = System.Drawing.Color.Transparent
         Me.PictureBox3.BackgroundImage = CType(resources.GetObject("PictureBox3.BackgroundImage"), System.Drawing.Image)
         Me.PictureBox3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
-        Me.PictureBox3.Location = New System.Drawing.Point(469, 175)
+        Me.PictureBox3.Location = New System.Drawing.Point(625, 215)
+        Me.PictureBox3.Margin = New System.Windows.Forms.Padding(4)
         Me.PictureBox3.Name = "PictureBox3"
-        Me.PictureBox3.Size = New System.Drawing.Size(23, 450)
+        Me.PictureBox3.Size = New System.Drawing.Size(31, 554)
         Me.PictureBox3.TabIndex = 85
         Me.PictureBox3.TabStop = False
         '
@@ -1474,14 +1527,15 @@ Partial Class MainWindow
         '
         Me.ProgressBar1.AutoRoundedCorners = True
         Me.ProgressBar1.BackColor = System.Drawing.Color.Transparent
-        Me.ProgressBar1.BorderRadius = 24
+        Me.ProgressBar1.BorderRadius = 33
         Me.ProgressBar1.GradientMode = System.Drawing.Drawing2D.LinearGradientMode.Horizontal
-        Me.ProgressBar1.Location = New System.Drawing.Point(87, 175)
+        Me.ProgressBar1.Location = New System.Drawing.Point(116, 215)
+        Me.ProgressBar1.Margin = New System.Windows.Forms.Padding(4)
         Me.ProgressBar1.Name = "ProgressBar1"
         Me.ProgressBar1.ProgressColor = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.ProgressBar1.ProgressColor2 = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.ProgressBar1.ShadowDecoration.Parent = Me.ProgressBar1
-        Me.ProgressBar1.Size = New System.Drawing.Size(51, 450)
+        Me.ProgressBar1.Size = New System.Drawing.Size(68, 554)
         Me.ProgressBar1.Style = System.Windows.Forms.ProgressBarStyle.Continuous
         Me.ProgressBar1.TabIndex = 78
         Me.ProgressBar1.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SystemDefault
@@ -1489,14 +1543,15 @@ Partial Class MainWindow
         'ProgressBar2
         '
         Me.ProgressBar2.AutoRoundedCorners = True
-        Me.ProgressBar2.BorderRadius = 24
+        Me.ProgressBar2.BorderRadius = 33
         Me.ProgressBar2.GradientMode = System.Drawing.Drawing2D.LinearGradientMode.Horizontal
-        Me.ProgressBar2.Location = New System.Drawing.Point(222, 175)
+        Me.ProgressBar2.Location = New System.Drawing.Point(296, 215)
+        Me.ProgressBar2.Margin = New System.Windows.Forms.Padding(4)
         Me.ProgressBar2.Name = "ProgressBar2"
         Me.ProgressBar2.ProgressColor = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.ProgressBar2.ProgressColor2 = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.ProgressBar2.ShadowDecoration.Parent = Me.ProgressBar2
-        Me.ProgressBar2.Size = New System.Drawing.Size(51, 450)
+        Me.ProgressBar2.Size = New System.Drawing.Size(68, 554)
         Me.ProgressBar2.Style = System.Windows.Forms.ProgressBarStyle.Continuous
         Me.ProgressBar2.TabIndex = 79
         Me.ProgressBar2.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SystemDefault
@@ -1504,14 +1559,15 @@ Partial Class MainWindow
         'ProgressBar3
         '
         Me.ProgressBar3.AutoRoundedCorners = True
-        Me.ProgressBar3.BorderRadius = 24
+        Me.ProgressBar3.BorderRadius = 33
         Me.ProgressBar3.GradientMode = System.Drawing.Drawing2D.LinearGradientMode.Horizontal
-        Me.ProgressBar3.Location = New System.Drawing.Point(357, 175)
+        Me.ProgressBar3.Location = New System.Drawing.Point(476, 215)
+        Me.ProgressBar3.Margin = New System.Windows.Forms.Padding(4)
         Me.ProgressBar3.Name = "ProgressBar3"
         Me.ProgressBar3.ProgressColor = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.ProgressBar3.ProgressColor2 = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.ProgressBar3.ShadowDecoration.Parent = Me.ProgressBar3
-        Me.ProgressBar3.Size = New System.Drawing.Size(51, 450)
+        Me.ProgressBar3.Size = New System.Drawing.Size(68, 554)
         Me.ProgressBar3.Style = System.Windows.Forms.ProgressBarStyle.Continuous
         Me.ProgressBar3.TabIndex = 80
         Me.ProgressBar3.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SystemDefault
@@ -1520,7 +1576,8 @@ Partial Class MainWindow
         '
         Me.Loaded_Progress_4_100.AutoSize = True
         Me.Loaded_Progress_4_100.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Loaded_Progress_4_100.Location = New System.Drawing.Point(422, 175)
+        Me.Loaded_Progress_4_100.Location = New System.Drawing.Point(563, 215)
+        Me.Loaded_Progress_4_100.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Loaded_Progress_4_100.Name = "Loaded_Progress_4_100"
         Me.Loaded_Progress_4_100.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_4_100.TabIndex = 87
@@ -1530,7 +1587,8 @@ Partial Class MainWindow
         '
         Me.Loaded_Progress_4_50.AutoSize = True
         Me.Loaded_Progress_4_50.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Loaded_Progress_4_50.Location = New System.Drawing.Point(422, 395)
+        Me.Loaded_Progress_4_50.Location = New System.Drawing.Point(563, 486)
+        Me.Loaded_Progress_4_50.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Loaded_Progress_4_50.Name = "Loaded_Progress_4_50"
         Me.Loaded_Progress_4_50.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_4_50.TabIndex = 88
@@ -1540,7 +1598,8 @@ Partial Class MainWindow
         '
         Me.Label7.AutoSize = True
         Me.Label7.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label7.Location = New System.Drawing.Point(414, 612)
+        Me.Label7.Location = New System.Drawing.Point(552, 753)
+        Me.Label7.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label7.Name = "Label7"
         Me.Label7.Size = New System.Drawing.Size(57, 17)
         Me.Label7.TabIndex = 92
@@ -1551,9 +1610,10 @@ Partial Class MainWindow
         Me.PictureBox4.BackColor = System.Drawing.Color.Transparent
         Me.PictureBox4.BackgroundImage = CType(resources.GetObject("PictureBox4.BackgroundImage"), System.Drawing.Image)
         Me.PictureBox4.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
-        Me.PictureBox4.Location = New System.Drawing.Point(334, 175)
+        Me.PictureBox4.Location = New System.Drawing.Point(445, 215)
+        Me.PictureBox4.Margin = New System.Windows.Forms.Padding(4)
         Me.PictureBox4.Name = "PictureBox4"
-        Me.PictureBox4.Size = New System.Drawing.Size(23, 450)
+        Me.PictureBox4.Size = New System.Drawing.Size(31, 554)
         Me.PictureBox4.TabIndex = 94
         Me.PictureBox4.TabStop = False
         '
@@ -1561,7 +1621,8 @@ Partial Class MainWindow
         '
         Me.Loaded_Progress_3_100.AutoSize = True
         Me.Loaded_Progress_3_100.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Loaded_Progress_3_100.Location = New System.Drawing.Point(287, 175)
+        Me.Loaded_Progress_3_100.Location = New System.Drawing.Point(383, 215)
+        Me.Loaded_Progress_3_100.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Loaded_Progress_3_100.Name = "Loaded_Progress_3_100"
         Me.Loaded_Progress_3_100.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_3_100.TabIndex = 95
@@ -1571,7 +1632,8 @@ Partial Class MainWindow
         '
         Me.Loaded_Progress_3_50.AutoSize = True
         Me.Loaded_Progress_3_50.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Loaded_Progress_3_50.Location = New System.Drawing.Point(287, 395)
+        Me.Loaded_Progress_3_50.Location = New System.Drawing.Point(383, 486)
+        Me.Loaded_Progress_3_50.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Loaded_Progress_3_50.Name = "Loaded_Progress_3_50"
         Me.Loaded_Progress_3_50.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_3_50.TabIndex = 96
@@ -1581,7 +1643,8 @@ Partial Class MainWindow
         '
         Me.Label10.AutoSize = True
         Me.Label10.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label10.Location = New System.Drawing.Point(278, 612)
+        Me.Label10.Location = New System.Drawing.Point(371, 753)
+        Me.Label10.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label10.Name = "Label10"
         Me.Label10.Size = New System.Drawing.Size(57, 17)
         Me.Label10.TabIndex = 97
@@ -1592,9 +1655,10 @@ Partial Class MainWindow
         Me.PictureBox5.BackColor = System.Drawing.Color.Transparent
         Me.PictureBox5.BackgroundImage = CType(resources.GetObject("PictureBox5.BackgroundImage"), System.Drawing.Image)
         Me.PictureBox5.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
-        Me.PictureBox5.Location = New System.Drawing.Point(198, 175)
+        Me.PictureBox5.Location = New System.Drawing.Point(264, 215)
+        Me.PictureBox5.Margin = New System.Windows.Forms.Padding(4)
         Me.PictureBox5.Name = "PictureBox5"
-        Me.PictureBox5.Size = New System.Drawing.Size(23, 450)
+        Me.PictureBox5.Size = New System.Drawing.Size(31, 554)
         Me.PictureBox5.TabIndex = 99
         Me.PictureBox5.TabStop = False
         '
@@ -1602,7 +1666,8 @@ Partial Class MainWindow
         '
         Me.Loaded_Progress_2_100.AutoSize = True
         Me.Loaded_Progress_2_100.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Loaded_Progress_2_100.Location = New System.Drawing.Point(151, 175)
+        Me.Loaded_Progress_2_100.Location = New System.Drawing.Point(201, 215)
+        Me.Loaded_Progress_2_100.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Loaded_Progress_2_100.Name = "Loaded_Progress_2_100"
         Me.Loaded_Progress_2_100.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_2_100.TabIndex = 100
@@ -1612,7 +1677,8 @@ Partial Class MainWindow
         '
         Me.Loaded_Progress_2_50.AutoSize = True
         Me.Loaded_Progress_2_50.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Loaded_Progress_2_50.Location = New System.Drawing.Point(151, 395)
+        Me.Loaded_Progress_2_50.Location = New System.Drawing.Point(201, 486)
+        Me.Loaded_Progress_2_50.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Loaded_Progress_2_50.Name = "Loaded_Progress_2_50"
         Me.Loaded_Progress_2_50.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_2_50.TabIndex = 101
@@ -1622,7 +1688,8 @@ Partial Class MainWindow
         '
         Me.Label13.AutoSize = True
         Me.Label13.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label13.Location = New System.Drawing.Point(144, 612)
+        Me.Label13.Location = New System.Drawing.Point(192, 753)
+        Me.Label13.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label13.Name = "Label13"
         Me.Label13.Size = New System.Drawing.Size(57, 17)
         Me.Label13.TabIndex = 102
@@ -1633,9 +1700,10 @@ Partial Class MainWindow
         Me.PictureBox6.BackColor = System.Drawing.Color.Transparent
         Me.PictureBox6.BackgroundImage = CType(resources.GetObject("PictureBox6.BackgroundImage"), System.Drawing.Image)
         Me.PictureBox6.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
-        Me.PictureBox6.Location = New System.Drawing.Point(64, 175)
+        Me.PictureBox6.Location = New System.Drawing.Point(85, 215)
+        Me.PictureBox6.Margin = New System.Windows.Forms.Padding(4)
         Me.PictureBox6.Name = "PictureBox6"
-        Me.PictureBox6.Size = New System.Drawing.Size(23, 450)
+        Me.PictureBox6.Size = New System.Drawing.Size(31, 554)
         Me.PictureBox6.TabIndex = 104
         Me.PictureBox6.TabStop = False
         '
@@ -1643,7 +1711,8 @@ Partial Class MainWindow
         '
         Me.Loaded_Progress_1_100.AutoSize = True
         Me.Loaded_Progress_1_100.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Loaded_Progress_1_100.Location = New System.Drawing.Point(18, 175)
+        Me.Loaded_Progress_1_100.Location = New System.Drawing.Point(24, 215)
+        Me.Loaded_Progress_1_100.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Loaded_Progress_1_100.Name = "Loaded_Progress_1_100"
         Me.Loaded_Progress_1_100.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_1_100.TabIndex = 105
@@ -1653,7 +1722,8 @@ Partial Class MainWindow
         '
         Me.Loaded_Progress_1_50.AutoSize = True
         Me.Loaded_Progress_1_50.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Loaded_Progress_1_50.Location = New System.Drawing.Point(17, 395)
+        Me.Loaded_Progress_1_50.Location = New System.Drawing.Point(23, 486)
+        Me.Loaded_Progress_1_50.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Loaded_Progress_1_50.Name = "Loaded_Progress_1_50"
         Me.Loaded_Progress_1_50.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_1_50.TabIndex = 106
@@ -1663,7 +1733,8 @@ Partial Class MainWindow
         '
         Me.Label16.AutoSize = True
         Me.Label16.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label16.Location = New System.Drawing.Point(10, 612)
+        Me.Label16.Location = New System.Drawing.Point(13, 753)
+        Me.Label16.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label16.Name = "Label16"
         Me.Label16.Size = New System.Drawing.Size(57, 17)
         Me.Label16.TabIndex = 107
@@ -1675,11 +1746,11 @@ Partial Class MainWindow
         Me.MFC_2_Read_Flow.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.MFC_2_Read_Flow.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.MFC_2_Read_Flow.ForeColor = System.Drawing.Color.Red
-        Me.MFC_2_Read_Flow.Location = New System.Drawing.Point(219, 634)
-        Me.MFC_2_Read_Flow.Margin = New System.Windows.Forms.Padding(2)
+        Me.MFC_2_Read_Flow.Location = New System.Drawing.Point(292, 780)
+        Me.MFC_2_Read_Flow.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.MFC_2_Read_Flow.Name = "MFC_2_Read_Flow"
         Me.MFC_2_Read_Flow.ReadOnly = True
-        Me.MFC_2_Read_Flow.Size = New System.Drawing.Size(59, 31)
+        Me.MFC_2_Read_Flow.Size = New System.Drawing.Size(79, 31)
         Me.MFC_2_Read_Flow.TabIndex = 116
         Me.MFC_2_Read_Flow.Text = "0.00"
         Me.MFC_2_Read_Flow.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -1691,12 +1762,12 @@ Partial Class MainWindow
         Me.MFC_2_Recipe_Flow.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.MFC_2_Recipe_Flow.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.MFC_2_Recipe_Flow.ForeColor = System.Drawing.SystemColors.InactiveCaption
-        Me.MFC_2_Recipe_Flow.Location = New System.Drawing.Point(219, 659)
-        Me.MFC_2_Recipe_Flow.Margin = New System.Windows.Forms.Padding(2)
-        Me.MFC_2_Recipe_Flow.MinimumSize = New System.Drawing.Size(38, 20)
+        Me.MFC_2_Recipe_Flow.Location = New System.Drawing.Point(292, 811)
+        Me.MFC_2_Recipe_Flow.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
+        Me.MFC_2_Recipe_Flow.MinimumSize = New System.Drawing.Size(51, 20)
         Me.MFC_2_Recipe_Flow.Name = "MFC_2_Recipe_Flow"
         Me.MFC_2_Recipe_Flow.ReadOnly = True
-        Me.MFC_2_Recipe_Flow.Size = New System.Drawing.Size(59, 31)
+        Me.MFC_2_Recipe_Flow.Size = New System.Drawing.Size(79, 31)
         Me.MFC_2_Recipe_Flow.TabIndex = 115
         Me.MFC_2_Recipe_Flow.Text = "???"
         Me.MFC_2_Recipe_Flow.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -1708,11 +1779,11 @@ Partial Class MainWindow
         Me.MFC_3_Read_Flow.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.MFC_3_Read_Flow.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.MFC_3_Read_Flow.ForeColor = System.Drawing.Color.Red
-        Me.MFC_3_Read_Flow.Location = New System.Drawing.Point(355, 633)
-        Me.MFC_3_Read_Flow.Margin = New System.Windows.Forms.Padding(2)
+        Me.MFC_3_Read_Flow.Location = New System.Drawing.Point(473, 779)
+        Me.MFC_3_Read_Flow.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.MFC_3_Read_Flow.Name = "MFC_3_Read_Flow"
         Me.MFC_3_Read_Flow.ReadOnly = True
-        Me.MFC_3_Read_Flow.Size = New System.Drawing.Size(59, 31)
+        Me.MFC_3_Read_Flow.Size = New System.Drawing.Size(79, 31)
         Me.MFC_3_Read_Flow.TabIndex = 119
         Me.MFC_3_Read_Flow.Text = "0.00"
         Me.MFC_3_Read_Flow.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -1724,12 +1795,12 @@ Partial Class MainWindow
         Me.MFC_3_Recipe_Flow.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.MFC_3_Recipe_Flow.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.MFC_3_Recipe_Flow.ForeColor = System.Drawing.SystemColors.InactiveCaption
-        Me.MFC_3_Recipe_Flow.Location = New System.Drawing.Point(355, 659)
-        Me.MFC_3_Recipe_Flow.Margin = New System.Windows.Forms.Padding(2)
-        Me.MFC_3_Recipe_Flow.MinimumSize = New System.Drawing.Size(38, 20)
+        Me.MFC_3_Recipe_Flow.Location = New System.Drawing.Point(473, 811)
+        Me.MFC_3_Recipe_Flow.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
+        Me.MFC_3_Recipe_Flow.MinimumSize = New System.Drawing.Size(51, 20)
         Me.MFC_3_Recipe_Flow.Name = "MFC_3_Recipe_Flow"
         Me.MFC_3_Recipe_Flow.ReadOnly = True
-        Me.MFC_3_Recipe_Flow.Size = New System.Drawing.Size(59, 31)
+        Me.MFC_3_Recipe_Flow.Size = New System.Drawing.Size(79, 31)
         Me.MFC_3_Recipe_Flow.TabIndex = 118
         Me.MFC_3_Recipe_Flow.Text = "???"
         Me.MFC_3_Recipe_Flow.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -1741,11 +1812,11 @@ Partial Class MainWindow
         Me.MFC_4_Read_Flow.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.MFC_4_Read_Flow.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.MFC_4_Read_Flow.ForeColor = System.Drawing.Color.Red
-        Me.MFC_4_Read_Flow.Location = New System.Drawing.Point(490, 634)
-        Me.MFC_4_Read_Flow.Margin = New System.Windows.Forms.Padding(2)
+        Me.MFC_4_Read_Flow.Location = New System.Drawing.Point(653, 780)
+        Me.MFC_4_Read_Flow.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.MFC_4_Read_Flow.Name = "MFC_4_Read_Flow"
         Me.MFC_4_Read_Flow.ReadOnly = True
-        Me.MFC_4_Read_Flow.Size = New System.Drawing.Size(59, 31)
+        Me.MFC_4_Read_Flow.Size = New System.Drawing.Size(79, 31)
         Me.MFC_4_Read_Flow.TabIndex = 122
         Me.MFC_4_Read_Flow.Text = "0.00"
         Me.MFC_4_Read_Flow.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -1757,12 +1828,12 @@ Partial Class MainWindow
         Me.MFC_4_Recipe_Flow.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.MFC_4_Recipe_Flow.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.MFC_4_Recipe_Flow.ForeColor = System.Drawing.SystemColors.InactiveCaption
-        Me.MFC_4_Recipe_Flow.Location = New System.Drawing.Point(490, 659)
-        Me.MFC_4_Recipe_Flow.Margin = New System.Windows.Forms.Padding(2)
-        Me.MFC_4_Recipe_Flow.MinimumSize = New System.Drawing.Size(38, 20)
+        Me.MFC_4_Recipe_Flow.Location = New System.Drawing.Point(653, 811)
+        Me.MFC_4_Recipe_Flow.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
+        Me.MFC_4_Recipe_Flow.MinimumSize = New System.Drawing.Size(51, 20)
         Me.MFC_4_Recipe_Flow.Name = "MFC_4_Recipe_Flow"
         Me.MFC_4_Recipe_Flow.ReadOnly = True
-        Me.MFC_4_Recipe_Flow.Size = New System.Drawing.Size(59, 31)
+        Me.MFC_4_Recipe_Flow.Size = New System.Drawing.Size(79, 31)
         Me.MFC_4_Recipe_Flow.TabIndex = 121
         Me.MFC_4_Recipe_Flow.Text = "???"
         Me.MFC_4_Recipe_Flow.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -1773,10 +1844,11 @@ Partial Class MainWindow
         Me.Loaded_Progress_2.BackColor = System.Drawing.Color.Transparent
         Me.Loaded_Progress_2.FillColor = System.Drawing.Color.Transparent
         Me.Loaded_Progress_2.GradientMode = System.Drawing.Drawing2D.LinearGradientMode.Horizontal
-        Me.Loaded_Progress_2.Location = New System.Drawing.Point(188, 175)
+        Me.Loaded_Progress_2.Location = New System.Drawing.Point(251, 215)
+        Me.Loaded_Progress_2.Margin = New System.Windows.Forms.Padding(4)
         Me.Loaded_Progress_2.Name = "Loaded_Progress_2"
         Me.Loaded_Progress_2.ShadowDecoration.Parent = Me.Loaded_Progress_2
-        Me.Loaded_Progress_2.Size = New System.Drawing.Size(10, 450)
+        Me.Loaded_Progress_2.Size = New System.Drawing.Size(13, 554)
         Me.Loaded_Progress_2.Style = System.Windows.Forms.ProgressBarStyle.Continuous
         Me.Loaded_Progress_2.TabIndex = 125
         Me.Loaded_Progress_2.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SystemDefault
@@ -1787,10 +1859,11 @@ Partial Class MainWindow
         Me.Loaded_Progress_1.BackColor = System.Drawing.Color.Transparent
         Me.Loaded_Progress_1.FillColor = System.Drawing.Color.Transparent
         Me.Loaded_Progress_1.GradientMode = System.Drawing.Drawing2D.LinearGradientMode.Horizontal
-        Me.Loaded_Progress_1.Location = New System.Drawing.Point(54, 175)
+        Me.Loaded_Progress_1.Location = New System.Drawing.Point(72, 215)
+        Me.Loaded_Progress_1.Margin = New System.Windows.Forms.Padding(4)
         Me.Loaded_Progress_1.Name = "Loaded_Progress_1"
         Me.Loaded_Progress_1.ShadowDecoration.Parent = Me.Loaded_Progress_1
-        Me.Loaded_Progress_1.Size = New System.Drawing.Size(10, 450)
+        Me.Loaded_Progress_1.Size = New System.Drawing.Size(13, 554)
         Me.Loaded_Progress_1.Style = System.Windows.Forms.ProgressBarStyle.Continuous
         Me.Loaded_Progress_1.TabIndex = 126
         Me.Loaded_Progress_1.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SystemDefault
@@ -1801,7 +1874,8 @@ Partial Class MainWindow
         Me.AC_CODE.AutoSize = True
         Me.AC_CODE.BackColor = System.Drawing.Color.White
         Me.AC_CODE.Font = New System.Drawing.Font("Microsoft Sans Serif", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.AC_CODE.Location = New System.Drawing.Point(48, 707)
+        Me.AC_CODE.Location = New System.Drawing.Point(64, 870)
+        Me.AC_CODE.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.AC_CODE.Name = "AC_CODE"
         Me.AC_CODE.Size = New System.Drawing.Size(106, 31)
         Me.AC_CODE.TabIndex = 13
@@ -1815,11 +1889,11 @@ Partial Class MainWindow
         Me.RecipeCyclesTxt_OPER.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.RecipeCyclesTxt_OPER.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.RecipeCyclesTxt_OPER.ForeColor = System.Drawing.Color.Red
-        Me.RecipeCyclesTxt_OPER.Location = New System.Drawing.Point(2551, 736)
-        Me.RecipeCyclesTxt_OPER.Margin = New System.Windows.Forms.Padding(2)
+        Me.RecipeCyclesTxt_OPER.Location = New System.Drawing.Point(3401, 906)
+        Me.RecipeCyclesTxt_OPER.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.RecipeCyclesTxt_OPER.Name = "RecipeCyclesTxt_OPER"
         Me.RecipeCyclesTxt_OPER.ReadOnly = True
-        Me.RecipeCyclesTxt_OPER.Size = New System.Drawing.Size(66, 31)
+        Me.RecipeCyclesTxt_OPER.Size = New System.Drawing.Size(88, 31)
         Me.RecipeCyclesTxt_OPER.TabIndex = 137
         Me.RecipeCyclesTxt_OPER.Text = "0"
         Me.RecipeCyclesTxt_OPER.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -1832,11 +1906,11 @@ Partial Class MainWindow
         Me.RecipeSpeedTxt_OPER.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.RecipeSpeedTxt_OPER.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.RecipeSpeedTxt_OPER.ForeColor = System.Drawing.Color.Red
-        Me.RecipeSpeedTxt_OPER.Location = New System.Drawing.Point(2400, 736)
-        Me.RecipeSpeedTxt_OPER.Margin = New System.Windows.Forms.Padding(2)
+        Me.RecipeSpeedTxt_OPER.Location = New System.Drawing.Point(3200, 906)
+        Me.RecipeSpeedTxt_OPER.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.RecipeSpeedTxt_OPER.Name = "RecipeSpeedTxt_OPER"
         Me.RecipeSpeedTxt_OPER.ReadOnly = True
-        Me.RecipeSpeedTxt_OPER.Size = New System.Drawing.Size(66, 31)
+        Me.RecipeSpeedTxt_OPER.Size = New System.Drawing.Size(88, 31)
         Me.RecipeSpeedTxt_OPER.TabIndex = 138
         Me.RecipeSpeedTxt_OPER.Text = "0"
         Me.RecipeSpeedTxt_OPER.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -1849,11 +1923,11 @@ Partial Class MainWindow
         Me.RecipeOverLapTxt_OPER.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.RecipeOverLapTxt_OPER.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.RecipeOverLapTxt_OPER.ForeColor = System.Drawing.Color.Red
-        Me.RecipeOverLapTxt_OPER.Location = New System.Drawing.Point(2251, 736)
-        Me.RecipeOverLapTxt_OPER.Margin = New System.Windows.Forms.Padding(2)
+        Me.RecipeOverLapTxt_OPER.Location = New System.Drawing.Point(3001, 906)
+        Me.RecipeOverLapTxt_OPER.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.RecipeOverLapTxt_OPER.Name = "RecipeOverLapTxt_OPER"
         Me.RecipeOverLapTxt_OPER.ReadOnly = True
-        Me.RecipeOverLapTxt_OPER.Size = New System.Drawing.Size(66, 31)
+        Me.RecipeOverLapTxt_OPER.Size = New System.Drawing.Size(88, 31)
         Me.RecipeOverLapTxt_OPER.TabIndex = 139
         Me.RecipeOverLapTxt_OPER.Text = "0"
         Me.RecipeOverLapTxt_OPER.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -1866,11 +1940,11 @@ Partial Class MainWindow
         Me.RecipeGapTxt_OPER.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.RecipeGapTxt_OPER.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.RecipeGapTxt_OPER.ForeColor = System.Drawing.Color.Red
-        Me.RecipeGapTxt_OPER.Location = New System.Drawing.Point(2102, 736)
-        Me.RecipeGapTxt_OPER.Margin = New System.Windows.Forms.Padding(2)
+        Me.RecipeGapTxt_OPER.Location = New System.Drawing.Point(2803, 906)
+        Me.RecipeGapTxt_OPER.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.RecipeGapTxt_OPER.Name = "RecipeGapTxt_OPER"
         Me.RecipeGapTxt_OPER.ReadOnly = True
-        Me.RecipeGapTxt_OPER.Size = New System.Drawing.Size(66, 31)
+        Me.RecipeGapTxt_OPER.Size = New System.Drawing.Size(88, 31)
         Me.RecipeGapTxt_OPER.TabIndex = 140
         Me.RecipeGapTxt_OPER.Text = "0"
         Me.RecipeGapTxt_OPER.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -1883,11 +1957,11 @@ Partial Class MainWindow
         Me.RecipeThicknessTxt_OPER.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.RecipeThicknessTxt_OPER.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.RecipeThicknessTxt_OPER.ForeColor = System.Drawing.Color.Red
-        Me.RecipeThicknessTxt_OPER.Location = New System.Drawing.Point(1953, 736)
-        Me.RecipeThicknessTxt_OPER.Margin = New System.Windows.Forms.Padding(2)
+        Me.RecipeThicknessTxt_OPER.Location = New System.Drawing.Point(2604, 906)
+        Me.RecipeThicknessTxt_OPER.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.RecipeThicknessTxt_OPER.Name = "RecipeThicknessTxt_OPER"
         Me.RecipeThicknessTxt_OPER.ReadOnly = True
-        Me.RecipeThicknessTxt_OPER.Size = New System.Drawing.Size(66, 31)
+        Me.RecipeThicknessTxt_OPER.Size = New System.Drawing.Size(88, 31)
         Me.RecipeThicknessTxt_OPER.TabIndex = 141
         Me.RecipeThicknessTxt_OPER.Text = "0"
         Me.RecipeThicknessTxt_OPER.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -1899,7 +1973,8 @@ Partial Class MainWindow
         Me.Label22.AutoSize = True
         Me.Label22.BackColor = System.Drawing.Color.White
         Me.Label22.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label22.Location = New System.Drawing.Point(1544, 750)
+        Me.Label22.Location = New System.Drawing.Point(2059, 923)
+        Me.Label22.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label22.Name = "Label22"
         Me.Label22.Size = New System.Drawing.Size(30, 25)
         Me.Label22.TabIndex = 142
@@ -1911,7 +1986,8 @@ Partial Class MainWindow
         Me.Label23.AutoSize = True
         Me.Label23.BackColor = System.Drawing.Color.White
         Me.Label23.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label23.Location = New System.Drawing.Point(1545, 707)
+        Me.Label23.Location = New System.Drawing.Point(2060, 870)
+        Me.Label23.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label23.Name = "Label23"
         Me.Label23.Size = New System.Drawing.Size(31, 25)
         Me.Label23.TabIndex = 143
@@ -1923,7 +1999,8 @@ Partial Class MainWindow
         Me.Label24.AutoSize = True
         Me.Label24.BackColor = System.Drawing.Color.White
         Me.Label24.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label24.Location = New System.Drawing.Point(1544, 662)
+        Me.Label24.Location = New System.Drawing.Point(2059, 815)
+        Me.Label24.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label24.Name = "Label24"
         Me.Label24.Size = New System.Drawing.Size(32, 25)
         Me.Label24.TabIndex = 144
@@ -1933,7 +2010,7 @@ Partial Class MainWindow
         'Vacbtn
         '
         Me.Vacbtn.AutoRoundedCorners = True
-        Me.Vacbtn.BorderRadius = 24
+        Me.Vacbtn.BorderRadius = 30
         Me.Vacbtn.CheckedState.Parent = Me.Vacbtn
         Me.Vacbtn.CustomImages.Parent = Me.Vacbtn
         Me.Vacbtn.FillColor = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
@@ -1941,12 +2018,13 @@ Partial Class MainWindow
         Me.Vacbtn.ForeColor = System.Drawing.Color.White
         Me.Vacbtn.HoverState.FillColor = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.Vacbtn.HoverState.Parent = Me.Vacbtn
-        Me.Vacbtn.Location = New System.Drawing.Point(1545, 198)
+        Me.Vacbtn.Location = New System.Drawing.Point(2060, 244)
+        Me.Vacbtn.Margin = New System.Windows.Forms.Padding(4)
         Me.Vacbtn.Name = "Vacbtn"
         Me.Vacbtn.ShadowDecoration.BorderRadius = 27
         Me.Vacbtn.ShadowDecoration.Color = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.Vacbtn.ShadowDecoration.Parent = Me.Vacbtn
-        Me.Vacbtn.Size = New System.Drawing.Size(167, 50)
+        Me.Vacbtn.Size = New System.Drawing.Size(223, 62)
         Me.Vacbtn.TabIndex = 145
         Me.Vacbtn.Text = "   VACUUM"
         Me.Vacbtn.Visible = False
@@ -1957,7 +2035,8 @@ Partial Class MainWindow
         Me.PinsSquare.BackColor = System.Drawing.Color.Gainsboro
         Me.PinsSquare.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
         Me.PinsSquare.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.PinsSquare.Location = New System.Drawing.Point(1382, 215)
+        Me.PinsSquare.Location = New System.Drawing.Point(1843, 265)
+        Me.PinsSquare.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.PinsSquare.Name = "PinsSquare"
         Me.PinsSquare.Size = New System.Drawing.Size(26, 22)
         Me.PinsSquare.TabIndex = 146
@@ -1967,7 +2046,7 @@ Partial Class MainWindow
         'Set_MFC_1_Recipe_Button
         '
         Me.Set_MFC_1_Recipe_Button.AutoRoundedCorners = True
-        Me.Set_MFC_1_Recipe_Button.BorderRadius = 18
+        Me.Set_MFC_1_Recipe_Button.BorderRadius = 23
         Me.Set_MFC_1_Recipe_Button.CheckedState.Parent = Me.Set_MFC_1_Recipe_Button
         Me.Set_MFC_1_Recipe_Button.CustomBorderColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer))
         Me.Set_MFC_1_Recipe_Button.CustomImages.Parent = Me.Set_MFC_1_Recipe_Button
@@ -1976,12 +2055,13 @@ Partial Class MainWindow
         Me.Set_MFC_1_Recipe_Button.ForeColor = System.Drawing.Color.White
         Me.Set_MFC_1_Recipe_Button.HoverState.FillColor = System.Drawing.SystemColors.ActiveCaption
         Me.Set_MFC_1_Recipe_Button.HoverState.Parent = Me.Set_MFC_1_Recipe_Button
-        Me.Set_MFC_1_Recipe_Button.Location = New System.Drawing.Point(17, 634)
+        Me.Set_MFC_1_Recipe_Button.Location = New System.Drawing.Point(23, 780)
+        Me.Set_MFC_1_Recipe_Button.Margin = New System.Windows.Forms.Padding(4)
         Me.Set_MFC_1_Recipe_Button.Name = "Set_MFC_1_Recipe_Button"
         Me.Set_MFC_1_Recipe_Button.ShadowDecoration.BorderRadius = 27
         Me.Set_MFC_1_Recipe_Button.ShadowDecoration.Color = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.Set_MFC_1_Recipe_Button.ShadowDecoration.Parent = Me.Set_MFC_1_Recipe_Button
-        Me.Set_MFC_1_Recipe_Button.Size = New System.Drawing.Size(64, 39)
+        Me.Set_MFC_1_Recipe_Button.Size = New System.Drawing.Size(85, 48)
         Me.Set_MFC_1_Recipe_Button.TabIndex = 148
         Me.Set_MFC_1_Recipe_Button.Text = "ENTER"
         Me.Set_MFC_1_Recipe_Button.Visible = False
@@ -1989,7 +2069,7 @@ Partial Class MainWindow
         'Set_MFC_3_Recipe_Button
         '
         Me.Set_MFC_3_Recipe_Button.AutoRoundedCorners = True
-        Me.Set_MFC_3_Recipe_Button.BorderRadius = 18
+        Me.Set_MFC_3_Recipe_Button.BorderRadius = 23
         Me.Set_MFC_3_Recipe_Button.CheckedState.Parent = Me.Set_MFC_3_Recipe_Button
         Me.Set_MFC_3_Recipe_Button.CustomImages.Parent = Me.Set_MFC_3_Recipe_Button
         Me.Set_MFC_3_Recipe_Button.FillColor = System.Drawing.SystemColors.ActiveCaption
@@ -1997,12 +2077,13 @@ Partial Class MainWindow
         Me.Set_MFC_3_Recipe_Button.ForeColor = System.Drawing.Color.White
         Me.Set_MFC_3_Recipe_Button.HoverState.FillColor = System.Drawing.SystemColors.ActiveCaption
         Me.Set_MFC_3_Recipe_Button.HoverState.Parent = Me.Set_MFC_3_Recipe_Button
-        Me.Set_MFC_3_Recipe_Button.Location = New System.Drawing.Point(290, 633)
+        Me.Set_MFC_3_Recipe_Button.Location = New System.Drawing.Point(387, 779)
+        Me.Set_MFC_3_Recipe_Button.Margin = New System.Windows.Forms.Padding(4)
         Me.Set_MFC_3_Recipe_Button.Name = "Set_MFC_3_Recipe_Button"
         Me.Set_MFC_3_Recipe_Button.ShadowDecoration.BorderRadius = 27
         Me.Set_MFC_3_Recipe_Button.ShadowDecoration.Color = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.Set_MFC_3_Recipe_Button.ShadowDecoration.Parent = Me.Set_MFC_3_Recipe_Button
-        Me.Set_MFC_3_Recipe_Button.Size = New System.Drawing.Size(64, 39)
+        Me.Set_MFC_3_Recipe_Button.Size = New System.Drawing.Size(85, 48)
         Me.Set_MFC_3_Recipe_Button.TabIndex = 149
         Me.Set_MFC_3_Recipe_Button.Text = "ENTER"
         Me.Set_MFC_3_Recipe_Button.Visible = False
@@ -2010,7 +2091,7 @@ Partial Class MainWindow
         'Set_MFC_2_Recipe_Button
         '
         Me.Set_MFC_2_Recipe_Button.AutoRoundedCorners = True
-        Me.Set_MFC_2_Recipe_Button.BorderRadius = 18
+        Me.Set_MFC_2_Recipe_Button.BorderRadius = 23
         Me.Set_MFC_2_Recipe_Button.CheckedState.Parent = Me.Set_MFC_2_Recipe_Button
         Me.Set_MFC_2_Recipe_Button.CustomImages.Parent = Me.Set_MFC_2_Recipe_Button
         Me.Set_MFC_2_Recipe_Button.FillColor = System.Drawing.SystemColors.ActiveCaption
@@ -2018,12 +2099,13 @@ Partial Class MainWindow
         Me.Set_MFC_2_Recipe_Button.ForeColor = System.Drawing.Color.White
         Me.Set_MFC_2_Recipe_Button.HoverState.FillColor = System.Drawing.SystemColors.ActiveCaption
         Me.Set_MFC_2_Recipe_Button.HoverState.Parent = Me.Set_MFC_2_Recipe_Button
-        Me.Set_MFC_2_Recipe_Button.Location = New System.Drawing.Point(154, 633)
+        Me.Set_MFC_2_Recipe_Button.Location = New System.Drawing.Point(205, 779)
+        Me.Set_MFC_2_Recipe_Button.Margin = New System.Windows.Forms.Padding(4)
         Me.Set_MFC_2_Recipe_Button.Name = "Set_MFC_2_Recipe_Button"
         Me.Set_MFC_2_Recipe_Button.ShadowDecoration.BorderRadius = 27
         Me.Set_MFC_2_Recipe_Button.ShadowDecoration.Color = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.Set_MFC_2_Recipe_Button.ShadowDecoration.Parent = Me.Set_MFC_2_Recipe_Button
-        Me.Set_MFC_2_Recipe_Button.Size = New System.Drawing.Size(64, 39)
+        Me.Set_MFC_2_Recipe_Button.Size = New System.Drawing.Size(85, 48)
         Me.Set_MFC_2_Recipe_Button.TabIndex = 150
         Me.Set_MFC_2_Recipe_Button.Text = "ENTER"
         Me.Set_MFC_2_Recipe_Button.Visible = False
@@ -2031,7 +2113,7 @@ Partial Class MainWindow
         'Set_MFC_4_Recipe_Button
         '
         Me.Set_MFC_4_Recipe_Button.AutoRoundedCorners = True
-        Me.Set_MFC_4_Recipe_Button.BorderRadius = 18
+        Me.Set_MFC_4_Recipe_Button.BorderRadius = 23
         Me.Set_MFC_4_Recipe_Button.CheckedState.Parent = Me.Set_MFC_4_Recipe_Button
         Me.Set_MFC_4_Recipe_Button.CustomImages.Parent = Me.Set_MFC_4_Recipe_Button
         Me.Set_MFC_4_Recipe_Button.FillColor = System.Drawing.SystemColors.ActiveCaption
@@ -2039,12 +2121,13 @@ Partial Class MainWindow
         Me.Set_MFC_4_Recipe_Button.ForeColor = System.Drawing.Color.White
         Me.Set_MFC_4_Recipe_Button.HoverState.FillColor = System.Drawing.SystemColors.ActiveCaption
         Me.Set_MFC_4_Recipe_Button.HoverState.Parent = Me.Set_MFC_4_Recipe_Button
-        Me.Set_MFC_4_Recipe_Button.Location = New System.Drawing.Point(425, 633)
+        Me.Set_MFC_4_Recipe_Button.Location = New System.Drawing.Point(567, 779)
+        Me.Set_MFC_4_Recipe_Button.Margin = New System.Windows.Forms.Padding(4)
         Me.Set_MFC_4_Recipe_Button.Name = "Set_MFC_4_Recipe_Button"
         Me.Set_MFC_4_Recipe_Button.ShadowDecoration.BorderRadius = 27
         Me.Set_MFC_4_Recipe_Button.ShadowDecoration.Color = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.Set_MFC_4_Recipe_Button.ShadowDecoration.Parent = Me.Set_MFC_4_Recipe_Button
-        Me.Set_MFC_4_Recipe_Button.Size = New System.Drawing.Size(64, 39)
+        Me.Set_MFC_4_Recipe_Button.Size = New System.Drawing.Size(85, 48)
         Me.Set_MFC_4_Recipe_Button.TabIndex = 151
         Me.Set_MFC_4_Recipe_Button.Text = "ENTER"
         Me.Set_MFC_4_Recipe_Button.Visible = False
@@ -2052,7 +2135,7 @@ Partial Class MainWindow
         'SetRecipeWattsBtn
         '
         Me.SetRecipeWattsBtn.AutoRoundedCorners = True
-        Me.SetRecipeWattsBtn.BorderRadius = 18
+        Me.SetRecipeWattsBtn.BorderRadius = 23
         Me.SetRecipeWattsBtn.CheckedState.Parent = Me.SetRecipeWattsBtn
         Me.SetRecipeWattsBtn.CustomImages.Parent = Me.SetRecipeWattsBtn
         Me.SetRecipeWattsBtn.FillColor = System.Drawing.SystemColors.ActiveCaption
@@ -2060,12 +2143,13 @@ Partial Class MainWindow
         Me.SetRecipeWattsBtn.ForeColor = System.Drawing.Color.White
         Me.SetRecipeWattsBtn.HoverState.FillColor = System.Drawing.SystemColors.ActiveCaption
         Me.SetRecipeWattsBtn.HoverState.Parent = Me.SetRecipeWattsBtn
-        Me.SetRecipeWattsBtn.Location = New System.Drawing.Point(943, 318)
+        Me.SetRecipeWattsBtn.Location = New System.Drawing.Point(1257, 391)
+        Me.SetRecipeWattsBtn.Margin = New System.Windows.Forms.Padding(4)
         Me.SetRecipeWattsBtn.Name = "SetRecipeWattsBtn"
         Me.SetRecipeWattsBtn.ShadowDecoration.BorderRadius = 27
         Me.SetRecipeWattsBtn.ShadowDecoration.Color = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.SetRecipeWattsBtn.ShadowDecoration.Parent = Me.SetRecipeWattsBtn
-        Me.SetRecipeWattsBtn.Size = New System.Drawing.Size(64, 39)
+        Me.SetRecipeWattsBtn.Size = New System.Drawing.Size(85, 48)
         Me.SetRecipeWattsBtn.TabIndex = 153
         Me.SetRecipeWattsBtn.Text = "ENTER"
         Me.SetRecipeWattsBtn.Visible = False
@@ -2073,7 +2157,7 @@ Partial Class MainWindow
         'SetRecipeTunerBtn
         '
         Me.SetRecipeTunerBtn.AutoRoundedCorners = True
-        Me.SetRecipeTunerBtn.BorderRadius = 18
+        Me.SetRecipeTunerBtn.BorderRadius = 23
         Me.SetRecipeTunerBtn.CheckedState.Parent = Me.SetRecipeTunerBtn
         Me.SetRecipeTunerBtn.CustomImages.Parent = Me.SetRecipeTunerBtn
         Me.SetRecipeTunerBtn.FillColor = System.Drawing.SystemColors.ActiveCaption
@@ -2081,12 +2165,13 @@ Partial Class MainWindow
         Me.SetRecipeTunerBtn.ForeColor = System.Drawing.Color.White
         Me.SetRecipeTunerBtn.HoverState.FillColor = System.Drawing.SystemColors.ActiveCaption
         Me.SetRecipeTunerBtn.HoverState.Parent = Me.SetRecipeTunerBtn
-        Me.SetRecipeTunerBtn.Location = New System.Drawing.Point(1190, 318)
+        Me.SetRecipeTunerBtn.Location = New System.Drawing.Point(1587, 391)
+        Me.SetRecipeTunerBtn.Margin = New System.Windows.Forms.Padding(4)
         Me.SetRecipeTunerBtn.Name = "SetRecipeTunerBtn"
         Me.SetRecipeTunerBtn.ShadowDecoration.BorderRadius = 27
         Me.SetRecipeTunerBtn.ShadowDecoration.Color = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.SetRecipeTunerBtn.ShadowDecoration.Parent = Me.SetRecipeTunerBtn
-        Me.SetRecipeTunerBtn.Size = New System.Drawing.Size(64, 39)
+        Me.SetRecipeTunerBtn.Size = New System.Drawing.Size(85, 48)
         Me.SetRecipeTunerBtn.TabIndex = 154
         Me.SetRecipeTunerBtn.Text = "ENTER"
         Me.SetRecipeTunerBtn.Visible = False
@@ -2096,10 +2181,11 @@ Partial Class MainWindow
         Me.Loaded_Progress_3.BackColor = System.Drawing.Color.Transparent
         Me.Loaded_Progress_3.FillColor = System.Drawing.Color.Transparent
         Me.Loaded_Progress_3.GradientMode = System.Drawing.Drawing2D.LinearGradientMode.Horizontal
-        Me.Loaded_Progress_3.Location = New System.Drawing.Point(324, 175)
+        Me.Loaded_Progress_3.Location = New System.Drawing.Point(432, 215)
+        Me.Loaded_Progress_3.Margin = New System.Windows.Forms.Padding(4)
         Me.Loaded_Progress_3.Name = "Loaded_Progress_3"
         Me.Loaded_Progress_3.ShadowDecoration.Parent = Me.Loaded_Progress_3
-        Me.Loaded_Progress_3.Size = New System.Drawing.Size(10, 450)
+        Me.Loaded_Progress_3.Size = New System.Drawing.Size(13, 554)
         Me.Loaded_Progress_3.Style = System.Windows.Forms.ProgressBarStyle.Continuous
         Me.Loaded_Progress_3.TabIndex = 124
         Me.Loaded_Progress_3.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SystemDefault
@@ -2108,19 +2194,20 @@ Partial Class MainWindow
         'SetTwoSpotBtn
         '
         Me.SetTwoSpotBtn.AutoRoundedCorners = True
-        Me.SetTwoSpotBtn.BorderRadius = 24
+        Me.SetTwoSpotBtn.BorderRadius = 30
         Me.SetTwoSpotBtn.CheckedState.Parent = Me.SetTwoSpotBtn
         Me.SetTwoSpotBtn.CustomImages.Parent = Me.SetTwoSpotBtn
         Me.SetTwoSpotBtn.FillColor = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.SetTwoSpotBtn.Font = New System.Drawing.Font("Segoe UI", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.SetTwoSpotBtn.ForeColor = System.Drawing.Color.White
         Me.SetTwoSpotBtn.HoverState.Parent = Me.SetTwoSpotBtn
-        Me.SetTwoSpotBtn.Location = New System.Drawing.Point(1367, 303)
+        Me.SetTwoSpotBtn.Location = New System.Drawing.Point(1823, 373)
+        Me.SetTwoSpotBtn.Margin = New System.Windows.Forms.Padding(4)
         Me.SetTwoSpotBtn.Name = "SetTwoSpotBtn"
         Me.SetTwoSpotBtn.ShadowDecoration.BorderRadius = 27
         Me.SetTwoSpotBtn.ShadowDecoration.Color = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.SetTwoSpotBtn.ShadowDecoration.Parent = Me.SetTwoSpotBtn
-        Me.SetTwoSpotBtn.Size = New System.Drawing.Size(174, 50)
+        Me.SetTwoSpotBtn.Size = New System.Drawing.Size(232, 62)
         Me.SetTwoSpotBtn.TabIndex = 156
         Me.SetTwoSpotBtn.Text = "SET TWO SPOT"
         Me.SetTwoSpotBtn.Visible = False
@@ -2128,7 +2215,7 @@ Partial Class MainWindow
         'SetDiameterBtn
         '
         Me.SetDiameterBtn.AutoRoundedCorners = True
-        Me.SetDiameterBtn.BorderRadius = 24
+        Me.SetDiameterBtn.BorderRadius = 30
         Me.SetDiameterBtn.CheckedState.Parent = Me.SetDiameterBtn
         Me.SetDiameterBtn.CustomImages.Parent = Me.SetDiameterBtn
         Me.SetDiameterBtn.FillColor = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
@@ -2136,12 +2223,13 @@ Partial Class MainWindow
         Me.SetDiameterBtn.ForeColor = System.Drawing.Color.White
         Me.SetDiameterBtn.HoverState.FillColor = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.SetDiameterBtn.HoverState.Parent = Me.SetDiameterBtn
-        Me.SetDiameterBtn.Location = New System.Drawing.Point(1545, 302)
+        Me.SetDiameterBtn.Location = New System.Drawing.Point(2060, 372)
+        Me.SetDiameterBtn.Margin = New System.Windows.Forms.Padding(4)
         Me.SetDiameterBtn.Name = "SetDiameterBtn"
         Me.SetDiameterBtn.ShadowDecoration.BorderRadius = 27
         Me.SetDiameterBtn.ShadowDecoration.Color = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.SetDiameterBtn.ShadowDecoration.Parent = Me.SetDiameterBtn
-        Me.SetDiameterBtn.Size = New System.Drawing.Size(167, 50)
+        Me.SetDiameterBtn.Size = New System.Drawing.Size(223, 62)
         Me.SetDiameterBtn.TabIndex = 157
         Me.SetDiameterBtn.Text = "SET DIAMETER"
         Me.SetDiameterBtn.Visible = False
@@ -2149,7 +2237,7 @@ Partial Class MainWindow
         'SetThicknessBtn
         '
         Me.SetThicknessBtn.AutoRoundedCorners = True
-        Me.SetThicknessBtn.BorderRadius = 16
+        Me.SetThicknessBtn.BorderRadius = 20
         Me.SetThicknessBtn.CheckedState.Parent = Me.SetThicknessBtn
         Me.SetThicknessBtn.CustomImages.Parent = Me.SetThicknessBtn
         Me.SetThicknessBtn.Enabled = False
@@ -2158,12 +2246,13 @@ Partial Class MainWindow
         Me.SetThicknessBtn.ForeColor = System.Drawing.Color.White
         Me.SetThicknessBtn.HoverState.FillColor = System.Drawing.SystemColors.ActiveCaption
         Me.SetThicknessBtn.HoverState.Parent = Me.SetThicknessBtn
-        Me.SetThicknessBtn.Location = New System.Drawing.Point(872, 742)
+        Me.SetThicknessBtn.Location = New System.Drawing.Point(1163, 913)
+        Me.SetThicknessBtn.Margin = New System.Windows.Forms.Padding(4)
         Me.SetThicknessBtn.Name = "SetThicknessBtn"
         Me.SetThicknessBtn.ShadowDecoration.BorderRadius = 27
         Me.SetThicknessBtn.ShadowDecoration.Color = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.SetThicknessBtn.ShadowDecoration.Parent = Me.SetThicknessBtn
-        Me.SetThicknessBtn.Size = New System.Drawing.Size(100, 35)
+        Me.SetThicknessBtn.Size = New System.Drawing.Size(133, 43)
         Me.SetThicknessBtn.TabIndex = 161
         Me.SetThicknessBtn.Text = "THICKNESS"
         Me.SetThicknessBtn.Visible = False
@@ -2171,7 +2260,7 @@ Partial Class MainWindow
         'SetOverlapBtn
         '
         Me.SetOverlapBtn.AutoRoundedCorners = True
-        Me.SetOverlapBtn.BorderRadius = 16
+        Me.SetOverlapBtn.BorderRadius = 20
         Me.SetOverlapBtn.CheckedState.Parent = Me.SetOverlapBtn
         Me.SetOverlapBtn.CustomImages.Parent = Me.SetOverlapBtn
         Me.SetOverlapBtn.Enabled = False
@@ -2180,12 +2269,13 @@ Partial Class MainWindow
         Me.SetOverlapBtn.ForeColor = System.Drawing.Color.White
         Me.SetOverlapBtn.HoverState.FillColor = System.Drawing.SystemColors.ActiveCaption
         Me.SetOverlapBtn.HoverState.Parent = Me.SetOverlapBtn
-        Me.SetOverlapBtn.Location = New System.Drawing.Point(1145, 743)
+        Me.SetOverlapBtn.Location = New System.Drawing.Point(1527, 914)
+        Me.SetOverlapBtn.Margin = New System.Windows.Forms.Padding(4)
         Me.SetOverlapBtn.Name = "SetOverlapBtn"
         Me.SetOverlapBtn.ShadowDecoration.BorderRadius = 27
         Me.SetOverlapBtn.ShadowDecoration.Color = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.SetOverlapBtn.ShadowDecoration.Parent = Me.SetOverlapBtn
-        Me.SetOverlapBtn.Size = New System.Drawing.Size(100, 35)
+        Me.SetOverlapBtn.Size = New System.Drawing.Size(133, 43)
         Me.SetOverlapBtn.TabIndex = 162
         Me.SetOverlapBtn.Text = "OVERLAP"
         Me.SetOverlapBtn.Visible = False
@@ -2193,7 +2283,7 @@ Partial Class MainWindow
         'SetGapBtn
         '
         Me.SetGapBtn.AutoRoundedCorners = True
-        Me.SetGapBtn.BorderRadius = 16
+        Me.SetGapBtn.BorderRadius = 20
         Me.SetGapBtn.CheckedState.Parent = Me.SetGapBtn
         Me.SetGapBtn.CustomImages.Parent = Me.SetGapBtn
         Me.SetGapBtn.Enabled = False
@@ -2202,12 +2292,13 @@ Partial Class MainWindow
         Me.SetGapBtn.ForeColor = System.Drawing.Color.White
         Me.SetGapBtn.HoverState.FillColor = System.Drawing.SystemColors.ActiveCaption
         Me.SetGapBtn.HoverState.Parent = Me.SetGapBtn
-        Me.SetGapBtn.Location = New System.Drawing.Point(1008, 742)
+        Me.SetGapBtn.Location = New System.Drawing.Point(1344, 913)
+        Me.SetGapBtn.Margin = New System.Windows.Forms.Padding(4)
         Me.SetGapBtn.Name = "SetGapBtn"
         Me.SetGapBtn.ShadowDecoration.BorderRadius = 27
         Me.SetGapBtn.ShadowDecoration.Color = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.SetGapBtn.ShadowDecoration.Parent = Me.SetGapBtn
-        Me.SetGapBtn.Size = New System.Drawing.Size(100, 35)
+        Me.SetGapBtn.Size = New System.Drawing.Size(133, 43)
         Me.SetGapBtn.TabIndex = 163
         Me.SetGapBtn.Text = "GAP"
         Me.SetGapBtn.Visible = False
@@ -2215,7 +2306,7 @@ Partial Class MainWindow
         'SetCyclesBtn
         '
         Me.SetCyclesBtn.AutoRoundedCorners = True
-        Me.SetCyclesBtn.BorderRadius = 16
+        Me.SetCyclesBtn.BorderRadius = 20
         Me.SetCyclesBtn.CheckedState.Parent = Me.SetCyclesBtn
         Me.SetCyclesBtn.CustomImages.Parent = Me.SetCyclesBtn
         Me.SetCyclesBtn.Enabled = False
@@ -2224,12 +2315,13 @@ Partial Class MainWindow
         Me.SetCyclesBtn.ForeColor = System.Drawing.Color.White
         Me.SetCyclesBtn.HoverState.FillColor = System.Drawing.SystemColors.ActiveCaption
         Me.SetCyclesBtn.HoverState.Parent = Me.SetCyclesBtn
-        Me.SetCyclesBtn.Location = New System.Drawing.Point(1421, 741)
+        Me.SetCyclesBtn.Location = New System.Drawing.Point(1895, 912)
+        Me.SetCyclesBtn.Margin = New System.Windows.Forms.Padding(4)
         Me.SetCyclesBtn.Name = "SetCyclesBtn"
         Me.SetCyclesBtn.ShadowDecoration.BorderRadius = 27
         Me.SetCyclesBtn.ShadowDecoration.Color = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.SetCyclesBtn.ShadowDecoration.Parent = Me.SetCyclesBtn
-        Me.SetCyclesBtn.Size = New System.Drawing.Size(100, 35)
+        Me.SetCyclesBtn.Size = New System.Drawing.Size(133, 43)
         Me.SetCyclesBtn.TabIndex = 164
         Me.SetCyclesBtn.Text = "CYCLES"
         Me.SetCyclesBtn.Visible = False
@@ -2237,7 +2329,7 @@ Partial Class MainWindow
         'SetSpeedBtn
         '
         Me.SetSpeedBtn.AutoRoundedCorners = True
-        Me.SetSpeedBtn.BorderRadius = 16
+        Me.SetSpeedBtn.BorderRadius = 20
         Me.SetSpeedBtn.CheckedState.Parent = Me.SetSpeedBtn
         Me.SetSpeedBtn.CustomImages.Parent = Me.SetSpeedBtn
         Me.SetSpeedBtn.Enabled = False
@@ -2246,12 +2338,13 @@ Partial Class MainWindow
         Me.SetSpeedBtn.ForeColor = System.Drawing.Color.White
         Me.SetSpeedBtn.HoverState.FillColor = System.Drawing.SystemColors.ActiveCaption
         Me.SetSpeedBtn.HoverState.Parent = Me.SetSpeedBtn
-        Me.SetSpeedBtn.Location = New System.Drawing.Point(1284, 743)
+        Me.SetSpeedBtn.Location = New System.Drawing.Point(1712, 914)
+        Me.SetSpeedBtn.Margin = New System.Windows.Forms.Padding(4)
         Me.SetSpeedBtn.Name = "SetSpeedBtn"
         Me.SetSpeedBtn.ShadowDecoration.BorderRadius = 27
         Me.SetSpeedBtn.ShadowDecoration.Color = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.SetSpeedBtn.ShadowDecoration.Parent = Me.SetSpeedBtn
-        Me.SetSpeedBtn.Size = New System.Drawing.Size(100, 35)
+        Me.SetSpeedBtn.Size = New System.Drawing.Size(133, 43)
         Me.SetSpeedBtn.TabIndex = 165
         Me.SetSpeedBtn.Text = "SPEED"
         Me.SetSpeedBtn.Visible = False
@@ -2262,12 +2355,13 @@ Partial Class MainWindow
         Me.MB_Pos_Bar.ArrowVisible = False
         Me.MB_Pos_Bar.Font = New System.Drawing.Font("Verdana", 8.2!)
         Me.MB_Pos_Bar.ForeColor = System.Drawing.Color.FromArgb(CType(CType(139, Byte), Integer), CType(CType(152, Byte), Integer), CType(CType(166, Byte), Integer))
-        Me.MB_Pos_Bar.Location = New System.Drawing.Point(1111, 129)
-        Me.MB_Pos_Bar.MinimumSize = New System.Drawing.Size(30, 30)
+        Me.MB_Pos_Bar.Location = New System.Drawing.Point(1481, 159)
+        Me.MB_Pos_Bar.Margin = New System.Windows.Forms.Padding(4)
+        Me.MB_Pos_Bar.MinimumSize = New System.Drawing.Size(40, 37)
         Me.MB_Pos_Bar.Name = "MB_Pos_Bar"
         Me.MB_Pos_Bar.ProgressColor = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.MB_Pos_Bar.ProgressColor2 = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
-        Me.MB_Pos_Bar.Size = New System.Drawing.Size(224, 224)
+        Me.MB_Pos_Bar.Size = New System.Drawing.Size(299, 299)
         Me.MB_Pos_Bar.TabIndex = 170
         '
         'Loaded_Progress_4
@@ -2275,10 +2369,11 @@ Partial Class MainWindow
         Me.Loaded_Progress_4.BackColor = System.Drawing.Color.Transparent
         Me.Loaded_Progress_4.FillColor = System.Drawing.Color.Transparent
         Me.Loaded_Progress_4.GradientMode = System.Drawing.Drawing2D.LinearGradientMode.Horizontal
-        Me.Loaded_Progress_4.Location = New System.Drawing.Point(459, 175)
+        Me.Loaded_Progress_4.Location = New System.Drawing.Point(612, 215)
+        Me.Loaded_Progress_4.Margin = New System.Windows.Forms.Padding(4)
         Me.Loaded_Progress_4.Name = "Loaded_Progress_4"
         Me.Loaded_Progress_4.ShadowDecoration.Parent = Me.Loaded_Progress_4
-        Me.Loaded_Progress_4.Size = New System.Drawing.Size(10, 450)
+        Me.Loaded_Progress_4.Size = New System.Drawing.Size(13, 554)
         Me.Loaded_Progress_4.Style = System.Windows.Forms.ProgressBarStyle.Continuous
         Me.Loaded_Progress_4.TabIndex = 84
         Me.Loaded_Progress_4.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SystemDefault
@@ -2288,7 +2383,8 @@ Partial Class MainWindow
         '
         Me.Label26.AutoSize = True
         Me.Label26.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label26.Location = New System.Drawing.Point(81, 777)
+        Me.Label26.Location = New System.Drawing.Point(108, 956)
+        Me.Label26.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label26.Name = "Label26"
         Me.Label26.Size = New System.Drawing.Size(117, 25)
         Me.Label26.TabIndex = 172
@@ -2300,7 +2396,8 @@ Partial Class MainWindow
         Me.Label30.AutoSize = True
         Me.Label30.BackColor = System.Drawing.Color.White
         Me.Label30.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label30.Location = New System.Drawing.Point(1212, 269)
+        Me.Label30.Location = New System.Drawing.Point(1616, 331)
+        Me.Label30.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label30.Name = "Label30"
         Me.Label30.Size = New System.Drawing.Size(30, 25)
         Me.Label30.TabIndex = 174
@@ -2310,7 +2407,8 @@ Partial Class MainWindow
         '
         Me.LabelLock.AutoSize = True
         Me.LabelLock.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.LabelLock.Location = New System.Drawing.Point(1361, 385)
+        Me.LabelLock.Location = New System.Drawing.Point(1815, 474)
+        Me.LabelLock.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.LabelLock.Name = "LabelLock"
         Me.LabelLock.Size = New System.Drawing.Size(96, 25)
         Me.LabelLock.TabIndex = 176
@@ -2323,11 +2421,11 @@ Partial Class MainWindow
         Me.RecipeXMaxTxt.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.RecipeXMaxTxt.Font = New System.Drawing.Font("Arial", 20.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.RecipeXMaxTxt.ForeColor = System.Drawing.SystemColors.InactiveCaption
-        Me.RecipeXMaxTxt.Location = New System.Drawing.Point(1611, 416)
-        Me.RecipeXMaxTxt.Margin = New System.Windows.Forms.Padding(2)
+        Me.RecipeXMaxTxt.Location = New System.Drawing.Point(2148, 512)
+        Me.RecipeXMaxTxt.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.RecipeXMaxTxt.Name = "RecipeXMaxTxt"
         Me.RecipeXMaxTxt.ReadOnly = True
-        Me.RecipeXMaxTxt.Size = New System.Drawing.Size(101, 39)
+        Me.RecipeXMaxTxt.Size = New System.Drawing.Size(135, 39)
         Me.RecipeXMaxTxt.TabIndex = 181
         Me.RecipeXMaxTxt.Text = "0"
         Me.RecipeXMaxTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -2340,11 +2438,11 @@ Partial Class MainWindow
         Me.RecipeXMinTxt.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.RecipeXMinTxt.Font = New System.Drawing.Font("Arial", 20.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.RecipeXMinTxt.ForeColor = System.Drawing.SystemColors.InactiveCaption
-        Me.RecipeXMinTxt.Location = New System.Drawing.Point(1435, 416)
-        Me.RecipeXMinTxt.Margin = New System.Windows.Forms.Padding(2)
+        Me.RecipeXMinTxt.Location = New System.Drawing.Point(1913, 512)
+        Me.RecipeXMinTxt.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.RecipeXMinTxt.Name = "RecipeXMinTxt"
         Me.RecipeXMinTxt.ReadOnly = True
-        Me.RecipeXMinTxt.Size = New System.Drawing.Size(83, 39)
+        Me.RecipeXMinTxt.Size = New System.Drawing.Size(111, 39)
         Me.RecipeXMinTxt.TabIndex = 182
         Me.RecipeXMinTxt.Text = "0"
         Me.RecipeXMinTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -2357,11 +2455,11 @@ Partial Class MainWindow
         Me.RecipeYMaxTxt.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.RecipeYMaxTxt.Font = New System.Drawing.Font("Arial", 20.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.RecipeYMaxTxt.ForeColor = System.Drawing.SystemColors.InactiveCaption
-        Me.RecipeYMaxTxt.Location = New System.Drawing.Point(1600, 475)
-        Me.RecipeYMaxTxt.Margin = New System.Windows.Forms.Padding(2)
+        Me.RecipeYMaxTxt.Location = New System.Drawing.Point(2133, 585)
+        Me.RecipeYMaxTxt.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.RecipeYMaxTxt.Name = "RecipeYMaxTxt"
         Me.RecipeYMaxTxt.ReadOnly = True
-        Me.RecipeYMaxTxt.Size = New System.Drawing.Size(101, 39)
+        Me.RecipeYMaxTxt.Size = New System.Drawing.Size(135, 39)
         Me.RecipeYMaxTxt.TabIndex = 183
         Me.RecipeYMaxTxt.Text = "0"
         Me.RecipeYMaxTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -2374,11 +2472,11 @@ Partial Class MainWindow
         Me.RecipeYMinTxt.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.RecipeYMinTxt.Font = New System.Drawing.Font("Arial", 20.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.RecipeYMinTxt.ForeColor = System.Drawing.SystemColors.InactiveCaption
-        Me.RecipeYMinTxt.Location = New System.Drawing.Point(1434, 475)
-        Me.RecipeYMinTxt.Margin = New System.Windows.Forms.Padding(2)
+        Me.RecipeYMinTxt.Location = New System.Drawing.Point(1912, 585)
+        Me.RecipeYMinTxt.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.RecipeYMinTxt.Name = "RecipeYMinTxt"
         Me.RecipeYMinTxt.ReadOnly = True
-        Me.RecipeYMinTxt.Size = New System.Drawing.Size(83, 39)
+        Me.RecipeYMinTxt.Size = New System.Drawing.Size(111, 39)
         Me.RecipeYMinTxt.TabIndex = 184
         Me.RecipeYMinTxt.Text = "0"
         Me.RecipeYMinTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -2388,7 +2486,7 @@ Partial Class MainWindow
         'SetXMaxBtn
         '
         Me.SetXMaxBtn.AutoRoundedCorners = True
-        Me.SetXMaxBtn.BorderRadius = 18
+        Me.SetXMaxBtn.BorderRadius = 23
         Me.SetXMaxBtn.CheckedState.Parent = Me.SetXMaxBtn
         Me.SetXMaxBtn.CustomImages.Parent = Me.SetXMaxBtn
         Me.SetXMaxBtn.Enabled = False
@@ -2397,12 +2495,13 @@ Partial Class MainWindow
         Me.SetXMaxBtn.ForeColor = System.Drawing.Color.White
         Me.SetXMaxBtn.HoverState.FillColor = System.Drawing.SystemColors.ActiveCaption
         Me.SetXMaxBtn.HoverState.Parent = Me.SetXMaxBtn
-        Me.SetXMaxBtn.Location = New System.Drawing.Point(1531, 409)
+        Me.SetXMaxBtn.Location = New System.Drawing.Point(2041, 503)
+        Me.SetXMaxBtn.Margin = New System.Windows.Forms.Padding(4)
         Me.SetXMaxBtn.Name = "SetXMaxBtn"
         Me.SetXMaxBtn.ShadowDecoration.BorderRadius = 27
         Me.SetXMaxBtn.ShadowDecoration.Color = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.SetXMaxBtn.ShadowDecoration.Parent = Me.SetXMaxBtn
-        Me.SetXMaxBtn.Size = New System.Drawing.Size(64, 39)
+        Me.SetXMaxBtn.Size = New System.Drawing.Size(85, 48)
         Me.SetXMaxBtn.TabIndex = 185
         Me.SetXMaxBtn.Text = "X2"
         Me.SetXMaxBtn.Visible = False
@@ -2410,7 +2509,7 @@ Partial Class MainWindow
         'SetYMaxBtn
         '
         Me.SetYMaxBtn.AutoRoundedCorners = True
-        Me.SetYMaxBtn.BorderRadius = 18
+        Me.SetYMaxBtn.BorderRadius = 23
         Me.SetYMaxBtn.CheckedState.Parent = Me.SetYMaxBtn
         Me.SetYMaxBtn.CustomImages.Parent = Me.SetYMaxBtn
         Me.SetYMaxBtn.Enabled = False
@@ -2419,12 +2518,13 @@ Partial Class MainWindow
         Me.SetYMaxBtn.ForeColor = System.Drawing.Color.White
         Me.SetYMaxBtn.HoverState.FillColor = System.Drawing.SystemColors.ActiveCaption
         Me.SetYMaxBtn.HoverState.Parent = Me.SetYMaxBtn
-        Me.SetYMaxBtn.Location = New System.Drawing.Point(1531, 469)
+        Me.SetYMaxBtn.Location = New System.Drawing.Point(2041, 577)
+        Me.SetYMaxBtn.Margin = New System.Windows.Forms.Padding(4)
         Me.SetYMaxBtn.Name = "SetYMaxBtn"
         Me.SetYMaxBtn.ShadowDecoration.BorderRadius = 27
         Me.SetYMaxBtn.ShadowDecoration.Color = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.SetYMaxBtn.ShadowDecoration.Parent = Me.SetYMaxBtn
-        Me.SetYMaxBtn.Size = New System.Drawing.Size(64, 39)
+        Me.SetYMaxBtn.Size = New System.Drawing.Size(85, 48)
         Me.SetYMaxBtn.TabIndex = 186
         Me.SetYMaxBtn.Text = "Y2"
         Me.SetYMaxBtn.Visible = False
@@ -2432,7 +2532,7 @@ Partial Class MainWindow
         'SetYMinBtn
         '
         Me.SetYMinBtn.AutoRoundedCorners = True
-        Me.SetYMinBtn.BorderRadius = 18
+        Me.SetYMinBtn.BorderRadius = 23
         Me.SetYMinBtn.CheckedState.Parent = Me.SetYMinBtn
         Me.SetYMinBtn.CustomImages.Parent = Me.SetYMinBtn
         Me.SetYMinBtn.Enabled = False
@@ -2441,12 +2541,13 @@ Partial Class MainWindow
         Me.SetYMinBtn.ForeColor = System.Drawing.Color.White
         Me.SetYMinBtn.HoverState.FillColor = System.Drawing.SystemColors.ActiveCaption
         Me.SetYMinBtn.HoverState.Parent = Me.SetYMinBtn
-        Me.SetYMinBtn.Location = New System.Drawing.Point(1367, 469)
+        Me.SetYMinBtn.Location = New System.Drawing.Point(1823, 577)
+        Me.SetYMinBtn.Margin = New System.Windows.Forms.Padding(4)
         Me.SetYMinBtn.Name = "SetYMinBtn"
         Me.SetYMinBtn.ShadowDecoration.BorderRadius = 27
         Me.SetYMinBtn.ShadowDecoration.Color = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.SetYMinBtn.ShadowDecoration.Parent = Me.SetYMinBtn
-        Me.SetYMinBtn.Size = New System.Drawing.Size(64, 39)
+        Me.SetYMinBtn.Size = New System.Drawing.Size(85, 48)
         Me.SetYMinBtn.TabIndex = 187
         Me.SetYMinBtn.Text = "Y1"
         Me.SetYMinBtn.Visible = False
@@ -2454,7 +2555,7 @@ Partial Class MainWindow
         'SetXMinBtn
         '
         Me.SetXMinBtn.AutoRoundedCorners = True
-        Me.SetXMinBtn.BorderRadius = 18
+        Me.SetXMinBtn.BorderRadius = 23
         Me.SetXMinBtn.CheckedState.Parent = Me.SetXMinBtn
         Me.SetXMinBtn.CustomImages.Parent = Me.SetXMinBtn
         Me.SetXMinBtn.Enabled = False
@@ -2463,12 +2564,13 @@ Partial Class MainWindow
         Me.SetXMinBtn.ForeColor = System.Drawing.Color.White
         Me.SetXMinBtn.HoverState.FillColor = System.Drawing.SystemColors.ActiveCaption
         Me.SetXMinBtn.HoverState.Parent = Me.SetXMinBtn
-        Me.SetXMinBtn.Location = New System.Drawing.Point(1367, 409)
+        Me.SetXMinBtn.Location = New System.Drawing.Point(1823, 503)
+        Me.SetXMinBtn.Margin = New System.Windows.Forms.Padding(4)
         Me.SetXMinBtn.Name = "SetXMinBtn"
         Me.SetXMinBtn.ShadowDecoration.BorderRadius = 27
         Me.SetXMinBtn.ShadowDecoration.Color = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.SetXMinBtn.ShadowDecoration.Parent = Me.SetXMinBtn
-        Me.SetXMinBtn.Size = New System.Drawing.Size(64, 39)
+        Me.SetXMinBtn.Size = New System.Drawing.Size(85, 48)
         Me.SetXMinBtn.TabIndex = 188
         Me.SetXMinBtn.Text = "X1"
         Me.SetXMinBtn.Visible = False
@@ -2478,7 +2580,8 @@ Partial Class MainWindow
         Me.Label29.AutoSize = True
         Me.Label29.BackColor = System.Drawing.Color.White
         Me.Label29.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label29.Location = New System.Drawing.Point(1688, 661)
+        Me.Label29.Location = New System.Drawing.Point(2251, 814)
+        Me.Label29.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label29.Name = "Label29"
         Me.Label29.Size = New System.Drawing.Size(44, 25)
         Me.Label29.TabIndex = 189
@@ -2490,7 +2593,8 @@ Partial Class MainWindow
         Me.Label33.AutoSize = True
         Me.Label33.BackColor = System.Drawing.Color.White
         Me.Label33.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label33.Location = New System.Drawing.Point(1688, 749)
+        Me.Label33.Location = New System.Drawing.Point(2251, 922)
+        Me.Label33.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label33.Name = "Label33"
         Me.Label33.Size = New System.Drawing.Size(44, 25)
         Me.Label33.TabIndex = 190
@@ -2502,7 +2606,8 @@ Partial Class MainWindow
         Me.Label34.AutoSize = True
         Me.Label34.BackColor = System.Drawing.Color.White
         Me.Label34.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label34.Location = New System.Drawing.Point(1688, 707)
+        Me.Label34.Location = New System.Drawing.Point(2251, 870)
+        Me.Label34.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label34.Name = "Label34"
         Me.Label34.Size = New System.Drawing.Size(44, 25)
         Me.Label34.TabIndex = 191
@@ -2512,7 +2617,7 @@ Partial Class MainWindow
         'ClearAbortbtn
         '
         Me.ClearAbortbtn.AutoRoundedCorners = True
-        Me.ClearAbortbtn.BorderRadius = 17
+        Me.ClearAbortbtn.BorderRadius = 22
         Me.ClearAbortbtn.CheckedState.Parent = Me.ClearAbortbtn
         Me.ClearAbortbtn.CustomImages.Parent = Me.ClearAbortbtn
         Me.ClearAbortbtn.FillColor = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
@@ -2520,12 +2625,13 @@ Partial Class MainWindow
         Me.ClearAbortbtn.ForeColor = System.Drawing.Color.White
         Me.ClearAbortbtn.HoverState.FillColor = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.ClearAbortbtn.HoverState.Parent = Me.ClearAbortbtn
-        Me.ClearAbortbtn.Location = New System.Drawing.Point(40, 737)
+        Me.ClearAbortbtn.Location = New System.Drawing.Point(53, 907)
+        Me.ClearAbortbtn.Margin = New System.Windows.Forms.Padding(4)
         Me.ClearAbortbtn.Name = "ClearAbortbtn"
         Me.ClearAbortbtn.ShadowDecoration.BorderRadius = 27
         Me.ClearAbortbtn.ShadowDecoration.Color = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.ClearAbortbtn.ShadowDecoration.Parent = Me.ClearAbortbtn
-        Me.ClearAbortbtn.Size = New System.Drawing.Size(232, 37)
+        Me.ClearAbortbtn.Size = New System.Drawing.Size(309, 46)
         Me.ClearAbortbtn.TabIndex = 192
         Me.ClearAbortbtn.Text = "ACKNOWLEDGE"
         Me.ClearAbortbtn.Visible = False
@@ -2534,7 +2640,8 @@ Partial Class MainWindow
         '
         Me.Loaded_Progress_3_25.AutoSize = True
         Me.Loaded_Progress_3_25.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Loaded_Progress_3_25.Location = New System.Drawing.Point(287, 509)
+        Me.Loaded_Progress_3_25.Location = New System.Drawing.Point(383, 626)
+        Me.Loaded_Progress_3_25.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Loaded_Progress_3_25.Name = "Loaded_Progress_3_25"
         Me.Loaded_Progress_3_25.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_3_25.TabIndex = 193
@@ -2544,7 +2651,8 @@ Partial Class MainWindow
         '
         Me.Loaded_Progress_4_25.AutoSize = True
         Me.Loaded_Progress_4_25.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Loaded_Progress_4_25.Location = New System.Drawing.Point(422, 509)
+        Me.Loaded_Progress_4_25.Location = New System.Drawing.Point(563, 626)
+        Me.Loaded_Progress_4_25.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Loaded_Progress_4_25.Name = "Loaded_Progress_4_25"
         Me.Loaded_Progress_4_25.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_4_25.TabIndex = 194
@@ -2554,7 +2662,8 @@ Partial Class MainWindow
         '
         Me.Loaded_Progress_3_75.AutoSize = True
         Me.Loaded_Progress_3_75.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Loaded_Progress_3_75.Location = New System.Drawing.Point(287, 288)
+        Me.Loaded_Progress_3_75.Location = New System.Drawing.Point(383, 354)
+        Me.Loaded_Progress_3_75.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Loaded_Progress_3_75.Name = "Loaded_Progress_3_75"
         Me.Loaded_Progress_3_75.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_3_75.TabIndex = 195
@@ -2564,7 +2673,8 @@ Partial Class MainWindow
         '
         Me.Loaded_Progress_4_75.AutoSize = True
         Me.Loaded_Progress_4_75.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Loaded_Progress_4_75.Location = New System.Drawing.Point(422, 288)
+        Me.Loaded_Progress_4_75.Location = New System.Drawing.Point(563, 354)
+        Me.Loaded_Progress_4_75.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Loaded_Progress_4_75.Name = "Loaded_Progress_4_75"
         Me.Loaded_Progress_4_75.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_4_75.TabIndex = 196
@@ -2574,7 +2684,8 @@ Partial Class MainWindow
         '
         Me.Loaded_Progress_2_25.AutoSize = True
         Me.Loaded_Progress_2_25.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Loaded_Progress_2_25.Location = New System.Drawing.Point(152, 508)
+        Me.Loaded_Progress_2_25.Location = New System.Drawing.Point(203, 625)
+        Me.Loaded_Progress_2_25.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Loaded_Progress_2_25.Name = "Loaded_Progress_2_25"
         Me.Loaded_Progress_2_25.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_2_25.TabIndex = 197
@@ -2584,7 +2695,8 @@ Partial Class MainWindow
         '
         Me.Loaded_Progress_1_25.AutoSize = True
         Me.Loaded_Progress_1_25.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Loaded_Progress_1_25.Location = New System.Drawing.Point(17, 509)
+        Me.Loaded_Progress_1_25.Location = New System.Drawing.Point(23, 626)
+        Me.Loaded_Progress_1_25.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Loaded_Progress_1_25.Name = "Loaded_Progress_1_25"
         Me.Loaded_Progress_1_25.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_1_25.TabIndex = 198
@@ -2594,7 +2706,8 @@ Partial Class MainWindow
         '
         Me.Loaded_Progress_1_75.AutoSize = True
         Me.Loaded_Progress_1_75.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Loaded_Progress_1_75.Location = New System.Drawing.Point(17, 286)
+        Me.Loaded_Progress_1_75.Location = New System.Drawing.Point(23, 352)
+        Me.Loaded_Progress_1_75.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Loaded_Progress_1_75.Name = "Loaded_Progress_1_75"
         Me.Loaded_Progress_1_75.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_1_75.TabIndex = 200
@@ -2604,7 +2717,8 @@ Partial Class MainWindow
         '
         Me.Loaded_Progress_2_75.AutoSize = True
         Me.Loaded_Progress_2_75.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Loaded_Progress_2_75.Location = New System.Drawing.Point(151, 285)
+        Me.Loaded_Progress_2_75.Location = New System.Drawing.Point(201, 351)
+        Me.Loaded_Progress_2_75.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Loaded_Progress_2_75.Name = "Loaded_Progress_2_75"
         Me.Loaded_Progress_2_75.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_2_75.TabIndex = 199
@@ -2616,7 +2730,8 @@ Partial Class MainWindow
         Me.ChuckVacSquare.BackColor = System.Drawing.Color.Gainsboro
         Me.ChuckVacSquare.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
         Me.ChuckVacSquare.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.ChuckVacSquare.Location = New System.Drawing.Point(1363, 360)
+        Me.ChuckVacSquare.Location = New System.Drawing.Point(1817, 443)
+        Me.ChuckVacSquare.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.ChuckVacSquare.Name = "ChuckVacSquare"
         Me.ChuckVacSquare.Size = New System.Drawing.Size(26, 22)
         Me.ChuckVacSquare.TabIndex = 205
@@ -2628,7 +2743,8 @@ Partial Class MainWindow
         Me.Label18.AutoSize = True
         Me.Label18.BackColor = System.Drawing.Color.White
         Me.Label18.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.8!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label18.Location = New System.Drawing.Point(1378, 358)
+        Me.Label18.Location = New System.Drawing.Point(1837, 441)
+        Me.Label18.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label18.Name = "Label18"
         Me.Label18.Size = New System.Drawing.Size(119, 24)
         Me.Label18.TabIndex = 206
@@ -2641,7 +2757,8 @@ Partial Class MainWindow
         Me.AutoVacSquare.BackColor = System.Drawing.Color.Gainsboro
         Me.AutoVacSquare.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
         Me.AutoVacSquare.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.AutoVacSquare.Location = New System.Drawing.Point(1560, 216)
+        Me.AutoVacSquare.Location = New System.Drawing.Point(2080, 266)
+        Me.AutoVacSquare.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.AutoVacSquare.Name = "AutoVacSquare"
         Me.AutoVacSquare.Size = New System.Drawing.Size(26, 22)
         Me.AutoVacSquare.TabIndex = 46
@@ -2652,7 +2769,8 @@ Partial Class MainWindow
         '
         Me.DateTimeLabel.AutoSize = True
         Me.DateTimeLabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 26.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.DateTimeLabel.Location = New System.Drawing.Point(1353, 8)
+        Me.DateTimeLabel.Location = New System.Drawing.Point(1804, 10)
+        Me.DateTimeLabel.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.DateTimeLabel.Name = "DateTimeLabel"
         Me.DateTimeLabel.Size = New System.Drawing.Size(0, 52)
         Me.DateTimeLabel.TabIndex = 207
@@ -2662,7 +2780,8 @@ Partial Class MainWindow
         Me.DateTimeLabel1.AutoSize = True
         Me.DateTimeLabel1.BackColor = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.DateTimeLabel1.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.DateTimeLabel1.Location = New System.Drawing.Point(1280, 15)
+        Me.DateTimeLabel1.Location = New System.Drawing.Point(1707, 18)
+        Me.DateTimeLabel1.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.DateTimeLabel1.Name = "DateTimeLabel1"
         Me.DateTimeLabel1.Size = New System.Drawing.Size(296, 20)
         Me.DateTimeLabel1.TabIndex = 208
@@ -2674,7 +2793,8 @@ Partial Class MainWindow
         Me.EngLabel.BackColor = System.Drawing.Color.Silver
         Me.EngLabel.Font = New System.Drawing.Font("Segoe UI", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.EngLabel.ForeColor = System.Drawing.Color.White
-        Me.EngLabel.Location = New System.Drawing.Point(805, 9)
+        Me.EngLabel.Location = New System.Drawing.Point(1073, 11)
+        Me.EngLabel.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.EngLabel.Name = "EngLabel"
         Me.EngLabel.Size = New System.Drawing.Size(225, 37)
         Me.EngLabel.TabIndex = 213
@@ -2687,7 +2807,8 @@ Partial Class MainWindow
         Me.N2Purgelabel.BackColor = System.Drawing.Color.Gainsboro
         Me.N2Purgelabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
         Me.N2Purgelabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.N2Purgelabel.Location = New System.Drawing.Point(1560, 162)
+        Me.N2Purgelabel.Location = New System.Drawing.Point(2080, 199)
+        Me.N2Purgelabel.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.N2Purgelabel.Name = "N2Purgelabel"
         Me.N2Purgelabel.Size = New System.Drawing.Size(26, 22)
         Me.N2Purgelabel.TabIndex = 215
@@ -2697,7 +2818,7 @@ Partial Class MainWindow
         'N2Purgebtn
         '
         Me.N2Purgebtn.AutoRoundedCorners = True
-        Me.N2Purgebtn.BorderRadius = 24
+        Me.N2Purgebtn.BorderRadius = 30
         Me.N2Purgebtn.CheckedState.Parent = Me.N2Purgebtn
         Me.N2Purgebtn.CustomImages.Parent = Me.N2Purgebtn
         Me.N2Purgebtn.FillColor = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
@@ -2705,12 +2826,13 @@ Partial Class MainWindow
         Me.N2Purgebtn.ForeColor = System.Drawing.Color.White
         Me.N2Purgebtn.HoverState.FillColor = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.N2Purgebtn.HoverState.Parent = Me.N2Purgebtn
-        Me.N2Purgebtn.Location = New System.Drawing.Point(1545, 144)
+        Me.N2Purgebtn.Location = New System.Drawing.Point(2060, 177)
+        Me.N2Purgebtn.Margin = New System.Windows.Forms.Padding(4)
         Me.N2Purgebtn.Name = "N2Purgebtn"
         Me.N2Purgebtn.ShadowDecoration.BorderRadius = 27
         Me.N2Purgebtn.ShadowDecoration.Color = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.N2Purgebtn.ShadowDecoration.Parent = Me.N2Purgebtn
-        Me.N2Purgebtn.Size = New System.Drawing.Size(167, 50)
+        Me.N2Purgebtn.Size = New System.Drawing.Size(223, 62)
         Me.N2Purgebtn.TabIndex = 214
         Me.N2Purgebtn.Text = "    N2 PURGE"
         Me.N2Purgebtn.Visible = False
@@ -2720,7 +2842,8 @@ Partial Class MainWindow
         Me.PurgeOnLabel.AutoSize = True
         Me.PurgeOnLabel.BackColor = System.Drawing.Color.White
         Me.PurgeOnLabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.8!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.PurgeOnLabel.Location = New System.Drawing.Point(1498, 358)
+        Me.PurgeOnLabel.Location = New System.Drawing.Point(1997, 441)
+        Me.PurgeOnLabel.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.PurgeOnLabel.Name = "PurgeOnLabel"
         Me.PurgeOnLabel.Size = New System.Drawing.Size(109, 24)
         Me.PurgeOnLabel.TabIndex = 217
@@ -2733,7 +2856,8 @@ Partial Class MainWindow
         Me.N2PurgeSquare.BackColor = System.Drawing.Color.Gainsboro
         Me.N2PurgeSquare.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
         Me.N2PurgeSquare.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.N2PurgeSquare.Location = New System.Drawing.Point(1479, 360)
+        Me.N2PurgeSquare.Location = New System.Drawing.Point(1972, 443)
+        Me.N2PurgeSquare.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.N2PurgeSquare.Name = "N2PurgeSquare"
         Me.N2PurgeSquare.Size = New System.Drawing.Size(26, 22)
         Me.N2PurgeSquare.TabIndex = 216
@@ -2743,7 +2867,7 @@ Partial Class MainWindow
         'BatchLoggingBTN
         '
         Me.BatchLoggingBTN.AutoRoundedCorners = True
-        Me.BatchLoggingBTN.BorderRadius = 18
+        Me.BatchLoggingBTN.BorderRadius = 23
         Me.BatchLoggingBTN.CheckedState.Parent = Me.BatchLoggingBTN
         Me.BatchLoggingBTN.CustomImages.Parent = Me.BatchLoggingBTN
         Me.BatchLoggingBTN.FillColor = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
@@ -2751,12 +2875,13 @@ Partial Class MainWindow
         Me.BatchLoggingBTN.ForeColor = System.Drawing.Color.White
         Me.BatchLoggingBTN.HoverState.FillColor = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.BatchLoggingBTN.HoverState.Parent = Me.BatchLoggingBTN
-        Me.BatchLoggingBTN.Location = New System.Drawing.Point(661, 56)
+        Me.BatchLoggingBTN.Location = New System.Drawing.Point(881, 69)
+        Me.BatchLoggingBTN.Margin = New System.Windows.Forms.Padding(4)
         Me.BatchLoggingBTN.Name = "BatchLoggingBTN"
         Me.BatchLoggingBTN.ShadowDecoration.BorderRadius = 27
         Me.BatchLoggingBTN.ShadowDecoration.Color = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.BatchLoggingBTN.ShadowDecoration.Parent = Me.BatchLoggingBTN
-        Me.BatchLoggingBTN.Size = New System.Drawing.Size(113, 39)
+        Me.BatchLoggingBTN.Size = New System.Drawing.Size(151, 48)
         Me.BatchLoggingBTN.TabIndex = 222
         Me.BatchLoggingBTN.Text = "BATCH ID"
         Me.BatchLoggingBTN.Visible = False
@@ -2765,12 +2890,12 @@ Partial Class MainWindow
         '
         Me.BatchIDTextBox.BackColor = System.Drawing.Color.FromArgb(CType(CType(213, Byte), Integer), CType(CType(218, Byte), Integer), CType(CType(223, Byte), Integer))
         Me.BatchIDTextBox.Font = New System.Drawing.Font("Arial", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.BatchIDTextBox.Location = New System.Drawing.Point(791, 60)
-        Me.BatchIDTextBox.Margin = New System.Windows.Forms.Padding(2)
-        Me.BatchIDTextBox.MinimumSize = New System.Drawing.Size(38, 20)
+        Me.BatchIDTextBox.Location = New System.Drawing.Point(1055, 74)
+        Me.BatchIDTextBox.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
+        Me.BatchIDTextBox.MinimumSize = New System.Drawing.Size(49, 20)
         Me.BatchIDTextBox.Name = "BatchIDTextBox"
         Me.BatchIDTextBox.ReadOnly = True
-        Me.BatchIDTextBox.Size = New System.Drawing.Size(338, 35)
+        Me.BatchIDTextBox.Size = New System.Drawing.Size(449, 35)
         Me.BatchIDTextBox.TabIndex = 221
         Me.BatchIDTextBox.Text = "Batch ID "
         Me.BatchIDTextBox.Visible = False
@@ -2779,7 +2904,7 @@ Partial Class MainWindow
         'SettingsBtn
         '
         Me.SettingsBtn.AutoRoundedCorners = True
-        Me.SettingsBtn.BorderRadius = 30
+        Me.SettingsBtn.BorderRadius = 38
         Me.SettingsBtn.CheckedState.Parent = Me.SettingsBtn
         Me.SettingsBtn.CustomImages.Parent = Me.SettingsBtn
         Me.SettingsBtn.Enabled = False
@@ -2790,12 +2915,13 @@ Partial Class MainWindow
         Me.SettingsBtn.HoverState.Parent = Me.SettingsBtn
         Me.SettingsBtn.Image = CType(resources.GetObject("SettingsBtn.Image"), System.Drawing.Image)
         Me.SettingsBtn.ImageSize = New System.Drawing.Size(50, 50)
-        Me.SettingsBtn.Location = New System.Drawing.Point(613, 706)
+        Me.SettingsBtn.Location = New System.Drawing.Point(817, 869)
+        Me.SettingsBtn.Margin = New System.Windows.Forms.Padding(4)
         Me.SettingsBtn.Name = "SettingsBtn"
         Me.SettingsBtn.ShadowDecoration.BorderRadius = 27
         Me.SettingsBtn.ShadowDecoration.Color = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.SettingsBtn.ShadowDecoration.Parent = Me.SettingsBtn
-        Me.SettingsBtn.Size = New System.Drawing.Size(69, 63)
+        Me.SettingsBtn.Size = New System.Drawing.Size(92, 78)
         Me.SettingsBtn.TabIndex = 223
         '
         'Label17
@@ -2803,7 +2929,8 @@ Partial Class MainWindow
         Me.Label17.AutoSize = True
         Me.Label17.BackColor = System.Drawing.Color.White
         Me.Label17.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.8!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label17.Location = New System.Drawing.Point(1609, 358)
+        Me.Label17.Location = New System.Drawing.Point(2145, 441)
+        Me.Label17.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label17.Name = "Label17"
         Me.Label17.Size = New System.Drawing.Size(140, 24)
         Me.Label17.TabIndex = 225
@@ -2816,7 +2943,8 @@ Partial Class MainWindow
         Me.LaserSenseSquare.BackColor = System.Drawing.Color.Gainsboro
         Me.LaserSenseSquare.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
         Me.LaserSenseSquare.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.LaserSenseSquare.Location = New System.Drawing.Point(1592, 360)
+        Me.LaserSenseSquare.Location = New System.Drawing.Point(2123, 443)
+        Me.LaserSenseSquare.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.LaserSenseSquare.Name = "LaserSenseSquare"
         Me.LaserSenseSquare.Size = New System.Drawing.Size(26, 22)
         Me.LaserSenseSquare.TabIndex = 224
@@ -2828,7 +2956,8 @@ Partial Class MainWindow
         Me.ControllerLabel.AutoSize = True
         Me.ControllerLabel.BackColor = System.Drawing.Color.White
         Me.ControllerLabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.8!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.ControllerLabel.Location = New System.Drawing.Point(1498, 385)
+        Me.ControllerLabel.Location = New System.Drawing.Point(1997, 474)
+        Me.ControllerLabel.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.ControllerLabel.Name = "ControllerLabel"
         Me.ControllerLabel.Size = New System.Drawing.Size(172, 24)
         Me.ControllerLabel.TabIndex = 229
@@ -2841,7 +2970,8 @@ Partial Class MainWindow
         Me.contollerONSquare.BackColor = System.Drawing.Color.Gainsboro
         Me.contollerONSquare.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
         Me.contollerONSquare.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.contollerONSquare.Location = New System.Drawing.Point(1479, 387)
+        Me.contollerONSquare.Location = New System.Drawing.Point(1972, 476)
+        Me.contollerONSquare.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.contollerONSquare.Name = "contollerONSquare"
         Me.contollerONSquare.Size = New System.Drawing.Size(26, 22)
         Me.contollerONSquare.TabIndex = 228
@@ -2852,7 +2982,8 @@ Partial Class MainWindow
         '
         Me.CTLStatusLabel.AutoSize = True
         Me.CTLStatusLabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.CTLStatusLabel.Location = New System.Drawing.Point(1741, 116)
+        Me.CTLStatusLabel.Location = New System.Drawing.Point(2321, 143)
+        Me.CTLStatusLabel.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.CTLStatusLabel.Name = "CTLStatusLabel"
         Me.CTLStatusLabel.Size = New System.Drawing.Size(112, 25)
         Me.CTLStatusLabel.TabIndex = 231
@@ -2863,7 +2994,7 @@ Partial Class MainWindow
         '
         Me.Guna2TextBox1.AutoRoundedCorners = True
         Me.Guna2TextBox1.BorderColor = System.Drawing.Color.Silver
-        Me.Guna2TextBox1.BorderRadius = 8
+        Me.Guna2TextBox1.BorderRadius = 10
         Me.Guna2TextBox1.BorderThickness = 2
         Me.Guna2TextBox1.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.Guna2TextBox1.DefaultText = ""
@@ -2877,14 +3008,15 @@ Partial Class MainWindow
         Me.Guna2TextBox1.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.Guna2TextBox1.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.Guna2TextBox1.HoverState.Parent = Me.Guna2TextBox1
-        Me.Guna2TextBox1.Location = New System.Drawing.Point(1367, 183)
+        Me.Guna2TextBox1.Location = New System.Drawing.Point(1823, 225)
+        Me.Guna2TextBox1.Margin = New System.Windows.Forms.Padding(4)
         Me.Guna2TextBox1.Name = "Guna2TextBox1"
         Me.Guna2TextBox1.PasswordChar = Global.Microsoft.VisualBasic.ChrW(0)
         Me.Guna2TextBox1.PlaceholderText = ""
         Me.Guna2TextBox1.ReadOnly = True
         Me.Guna2TextBox1.SelectedText = ""
         Me.Guna2TextBox1.ShadowDecoration.Parent = Me.Guna2TextBox1
-        Me.Guna2TextBox1.Size = New System.Drawing.Size(94, 18)
+        Me.Guna2TextBox1.Size = New System.Drawing.Size(125, 22)
         Me.Guna2TextBox1.TabIndex = 248
         Me.Guna2TextBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         Me.Guna2TextBox1.Visible = False
@@ -2893,7 +3025,7 @@ Partial Class MainWindow
         'Guna2TextBox2
         '
         Me.Guna2TextBox2.AutoRoundedCorners = True
-        Me.Guna2TextBox2.BorderRadius = 8
+        Me.Guna2TextBox2.BorderRadius = 10
         Me.Guna2TextBox2.BorderThickness = 2
         Me.Guna2TextBox2.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.Guna2TextBox2.DefaultText = ""
@@ -2907,14 +3039,15 @@ Partial Class MainWindow
         Me.Guna2TextBox2.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.Guna2TextBox2.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.Guna2TextBox2.HoverState.Parent = Me.Guna2TextBox2
-        Me.Guna2TextBox2.Location = New System.Drawing.Point(1367, 207)
+        Me.Guna2TextBox2.Location = New System.Drawing.Point(1823, 255)
+        Me.Guna2TextBox2.Margin = New System.Windows.Forms.Padding(4)
         Me.Guna2TextBox2.Name = "Guna2TextBox2"
         Me.Guna2TextBox2.PasswordChar = Global.Microsoft.VisualBasic.ChrW(0)
         Me.Guna2TextBox2.PlaceholderText = ""
         Me.Guna2TextBox2.ReadOnly = True
         Me.Guna2TextBox2.SelectedText = ""
         Me.Guna2TextBox2.ShadowDecoration.Parent = Me.Guna2TextBox2
-        Me.Guna2TextBox2.Size = New System.Drawing.Size(94, 18)
+        Me.Guna2TextBox2.Size = New System.Drawing.Size(125, 22)
         Me.Guna2TextBox2.TabIndex = 249
         Me.Guna2TextBox2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         Me.Guna2TextBox2.Visible = False
@@ -2923,7 +3056,7 @@ Partial Class MainWindow
         'Guna2TextBox3
         '
         Me.Guna2TextBox3.AutoRoundedCorners = True
-        Me.Guna2TextBox3.BorderRadius = 8
+        Me.Guna2TextBox3.BorderRadius = 10
         Me.Guna2TextBox3.BorderThickness = 2
         Me.Guna2TextBox3.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.Guna2TextBox3.DefaultText = ""
@@ -2937,14 +3070,15 @@ Partial Class MainWindow
         Me.Guna2TextBox3.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.Guna2TextBox3.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.Guna2TextBox3.HoverState.Parent = Me.Guna2TextBox3
-        Me.Guna2TextBox3.Location = New System.Drawing.Point(1367, 231)
+        Me.Guna2TextBox3.Location = New System.Drawing.Point(1823, 284)
+        Me.Guna2TextBox3.Margin = New System.Windows.Forms.Padding(4)
         Me.Guna2TextBox3.Name = "Guna2TextBox3"
         Me.Guna2TextBox3.PasswordChar = Global.Microsoft.VisualBasic.ChrW(0)
         Me.Guna2TextBox3.PlaceholderText = ""
         Me.Guna2TextBox3.ReadOnly = True
         Me.Guna2TextBox3.SelectedText = ""
         Me.Guna2TextBox3.ShadowDecoration.Parent = Me.Guna2TextBox3
-        Me.Guna2TextBox3.Size = New System.Drawing.Size(94, 18)
+        Me.Guna2TextBox3.Size = New System.Drawing.Size(125, 22)
         Me.Guna2TextBox3.TabIndex = 251
         Me.Guna2TextBox3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         Me.Guna2TextBox3.Visible = False
@@ -2953,7 +3087,7 @@ Partial Class MainWindow
         'Guna2TextBox4
         '
         Me.Guna2TextBox4.AutoRoundedCorners = True
-        Me.Guna2TextBox4.BorderRadius = 8
+        Me.Guna2TextBox4.BorderRadius = 10
         Me.Guna2TextBox4.BorderThickness = 2
         Me.Guna2TextBox4.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.Guna2TextBox4.DefaultText = ""
@@ -2967,14 +3101,15 @@ Partial Class MainWindow
         Me.Guna2TextBox4.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.Guna2TextBox4.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.Guna2TextBox4.HoverState.Parent = Me.Guna2TextBox4
-        Me.Guna2TextBox4.Location = New System.Drawing.Point(1367, 255)
+        Me.Guna2TextBox4.Location = New System.Drawing.Point(1823, 314)
+        Me.Guna2TextBox4.Margin = New System.Windows.Forms.Padding(4)
         Me.Guna2TextBox4.Name = "Guna2TextBox4"
         Me.Guna2TextBox4.PasswordChar = Global.Microsoft.VisualBasic.ChrW(0)
         Me.Guna2TextBox4.PlaceholderText = ""
         Me.Guna2TextBox4.ReadOnly = True
         Me.Guna2TextBox4.SelectedText = ""
         Me.Guna2TextBox4.ShadowDecoration.Parent = Me.Guna2TextBox4
-        Me.Guna2TextBox4.Size = New System.Drawing.Size(94, 18)
+        Me.Guna2TextBox4.Size = New System.Drawing.Size(125, 22)
         Me.Guna2TextBox4.TabIndex = 250
         Me.Guna2TextBox4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         Me.Guna2TextBox4.Visible = False
@@ -2983,7 +3118,7 @@ Partial Class MainWindow
         'Guna2TextBox5
         '
         Me.Guna2TextBox5.AutoRoundedCorners = True
-        Me.Guna2TextBox5.BorderRadius = 8
+        Me.Guna2TextBox5.BorderRadius = 10
         Me.Guna2TextBox5.BorderThickness = 2
         Me.Guna2TextBox5.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.Guna2TextBox5.DefaultText = ""
@@ -2997,14 +3132,15 @@ Partial Class MainWindow
         Me.Guna2TextBox5.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.Guna2TextBox5.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.Guna2TextBox5.HoverState.Parent = Me.Guna2TextBox5
-        Me.Guna2TextBox5.Location = New System.Drawing.Point(1367, 279)
+        Me.Guna2TextBox5.Location = New System.Drawing.Point(1823, 343)
+        Me.Guna2TextBox5.Margin = New System.Windows.Forms.Padding(4)
         Me.Guna2TextBox5.Name = "Guna2TextBox5"
         Me.Guna2TextBox5.PasswordChar = Global.Microsoft.VisualBasic.ChrW(0)
         Me.Guna2TextBox5.PlaceholderText = ""
         Me.Guna2TextBox5.ReadOnly = True
         Me.Guna2TextBox5.SelectedText = ""
         Me.Guna2TextBox5.ShadowDecoration.Parent = Me.Guna2TextBox5
-        Me.Guna2TextBox5.Size = New System.Drawing.Size(94, 18)
+        Me.Guna2TextBox5.Size = New System.Drawing.Size(125, 22)
         Me.Guna2TextBox5.TabIndex = 255
         Me.Guna2TextBox5.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         Me.Guna2TextBox5.Visible = False
@@ -3013,7 +3149,7 @@ Partial Class MainWindow
         'Guna2TextBox6
         '
         Me.Guna2TextBox6.AutoRoundedCorners = True
-        Me.Guna2TextBox6.BorderRadius = 8
+        Me.Guna2TextBox6.BorderRadius = 10
         Me.Guna2TextBox6.BorderThickness = 2
         Me.Guna2TextBox6.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.Guna2TextBox6.DefaultText = ""
@@ -3027,14 +3163,15 @@ Partial Class MainWindow
         Me.Guna2TextBox6.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.Guna2TextBox6.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.Guna2TextBox6.HoverState.Parent = Me.Guna2TextBox6
-        Me.Guna2TextBox6.Location = New System.Drawing.Point(1367, 303)
+        Me.Guna2TextBox6.Location = New System.Drawing.Point(1823, 373)
+        Me.Guna2TextBox6.Margin = New System.Windows.Forms.Padding(4)
         Me.Guna2TextBox6.Name = "Guna2TextBox6"
         Me.Guna2TextBox6.PasswordChar = Global.Microsoft.VisualBasic.ChrW(0)
         Me.Guna2TextBox6.PlaceholderText = ""
         Me.Guna2TextBox6.ReadOnly = True
         Me.Guna2TextBox6.SelectedText = ""
         Me.Guna2TextBox6.ShadowDecoration.Parent = Me.Guna2TextBox6
-        Me.Guna2TextBox6.Size = New System.Drawing.Size(94, 18)
+        Me.Guna2TextBox6.Size = New System.Drawing.Size(125, 22)
         Me.Guna2TextBox6.TabIndex = 254
         Me.Guna2TextBox6.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         Me.Guna2TextBox6.Visible = False
@@ -3043,7 +3180,7 @@ Partial Class MainWindow
         'Guna2TextBox7
         '
         Me.Guna2TextBox7.AutoRoundedCorners = True
-        Me.Guna2TextBox7.BorderRadius = 8
+        Me.Guna2TextBox7.BorderRadius = 10
         Me.Guna2TextBox7.BorderThickness = 2
         Me.Guna2TextBox7.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.Guna2TextBox7.DefaultText = ""
@@ -3057,14 +3194,15 @@ Partial Class MainWindow
         Me.Guna2TextBox7.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.Guna2TextBox7.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.Guna2TextBox7.HoverState.Parent = Me.Guna2TextBox7
-        Me.Guna2TextBox7.Location = New System.Drawing.Point(1367, 326)
+        Me.Guna2TextBox7.Location = New System.Drawing.Point(1823, 401)
+        Me.Guna2TextBox7.Margin = New System.Windows.Forms.Padding(4)
         Me.Guna2TextBox7.Name = "Guna2TextBox7"
         Me.Guna2TextBox7.PasswordChar = Global.Microsoft.VisualBasic.ChrW(0)
         Me.Guna2TextBox7.PlaceholderText = ""
         Me.Guna2TextBox7.ReadOnly = True
         Me.Guna2TextBox7.SelectedText = ""
         Me.Guna2TextBox7.ShadowDecoration.Parent = Me.Guna2TextBox7
-        Me.Guna2TextBox7.Size = New System.Drawing.Size(94, 18)
+        Me.Guna2TextBox7.Size = New System.Drawing.Size(125, 22)
         Me.Guna2TextBox7.TabIndex = 253
         Me.Guna2TextBox7.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         Me.Guna2TextBox7.Visible = False
@@ -3073,7 +3211,7 @@ Partial Class MainWindow
         'Guna2TextBox8
         '
         Me.Guna2TextBox8.AutoRoundedCorners = True
-        Me.Guna2TextBox8.BorderRadius = 8
+        Me.Guna2TextBox8.BorderRadius = 10
         Me.Guna2TextBox8.BorderThickness = 2
         Me.Guna2TextBox8.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.Guna2TextBox8.DefaultText = ""
@@ -3087,14 +3225,15 @@ Partial Class MainWindow
         Me.Guna2TextBox8.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.Guna2TextBox8.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.Guna2TextBox8.HoverState.Parent = Me.Guna2TextBox8
-        Me.Guna2TextBox8.Location = New System.Drawing.Point(1367, 350)
+        Me.Guna2TextBox8.Location = New System.Drawing.Point(1823, 431)
+        Me.Guna2TextBox8.Margin = New System.Windows.Forms.Padding(4)
         Me.Guna2TextBox8.Name = "Guna2TextBox8"
         Me.Guna2TextBox8.PasswordChar = Global.Microsoft.VisualBasic.ChrW(0)
         Me.Guna2TextBox8.PlaceholderText = ""
         Me.Guna2TextBox8.ReadOnly = True
         Me.Guna2TextBox8.SelectedText = ""
         Me.Guna2TextBox8.ShadowDecoration.Parent = Me.Guna2TextBox8
-        Me.Guna2TextBox8.Size = New System.Drawing.Size(94, 18)
+        Me.Guna2TextBox8.Size = New System.Drawing.Size(125, 22)
         Me.Guna2TextBox8.TabIndex = 252
         Me.Guna2TextBox8.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         Me.Guna2TextBox8.Visible = False
@@ -3103,7 +3242,7 @@ Partial Class MainWindow
         'Guna2TextBox9
         '
         Me.Guna2TextBox9.AutoRoundedCorners = True
-        Me.Guna2TextBox9.BorderRadius = 8
+        Me.Guna2TextBox9.BorderRadius = 10
         Me.Guna2TextBox9.BorderThickness = 2
         Me.Guna2TextBox9.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.Guna2TextBox9.DefaultText = ""
@@ -3117,14 +3256,15 @@ Partial Class MainWindow
         Me.Guna2TextBox9.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.Guna2TextBox9.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.Guna2TextBox9.HoverState.Parent = Me.Guna2TextBox9
-        Me.Guna2TextBox9.Location = New System.Drawing.Point(1367, 374)
+        Me.Guna2TextBox9.Location = New System.Drawing.Point(1823, 460)
+        Me.Guna2TextBox9.Margin = New System.Windows.Forms.Padding(4)
         Me.Guna2TextBox9.Name = "Guna2TextBox9"
         Me.Guna2TextBox9.PasswordChar = Global.Microsoft.VisualBasic.ChrW(0)
         Me.Guna2TextBox9.PlaceholderText = ""
         Me.Guna2TextBox9.ReadOnly = True
         Me.Guna2TextBox9.SelectedText = ""
         Me.Guna2TextBox9.ShadowDecoration.Parent = Me.Guna2TextBox9
-        Me.Guna2TextBox9.Size = New System.Drawing.Size(94, 18)
+        Me.Guna2TextBox9.Size = New System.Drawing.Size(125, 22)
         Me.Guna2TextBox9.TabIndex = 263
         Me.Guna2TextBox9.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         Me.Guna2TextBox9.Visible = False
@@ -3133,7 +3273,7 @@ Partial Class MainWindow
         'Guna2TextBox10
         '
         Me.Guna2TextBox10.AutoRoundedCorners = True
-        Me.Guna2TextBox10.BorderRadius = 8
+        Me.Guna2TextBox10.BorderRadius = 10
         Me.Guna2TextBox10.BorderThickness = 2
         Me.Guna2TextBox10.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.Guna2TextBox10.DefaultText = ""
@@ -3147,14 +3287,15 @@ Partial Class MainWindow
         Me.Guna2TextBox10.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.Guna2TextBox10.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.Guna2TextBox10.HoverState.Parent = Me.Guna2TextBox10
-        Me.Guna2TextBox10.Location = New System.Drawing.Point(1367, 398)
+        Me.Guna2TextBox10.Location = New System.Drawing.Point(1823, 490)
+        Me.Guna2TextBox10.Margin = New System.Windows.Forms.Padding(4)
         Me.Guna2TextBox10.Name = "Guna2TextBox10"
         Me.Guna2TextBox10.PasswordChar = Global.Microsoft.VisualBasic.ChrW(0)
         Me.Guna2TextBox10.PlaceholderText = ""
         Me.Guna2TextBox10.ReadOnly = True
         Me.Guna2TextBox10.SelectedText = ""
         Me.Guna2TextBox10.ShadowDecoration.Parent = Me.Guna2TextBox10
-        Me.Guna2TextBox10.Size = New System.Drawing.Size(94, 18)
+        Me.Guna2TextBox10.Size = New System.Drawing.Size(125, 22)
         Me.Guna2TextBox10.TabIndex = 262
         Me.Guna2TextBox10.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         Me.Guna2TextBox10.Visible = False
@@ -3163,7 +3304,7 @@ Partial Class MainWindow
         'Guna2TextBox11
         '
         Me.Guna2TextBox11.AutoRoundedCorners = True
-        Me.Guna2TextBox11.BorderRadius = 8
+        Me.Guna2TextBox11.BorderRadius = 10
         Me.Guna2TextBox11.BorderThickness = 2
         Me.Guna2TextBox11.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.Guna2TextBox11.DefaultText = ""
@@ -3177,14 +3318,15 @@ Partial Class MainWindow
         Me.Guna2TextBox11.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.Guna2TextBox11.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.Guna2TextBox11.HoverState.Parent = Me.Guna2TextBox11
-        Me.Guna2TextBox11.Location = New System.Drawing.Point(1367, 422)
+        Me.Guna2TextBox11.Location = New System.Drawing.Point(1823, 519)
+        Me.Guna2TextBox11.Margin = New System.Windows.Forms.Padding(4)
         Me.Guna2TextBox11.Name = "Guna2TextBox11"
         Me.Guna2TextBox11.PasswordChar = Global.Microsoft.VisualBasic.ChrW(0)
         Me.Guna2TextBox11.PlaceholderText = ""
         Me.Guna2TextBox11.ReadOnly = True
         Me.Guna2TextBox11.SelectedText = ""
         Me.Guna2TextBox11.ShadowDecoration.Parent = Me.Guna2TextBox11
-        Me.Guna2TextBox11.Size = New System.Drawing.Size(94, 18)
+        Me.Guna2TextBox11.Size = New System.Drawing.Size(125, 22)
         Me.Guna2TextBox11.TabIndex = 261
         Me.Guna2TextBox11.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         Me.Guna2TextBox11.Visible = False
@@ -3193,7 +3335,7 @@ Partial Class MainWindow
         'Guna2TextBox12
         '
         Me.Guna2TextBox12.AutoRoundedCorners = True
-        Me.Guna2TextBox12.BorderRadius = 8
+        Me.Guna2TextBox12.BorderRadius = 10
         Me.Guna2TextBox12.BorderThickness = 2
         Me.Guna2TextBox12.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.Guna2TextBox12.DefaultText = ""
@@ -3207,14 +3349,15 @@ Partial Class MainWindow
         Me.Guna2TextBox12.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.Guna2TextBox12.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.Guna2TextBox12.HoverState.Parent = Me.Guna2TextBox12
-        Me.Guna2TextBox12.Location = New System.Drawing.Point(1367, 446)
+        Me.Guna2TextBox12.Location = New System.Drawing.Point(1823, 549)
+        Me.Guna2TextBox12.Margin = New System.Windows.Forms.Padding(4)
         Me.Guna2TextBox12.Name = "Guna2TextBox12"
         Me.Guna2TextBox12.PasswordChar = Global.Microsoft.VisualBasic.ChrW(0)
         Me.Guna2TextBox12.PlaceholderText = ""
         Me.Guna2TextBox12.ReadOnly = True
         Me.Guna2TextBox12.SelectedText = ""
         Me.Guna2TextBox12.ShadowDecoration.Parent = Me.Guna2TextBox12
-        Me.Guna2TextBox12.Size = New System.Drawing.Size(94, 18)
+        Me.Guna2TextBox12.Size = New System.Drawing.Size(125, 22)
         Me.Guna2TextBox12.TabIndex = 260
         Me.Guna2TextBox12.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         Me.Guna2TextBox12.Visible = False
@@ -3223,7 +3366,7 @@ Partial Class MainWindow
         'Guna2TextBox13
         '
         Me.Guna2TextBox13.AutoRoundedCorners = True
-        Me.Guna2TextBox13.BorderRadius = 8
+        Me.Guna2TextBox13.BorderRadius = 10
         Me.Guna2TextBox13.BorderThickness = 2
         Me.Guna2TextBox13.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.Guna2TextBox13.DefaultText = ""
@@ -3237,14 +3380,15 @@ Partial Class MainWindow
         Me.Guna2TextBox13.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.Guna2TextBox13.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.Guna2TextBox13.HoverState.Parent = Me.Guna2TextBox13
-        Me.Guna2TextBox13.Location = New System.Drawing.Point(1367, 470)
+        Me.Guna2TextBox13.Location = New System.Drawing.Point(1823, 578)
+        Me.Guna2TextBox13.Margin = New System.Windows.Forms.Padding(4)
         Me.Guna2TextBox13.Name = "Guna2TextBox13"
         Me.Guna2TextBox13.PasswordChar = Global.Microsoft.VisualBasic.ChrW(0)
         Me.Guna2TextBox13.PlaceholderText = ""
         Me.Guna2TextBox13.ReadOnly = True
         Me.Guna2TextBox13.SelectedText = ""
         Me.Guna2TextBox13.ShadowDecoration.Parent = Me.Guna2TextBox13
-        Me.Guna2TextBox13.Size = New System.Drawing.Size(94, 18)
+        Me.Guna2TextBox13.Size = New System.Drawing.Size(125, 22)
         Me.Guna2TextBox13.TabIndex = 259
         Me.Guna2TextBox13.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         Me.Guna2TextBox13.Visible = False
@@ -3253,7 +3397,7 @@ Partial Class MainWindow
         'Guna2TextBox14
         '
         Me.Guna2TextBox14.AutoRoundedCorners = True
-        Me.Guna2TextBox14.BorderRadius = 8
+        Me.Guna2TextBox14.BorderRadius = 10
         Me.Guna2TextBox14.BorderThickness = 2
         Me.Guna2TextBox14.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.Guna2TextBox14.DefaultText = ""
@@ -3267,14 +3411,15 @@ Partial Class MainWindow
         Me.Guna2TextBox14.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.Guna2TextBox14.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.Guna2TextBox14.HoverState.Parent = Me.Guna2TextBox14
-        Me.Guna2TextBox14.Location = New System.Drawing.Point(1367, 494)
+        Me.Guna2TextBox14.Location = New System.Drawing.Point(1823, 608)
+        Me.Guna2TextBox14.Margin = New System.Windows.Forms.Padding(4)
         Me.Guna2TextBox14.Name = "Guna2TextBox14"
         Me.Guna2TextBox14.PasswordChar = Global.Microsoft.VisualBasic.ChrW(0)
         Me.Guna2TextBox14.PlaceholderText = ""
         Me.Guna2TextBox14.ReadOnly = True
         Me.Guna2TextBox14.SelectedText = ""
         Me.Guna2TextBox14.ShadowDecoration.Parent = Me.Guna2TextBox14
-        Me.Guna2TextBox14.Size = New System.Drawing.Size(94, 18)
+        Me.Guna2TextBox14.Size = New System.Drawing.Size(125, 22)
         Me.Guna2TextBox14.TabIndex = 258
         Me.Guna2TextBox14.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         Me.Guna2TextBox14.Visible = False
@@ -3283,7 +3428,7 @@ Partial Class MainWindow
         'Guna2TextBox15
         '
         Me.Guna2TextBox15.AutoRoundedCorners = True
-        Me.Guna2TextBox15.BorderRadius = 8
+        Me.Guna2TextBox15.BorderRadius = 10
         Me.Guna2TextBox15.BorderThickness = 2
         Me.Guna2TextBox15.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.Guna2TextBox15.DefaultText = ""
@@ -3297,14 +3442,15 @@ Partial Class MainWindow
         Me.Guna2TextBox15.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.Guna2TextBox15.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.Guna2TextBox15.HoverState.Parent = Me.Guna2TextBox15
-        Me.Guna2TextBox15.Location = New System.Drawing.Point(1367, 518)
+        Me.Guna2TextBox15.Location = New System.Drawing.Point(1823, 638)
+        Me.Guna2TextBox15.Margin = New System.Windows.Forms.Padding(4)
         Me.Guna2TextBox15.Name = "Guna2TextBox15"
         Me.Guna2TextBox15.PasswordChar = Global.Microsoft.VisualBasic.ChrW(0)
         Me.Guna2TextBox15.PlaceholderText = ""
         Me.Guna2TextBox15.ReadOnly = True
         Me.Guna2TextBox15.SelectedText = ""
         Me.Guna2TextBox15.ShadowDecoration.Parent = Me.Guna2TextBox15
-        Me.Guna2TextBox15.Size = New System.Drawing.Size(94, 18)
+        Me.Guna2TextBox15.Size = New System.Drawing.Size(125, 22)
         Me.Guna2TextBox15.TabIndex = 257
         Me.Guna2TextBox15.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         Me.Guna2TextBox15.Visible = False
@@ -3313,7 +3459,7 @@ Partial Class MainWindow
         'Guna2TextBox16
         '
         Me.Guna2TextBox16.AutoRoundedCorners = True
-        Me.Guna2TextBox16.BorderRadius = 8
+        Me.Guna2TextBox16.BorderRadius = 10
         Me.Guna2TextBox16.BorderThickness = 2
         Me.Guna2TextBox16.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.Guna2TextBox16.DefaultText = ""
@@ -3327,14 +3473,15 @@ Partial Class MainWindow
         Me.Guna2TextBox16.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.Guna2TextBox16.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.Guna2TextBox16.HoverState.Parent = Me.Guna2TextBox16
-        Me.Guna2TextBox16.Location = New System.Drawing.Point(1367, 542)
+        Me.Guna2TextBox16.Location = New System.Drawing.Point(1823, 667)
+        Me.Guna2TextBox16.Margin = New System.Windows.Forms.Padding(4)
         Me.Guna2TextBox16.Name = "Guna2TextBox16"
         Me.Guna2TextBox16.PasswordChar = Global.Microsoft.VisualBasic.ChrW(0)
         Me.Guna2TextBox16.PlaceholderText = ""
         Me.Guna2TextBox16.ReadOnly = True
         Me.Guna2TextBox16.SelectedText = ""
         Me.Guna2TextBox16.ShadowDecoration.Parent = Me.Guna2TextBox16
-        Me.Guna2TextBox16.Size = New System.Drawing.Size(94, 18)
+        Me.Guna2TextBox16.Size = New System.Drawing.Size(125, 22)
         Me.Guna2TextBox16.TabIndex = 256
         Me.Guna2TextBox16.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         Me.Guna2TextBox16.Visible = False
@@ -3345,11 +3492,12 @@ Partial Class MainWindow
         Me.Label21.BackColor = System.Drawing.Color.White
         Me.Label21.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.Label21.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!)
-        Me.Label21.Location = New System.Drawing.Point(1735, 617)
-        Me.Label21.MaximumSize = New System.Drawing.Size(700, 2)
-        Me.Label21.MinimumSize = New System.Drawing.Size(150, 2)
+        Me.Label21.Location = New System.Drawing.Point(2313, 759)
+        Me.Label21.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.Label21.MaximumSize = New System.Drawing.Size(933, 2)
+        Me.Label21.MinimumSize = New System.Drawing.Size(199, 2)
         Me.Label21.Name = "Label21"
-        Me.Label21.Size = New System.Drawing.Size(164, 2)
+        Me.Label21.Size = New System.Drawing.Size(218, 2)
         Me.Label21.TabIndex = 264
         Me.Label21.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
@@ -3360,10 +3508,11 @@ Partial Class MainWindow
         Me.AutoManBtn.CheckedState.InnerBorderColor = System.Drawing.Color.White
         Me.AutoManBtn.CheckedState.InnerColor = System.Drawing.Color.White
         Me.AutoManBtn.CheckedState.Parent = Me.AutoManBtn
-        Me.AutoManBtn.Location = New System.Drawing.Point(1193, 108)
+        Me.AutoManBtn.Location = New System.Drawing.Point(1591, 133)
+        Me.AutoManBtn.Margin = New System.Windows.Forms.Padding(4)
         Me.AutoManBtn.Name = "AutoManBtn"
         Me.AutoManBtn.ShadowDecoration.Parent = Me.AutoManBtn
-        Me.AutoManBtn.Size = New System.Drawing.Size(61, 25)
+        Me.AutoManBtn.Size = New System.Drawing.Size(81, 31)
         Me.AutoManBtn.TabIndex = 265
         Me.AutoManBtn.UncheckedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(125, Byte), Integer), CType(CType(137, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.AutoManBtn.UncheckedState.FillColor = System.Drawing.Color.FromArgb(CType(CType(125, Byte), Integer), CType(CType(137, Byte), Integer), CType(CType(149, Byte), Integer))
@@ -3376,7 +3525,8 @@ Partial Class MainWindow
         '
         Me.auto_tune_label.AutoSize = True
         Me.auto_tune_label.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.auto_tune_label.Location = New System.Drawing.Point(1188, 88)
+        Me.auto_tune_label.Location = New System.Drawing.Point(1584, 108)
+        Me.auto_tune_label.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.auto_tune_label.Name = "auto_tune_label"
         Me.auto_tune_label.Size = New System.Drawing.Size(85, 20)
         Me.auto_tune_label.TabIndex = 266
@@ -3389,9 +3539,10 @@ Partial Class MainWindow
         Me.LEDTrackBar.FillColor = System.Drawing.Color.FromArgb(CType(CType(193, Byte), Integer), CType(CType(200, Byte), Integer), CType(CType(207, Byte), Integer))
         Me.LEDTrackBar.HoverState.Parent = Me.LEDTrackBar
         Me.LEDTrackBar.IndicateFocus = False
-        Me.LEDTrackBar.Location = New System.Drawing.Point(1403, 75)
+        Me.LEDTrackBar.Location = New System.Drawing.Point(1871, 92)
+        Me.LEDTrackBar.Margin = New System.Windows.Forms.Padding(4)
         Me.LEDTrackBar.Name = "LEDTrackBar"
-        Me.LEDTrackBar.Size = New System.Drawing.Size(305, 23)
+        Me.LEDTrackBar.Size = New System.Drawing.Size(407, 28)
         Me.LEDTrackBar.TabIndex = 271
         Me.LEDTrackBar.ThumbColor = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.LEDTrackBar.Value = 0
@@ -3401,7 +3552,8 @@ Partial Class MainWindow
         '
         Me.Label6.AutoSize = True
         Me.Label6.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label6.Location = New System.Drawing.Point(1451, 54)
+        Me.Label6.Location = New System.Drawing.Point(1935, 66)
+        Me.Label6.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label6.Name = "Label6"
         Me.Label6.Size = New System.Drawing.Size(215, 25)
         Me.Label6.TabIndex = 272
@@ -3412,7 +3564,8 @@ Partial Class MainWindow
         '
         Me.Loaded_Progress_6_75.AutoSize = True
         Me.Loaded_Progress_6_75.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Loaded_Progress_6_75.Location = New System.Drawing.Point(690, 285)
+        Me.Loaded_Progress_6_75.Location = New System.Drawing.Point(920, 351)
+        Me.Loaded_Progress_6_75.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Loaded_Progress_6_75.Name = "Loaded_Progress_6_75"
         Me.Loaded_Progress_6_75.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_6_75.TabIndex = 292
@@ -3422,7 +3575,8 @@ Partial Class MainWindow
         '
         Me.Loaded_Progress_6_25.AutoSize = True
         Me.Loaded_Progress_6_25.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Loaded_Progress_6_25.Location = New System.Drawing.Point(691, 508)
+        Me.Loaded_Progress_6_25.Location = New System.Drawing.Point(921, 625)
+        Me.Loaded_Progress_6_25.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Loaded_Progress_6_25.Name = "Loaded_Progress_6_25"
         Me.Loaded_Progress_6_25.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_6_25.TabIndex = 291
@@ -3431,7 +3585,7 @@ Partial Class MainWindow
         'Set_MFC_6_Recipe_Button
         '
         Me.Set_MFC_6_Recipe_Button.AutoRoundedCorners = True
-        Me.Set_MFC_6_Recipe_Button.BorderRadius = 18
+        Me.Set_MFC_6_Recipe_Button.BorderRadius = 23
         Me.Set_MFC_6_Recipe_Button.CheckedState.Parent = Me.Set_MFC_6_Recipe_Button
         Me.Set_MFC_6_Recipe_Button.CustomImages.Parent = Me.Set_MFC_6_Recipe_Button
         Me.Set_MFC_6_Recipe_Button.FillColor = System.Drawing.SystemColors.ActiveCaption
@@ -3439,12 +3593,13 @@ Partial Class MainWindow
         Me.Set_MFC_6_Recipe_Button.ForeColor = System.Drawing.Color.White
         Me.Set_MFC_6_Recipe_Button.HoverState.FillColor = System.Drawing.SystemColors.ActiveCaption
         Me.Set_MFC_6_Recipe_Button.HoverState.Parent = Me.Set_MFC_6_Recipe_Button
-        Me.Set_MFC_6_Recipe_Button.Location = New System.Drawing.Point(693, 633)
+        Me.Set_MFC_6_Recipe_Button.Location = New System.Drawing.Point(924, 779)
+        Me.Set_MFC_6_Recipe_Button.Margin = New System.Windows.Forms.Padding(4)
         Me.Set_MFC_6_Recipe_Button.Name = "Set_MFC_6_Recipe_Button"
         Me.Set_MFC_6_Recipe_Button.ShadowDecoration.BorderRadius = 27
         Me.Set_MFC_6_Recipe_Button.ShadowDecoration.Color = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.Set_MFC_6_Recipe_Button.ShadowDecoration.Parent = Me.Set_MFC_6_Recipe_Button
-        Me.Set_MFC_6_Recipe_Button.Size = New System.Drawing.Size(64, 39)
+        Me.Set_MFC_6_Recipe_Button.Size = New System.Drawing.Size(85, 48)
         Me.Set_MFC_6_Recipe_Button.TabIndex = 290
         Me.Set_MFC_6_Recipe_Button.Text = "ENTER"
         Me.Set_MFC_6_Recipe_Button.Visible = False
@@ -3452,7 +3607,7 @@ Partial Class MainWindow
         'Set_MFC_5_Recipe_Button
         '
         Me.Set_MFC_5_Recipe_Button.AutoRoundedCorners = True
-        Me.Set_MFC_5_Recipe_Button.BorderRadius = 18
+        Me.Set_MFC_5_Recipe_Button.BorderRadius = 23
         Me.Set_MFC_5_Recipe_Button.CheckedState.Parent = Me.Set_MFC_5_Recipe_Button
         Me.Set_MFC_5_Recipe_Button.CustomBorderColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer))
         Me.Set_MFC_5_Recipe_Button.CustomImages.Parent = Me.Set_MFC_5_Recipe_Button
@@ -3461,12 +3616,13 @@ Partial Class MainWindow
         Me.Set_MFC_5_Recipe_Button.ForeColor = System.Drawing.Color.White
         Me.Set_MFC_5_Recipe_Button.HoverState.FillColor = System.Drawing.SystemColors.ActiveCaption
         Me.Set_MFC_5_Recipe_Button.HoverState.Parent = Me.Set_MFC_5_Recipe_Button
-        Me.Set_MFC_5_Recipe_Button.Location = New System.Drawing.Point(556, 634)
+        Me.Set_MFC_5_Recipe_Button.Location = New System.Drawing.Point(741, 780)
+        Me.Set_MFC_5_Recipe_Button.Margin = New System.Windows.Forms.Padding(4)
         Me.Set_MFC_5_Recipe_Button.Name = "Set_MFC_5_Recipe_Button"
         Me.Set_MFC_5_Recipe_Button.ShadowDecoration.BorderRadius = 27
         Me.Set_MFC_5_Recipe_Button.ShadowDecoration.Color = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.Set_MFC_5_Recipe_Button.ShadowDecoration.Parent = Me.Set_MFC_5_Recipe_Button
-        Me.Set_MFC_5_Recipe_Button.Size = New System.Drawing.Size(64, 39)
+        Me.Set_MFC_5_Recipe_Button.Size = New System.Drawing.Size(85, 48)
         Me.Set_MFC_5_Recipe_Button.TabIndex = 289
         Me.Set_MFC_5_Recipe_Button.Text = "ENTER"
         Me.Set_MFC_5_Recipe_Button.Visible = False
@@ -3476,10 +3632,11 @@ Partial Class MainWindow
         Me.Loaded_Progress_5.BackColor = System.Drawing.Color.Transparent
         Me.Loaded_Progress_5.FillColor = System.Drawing.Color.Transparent
         Me.Loaded_Progress_5.GradientMode = System.Drawing.Drawing2D.LinearGradientMode.Horizontal
-        Me.Loaded_Progress_5.Location = New System.Drawing.Point(593, 175)
+        Me.Loaded_Progress_5.Location = New System.Drawing.Point(791, 215)
+        Me.Loaded_Progress_5.Margin = New System.Windows.Forms.Padding(4)
         Me.Loaded_Progress_5.Name = "Loaded_Progress_5"
         Me.Loaded_Progress_5.ShadowDecoration.Parent = Me.Loaded_Progress_5
-        Me.Loaded_Progress_5.Size = New System.Drawing.Size(10, 450)
+        Me.Loaded_Progress_5.Size = New System.Drawing.Size(13, 554)
         Me.Loaded_Progress_5.Style = System.Windows.Forms.ProgressBarStyle.Continuous
         Me.Loaded_Progress_5.TabIndex = 288
         Me.Loaded_Progress_5.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SystemDefault
@@ -3490,10 +3647,11 @@ Partial Class MainWindow
         Me.Loaded_Progress_6.BackColor = System.Drawing.Color.Transparent
         Me.Loaded_Progress_6.FillColor = System.Drawing.Color.Transparent
         Me.Loaded_Progress_6.GradientMode = System.Drawing.Drawing2D.LinearGradientMode.Horizontal
-        Me.Loaded_Progress_6.Location = New System.Drawing.Point(727, 175)
+        Me.Loaded_Progress_6.Location = New System.Drawing.Point(969, 215)
+        Me.Loaded_Progress_6.Margin = New System.Windows.Forms.Padding(4)
         Me.Loaded_Progress_6.Name = "Loaded_Progress_6"
         Me.Loaded_Progress_6.ShadowDecoration.Parent = Me.Loaded_Progress_6
-        Me.Loaded_Progress_6.Size = New System.Drawing.Size(10, 450)
+        Me.Loaded_Progress_6.Size = New System.Drawing.Size(13, 554)
         Me.Loaded_Progress_6.Style = System.Windows.Forms.ProgressBarStyle.Continuous
         Me.Loaded_Progress_6.TabIndex = 287
         Me.Loaded_Progress_6.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SystemDefault
@@ -3505,11 +3663,11 @@ Partial Class MainWindow
         Me.MFC_6_Read_Flow.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.MFC_6_Read_Flow.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.MFC_6_Read_Flow.ForeColor = System.Drawing.Color.Red
-        Me.MFC_6_Read_Flow.Location = New System.Drawing.Point(758, 634)
-        Me.MFC_6_Read_Flow.Margin = New System.Windows.Forms.Padding(2)
+        Me.MFC_6_Read_Flow.Location = New System.Drawing.Point(1011, 780)
+        Me.MFC_6_Read_Flow.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.MFC_6_Read_Flow.Name = "MFC_6_Read_Flow"
         Me.MFC_6_Read_Flow.ReadOnly = True
-        Me.MFC_6_Read_Flow.Size = New System.Drawing.Size(59, 31)
+        Me.MFC_6_Read_Flow.Size = New System.Drawing.Size(79, 31)
         Me.MFC_6_Read_Flow.TabIndex = 286
         Me.MFC_6_Read_Flow.Text = "0.00"
         Me.MFC_6_Read_Flow.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -3521,12 +3679,12 @@ Partial Class MainWindow
         Me.MFC_6_Recipe_Flow.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.MFC_6_Recipe_Flow.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.MFC_6_Recipe_Flow.ForeColor = System.Drawing.SystemColors.InactiveCaption
-        Me.MFC_6_Recipe_Flow.Location = New System.Drawing.Point(758, 659)
-        Me.MFC_6_Recipe_Flow.Margin = New System.Windows.Forms.Padding(2)
-        Me.MFC_6_Recipe_Flow.MinimumSize = New System.Drawing.Size(38, 20)
+        Me.MFC_6_Recipe_Flow.Location = New System.Drawing.Point(1011, 811)
+        Me.MFC_6_Recipe_Flow.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
+        Me.MFC_6_Recipe_Flow.MinimumSize = New System.Drawing.Size(51, 20)
         Me.MFC_6_Recipe_Flow.Name = "MFC_6_Recipe_Flow"
         Me.MFC_6_Recipe_Flow.ReadOnly = True
-        Me.MFC_6_Recipe_Flow.Size = New System.Drawing.Size(59, 31)
+        Me.MFC_6_Recipe_Flow.Size = New System.Drawing.Size(79, 31)
         Me.MFC_6_Recipe_Flow.TabIndex = 285
         Me.MFC_6_Recipe_Flow.Text = "???"
         Me.MFC_6_Recipe_Flow.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -3537,9 +3695,10 @@ Partial Class MainWindow
         Me.PictureBox1.BackColor = System.Drawing.Color.Transparent
         Me.PictureBox1.BackgroundImage = CType(resources.GetObject("PictureBox1.BackgroundImage"), System.Drawing.Image)
         Me.PictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
-        Me.PictureBox1.Location = New System.Drawing.Point(603, 175)
+        Me.PictureBox1.Location = New System.Drawing.Point(804, 215)
+        Me.PictureBox1.Margin = New System.Windows.Forms.Padding(4)
         Me.PictureBox1.Name = "PictureBox1"
-        Me.PictureBox1.Size = New System.Drawing.Size(23, 450)
+        Me.PictureBox1.Size = New System.Drawing.Size(31, 554)
         Me.PictureBox1.TabIndex = 283
         Me.PictureBox1.TabStop = False
         '
@@ -3547,7 +3706,8 @@ Partial Class MainWindow
         '
         Me.Loaded_Progress_5_0.AutoSize = True
         Me.Loaded_Progress_5_0.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Loaded_Progress_5_0.Location = New System.Drawing.Point(549, 612)
+        Me.Loaded_Progress_5_0.Location = New System.Drawing.Point(732, 753)
+        Me.Loaded_Progress_5_0.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Loaded_Progress_5_0.Name = "Loaded_Progress_5_0"
         Me.Loaded_Progress_5_0.Size = New System.Drawing.Size(57, 17)
         Me.Loaded_Progress_5_0.TabIndex = 284
@@ -3558,9 +3718,10 @@ Partial Class MainWindow
         Me.PictureBox2.BackColor = System.Drawing.Color.Transparent
         Me.PictureBox2.BackgroundImage = CType(resources.GetObject("PictureBox2.BackgroundImage"), System.Drawing.Image)
         Me.PictureBox2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
-        Me.PictureBox2.Location = New System.Drawing.Point(737, 175)
+        Me.PictureBox2.Location = New System.Drawing.Point(983, 215)
+        Me.PictureBox2.Margin = New System.Windows.Forms.Padding(4)
         Me.PictureBox2.Name = "PictureBox2"
-        Me.PictureBox2.Size = New System.Drawing.Size(23, 450)
+        Me.PictureBox2.Size = New System.Drawing.Size(31, 554)
         Me.PictureBox2.TabIndex = 279
         Me.PictureBox2.TabStop = False
         '
@@ -3568,7 +3729,8 @@ Partial Class MainWindow
         '
         Me.Loaded_Progress_6_100.AutoSize = True
         Me.Loaded_Progress_6_100.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Loaded_Progress_6_100.Location = New System.Drawing.Point(690, 175)
+        Me.Loaded_Progress_6_100.Location = New System.Drawing.Point(920, 215)
+        Me.Loaded_Progress_6_100.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Loaded_Progress_6_100.Name = "Loaded_Progress_6_100"
         Me.Loaded_Progress_6_100.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_6_100.TabIndex = 280
@@ -3578,7 +3740,8 @@ Partial Class MainWindow
         '
         Me.Loaded_Progress_6_50.AutoSize = True
         Me.Loaded_Progress_6_50.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Loaded_Progress_6_50.Location = New System.Drawing.Point(690, 395)
+        Me.Loaded_Progress_6_50.Location = New System.Drawing.Point(920, 486)
+        Me.Loaded_Progress_6_50.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Loaded_Progress_6_50.Name = "Loaded_Progress_6_50"
         Me.Loaded_Progress_6_50.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_6_50.TabIndex = 281
@@ -3588,7 +3751,8 @@ Partial Class MainWindow
         '
         Me.Loaded_Progress_6_0.AutoSize = True
         Me.Loaded_Progress_6_0.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Loaded_Progress_6_0.Location = New System.Drawing.Point(683, 612)
+        Me.Loaded_Progress_6_0.Location = New System.Drawing.Point(911, 753)
+        Me.Loaded_Progress_6_0.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Loaded_Progress_6_0.Name = "Loaded_Progress_6_0"
         Me.Loaded_Progress_6_0.Size = New System.Drawing.Size(57, 17)
         Me.Loaded_Progress_6_0.TabIndex = 282
@@ -3597,14 +3761,15 @@ Partial Class MainWindow
         'ProgressBar6
         '
         Me.ProgressBar6.AutoRoundedCorners = True
-        Me.ProgressBar6.BorderRadius = 24
+        Me.ProgressBar6.BorderRadius = 33
         Me.ProgressBar6.GradientMode = System.Drawing.Drawing2D.LinearGradientMode.Horizontal
-        Me.ProgressBar6.Location = New System.Drawing.Point(761, 175)
+        Me.ProgressBar6.Location = New System.Drawing.Point(1015, 215)
+        Me.ProgressBar6.Margin = New System.Windows.Forms.Padding(4)
         Me.ProgressBar6.Name = "ProgressBar6"
         Me.ProgressBar6.ProgressColor = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.ProgressBar6.ProgressColor2 = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.ProgressBar6.ShadowDecoration.Parent = Me.ProgressBar6
-        Me.ProgressBar6.Size = New System.Drawing.Size(51, 450)
+        Me.ProgressBar6.Size = New System.Drawing.Size(68, 554)
         Me.ProgressBar6.Style = System.Windows.Forms.ProgressBarStyle.Continuous
         Me.ProgressBar6.TabIndex = 278
         Me.ProgressBar6.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SystemDefault
@@ -3614,7 +3779,8 @@ Partial Class MainWindow
         Me.MFC_6_Label.AutoSize = True
         Me.MFC_6_Label.BackColor = System.Drawing.Color.White
         Me.MFC_6_Label.Font = New System.Drawing.Font("Microsoft Sans Serif", 18.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.MFC_6_Label.Location = New System.Drawing.Point(734, 138)
+        Me.MFC_6_Label.Location = New System.Drawing.Point(979, 170)
+        Me.MFC_6_Label.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.MFC_6_Label.Name = "MFC_6_Label"
         Me.MFC_6_Label.Size = New System.Drawing.Size(113, 36)
         Me.MFC_6_Label.TabIndex = 274
@@ -3625,7 +3791,8 @@ Partial Class MainWindow
         Me.MFC_5_Label.AutoSize = True
         Me.MFC_5_Label.BackColor = System.Drawing.Color.White
         Me.MFC_5_Label.Font = New System.Drawing.Font("Microsoft Sans Serif", 18.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.MFC_5_Label.Location = New System.Drawing.Point(599, 138)
+        Me.MFC_5_Label.Location = New System.Drawing.Point(799, 170)
+        Me.MFC_5_Label.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.MFC_5_Label.Name = "MFC_5_Label"
         Me.MFC_5_Label.Size = New System.Drawing.Size(113, 36)
         Me.MFC_5_Label.TabIndex = 273
@@ -3637,11 +3804,11 @@ Partial Class MainWindow
         Me.MFC_5_Read_Flow.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.MFC_5_Read_Flow.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.MFC_5_Read_Flow.ForeColor = System.Drawing.Color.Red
-        Me.MFC_5_Read_Flow.Location = New System.Drawing.Point(621, 634)
-        Me.MFC_5_Read_Flow.Margin = New System.Windows.Forms.Padding(2)
+        Me.MFC_5_Read_Flow.Location = New System.Drawing.Point(828, 780)
+        Me.MFC_5_Read_Flow.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.MFC_5_Read_Flow.Name = "MFC_5_Read_Flow"
         Me.MFC_5_Read_Flow.ReadOnly = True
-        Me.MFC_5_Read_Flow.Size = New System.Drawing.Size(59, 31)
+        Me.MFC_5_Read_Flow.Size = New System.Drawing.Size(79, 31)
         Me.MFC_5_Read_Flow.TabIndex = 276
         Me.MFC_5_Read_Flow.Text = "0.00"
         Me.MFC_5_Read_Flow.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -3653,12 +3820,12 @@ Partial Class MainWindow
         Me.MFC_5_Recipe_Flow.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.MFC_5_Recipe_Flow.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.MFC_5_Recipe_Flow.ForeColor = System.Drawing.SystemColors.InactiveCaption
-        Me.MFC_5_Recipe_Flow.Location = New System.Drawing.Point(621, 659)
-        Me.MFC_5_Recipe_Flow.Margin = New System.Windows.Forms.Padding(2)
-        Me.MFC_5_Recipe_Flow.MinimumSize = New System.Drawing.Size(38, 20)
+        Me.MFC_5_Recipe_Flow.Location = New System.Drawing.Point(828, 811)
+        Me.MFC_5_Recipe_Flow.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
+        Me.MFC_5_Recipe_Flow.MinimumSize = New System.Drawing.Size(51, 20)
         Me.MFC_5_Recipe_Flow.Name = "MFC_5_Recipe_Flow"
         Me.MFC_5_Recipe_Flow.ReadOnly = True
-        Me.MFC_5_Recipe_Flow.Size = New System.Drawing.Size(59, 31)
+        Me.MFC_5_Recipe_Flow.Size = New System.Drawing.Size(79, 31)
         Me.MFC_5_Recipe_Flow.TabIndex = 275
         Me.MFC_5_Recipe_Flow.Text = "???"
         Me.MFC_5_Recipe_Flow.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -3668,7 +3835,8 @@ Partial Class MainWindow
         '
         Me.Loaded_Progress_5_75.AutoSize = True
         Me.Loaded_Progress_5_75.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Loaded_Progress_5_75.Location = New System.Drawing.Point(559, 285)
+        Me.Loaded_Progress_5_75.Location = New System.Drawing.Point(745, 351)
+        Me.Loaded_Progress_5_75.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Loaded_Progress_5_75.Name = "Loaded_Progress_5_75"
         Me.Loaded_Progress_5_75.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_5_75.TabIndex = 296
@@ -3678,7 +3846,8 @@ Partial Class MainWindow
         '
         Me.Loaded_Progress_5_25.AutoSize = True
         Me.Loaded_Progress_5_25.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Loaded_Progress_5_25.Location = New System.Drawing.Point(560, 508)
+        Me.Loaded_Progress_5_25.Location = New System.Drawing.Point(747, 625)
+        Me.Loaded_Progress_5_25.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Loaded_Progress_5_25.Name = "Loaded_Progress_5_25"
         Me.Loaded_Progress_5_25.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_5_25.TabIndex = 295
@@ -3688,7 +3857,8 @@ Partial Class MainWindow
         '
         Me.Loaded_Progress_5_100.AutoSize = True
         Me.Loaded_Progress_5_100.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Loaded_Progress_5_100.Location = New System.Drawing.Point(559, 175)
+        Me.Loaded_Progress_5_100.Location = New System.Drawing.Point(745, 215)
+        Me.Loaded_Progress_5_100.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Loaded_Progress_5_100.Name = "Loaded_Progress_5_100"
         Me.Loaded_Progress_5_100.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_5_100.TabIndex = 293
@@ -3698,7 +3868,8 @@ Partial Class MainWindow
         '
         Me.Loaded_Progress_5_50.AutoSize = True
         Me.Loaded_Progress_5_50.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Loaded_Progress_5_50.Location = New System.Drawing.Point(559, 395)
+        Me.Loaded_Progress_5_50.Location = New System.Drawing.Point(745, 486)
+        Me.Loaded_Progress_5_50.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Loaded_Progress_5_50.Name = "Loaded_Progress_5_50"
         Me.Loaded_Progress_5_50.Size = New System.Drawing.Size(44, 17)
         Me.Loaded_Progress_5_50.TabIndex = 294
@@ -3707,25 +3878,26 @@ Partial Class MainWindow
         'ProgressBar5
         '
         Me.ProgressBar5.AutoRoundedCorners = True
-        Me.ProgressBar5.BorderRadius = 24
+        Me.ProgressBar5.BorderRadius = 33
         Me.ProgressBar5.GradientMode = System.Drawing.Drawing2D.LinearGradientMode.Horizontal
-        Me.ProgressBar5.Location = New System.Drawing.Point(626, 175)
+        Me.ProgressBar5.Location = New System.Drawing.Point(835, 215)
+        Me.ProgressBar5.Margin = New System.Windows.Forms.Padding(4)
         Me.ProgressBar5.Name = "ProgressBar5"
         Me.ProgressBar5.ProgressColor = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.ProgressBar5.ProgressColor2 = System.Drawing.Color.FromArgb(CType(CType(201, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(38, Byte), Integer))
         Me.ProgressBar5.ShadowDecoration.Parent = Me.ProgressBar5
-        Me.ProgressBar5.Size = New System.Drawing.Size(51, 450)
+        Me.ProgressBar5.Size = New System.Drawing.Size(68, 554)
         Me.ProgressBar5.Style = System.Windows.Forms.ProgressBarStyle.Continuous
         Me.ProgressBar5.TabIndex = 297
         Me.ProgressBar5.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SystemDefault
         '
         'MainWindow
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.White
         Me.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
-        Me.ClientSize = New System.Drawing.Size(1769, 845)
+        Me.ClientSize = New System.Drawing.Size(2359, 1040)
         Me.ControlBox = False
         Me.Controls.Add(Me.ProgressBar5)
         Me.Controls.Add(Me.Loaded_Progress_5_75)
@@ -3939,7 +4111,7 @@ Partial Class MainWindow
         Me.ForeColor = System.Drawing.SystemColors.ControlText
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.MainMenuStrip = Me.MenuStrip1
-        Me.Margin = New System.Windows.Forms.Padding(2)
+        Me.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
         Me.MaximizeBox = False
         Me.MinimizeBox = False
         Me.Name = "MainWindow"
@@ -4212,4 +4384,7 @@ Partial Class MainWindow
     Friend WithEvents Loaded_Progress_5_50 As Label
     Friend WithEvents SetGapBtn As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents ProgressBar5 As Guna.UI2.WinForms.Guna2VProgressBar
+    Friend WithEvents ToolStripMenuSmallStepSize As ToolStripMenuItem
+    Friend WithEvents ToolStripMenuNormalStepSize As ToolStripMenuItem
+    Friend WithEvents ToolStripMenuBigStepSize As ToolStripMenuItem
 End Class

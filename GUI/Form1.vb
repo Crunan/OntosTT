@@ -3515,9 +3515,6 @@ Public Class MainWindow
         Return CoordParam.db_Zp_2_Base + db_C_ZPos_RefPH
     End Function
 
-    Private Sub MBScanToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles MBScanToolStripMenuItem.Click
-        SM_State = MB_SCAN_RESET
-    End Sub
 
     Private Sub RecipeButtonPins_Click(sender As Object, e As EventArgs) Handles RecipeButtonPins.Click
         Dim st_StrCmd As String
@@ -4612,6 +4609,20 @@ Public Class MainWindow
             WriteCommand(LEDCommand, LEDCommand.Length)
         End If
     End Sub
+    Private Sub ToolStripMenuSmallStepSize_Click(sender As Object, e As EventArgs) Handles ToolStripMenuSmallStepSize.Click
+        ChangeStepSize("50")
+    End Sub
 
+    Private Sub ToolStripMenuNormalStepSize_Click(sender As Object, e As EventArgs) Handles ToolStripMenuNormalStepSize.Click
+        ChangeStepSize("32")
+    End Sub
+
+    Private Sub ToolStripMenuBigStepSize_Click(sender As Object, e As EventArgs) Handles ToolStripMenuBigStepSize.Click
+        ChangeStepSize("02")
+    End Sub
+    Private Sub ChangeStepSize(size As String)
+        st_MBRightSpeed = "$110100" & size & "%"
+        st_MBLeftSpeed = "$110000" & size & "%"
+    End Sub
 
 End Class
