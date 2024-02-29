@@ -790,41 +790,6 @@ Public Class MainWindow
     Const MAXRF_PR_WATTS = 33  'maximum rated RF watts reflected
     Const SERIAL_RESPONSE_TIMEOUT = 1000 'timeout waiting for control pcb response (milliseconds)
 
-    ' Controller Error Codes
-    Public Enum AbortCode
-        AC_OK = &H0
-        AC_NO_N2 = &H1
-        AC_NO_HEARTBEAT = &H2
-        AC_NO_GAS_1 = &H3
-        AC_NO_GAS_2 = &H4
-        AC_NO_GAS_3 = &H5
-        AC_NO_GAS_4 = &H6
-        AC_AR_ONLY = &H7
-        AC_ESTOP = &H8
-        AC_DOORS_OPEN = &H9
-        AC_PWR_FWD_LOW = &HA
-        AC_OVER_TEMP = &HB
-        AC_NO_CDA = &HC
-    End Enum
-
-
-    ' At the top of your class/module
-    Private AbortCodeMessages As Dictionary(Of String, String) = New Dictionary(Of String, String) From {
-        {AbortCode.AC_NO_N2.ToString(), "NO PURGE N2"},
-        {AbortCode.AC_NO_HEARTBEAT.ToString(), "NO HEARTBEAT"},
-        {AbortCode.AC_NO_GAS_1.ToString(), "MFC_1 Low Flow"},
-        {AbortCode.AC_NO_GAS_2.ToString(), "MFC_2 Low Flow"},
-        {AbortCode.AC_NO_GAS_3.ToString(), "MFC_3 Low Flow"},
-        {AbortCode.AC_NO_GAS_4.ToString(), "MFC_4 Low Flow"},
-        {AbortCode.AC_AR_ONLY.ToString(), "Ar Only, No Mix"},
-        {AbortCode.AC_ESTOP.ToString(), "ESTOP ACTIVE"},
-        {AbortCode.AC_DOORS_OPEN.ToString(), "ABORT: DOOR OPENED"},
-        {AbortCode.AC_PWR_FWD_LOW.ToString(), "Power Fwd Low"},
-        {AbortCode.AC_OVER_TEMP.ToString(), "Head Too Hot"},
-        {AbortCode.AC_NO_CDA.ToString(), "No CDA"}
-    }
-
-
 
     Dim SM_State As Integer = IDLE
     Dim SM_PollCounter As Integer = 0
