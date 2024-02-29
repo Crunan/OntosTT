@@ -1,14 +1,9 @@
-﻿Imports System
-Imports System.Threading
-Imports System.IO.Ports
-Imports System.ComponentModel
+﻿Imports System.IO.Ports
 Imports System.IO
-Imports System.String
 Imports System.Runtime.InteropServices
-Imports System.Drawing
 Imports System.Runtime.Serialization
-Imports Guna.UI2.AnimatorNS
 Imports Guna.UI2.WinForms
+
 
 Public Class MainWindow
 
@@ -705,7 +700,10 @@ Public Class MainWindow
         Dim db_ActualPos As Double
         Dim db_ActualPosPct As Double
         Dim b_LoadTunerPos As Boolean
+        Dim runpoint As Integer
+        Dim b_LoadRunpointPos As Boolean
     End Structure
+
     Dim TUNER As TUNER_POS
 
     'for number string validation
@@ -801,7 +799,7 @@ Public Class MainWindow
         AC_NO_GAS_2 = &H4
         AC_NO_GAS_3 = &H5
         AC_NO_GAS_4 = &H6
-        AC_BAD_HELIUM = &H7
+        AC_AR_ONLY = &H7
         AC_ESTOP = &H8
         AC_DOORS_OPEN = &H9
         AC_PWR_FWD_LOW = &HA
@@ -818,7 +816,7 @@ Public Class MainWindow
         {AbortCode.AC_NO_GAS_2.ToString(), "MFC_2 Low Flow"},
         {AbortCode.AC_NO_GAS_3.ToString(), "MFC_3 Low Flow"},
         {AbortCode.AC_NO_GAS_4.ToString(), "MFC_4 Low Flow"},
-        {AbortCode.AC_BAD_HELIUM.ToString(), "BAD HELIUM"},
+        {AbortCode.AC_AR_ONLY.ToString(), "Ar Only, No Mix"},
         {AbortCode.AC_ESTOP.ToString(), "ESTOP ACTIVE"},
         {AbortCode.AC_DOORS_OPEN.ToString(), "ABORT: DOOR OPENED"},
         {AbortCode.AC_PWR_FWD_LOW.ToString(), "Power Fwd Low"},
@@ -1563,6 +1561,21 @@ Public Class MainWindow
             Return
         End If
 
+    End Sub
+    Private Sub runpoint_btn_Click(sender As Object, e As EventArgs) Handles runpoint_btn.Click
+        Dim StrVar As String
+        Dim DoubVal As Double
+
+        StrVar = InputBox("Format xxx (max value: 100)", "Tuner Run point, Enter Percentage Value", "")
+        If b_IsStringValid(StrVar, st_DoubleChars, "Invalid Entry") Then
+            If StrVar = "" Or StrVar.Length > 6 Then Return
+            DoubVal = Convert.ToDouble(StrVar)
+            If DoubVal > 100 Or DoubVal < 0 Then Return
+            TUNER.runpoint = DoubVal
+            TUNER.b_LoadRunpointPos = True
+        Else
+            Return
+        End If
     End Sub
     Private Sub SetThicknessBtn_Click(sender As Object, e As EventArgs) Handles SetThicknessBtn.Click
         Dim StrVar, st_ThicSubtractGap As String
@@ -2631,6 +2644,17 @@ Public Class MainWindow
             TUNER.b_LoadTunerPos = False
         End If
 
+        'TODO: create function that handles sending command and flag.
+        If TUNER.b_LoadRunpointPos = True Then
+            'TODO: Use emmetts new command to send runpoint value
+            StrVar = "$43" & TUNER.runpoint.ToString() & "%"     'SET_RCP_MS_POS  $43xxxx$ xxxx = Base10 MB Motor Pos; resp[!43xxxx#]
+            WriteCommand(StrVar, Len(StrVar))
+            ResponseLen = ReadResponse(0)
+            'verify tuner position was set somehow, use that to make text go from light grey to black!
+            TUNER.b_LoadRunpointPos = False
+        End If
+
+
         If b_ToggleAutoMode = True Then
             b_AutoModeOn = Not b_AutoModeOn
             If b_AutoModeOn Then
@@ -2706,34 +2730,23 @@ Public Class MainWindow
 
         Return DecStr
     End Function
-    'UPdateStatus bit patterns =>
-    'LED_GAS_1        0 //VBWord bit 8    &H0100
-    'LED_GAS_2        1 //VBWord bit 9    &H0200
-    'LED_GAS_3        2 //VBWord bit 10   &H0400
-    'LED_GAS_4        3 //VBWord bit 11   &H0800
-    'LED_VLV_5        4 //VBWord bit 12   &H1000 - R12 (not used here)
-    'LED_VLV_6        5 //VBWord bit 13   &H2000 - R12 (not used here)
-    'LED_VLV_7        6 //VBWord bit 14   &H4000
-    'LED_RF_EN        7 //VBWord bit 15   &H8000
-
     Public Sub PublishAbortCode()
         Dim ResponseLen As Integer
-        WriteCommand("$8B%", 4) 'GETSET_ABORT_CODE  $8B%; resp [!8Bcccc#] cccc = Base10 Abort Code
-        ReadResponse(0)
+        WriteCommand("$88%", 4) 'GETSET_ABORT_CODE  $88%; resp [!8Bcccc#] cccc = Base10 Abort Code
+        ResponseLen = ReadResponse(0)
+        WriteLogLine(st_RCV)
         ParseAbortCode(ResponseLen)
     End Sub
     Public Sub ParseAbortCode(length As Integer)
-        Dim StrVar As String
-        Dim errorMessage As String
-        If length > 7 Then
-            StrVar = st_RCV.Substring(3, 4)
-            If AbortCodeMessages.ContainsKey(StrVar) Then
-                errorMessage = AbortCodeMessages(StrVar)
-                MsgBox(errorMessage)
-            Else
-                MsgBox("Abort occurred, no corresponding abort code found.")
-            End If
+        Dim StrVar As String = ""
+        If length > 4 Then
+            StrVar = st_RCV.Substring(1, length - 2) 'The 4 are the four characters we don't need each time which is the $88 and the closing %
         End If
+        AC_CODE.Text = StrVar
+        AC_CODE.Visible = True
+        WriteLogLine("ABORT DESCRIPTION:" + StrVar)
+        b_ClearAbort = True
+        ClearAbortbtn.Visible = True
     End Sub
 
     Private Sub OpenLogFile()
