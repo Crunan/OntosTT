@@ -2958,6 +2958,8 @@ Public Class MainWindow
                     RecipeWattsTxt.Text = st_RecipeParamValue
                 Case "TUNER"
                     RecipeTunerTxt.Text = st_RecipeParamValue
+                Case "TUNER_RUNPOINT"
+                    TUNER.runpoint = CInt(st_RecipeParamValue)
                 Case "THICKNESS"
                     RecipeThicknessTxt.Text = st_RecipeParamValue
                 Case "GAP"
