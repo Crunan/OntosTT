@@ -3055,7 +3055,7 @@ Public Class MainWindow
         'build the Recipe from current data
         st_RecipeString = "<MFC1>" + MFC_1_Recipe_Flow.Text + vbCrLf + "<MFC2>" + MFC_2_Recipe_Flow.Text + vbCrLf +
                        "<MFC3>" + MFC_3_Recipe_Flow.Text + vbCrLf + "<MFC4>" + MFC_4_Recipe_Flow.Text + vbCrLf +
-                       "<PWR>" + RecipeWattsTxt.Text + vbCrLf + "<TUNER>" + RecipeTunerTxt.Text + vbCrLf +
+                       "<PWR>" + RecipeWattsTxt.Text + vbCrLf + "<TUNER>" + RecipeTunerTxt.Text + vbCrLf + "<TUNER_RUNPOINT>" + TUNER.runpoint.ToString() + vbCrLf +
                        "<THICKNESS>" + RecipeThicknessTxt.Text + vbCrLf + "<GAP>" + RecipeGapTxt.Text + vbCrLf +
                        "<OVERLAP>" + RecipeOverLapTxt.Text + vbCrLf + "<SPEED>" + RecipeSpeedTxt.Text + vbCrLf +
                        "<CYCLES>" + RecipeCyclesTxt.Text + vbCrLf + "<XMIN>" + RecipeXMinTxt.Text + vbCrLf +
@@ -3097,7 +3097,7 @@ Public Class MainWindow
         'build the Recipe from current data
         st_RecipeString = "<MFC1>" + MFC_1_Recipe_Flow.Text + vbCrLf + "<MFC2>" + MFC_2_Recipe_Flow.Text + vbCrLf +
                        "<MFC3>" + MFC_3_Recipe_Flow.Text + vbCrLf + "<MFC4>" + MFC_4_Recipe_Flow.Text + vbCrLf +
-                       "<PWR>" + RecipeWattsTxt.Text + vbCrLf + "<TUNER>" + RecipeTunerTxt.Text + vbCrLf +
+                       "<PWR>" + RecipeWattsTxt.Text + vbCrLf + "<TUNER>" + RecipeTunerTxt.Text + vbCrLf + "<TUNER_RUNPOINT>" + TUNER.runpoint.ToString() + vbCrLf +
                        "<THICKNESS>" + RecipeThicknessTxt.Text + vbCrLf + "<GAP>" + RecipeGapTxt.Text + vbCrLf +
                        "<OVERLAP>" + RecipeOverLapTxt.Text + vbCrLf + "<SPEED>" + RecipeSpeedTxt.Text + vbCrLf +
                        "<CYCLES>" + RecipeCyclesTxt.Text + vbCrLf + "<XMIN>" + RecipeXMinTxt.Text + vbCrLf +
