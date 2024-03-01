@@ -241,6 +241,7 @@ Partial Class MainWindow
         Me.Label6 = New System.Windows.Forms.Label()
         Me.runpoint_btn = New Guna.UI2.WinForms.Guna2Button()
         Me.runpoint_label = New System.Windows.Forms.Label()
+        Me.RunpointDisplay = New System.Windows.Forms.TextBox()
         Me.MenuStrip1.SuspendLayout()
         CType(Me.MB_Left_Arrow, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.MB_Right_Arrow, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -3534,7 +3535,7 @@ Partial Class MainWindow
         Me.runpoint_btn.ForeColor = System.Drawing.Color.White
         Me.runpoint_btn.HoverState.FillColor = System.Drawing.SystemColors.ActiveCaption
         Me.runpoint_btn.HoverState.Parent = Me.runpoint_btn
-        Me.runpoint_btn.Location = New System.Drawing.Point(1431, 133)
+        Me.runpoint_btn.Location = New System.Drawing.Point(1166, 164)
         Me.runpoint_btn.Margin = New System.Windows.Forms.Padding(4)
         Me.runpoint_btn.Name = "runpoint_btn"
         Me.runpoint_btn.ShadowDecoration.BorderRadius = 27
@@ -3549,13 +3550,29 @@ Partial Class MainWindow
         '
         Me.runpoint_label.AutoSize = True
         Me.runpoint_label.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.runpoint_label.Location = New System.Drawing.Point(1442, 112)
+        Me.runpoint_label.Location = New System.Drawing.Point(1176, 112)
         Me.runpoint_label.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.runpoint_label.Name = "runpoint_label"
         Me.runpoint_label.Size = New System.Drawing.Size(70, 17)
         Me.runpoint_label.TabIndex = 274
         Me.runpoint_label.Text = "Run Point"
         Me.runpoint_label.Visible = False
+        '
+        'RunpointDisplay
+        '
+        Me.RunpointDisplay.BackColor = System.Drawing.Color.White
+        Me.RunpointDisplay.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.RunpointDisplay.Font = New System.Drawing.Font("Arial", 18.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.RunpointDisplay.ForeColor = System.Drawing.SystemColors.InactiveCaption
+        Me.RunpointDisplay.Location = New System.Drawing.Point(1152, 133)
+        Me.RunpointDisplay.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
+        Me.RunpointDisplay.Name = "RunpointDisplay"
+        Me.RunpointDisplay.ReadOnly = True
+        Me.RunpointDisplay.Size = New System.Drawing.Size(109, 28)
+        Me.RunpointDisplay.TabIndex = 275
+        Me.RunpointDisplay.Text = "???"
+        Me.RunpointDisplay.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me.RunpointDisplay.WordWrap = False
         '
         'MainWindow
         '
@@ -3565,6 +3582,7 @@ Partial Class MainWindow
         Me.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
         Me.ClientSize = New System.Drawing.Size(1924, 1040)
         Me.ControlBox = False
+        Me.Controls.Add(Me.RunpointDisplay)
         Me.Controls.Add(Me.runpoint_label)
         Me.Controls.Add(Me.runpoint_btn)
         Me.Controls.Add(Me.Label6)
@@ -4012,4 +4030,5 @@ Partial Class MainWindow
     Friend WithEvents Label6 As Label
     Friend WithEvents runpoint_btn As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents runpoint_label As Label
+    Friend WithEvents RunpointDisplay As TextBox
 End Class

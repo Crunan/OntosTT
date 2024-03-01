@@ -10,9 +10,6 @@ Public Class MainWindow
     Public Shared SelectedWaferSize As Integer = 0 'Public to be shared between OTTForm and DiameterEntryDialog
 
     'Public to be shared between OTTForm and SettingsDialog
-    Public Shared b_toggleHeater As Boolean = False ' This is the flag for toggle heater
-    Public Shared b_heaterActive As Boolean = False
-    Public Shared st_HasHeatSave As String = 0 'For saving the HEATER on/off state
     'Batch ID Logging
     Public Shared b_togglebatchIDLogging As Boolean = False ' This is the flag for batch ID logging
     Public Shared b_batchActive As Boolean = False
@@ -704,7 +701,7 @@ Public Class MainWindow
         Dim b_LoadRunpointPos As Boolean
     End Structure
 
-    Dim TUNER As TUNER_POS
+    Dim TUNER As TunerSystemManager
 
     'for number string validation
     Dim st_EmptyChars As String = ""
@@ -1520,8 +1517,7 @@ Public Class MainWindow
             If StrVar = "" Or StrVar.Length > 6 Then Return
             DoubVal = Convert.ToDouble(StrVar)
             If DoubVal > 100 Or DoubVal < 0 Then Return
-            RecipeTunerTxt.Text = DoubVal.ToString("F")
-            TUNER.b_LoadTunerPos = True
+            TUNER.Strikepoint = DoubVal
         Else
             Return
         End If
@@ -1536,8 +1532,7 @@ Public Class MainWindow
             If StrVar = "" Or StrVar.Length > 6 Then Return
             DoubVal = Convert.ToDouble(StrVar)
             If DoubVal > 100 Or DoubVal < 0 Then Return
-            TUNER.runpoint = DoubVal
-            TUNER.b_LoadRunpointPos = True
+            TUNER.Runpoint = DoubVal
         Else
             Return
         End If
@@ -1829,11 +1824,12 @@ Public Class MainWindow
         If ResponseLen > 7 Then
             StrVar = st_RCV.Substring(7, 4)
             b_IsStringANumber(StrVar, st_IntChars, "$2A%")
-            TUNER.LoadedSetPoint = Convert.ToInt32(StrVar, 10) 'integer approximation to %            
-            StrVar = st_RCV.Substring(7, 7)
-            TUNER.db_LoadedSetPointPct = Convert.ToDouble(StrVar)
-            LoadedTunerTxt.Text = TUNER.db_LoadedSetPointPct.ToString("F") '2 decimal points
-            RecipeTunerTxt.Text = TUNER.db_LoadedSetPointPct.ToString("F")
+            TUNER.Strikepoint = Convert.ToInt32(StrVar, 10) 'integer approximation to %            
+            'TODO: Figure out what all of this was even needed for.
+            'StrVar = st_RCV.Substring(7, 7)
+            'TUNER.db_LoadedSetPointPct = Convert.ToDouble(StrVar)
+            'LoadedTunerTxt.Text = TUNER.db_LoadedSetPointPct.ToString("F") '2 decimal points
+            'RecipeTunerTxt.Text = TUNER.db_LoadedSetPointPct.ToString("F")
             'WriteLogLine("Initial Tuner SetPoint: " & LoadedTunerTxt.Text)
         End If
         WriteCommand("$2A605%", 7) 'GET RECIPE RF PWR Setpoint (Watts) $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value        
@@ -2277,21 +2273,19 @@ Public Class MainWindow
         b_IsStringANumber(StrVar, st_DoubleChars, "MB Motor Pos")
         MB_Pos_Bar.Value = CInt(StrVar)
         DoubVal = CDbl(StrVar) 'Convert the string value to a floating point
-        TUNER.db_ActualPos = DoubVal
-        TUNER.db_ActualPosPct = DoubVal
+        TUNER.CurrentPosition = DoubVal
 
         If (b_AutoModeOn = False) Or (b_RunRecipeOn = False) Then 'watch for end limits when in manual MB Motor control
-            If TUNER.db_ActualPosPct > 98 Then
+            If TUNER.CurrentPosition > 98 Then
                 MB_Right_Arrow.Visible = False
-            ElseIf TUNER.db_ActualPosPct < 2 Then
+            ElseIf TUNER.CurrentPosition < 2 Then
                 MB_Left_Arrow.Visible = False
             Else
                 ' MB_Right_Arrow.Visible = True
                 'MB_Left_Arrow.Visible = True
             End If
         End If
-        ActTunerTxt.Text = TUNER.db_ActualPosPct.ToString("F") '2 decimal points
-        'MB_Pos_Bar.Value = CStr(ActTunerTxt.Text)
+        ActTunerTxt.Text = TUNER.CurrentPosition.ToString("F") '2 decimal points
 
         StrVar = ar_CTL_ParamVals(2) 'RF Power Forward A/D
         b_IsStringANumber(StrVar, st_IntChars, "RF Pwr Fwd")
@@ -2592,32 +2586,33 @@ Public Class MainWindow
             RF.b_LoadRecipePower = False
         End If
 
-        If TUNER.b_LoadTunerPos = True Then
-            StrVar = RecipeTunerTxt.Text 'get the entered percentage
-            'TUNER.LoadedSetPoint = Convert.ToInt32(StrVar) 'convert to % integer
-            StrVar = "$43" & StrVar & "%"     'SET_RCP_MS_POS  $43xxxx$ xxxx = Base10 MB Motor Pos; resp[!43xxxx#]
+        If TUNER.StrikepointChanged Then
+            StrVar = "$43" & TUNER.Strikepoint.ToString() & "%"     'SET_RCP_MS_POS  $43xxxx$ xxxx = Base10 MB Motor Pos; resp[!43xxxx#]
             WriteCommand(StrVar, Len(StrVar))
             ResponseLen = ReadResponse(0)
+            'TODO: create verification of response then update UI
             If ResponseLen > 4 Then
                 StrVar = st_RCV.Substring(3, 4)
                 b_IsStringANumber(StrVar, st_DoubleChars, "$43%") 'restarts if = False
-                TUNER.db_LoadedSetPointPct = Convert.ToDouble(StrVar) ' int to %
-                LoadedTunerTxt.Text = TUNER.db_LoadedSetPointPct.ToString("F")
-                'StrVar = st_RCV.Substring(3, 2)
-                'TUNER.LoadedSetPoint = Convert.ToInt32(StrVar, 10)
+                LoadedTunerTxt.Text = TUNER.Strikepoint.ToString("F")
             End If
-            TUNER.b_LoadTunerPos = False
+            TUNER.ResetStrikepointChanged()
         End If
 
-        'TODO: create function that handles sending command and flag.
-        If TUNER.b_LoadRunpointPos = True Then
+        If TUNER.RunpointChanged Then
             'TODO: Use emmetts new command to send runpoint value
-            StrVar = "$43" & TUNER.runpoint.ToString() & "%"     'SET_RCP_MS_POS  $43xxxx$ xxxx = Base10 MB Motor Pos; resp[!43xxxx#]
+            StrVar = "$43" & TUNER.Runpoint.ToString() & "%"     'SET_RCP_MS_POS  $43xxxx$ xxxx = Base10 MB Motor Pos; resp[!43xxxx#]
             WriteCommand(StrVar, Len(StrVar))
             ResponseLen = ReadResponse(0)
-            'verify tuner position was set somehow, use that to make text go from light grey to black!
-            TUNER.b_LoadRunpointPos = False
+            'TODO: create verification of response then update UI
+            If ResponseLen > 4 Then
+                StrVar = st_RCV.Substring(3, 4)
+                b_IsStringANumber(StrVar, st_DoubleChars, "$43%") 'restarts if = False
+                LoadedTunerTxt.Text = TUNER.Runpoint.ToString("F")
+            End If
+            TUNER.ResetRunpointChanged()
         End If
+
 
 
         If b_ToggleAutoMode = True Then
@@ -2655,22 +2650,6 @@ Public Class MainWindow
             b_SetDefaultRecipe = False
         End If
 
-        If b_toggleHeater = True Then 'heater button is pushed           
-            b_toggleHeater = False
-
-            If b_heaterActive Then
-                WriteCommand("$CE35.0%", 8) '$CEtt.t% resp [!CEtt.t#] where tt.t is target temp in 'C. t=0 is off
-                ReadResponse(0)
-                HeatLabel.BackColor = Color.Lime
-                WriteLogLine("Preheat Plasma Recipe ON")
-            Else
-                WriteCommand("$CE00.0%", 8) '$CEtt.t% resp [!CEtt.t#] where tt.t is target temp in 'C. t=0 is off
-                ReadResponse(0)
-                HeatLabel.BackColor = Color.Gainsboro
-                WriteLogLine("Preheat Plasma Recipe OFF")
-            End If
-
-        End If
 
     End Sub
 
@@ -2782,14 +2761,7 @@ Public Class MainWindow
 
     End Sub
 
-    Private Sub LoadToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles LoadToolStripMenuItem.Click
-        MFC(1).b_MFCLoadRecipeFlow = True 'signal main loop to load the new flow
-        MFC(2).b_MFCLoadRecipeFlow = True
-        MFC(3).b_MFCLoadRecipeFlow = True
-        MFC(4).b_MFCLoadRecipeFlow = True
-        RF.b_LoadRecipePower = True 'signal main loop to load the new RF Power
-        TUNER.b_LoadTunerPos = True 'signal main loop to load the new Tuner Start Position
-    End Sub
+
     Private Sub ClearAbortbutton_Click(sender As Object, e As EventArgs) Handles ClearAbortbtn.Click
         'Simply clears error code text
         AC_CODE.Text = ""
@@ -2924,7 +2896,7 @@ Public Class MainWindow
                 Case "TUNER"
                     RecipeTunerTxt.Text = st_RecipeParamValue
                 Case "TUNER_RUNPOINT"
-                    TUNER.runpoint = CInt(st_RecipeParamValue)
+                    TUNER.Runpoint = CInt(st_RecipeParamValue)
                 Case "THICKNESS"
                     RecipeThicknessTxt.Text = st_RecipeParamValue
                 Case "GAP"
@@ -2964,15 +2936,7 @@ Public Class MainWindow
                         b_autoScanActive = False
                         Form4.AutoScanChkBox.Checked = False
                     End If
-                Case "HEATER"
-                    st_HasHeatSave = st_RecipeParamValue
-                    If st_HasHeatSave = "1" Then
-                        b_heaterActive = True
-                        b_toggleHeater = True
-                        Form4.PreheatChkBox.Checked = True
-                    Else
-                        Form4.PreheatChkBox.Checked = False
-                    End If
+
                 Case Else
 
             End Select
@@ -2985,7 +2949,6 @@ Public Class MainWindow
         MFC(3).b_MFCLoadRecipeFlow = True
         MFC(4).b_MFCLoadRecipeFlow = True
         RF.b_LoadRecipePower = True 'signal main loop to load the new RF Power
-        TUNER.b_LoadTunerPos = True 'signal main loop to load the new Tuner Start Position
         'Enable the Plasma button since we HAVE A RECIPE NOW
         If b_ENG_mode = True Then
             SaveToolStripMenuItem.Enabled = True 'Enable 'Save'
@@ -3020,13 +2983,13 @@ Public Class MainWindow
         'build the Recipe from current data
         st_RecipeString = "<MFC1>" + MFC_1_Recipe_Flow.Text + vbCrLf + "<MFC2>" + MFC_2_Recipe_Flow.Text + vbCrLf +
                        "<MFC3>" + MFC_3_Recipe_Flow.Text + vbCrLf + "<MFC4>" + MFC_4_Recipe_Flow.Text + vbCrLf +
-                       "<PWR>" + RecipeWattsTxt.Text + vbCrLf + "<TUNER>" + RecipeTunerTxt.Text + vbCrLf + "<TUNER_RUNPOINT>" + TUNER.runpoint.ToString() + vbCrLf +
+                       "<PWR>" + RecipeWattsTxt.Text + vbCrLf + "<TUNER>" + RecipeTunerTxt.Text + vbCrLf + "<TUNER_RUNPOINT>" + TUNER.Runpoint.ToString() + vbCrLf +
                        "<THICKNESS>" + RecipeThicknessTxt.Text + vbCrLf + "<GAP>" + RecipeGapTxt.Text + vbCrLf +
                        "<OVERLAP>" + RecipeOverLapTxt.Text + vbCrLf + "<SPEED>" + RecipeSpeedTxt.Text + vbCrLf +
                        "<CYCLES>" + RecipeCyclesTxt.Text + vbCrLf + "<XMIN>" + RecipeXMinTxt.Text + vbCrLf +
                        "<YMIN>" + RecipeYMinTxt.Text + vbCrLf + "<XMAX>" + RecipeXMaxTxt.Text + vbCrLf +
                        "<YMAX>" + RecipeYMaxTxt.Text + vbCrLf + "<PURGE>" + st_HasPurgeSave + vbCrLf +
-                       "<AUTOSCAN>" + st_AutoScanSave + vbCrLf + "<HEATER>" + st_HasHeatSave + vbCrLf
+                       "<AUTOSCAN>" + st_AutoScanSave + vbCrLf
 
         Using RecipeOut As New StreamWriter(st_RecipePathFileName)
             RecipeOut.Write(st_RecipeString)
@@ -3062,13 +3025,13 @@ Public Class MainWindow
         'build the Recipe from current data
         st_RecipeString = "<MFC1>" + MFC_1_Recipe_Flow.Text + vbCrLf + "<MFC2>" + MFC_2_Recipe_Flow.Text + vbCrLf +
                        "<MFC3>" + MFC_3_Recipe_Flow.Text + vbCrLf + "<MFC4>" + MFC_4_Recipe_Flow.Text + vbCrLf +
-                       "<PWR>" + RecipeWattsTxt.Text + vbCrLf + "<TUNER>" + RecipeTunerTxt.Text + vbCrLf + "<TUNER_RUNPOINT>" + TUNER.runpoint.ToString() + vbCrLf +
+                       "<PWR>" + RecipeWattsTxt.Text + vbCrLf + "<TUNER>" + RecipeTunerTxt.Text + vbCrLf + "<TUNER_RUNPOINT>" + TUNER.Runpoint.ToString() + vbCrLf +
                        "<THICKNESS>" + RecipeThicknessTxt.Text + vbCrLf + "<GAP>" + RecipeGapTxt.Text + vbCrLf +
                        "<OVERLAP>" + RecipeOverLapTxt.Text + vbCrLf + "<SPEED>" + RecipeSpeedTxt.Text + vbCrLf +
                        "<CYCLES>" + RecipeCyclesTxt.Text + vbCrLf + "<XMIN>" + RecipeXMinTxt.Text + vbCrLf +
                        "<YMIN>" + RecipeYMinTxt.Text + vbCrLf + "<XMAX>" + RecipeXMaxTxt.Text + vbCrLf +
                        "<YMAX>" + RecipeYMaxTxt.Text + vbCrLf + "<PURGE>" + st_HasPurgeSave + vbCrLf +
-                       "<AUTOSCAN>" + st_AutoScanSave + vbCrLf + "<HEATER>" + st_HasHeatSave + vbCrLf
+                       "<AUTOSCAN>" + st_AutoScanSave + vbCrLf
 
         Using RecipeOut As New StreamWriter(st_RecipePathFileName)
             RecipeOut.Write(st_RecipeString)

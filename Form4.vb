@@ -10,17 +10,7 @@
             MainWindow.st_AutoScanSave = "0"
         End If
 
-        if PreheatChkBox.Checked = true then
-            MainWindow.b_heaterActive = true     
-            MainWindow.st_HasHeatSave = "1"
-            MainWindow.b_toggleHeater = true
-        else
-            MainWindow.b_heaterActive = False   
-            MainWindow.st_HasHeatSave = "0"
-            MainWindow.b_toggleHeater = true
-        End If
-
-        if CollisionCheckBox.Checked = true then
+        If CollisionCheckBox.Checked = true then
             MainWindow.b_HasCollision = true
         else
             MainWindow.b_HasCollision = False  
