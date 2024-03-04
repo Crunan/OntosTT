@@ -1017,7 +1017,7 @@ Public Class MainWindow
     End Function
     Public Function EnableJoystickStageControl() As Boolean
         If gamepad IsNot Nothing Then
-            If gamepad.isConnected() Then
+            If gamepad.IsConnected() Then
                 WriteCommand("$BD%", 4)
             End If
         Else
@@ -1765,7 +1765,7 @@ Public Class MainWindow
 
         'Check if controller is connected.
         If gamepad IsNot Nothing Then
-            If gamepad.isConnected() Then
+            If gamepad.IsConnected() Then
                 contollerONSquare.BackColor = Color.Lime
                 WriteLogLine("Controller is connected")
             End If
@@ -2255,7 +2255,7 @@ Public Class MainWindow
 
         'Get Controller Status        
         If gamepad IsNot Nothing Then
-            If gamepad.isConnected() = False Then
+            If gamepad.IsConnected() = False Then
                 contollerONSquare.BackColor = Color.Gainsboro
             End If
         End If

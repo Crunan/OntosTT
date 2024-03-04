@@ -2,13 +2,15 @@
 Imports System.Text.RegularExpressions
 
 Public Class SerialController
+    Implements IDevice
+
     Private _serialPort As SerialPort
     Private _RCV As String
     Private _parsedResponse As String
     Private _lastCommand As String
 
 
-    Private Property ParsedResponse() As String
+    Public Property ParsedResponse() As String
         Get
             Return _parsedResponse
         End Get
@@ -17,7 +19,7 @@ Public Class SerialController
         End Set
     End Property
 
-    Private Sub WriteCommand(command As String)
+    Private Sub Send(command As String) Implements IDevice.Send
         ' Implementation of WriteCommand
         If _serialPort.IsOpen Then
             _lastCommand = command
@@ -29,7 +31,7 @@ Public Class SerialController
         ' You may want to handle exceptions or other error conditions
     End Sub
 
-    Private Sub ReadResponse()
+    Private Sub Read() Implements IDevice.Read
         _RCV = ""
 
         While True
@@ -46,28 +48,24 @@ Public Class SerialController
         End While
     End Sub
 
-    Private Function ParseResponse() As Boolean
+    Private Function Parse() As Boolean
         Dim pattern As String = "!" & Regex.Escape(_lastCommand) & "(\d+)#"
         Dim match = Regex.Match(_RCV, pattern)
 
-        _parsedResponse = ""
+        ParsedResponse = ""
         If match.Success Then
             ParsedResponse = match.Groups(1).Value
         End If
     End Function
-    ' Constructor that takes a SerialPort instance
-    Public Sub SetPort(port As SerialPort)
-        _serialPort = port
+
+    Public Sub connect() Implements IDevice.Connect
+        If Not _serialPort.IsOpen Then _serialPort.Open()
     End Sub
 
     Public Function SendCommandAndParseResponse(command As String) As Boolean
-        WriteCommand(command)
-        ReadResponse()
-        Return ParseResponse()
-    End Function
-
-    Public Function getParsedResponse() As String
-        Return ParsedResponse
+        Send(command)
+        Read()
+        Return Parse()
     End Function
 
 End Class
