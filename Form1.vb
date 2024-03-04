@@ -2,6 +2,7 @@
 Imports System.IO
 Imports System.Runtime.InteropServices
 Imports System.Runtime.Serialization
+Imports System.Text.RegularExpressions
 Imports Guna.UI2.WinForms
 
 
@@ -34,6 +35,7 @@ Public Class MainWindow
     Dim st_LastCMD As String ' for debug
     Dim st_RCV As String
     Dim st_Was As String
+    Dim parsedValue As String
 
     Dim WaferDiameter As Integer = 0
     'Recipe file management stuff
@@ -1398,6 +1400,17 @@ Public Class MainWindow
         End If
         Return ResponseLen
     End Function
+    Private Function ParseReponse(commandFormat As String, response As String, ByRef parsedValue As String) As Boolean
+        Dim pattern As String = "!" & Regex.Escape(commandFormat) & "(\d+)#"
+        Dim match = Regex.Match(response, pattern)
+
+        If match.Success Then
+            Dim valueString = match.Groups(1).Value
+            Return True
+        End If
+
+        Return False
+    End Function
     Private Sub Main_Loop_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
         Dim ResponseLen As Integer
 
@@ -1678,8 +1691,6 @@ Public Class MainWindow
         End If
 
     End Sub
-
-
 
     Private Sub RunRcpBtn_Click(sender As Object, e As EventArgs) Handles RunRcpBtn.Click
         If b_HasCollision = True And b_autoScanActive And Not CTL.isPlasmaActive() Then
@@ -2591,10 +2602,8 @@ Public Class MainWindow
             WriteCommand(StrVar, Len(StrVar))
             ResponseLen = ReadResponse(0)
             'TODO: create verification of response then update UI
-            If ResponseLen > 4 Then
-                StrVar = st_RCV.Substring(3, 4)
-                b_IsStringANumber(StrVar, st_DoubleChars, "$43%") 'restarts if = False
-                LoadedTunerTxt.Text = TUNER.Strikepoint.ToString("F")
+            If ParseReponse("$43%", st_RCV, parsedValue) Then
+                LoadedTunerTxt.Text = parsedValue
             End If
             TUNER.ResetStrikepointChanged()
         End If
@@ -2604,16 +2613,11 @@ Public Class MainWindow
             StrVar = "$43" & TUNER.Runpoint.ToString() & "%"     'SET_RCP_MS_POS  $43xxxx$ xxxx = Base10 MB Motor Pos; resp[!43xxxx#]
             WriteCommand(StrVar, Len(StrVar))
             ResponseLen = ReadResponse(0)
-            'TODO: create verification of response then update UI
-            If ResponseLen > 4 Then
-                StrVar = st_RCV.Substring(3, 4)
-                b_IsStringANumber(StrVar, st_DoubleChars, "$43%") 'restarts if = False
-                LoadedTunerTxt.Text = TUNER.Runpoint.ToString("F")
-            End If
             TUNER.ResetRunpointChanged()
         End If
-
-
+        If ParseReponse("$43%", st_RCV, parsedValue) Then
+            LoadedTunerTxt.Text = parsedValue
+        End If
 
         If b_ToggleAutoMode = True Then
             b_AutoModeOn = Not b_AutoModeOn
