@@ -1860,11 +1860,31 @@ Public Class MainWindow
 
         Operator_Mode()
     End Sub
+    'Public Function RunAuxStartup() As Boolean
+    '    ' Iterate through the dictionary and execute commands
+    '    For Each kvp As KeyValuePair(Of String, String) In _commandsAndResponses
+    '        Dim command As String = kvp.Key
+    '        Dim expectedResponse As String = kvp.Value
 
+    '        ' Send the command and parse the response
+    '        SendCommandAndParseResponse(command)
+
+    '        ' Check if the response matches the expected value
+    '        If ParsedResponse <> expectedResponse Then
+    '            ' Handle the case where the response doesn't match the expected value
+    '            Console.WriteLine($"Unexpected response for command '{command}': {ParsedResponse}")
+    '            Return False
+    '        End If
+    '    Next
+
+    '    ' All commands executed successfully
+    '    Return True
+    'End Function
     Private Sub RunAUXStartUp()
         CTL.SendCommandAndParseResponse("$2A006%") 'AUX_PCB_EXISTS_ADDR  Aux PCB Exists (0 = false, else true)           
         has3AxisBoard = Convert.ToBoolean(CTL.ResponseValue)
         If (has3AxisBoard) Then
+
             CTL.SendCommandAndParseResponse("$A1%") 'GET FW VERSION $A1% resp[!A1xx#]; xx = hard coded FW rev in Hex
             WriteLogLine("Axis Firmware Version: " + CTL.ResponseValue)
 
