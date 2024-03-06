@@ -3,19 +3,23 @@ Imports System.Text.RegularExpressions
 
 Public Class SerialController
     Implements IDevice
+    Implements IDisposable
 
     Private _serialPort As SerialPort
-    Private _RCV As String
-    Private _parsedResponse As String
+    Private _rawResponse As String
+    Private _responseValue As String
     Private _lastCommand As String
 
+    Public Sub New(serial As SerialPort)
+        _serialPort = serial
+    End Sub
 
-    Public Property ParsedResponse() As String
+    Public Property ResponseValue() As String
         Get
-            Return _parsedResponse
+            Return _responseValue
         End Get
         Set(data As String)
-            _parsedResponse = data
+            _responseValue = data
         End Set
     End Property
 
@@ -32,7 +36,7 @@ Public Class SerialController
     End Sub
 
     Private Sub Read() Implements IDevice.Read
-        _RCV = ""
+        _rawResponse = ""
 
         While True
             Dim currentByte As Integer = _serialPort.ReadByte()
@@ -43,23 +47,33 @@ Public Class SerialController
 
             ' Process the current byte (if needed)
             If currentByte > 31 AndAlso currentByte < 127 Then
-                _RCV += Chr(currentByte)
+                _rawResponse += Chr(currentByte)
             End If
         End While
     End Sub
 
     Private Function Parse() As Boolean
         Dim pattern As String = "!" & Regex.Escape(_lastCommand) & "(\d+)#"
-        Dim match = Regex.Match(_RCV, pattern)
+        Dim match = Regex.Match(_rawResponse, pattern)
 
-        ParsedResponse = ""
+        ResponseValue = ""
         If match.Success Then
-            ParsedResponse = match.Groups(1).Value
+            ResponseValue = match.Groups(1).Value
+            Return True
+        Else
+            ' Log the information when the match is not succesful
+            Console.WriteLine("Failed to parse the response for command: " & _lastCommand)
+            Return false
         End If
     End Function
 
     Public Sub connect() Implements IDevice.Connect
-        If Not _serialPort.IsOpen Then _serialPort.Open()
+        Try
+            If Not _serialPort.IsOpen Then _serialPort.Open()
+        Catch ex As Exception
+            ' Handle the exception or log the error
+        End Try
+
     End Sub
 
     Public Function SendCommandAndParseResponse(command As String) As Boolean
@@ -67,5 +81,16 @@ Public Class SerialController
         Read()
         Return Parse()
     End Function
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        ' Dispose of any resources here
+        If _serialPort IsNot Nothing Then
+            If _serialPort.IsOpen Then
+                _serialPort.Close()
+            End If
+            _serialPort.Dispose()
+        End If
+    End Sub
+
 
 End Class
