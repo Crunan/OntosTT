@@ -7,7 +7,7 @@ Imports Guna.UI2.WinForms
 
 
 Public Class MainWindow
-
+    Dim CTL As SerialController
     Public Shared SelectedWaferSize As Integer = 0 'Public to be shared between OTTForm and DiameterEntryDialog
 
     'Public to be shared between OTTForm and SettingsDialog
@@ -19,7 +19,7 @@ Public Class MainWindow
     Public Shared b_autoScanActive As Boolean = True
     Public Shared st_AutoScanSave As String = 1 'For saving the AUTO SCAN state   
     '
-    Public Shared st_has3AxisBoard As String
+    Public Shared has3AxisBoard As Boolean
     Public Shared st_password As String
     Public Shared st_hasHandshake As String
     Public Shared b_HasCollision As Boolean = False 'the tool has a Collision System on 
@@ -325,7 +325,7 @@ Public Class MainWindow
         End Sub
 
     End Class
-    Dim CTL As New ControlBoard
+    Dim CTLLEDS As New ControlBoard
 
     'PCB Parameter Storage
     Structure PARAMETERS
@@ -1248,7 +1248,7 @@ Public Class MainWindow
                 AutoManBtn.Visible = True
             End If
 
-            If (st_has3AxisBoard = "1") Then
+            If (has3AxisBoard = "1") Then
                 'Reset the controller PCB and give it time to do so
                 WriteCommand("$A9%", 4)  'SOFT_RESET   $A9%; resp[!A9#]; causes Aux PCB Soft Reset
                 responseLen = ReadResponse(0)
@@ -1303,7 +1303,7 @@ Public Class MainWindow
             If b_ENG_mode Then
                 AutoManBtn.Visible = True
             End If
-            If (st_has3AxisBoard = "1") Then
+            If (has3AxisBoard = "1") Then
                 'Reset the controller PCB and give it time to do so
                 WriteCommand("$A9%", 4)  'SOFT_RESET   $A9%; resp[!A9#]; causes Aux PCB Soft Reset
                 ResponseLen = ReadResponse(0)
@@ -1693,7 +1693,7 @@ Public Class MainWindow
     End Sub
 
     Private Sub RunRcpBtn_Click(sender As Object, e As EventArgs) Handles RunRcpBtn.Click
-        If b_HasCollision = True And b_autoScanActive And Not CTL.isPlasmaActive() Then
+        If b_HasCollision = True And b_autoScanActive And Not CTLLEDS.isPlasmaActive() Then
             b_PlannedAutoStart = True 'this will make sure we dont accidently start plasma when just clicking RUN SCAN button
             If SMScan.State = SCSM_IDLE Then
                 SMScan.ExternalNewState = SCSM_START_UP
@@ -1716,7 +1716,8 @@ Public Class MainWindow
                     AUXResetTimeOut -= 1
                 Else
                     WriteLogLine("Main State Machine Start Up")
-                    RunStartUp()
+                    RunCTLStartUp()
+                    RunAUXStartUp()
                     SM_State = POLLING
                 End If
 
@@ -1727,7 +1728,7 @@ Public Class MainWindow
                 If SM_PollCounter >= SM_POLL_PERIOD Then
                     SM_PollCounter = 0
                     RunPolling() 'poll the main PCB
-                    If st_has3AxisBoard Then
+                    If has3AxisBoard Then
                         RunInitAxesSM() 'run the Initialize Axes state machine
                         RunTwoSpotSM() 'run the Two Spot state machine                                   
                         RunScanSM() 'run the Scan state machine
@@ -1751,11 +1752,10 @@ Public Class MainWindow
         End Select
 
     End Sub
-    Private Sub RunStartUp()
+    Private Sub RunCTLStartUp()
         Dim Index As Integer
         Dim StrVar As String
         Dim IntVar As Integer
-        Dim DblVar As Double
         Dim ResponseLen As Integer
         Dim CMDIndex() As String = {"0", "01%", "02%", "03%", "04%"}
 
@@ -1772,324 +1772,161 @@ Public Class MainWindow
         End If
 
         'First things first, log the CTL & Axis firmware. 
-        WriteCommand("$8F%", 4) 'GET FW VERSION $8F%; resp[!8Fxx#]; xx = hard coded FW rev in Hex
-        ResponseLen = ReadResponse(0)
-        If ResponseLen > 3 Then
-            StrVar = st_RCV.Substring(3, 2)
-            WriteLogLine("CTL Firmware Version: " + StrVar)
-        End If
-
+        CTL.SendCommandAndParseResponse("$8F%")
+        WriteLogLine("CTL Firmware Version: " + CTL.ResponseValue)
 
         'How many MFCs?
-        WriteCommand("$2A002%", 7) 'GET Number of MFCs (1-4) $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
-        ResponseLen = ReadResponse(0)
-        If ResponseLen > 7 Then
-            StrVar = st_RCV.Substring(7, 1)
-            b_IsStringANumber(StrVar, st_IntChars, "$2A%")
-            NumMFC = CInt(StrVar)
-            WriteLogLine("Number of MFCs: " & StrVar)
-        Else
-            If (NumMFC = 0) Then
-                If b_ErrorStateActive = False Then
-                    b_ErrorStateActive = True
-                    MsgBox("Error: Control PCB Configuration Missing => Exit")
-                    'Restart the App after operator ack
-                    Application.Exit()
-                End If
-            End If
-        End If
+
+        CTL.SendCommandAndParseResponse("$2A002%") 'GET Number of MFCs (1-4) $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
+        NumMFC = CInt(CTL.ResponseValue)
+        WriteLogLine("Number of MFCs: " & CTL.ResponseValue)
+        'TODO: Create the MFC Class that when it sets MFC if its 0, it will throw an exception.
+        'If (NumMFC = 0) Then
+        '        If b_ErrorStateActive = False Then
+        '       b_ErrorStateActive = True
+        '      MsgBox("Error: Control PCB Configuration Missing => Exit")
+        '     'Restart the App after operator ack
+        '    Application.Exit()
+        '   End If
+        '  End If
 
         'This is for Batch Logging systems only
-        WriteCommand("$2A011%", 7) 'GET BatchIDLogging $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
-        ResponseLen = ReadResponse(0)
-        If ResponseLen > 7 Then
-            StrVar = st_RCV.Substring(7, 1)
-            If StrVar = "1" Then b_batchActive = True
-            If b_batchActive = True Then
-                BatchIDTextBox.Visible = True
-                BatchLoggingBTN.Visible = True
-                Form4.BatchChkBox.Checked = True
-                b_togglebatchIDLogging = True 'this is the flag to set Batch ID on/off 
-            End If
-        End If
+        CTL.SendCommandAndParseResponse("$2A011%") 'GET BatchIDLogging $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
+        'TODO: Create BatchID member for MainWindow, this gets set here.
+        'CTL.ResponseValue = "1" 
+        'If StrVar = "1" Then b_batchActive = True
+        '    If b_batchActive = True Then
+        '        BatchIDTextBox.Visible = True
+        '        BatchLoggingBTN.Visible = True
+        '        Form4.BatchChkBox.Checked = True
+        '        b_togglebatchIDLogging = True 'this is the flag to set Batch ID on/off 
+        '    End If
+        'End If
 
         For Index = 1 To NumMFC
-            WriteCommand("$85" & CMDIndex(Index), 6) 'GET_MFC_RANGE $850m% 1<=m<=4; resp[!850xxx.yy#]
-            ResponseLen = ReadResponse(0)
-            If ResponseLen > 6 Then
-                StrVar = st_RCV.Substring(5, ResponseLen - 6)
-                If (IsNumeric(StrVar) = True) Then
-                    DblVar = CDbl(StrVar)
-                    'If (DblVar > MFCRangeMAX) And (Index > 2) Then DblVar = MFCRangeMAX
-                    MFC(Index).db_Range = DblVar
-                    MFCRange(Index).Text = MFC(Index).db_Range.ToString("F")
-                    SetGUILoadedProgressNumbers(Index)
-                Else
-                    MFCRange(Index).Text = "NO RS485"
-                End If
-            End If
+            CTL.SendCommandAndParseResponse("$85" & CMDIndex(Index)) 'GET_MFC_RANGE $850m% 1<=m<=4; resp[!850xxx.yy#]
+            MFC(Index).db_Range = CDbl(CTL.ResponseValue)
+            MFCRange(Index).Text = MFC(Index).db_Range.ToString("F")
+            SetGUILoadedProgressNumbers(Index)
         Next
 
-        WriteCommand("$2A606%", 7) 'GET RECIPE MB Start Position () $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
-        ResponseLen = ReadResponse(0)
-        If ResponseLen > 7 Then
-            StrVar = st_RCV.Substring(7, 4)
-            b_IsStringANumber(StrVar, st_IntChars, "$2A%")
-            TUNER.Strikepoint = Convert.ToInt32(StrVar, 10) 'integer approximation to %            
-            'TODO: Figure out what all of this was even needed for.
-            'StrVar = st_RCV.Substring(7, 7)
-            'TUNER.db_LoadedSetPointPct = Convert.ToDouble(StrVar)
-            'LoadedTunerTxt.Text = TUNER.db_LoadedSetPointPct.ToString("F") '2 decimal points
-            'RecipeTunerTxt.Text = TUNER.db_LoadedSetPointPct.ToString("F")
-            'WriteLogLine("Initial Tuner SetPoint: " & LoadedTunerTxt.Text)
-        End If
-        WriteCommand("$2A605%", 7) 'GET RECIPE RF PWR Setpoint (Watts) $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value        
-        ResponseLen = ReadResponse(0)
-        If ResponseLen > 7 Then
-            StrVar = st_RCV.Substring(7, 4)
-            b_IsStringANumber(StrVar, st_IntChars, "$2A%")
-            RF.LoadedSetPoint = Convert.ToInt32(StrVar, 10)
-            LoadedWattsTxt.Text = CStr(RF.LoadedSetPoint)
-            RecipeWattsTxt.Text = CStr(RF.LoadedSetPoint) 'this is for the New GUI to view Loaded values
-        End If
-        WriteCommand("$2A604%", 7) 'GET RECIPE MFC4 Flow (SLPM) $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
-        ResponseLen = ReadResponse(0)
-        If ResponseLen > 7 Then
-            MFC(4).db_LoadedFlow = CDbl(st_RCV.Substring(7, ResponseLen - 8))
-            MFCLoadedFlow(4).Text = MFC(4).db_LoadedFlow.ToString("F3")
-            MFCRecipeFlow(4).Text = MFC(4).db_LoadedFlow.ToString("F3") 'this is for the New GUI to view Loaded values
-            SetGUILoadProgressBars(4, MFCRecipeFlow(4).Text)
-        End If
-        WriteCommand("$2A603%", 7) 'GET RECIPE MFC3 Flow (SLPM) $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
-        ResponseLen = ReadResponse(0)
-        If ResponseLen > 7 Then
-            MFC(3).db_LoadedFlow = CDbl(st_RCV.Substring(7, ResponseLen - 8))
-            MFCLoadedFlow(3).Text = MFC(3).db_LoadedFlow.ToString("F3")
-            MFCRecipeFlow(3).Text = MFC(3).db_LoadedFlow.ToString("F3") 'this is for the New GUI to view Loaded values        
-            SetGUILoadProgressBars(3, MFCRecipeFlow(3).Text)
-        End If
-        WriteCommand("$2A602%", 7) 'GET RECIPE MFC2 Flow (SLPM) $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
-        ResponseLen = ReadResponse(0)
-        If ResponseLen > 7 Then
-            MFC(2).db_LoadedFlow = CDbl(st_RCV.Substring(7, ResponseLen - 8))
-            MFCLoadedFlow(2).Text = MFC(2).db_LoadedFlow.ToString("F")
-            MFCRecipeFlow(2).Text = MFC(2).db_LoadedFlow.ToString("F")
-            SetGUILoadProgressBars(2, MFCRecipeFlow(2).Text)
-        End If
-        WriteCommand("$2A601%", 7) 'GET RECIPE MFC1 Flow (SLPM) $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
-        ResponseLen = ReadResponse(0)
-        If ResponseLen > 7 Then
-            MFC(1).db_LoadedFlow = CDbl(st_RCV.Substring(7, ResponseLen - 8))
-            MFCLoadedFlow(1).Text = MFC(1).db_LoadedFlow.ToString("F")
-            MFCRecipeFlow(1).Text = MFC(1).db_LoadedFlow.ToString("F")
-            SetGUILoadProgressBars(1, MFCRecipeFlow(1).Text)
-        End If
+        CTL.SendCommandAndParseResponse("$2A606%") 'GET RECIPE MB Start Position () $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
+        TUNER.Strikepoint = Convert.ToInt32(CTL.ResponseValue, 10) 'integer approximation to %            
+        'TODO: Figure out what all of this was even needed for.
+        'StrVar = st_RCV.Substring(7, 7)
+        'TUNER.db_LoadedSetPointPct = Convert.ToDouble(StrVar)
+        'LoadedTunerTxt.Text = TUNER.db_LoadedSetPointPct.ToString("F") '2 decimal points
+        'RecipeTunerTxt.Text = TUNER.db_LoadedSetPointPct.ToString("F")
+        'WriteLogLine("Initial Tuner SetPoint: " & LoadedTunerTxt.Text)
+
+        CTL.SendCommandAndParseResponse("$2A605%") 'GET RECIPE RF PWR Setpoint (Watts) $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value        
+        RF.LoadedSetPoint = Convert.ToInt32(CTL.ResponseValue, 10)
+        LoadedWattsTxt.Text = CStr(RF.LoadedSetPoint)
+        RecipeWattsTxt.Text = CStr(RF.LoadedSetPoint) 'this is for the New GUI to view Loaded values
+
+        For Index = 1 To NumMFC
+            CTL.SendCommandAndParseResponse("$2A60" & Index & "%") 'GET RECIPE MFC4 Flow (SLPM) $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
+            MFC(Index).db_LoadedFlow = CDbl(CTL.ResponseValue)
+            MFCLoadedFlow(Index).Text = MFC(Index).db_LoadedFlow.ToString("F3")
+            MFCRecipeFlow(Index).Text = MFC(Index).db_LoadedFlow.ToString("F3") 'this is for the New GUI to view Loaded values
+            SetGUILoadProgressBars(Index, MFCRecipeFlow(Index).Text)
+        Next
+
+        CTL.SendCommandAndParseResponse("$2A705%") 'Get Max RF power forward  $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value 
+        MAXRF_PF_WATTS = Convert.ToInt32(CTL.ResponseValue)
 
 
-
-        WriteCommand("$2A705%", 7)  'Get Max RF power forward  $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
-        ResponseLen = ReadResponse(0)
-        If ResponseLen > 7 Then
-            StrVar = st_RCV.Substring(7)
-            StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-            MAXRF_PF_WATTS = Convert.ToInt32(StrVar)
-        End If
-
-        WriteCommand("$89%", 4)  'GET_AUTO_MAN   $89%; resp [!890p#] p=1 AutoMode, p=0 ManualMode
-        ResponseLen = ReadResponse(0)
-        If ResponseLen > 3 Then
-            StrVar = st_RCV.Substring(3, 2)
-            b_IsStringANumber(StrVar, st_HexChars, "$89%")
-            IntVar = Convert.ToInt32(StrVar, 16)
-            b_AutoModeOn = False
-            If IntVar > 0 Then
-                b_AutoModeOn = True
-                AutoManBtn.Checked = True
-            End If
+        CTL.SendCommandAndParseResponse("$89%") 'GET_AUTO_MAN   $89%; resp [!890p#] p=1 AutoMode, p=0 ManualMode        
+        b_AutoModeOn = Convert.ToBoolean(CTL.ResponseValue)
+        'TODO: Create encapsulation for automode.
+        If IntVar > 0 Then
+            b_AutoModeOn = True
+            AutoManBtn.Checked = True
         End If
 
         'turn off Exec Recipe
-        WriteCommand("$8700%", 6) 'SET_EXEC_RECIPE  $870p% p=1 Execute Recipe, p=0 RF off, Recipe off
-        ResponseLen = ReadResponse(0)
-        b_RunRecipeOn = False
+        CTL.SendCommandAndParseResponse("$8700%") 'SET_EXEC_RECIPE  $870p% p=1 Execute Recipe, p=0 RF off, Recipe off
+        b_RunRecipeOn = Convert.ToBoolean(CTL.ResponseValue)
 
         'enable service menu
         EnableServiceMenuToolStripMenuItem.Enabled = True
 
-        If (st_hasHandshake = "1") Then
-            WriteCommand("$1E01%", 6)
-            ResponseLen = ReadResponse(1)
-        Else
-            WriteCommand("$1E00%", 6)
-            ResponseLen = ReadResponse(1)
-        End If
+        CTL.SendCommandAndParseResponse("$1E00%")
+        'TODO: Has handshake to be encapsulated.
 
-        If (st_has3AxisBoard = "1") Then
-            WriteCommand("$A1%", 4) 'GET FW VERSION $A1% resp[!A1xx#]; xx = hard coded FW rev in Hex
-            ResponseLen = ReadResponse(0)
-            If ResponseLen > 3 Then
-                StrVar = st_RCV.Substring(3, 2)
-                WriteLogLine("Axis Firmware Version: " + StrVar)
-            End If
-            'Ask the Aux PCB for MAX & MIN values
-            WriteCommand("$DA106%", 7) 'GET_X_MAX_POSITION  X maximum allowed position in MM (float) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            ResponseLen = ReadResponse(1)
-            If ResponseLen > 7 Then
-                StrVar = st_RCV.Substring(7)
-                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-                b_IsStringANumber(StrVar, st_DoubleChars, "$DA106%")
-                Param.db_X_Max_Pos = Convert.ToDouble(StrVar)
-            End If
-            'Ask the Aux PCB for MAX & MIN values              
-            WriteCommand("$DA206%", 7) 'GET_Y_MAX_POSITION Y maximum allowed position in MM (float) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            ResponseLen = ReadResponse(1)
-            If ResponseLen > 7 Then
-                StrVar = st_RCV.Substring(7)
-                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-                b_IsStringANumber(StrVar, st_DoubleChars, "$DA206%")
-                Param.db_Y_Max_Pos = Convert.ToDouble(StrVar)
-                'Ask the Aux PCB for MAX & MIN values
-            End If
-            WriteCommand("$DA306%", 7) ''GET_Z_MAX_POSITION  Z maximum allowed position in MM (float) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            ResponseLen = ReadResponse(1)
-            If ResponseLen > 7 Then
-                StrVar = st_RCV.Substring(7)
-                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-                b_IsStringANumber(StrVar, st_DoubleChars, "$DA306%")
-                Param.db_Z_Max_Pos = Convert.ToDouble(StrVar)
-            End If
-            WriteCommand("$DA107%", 7) 'GET_X_MAX_SPEED  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            ResponseLen = ReadResponse(1)
-            If ResponseLen > 7 Then
-                StrVar = st_RCV.Substring(7)
-                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-                b_IsStringANumber(StrVar, st_DoubleChars, "$DA107%")
-                Param.db_X_Max_Speed = Convert.ToDouble(StrVar)
-            End If
-            WriteCommand("$DA207%", 7) 'GET_Y_MAX_SPEED  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            ResponseLen = ReadResponse(1)
-            If ResponseLen > 7 Then
-                StrVar = st_RCV.Substring(7)
-                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-                b_IsStringANumber(StrVar, st_DoubleChars, "$DA207%")
-                Param.db_Y_Max_Speed = Convert.ToDouble(StrVar)
-            End If
-            WriteCommand("$DA307%", 7) 'GET_Z_MAX_SPEED  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            ResponseLen = ReadResponse(1)
-            If ResponseLen > 7 Then
-                StrVar = st_RCV.Substring(7) '<<<EMMETT USE TRIM HERE
-                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-                b_IsStringANumber(StrVar, st_DoubleChars, "$DA307%")
-                Param.db_Z_Max_Speed = Convert.ToDouble(StrVar)
-            End If
+        SettingsBtn.Enabled = True
+        FileToolStripMenuItem.Enabled = True
+
+
+        Operator_Mode()
+    End Sub
+
+    Private Sub RunAUXStartUp()
+        CTL.SendCommandAndParseResponse("$2A006%") 'AUX_PCB_EXISTS_ADDR  Aux PCB Exists (0 = false, else true)           
+        has3AxisBoard = Convert.ToBoolean(CTL.ResponseValue)
+        If (has3AxisBoard) Then
+            CTL.SendCommandAndParseResponse("$A1%") 'GET FW VERSION $A1% resp[!A1xx#]; xx = hard coded FW rev in Hex
+            WriteLogLine("Axis Firmware Version: " + CTL.ResponseValue)
+
+            CTL.SendCommandAndParseResponse("$DA106%") 'GET_X_MAX_POSITION  X maximum allowed position in MM (float) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            Param.db_X_Max_Pos = Convert.ToDouble(CTL.ResponseValue)
+
+            CTL.SendCommandAndParseResponse("$DA206%") 'GET_Y_MAX_POSITION Y maximum allowed position in MM (float) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            Param.db_Y_Max_Pos = Convert.ToDouble(CTL.ResponseValue)
+
+            CTL.SendCommandAndParseResponse("$DA306%") 'GET_Z_MAX_POSITION  Z maximum allowed position in MM (float) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            Param.db_Z_Max_Pos = Convert.ToDouble(CTL.ResponseValue)
+
+            CTL.SendCommandAndParseResponse("$DA107%") 'GET_X_MAX_SPEED  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            Param.db_X_Max_Speed = Convert.ToDouble(CTL.ResponseValue)
+
+            CTL.SendCommandAndParseResponse("$DA207%") 'GET_Y_MAX_SPEED  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            Param.db_Y_Max_Speed = Convert.ToDouble(CTL.ResponseValue)
+
+            CTL.SendCommandAndParseResponse("$DA307%") 'GET_Z_MAX_SPEED  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            Param.db_Z_Max_Speed = Convert.ToDouble(CTL.ResponseValue)
 
             'get Coordinate system info from 3-Axis PCB
-            WriteCommand("$DA510%", 7) 'GET db_Xp_2Base  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            ResponseLen = ReadResponse(0)
-            If ResponseLen > 7 Then
-                StrVar = st_RCV.Substring(7)
-                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-                b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
-                CoordParam.db_Xp_2_Base = Convert.ToDouble(StrVar)
-            End If
-            WriteCommand("$DA520%", 7) 'GET db_Yp_2Base  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            ResponseLen = ReadResponse(0)
-            If ResponseLen > 7 Then
-                StrVar = st_RCV.Substring(7)
-                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-                b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
-                CoordParam.db_Yp_2_Base = Convert.ToDouble(StrVar)
-            End If
-            WriteCommand("$DA530%", 7) 'GET db_Zp_2Base  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            ResponseLen = ReadResponse(0)
-            If ResponseLen > 7 Then
-                StrVar = st_RCV.Substring(7)
-                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-                b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
-                CoordParam.db_Zp_2_Base = Convert.ToDouble(StrVar)
-                Param.db_Z_Head_Pos = Convert.ToDouble(StrVar) 'Used for running scan, need to know where the head is. 
-            End If
-            WriteCommand("$DA511%", 7) 'GET db_Xs_2_PH  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            ResponseLen = ReadResponse(0)
-            If ResponseLen > 7 Then
-                StrVar = st_RCV.Substring(7)
-                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-                b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
-                CoordParam.db_Xs_2_PH = Convert.ToDouble(StrVar)
-            End If
-            WriteCommand("$DA521%", 7) 'GET db_Ys_2_PH  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            ResponseLen = ReadResponse(0)
-            If ResponseLen > 7 Then
-                StrVar = st_RCV.Substring(7)
-                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-                b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
-                CoordParam.db_Ys_2_PH = Convert.ToDouble(StrVar)
-            End If
-            WriteCommand("$DA540%", 7) 'GET Plasma Head Slit Length (mm)  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            ResponseLen = ReadResponse(0)
-            If ResponseLen > 7 Then
-                StrVar = st_RCV.Substring(7)
-                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-                b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
-                CoordParam.db_PlasmaHeadSlitLength = Convert.ToDouble(StrVar)
-            End If
-            WriteCommand("$DA541%", 7) 'GET Plasma Head Slit Width (mm) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            ResponseLen = ReadResponse(0)
-            If ResponseLen > 7 Then
-                StrVar = st_RCV.Substring(7)
-                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-                b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
-                CoordParam.db_PlasmaHeadSlitWidth = Convert.ToDouble(StrVar)
-            End If
-            WriteCommand("$DA542%", 7) 'GET Chuck to Plasma Head safety gap (mm) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            ResponseLen = ReadResponse(0)
-            If ResponseLen > 7 Then
-                StrVar = st_RCV.Substring(7)
-                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-                b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
-                CoordParam.db_ChuckToPlasmaHeadSafetyGap = Convert.ToDouble(StrVar)
-            End If
-            WriteCommand("$DA543%", 7) 'GET Z Pins Buried Pos (mm) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            ResponseLen = ReadResponse(0)
-            If ResponseLen > 7 Then
-                StrVar = st_RCV.Substring(7)
-                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-                b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
-                CoordParam.db_ZPinsBuriedPos = Convert.ToDouble(StrVar)
-            End If
-            WriteCommand("$DA544%", 7) 'GET Z Pins Exposed Pos (mm) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            ResponseLen = ReadResponse(0)
-            If ResponseLen > 7 Then
-                StrVar = st_RCV.Substring(7)
-                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-                b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
-                CoordParam.db_ZPinsExposedPos = Convert.ToDouble(StrVar)
-            End If
-            'Get the Home Position Parameters
-            WriteCommand("$DA512%", 7) 'GET db_LoadPos_X_Base $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            ResponseLen = ReadResponse(0)
-            If ResponseLen > 7 Then
-                StrVar = st_RCV.Substring(7)
-                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-                b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
-                Param.db_X_Home_Pos = Convert.ToDouble(StrVar)
-            End If
-            WriteCommand("$DA522%", 7) 'GET db_LoadPos_Y_Base $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            ResponseLen = ReadResponse(0)
-            If ResponseLen > 7 Then
-                StrVar = st_RCV.Substring(7)
-                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-                b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
-                Param.db_Y_Home_Pos = Convert.ToDouble(StrVar)
-            End If
-            WriteCommand("$DA532%", 7) 'GET db_LoadPos_Z_Base $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            ResponseLen = ReadResponse(0)
-            If ResponseLen > 7 Then
-                StrVar = st_RCV.Substring(7)
-                StrVar = StrVar.Trim(New Char() {"#"c}) 'remove the last char
-                b_IsStringANumber(StrVar, st_DoubleChars, "$DA%")
-                Param.db_Z_Home_Pos = Convert.ToDouble(StrVar)
-            End If
+            CTL.SendCommandAndParseResponse("$DA510%") 'GET db_Xp_2Base  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            CoordParam.db_Xp_2_Base = Convert.ToDouble(CTL.ResponseValue)
+
+            CTL.SendCommandAndParseResponse("$DA520%") 'GET db_Yp_2Base  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            CoordParam.db_Yp_2_Base = Convert.ToDouble(CTL.ResponseValue)
+
+            CTL.SendCommandAndParseResponse("$DA530%") 'GET db_Zp_2Base  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            CoordParam.db_Zp_2_Base = Convert.ToDouble(CTL.ResponseValue)
+            Param.db_Z_Head_Pos = Convert.ToDouble(CTL.ResponseValue) 'Used for running scan, need to know where the head is. 
+
+            CTL.SendCommandAndParseResponse("$DA511%") 'GET db_Xs_2_PH  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            CoordParam.db_Xs_2_PH = Convert.ToDouble(CTL.ResponseValue)
+
+            CTL.SendCommandAndParseResponse("$DA521%") 'GET db_Ys_2_PH  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            CoordParam.db_Ys_2_PH = Convert.ToDouble(CTL.ResponseValue)
+
+            CTL.SendCommandAndParseResponse("$DA540%") 'GET Plasma Head Slit Length (mm)  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            CoordParam.db_PlasmaHeadSlitLength = Convert.ToDouble(CTL.ResponseValue)
+
+            CTL.SendCommandAndParseResponse("$DA541%") 'GET Plasma Head Slit Width (mm) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            CoordParam.db_PlasmaHeadSlitWidth = Convert.ToDouble(CTL.ResponseValue)
+
+            CTL.SendCommandAndParseResponse("$DA542%") 'GET Chuck to Plasma Head safety gap (mm) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            CoordParam.db_ChuckToPlasmaHeadSafetyGap = Convert.ToDouble(CTL.ResponseValue)
+
+            CTL.SendCommandAndParseResponse("$DA543%") 'GET Z Pins Buried Pos (mm) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            CoordParam.db_ZPinsBuriedPos = Convert.ToDouble(CTL.ResponseValue)
+
+            CTL.SendCommandAndParseResponse("$DA544%") 'GET Z Pins Exposed Pos (mm) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            CoordParam.db_ZPinsExposedPos = Convert.ToDouble(CTL.ResponseValue)
+
+            CTL.SendCommandAndParseResponse("$DA512%") 'GET db_LoadPos_X_Base $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            Param.db_X_Home_Pos = Convert.ToDouble(CTL.ResponseValue)
+
+            CTL.SendCommandAndParseResponse("$DA522%") 'GET db_LoadPos_Y_Base $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            Param.db_Y_Home_Pos = Convert.ToDouble(CTL.ResponseValue)
+
+            CTL.SendCommandAndParseResponse("$DA532%") 'GET db_LoadPos_Z_Base $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+            Param.db_Z_Home_Pos = Convert.ToDouble(CTL.ResponseValue)
+
 
             InitAxesBtn.Enabled = True
             'Initialize sub-StateMachines        
@@ -2103,15 +1940,7 @@ Public Class MainWindow
             SMTwoSpot.b_ExternalStateChange = False
 
         End If
-
-        SettingsBtn.Enabled = True
-        FileToolStripMenuItem.Enabled = True
-
-
-        Operator_Mode()
     End Sub
-
-
 
     Private Sub GetAxesStatus() 'update the AxesStatus data structure
         Dim ResponseLen As Integer
@@ -2277,7 +2106,7 @@ Public Class MainWindow
         StrVar = ar_CTL_ParamVals(0)
         b_IsStringANumber(StrVar, st_HexChars, "CTL Status Bits") 'restarts if = False
         'CTL LEDS is reliant on these 4 (nibbles) characters (16 bits, 4nibbles). 
-        CTL.Statusbits = Convert.ToInt32(StrVar, 16) 'parse status bits to boolean
+        CTLLEDS.Statusbits = Convert.ToInt32(StrVar, 16) 'parse status bits to boolean
 
 
         StrVar = ar_CTL_ParamVals(1) 'MB Motor Position (to update slider bar)
@@ -2446,7 +2275,7 @@ Public Class MainWindow
 
 
         'This controls the AUTO START SCAN setting 
-        If CTL.isPlasmaActive() And b_autoScanActive = True And b_toggleAutoScan = True Then
+        If CTLLEDS.isPlasmaActive() And b_autoScanActive = True And b_toggleAutoScan = True Then
             If SMScan.State = SCSM_IDLE Then 'IDLE, so must want me to start up
                 'Are my axis initialized
                 If AxesStatus.XState >= ASM_IDLE And AxesStatus.YState >= ASM_IDLE And AxesStatus.ZState >= ASM_IDLE And RunScanBtn.Visible = True Then
@@ -2459,7 +2288,7 @@ Public Class MainWindow
 
 
         'Get Axes Status
-        If (st_has3AxisBoard = "1") Then
+        If (has3AxisBoard = "1") Then
             GetAxesStatus() 'Update AxesStatus Data Structure
             'Manage Axes Status Message
             If AxesStatus.b_XYZSameState = True And AxesStatus.XState < ASM_IDLE Then
@@ -2495,9 +2324,9 @@ Public Class MainWindow
                 & " Pfwd: " & ActWattsTxt.Text & " Pref: " & RflWattsTxt.Text)
         End If
 
-        If CTL.isAbortActive() Then PublishAbortCode()
+        If CTLLEDS.isAbortActive() Then PublishAbortCode()
 
-        If CTL.isEstopActive() Then
+        If CTLLEDS.isEstopActive() Then
             WriteLogLine("ESTOP active, application shutting down.")
             Application.Exit()
         End If
@@ -2746,7 +2575,7 @@ Public Class MainWindow
                     st_KnownComPort = Exe_Cfg.KNOWN_COM_PORT
                 Case "HAS_3_AXIS_BOARD"
                     Exe_Cfg.KNOWN_COM_PORT = ExeConfigParamValue
-                    st_has3AxisBoard = Exe_Cfg.KNOWN_COM_PORT
+                    has3AxisBoard = Exe_Cfg.KNOWN_COM_PORT
                 Case "PW"
                     Exe_Cfg.KNOWN_COM_PORT = ExeConfigParamValue
                     st_password = Exe_Cfg.KNOWN_COM_PORT
@@ -2756,7 +2585,7 @@ Public Class MainWindow
 
 
                 Case "LED1", "LED2", "LED3", "LED4", "LED5", "LED6", "LED7", "LED8", "LED9", "LED10", "LED11", "LED12", "LED13", "LED14", "LED15", "LED16"
-                    CTL.LEDS.CreateLED(ExeConfigParamValue)
+                    CTLLEDS.LEDS.CreateLED(ExeConfigParamValue)
                 Case Else
             End Select
 
@@ -4233,7 +4062,7 @@ Public Class MainWindow
                 CurrentStepTxtBox.Text = ("Collision Test")
                 SMCollisionPass.State = CPSM_GET_Z_UP
 
-                If CTL.isPlasmaActive() Then
+                If CTLLEDS.isPlasmaActive() Then
                     b_ToggleRunRecipe = True
                 End If
 
@@ -4310,7 +4139,7 @@ Public Class MainWindow
     End Sub
 
     Private Sub ControllerStatusLEDSToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ControllerStatusLEDSToolStripMenuItem.Click
-        CTL.ToggleDisplayStatus()
+        CTLLEDS.ToggleDisplayStatus()
     End Sub
 
     Private Sub AutoManBtn_CheckedChanged(sender As Object, e As EventArgs) Handles AutoManBtn.Click
