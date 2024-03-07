@@ -8,6 +8,9 @@ Imports Guna.UI2.WinForms
 
 Public Class MainWindow
     Dim CTL As SerialController
+    Dim CTL_CMDS As List(Of CommandInfo)
+    Dim AUX_CMDS As List(Of CommandInfo)
+
     Public Shared SelectedWaferSize As Integer = 0 'Public to be shared between OTTForm and DiameterEntryDialog
 
     'Public to be shared between OTTForm and SettingsDialog
@@ -70,6 +73,9 @@ Public Class MainWindow
     Dim ExeConfigParamName As String 'Parameter name part of a  ConfigLine
     Dim ExeConfigParamValue As String 'Value part of a ConfigLine
     Dim ExeConfigOpened As Boolean = False 'has a Config been opened?
+
+    'Commands file management stuff
+    Dim CommandsPath As String = "C:\OTT_PLUS\Commands\" 'Configuration path without filename
     Structure EXE_CONFIG
         Dim MFC_LABEL_1 As String
         Dim MFC_LABEL_2 As String
@@ -1712,8 +1718,6 @@ Public Class MainWindow
             Case STARTUP
                 If CTLResetTimeOut > 0 Then
                     CTLResetTimeOut -= 1
-                ElseIf AUXResetTimeOut > 0 Then
-                    AUXResetTimeOut -= 1
                 Else
                     WriteLogLine("Main State Machine Start Up")
                     RunCTLStartUp()
@@ -1760,9 +1764,11 @@ Public Class MainWindow
         Dim CMDIndex() As String = {"0", "01%", "02%", "03%", "04%"}
 
         'Set initial stageTest values
+        'TODO: Remove stage test from responsibilities here
         StageTestSM.SetDetailedLog(True)
         StageTestSM.SetTestZ(True)
 
+        'TODO: Remove Controller from responsibilities
         'Check if controller is connected.
         If gamepad IsNot Nothing Then
             If gamepad.IsConnected() Then
@@ -1770,6 +1776,9 @@ Public Class MainWindow
                 WriteLogLine("Controller is connected")
             End If
         End If
+
+        'TODO: Read all the available commands
+        CTL_CMDS.LoadCommandsFromFile(CommandsPath & "ctl_commands.json")
 
         'First things first, log the CTL & Axis firmware. 
         CTL.SendCommandAndParseResponse("$8F%")

@@ -6,7 +6,7 @@ Public Class CommandInfo
     Public Property Variable As String
     Public Property LogMessage As String
 
-    Private Function LoadCommandsFromFile(filepath As String) As List(Of CommandInfo)
+    Public Function LoadCommandsFromFile(filepath As String) As List(Of CommandInfo)
         Dim commands As New List(Of CommandInfo)
 
         Try
