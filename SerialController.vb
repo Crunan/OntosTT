@@ -6,7 +6,7 @@ Public Class SerialController
     Implements IDevice
     Implements IDisposable
 
-    Private _commands As List(Of CommandInfo)
+    Private _commands As CommandCategory
     Private _serialPort As SerialPort
     Private _rawResponse As String
     Private _responseValue As String
@@ -24,11 +24,11 @@ Public Class SerialController
             _responseValue = data
         End Set
     End Property
-    Public Property Commands() As List(Of CommandInfo)
+    Public Property Commands() As CommandCategory
         Get
             Return _commands
         End Get
-        Set(value As List(Of CommandInfo))
+        Set(value As CommandCategory)
             _commands = value
         End Set
     End Property
@@ -96,17 +96,17 @@ Public Class SerialController
         ' Ensure the list of commands is not null
         If _commands IsNot Nothing Then
             ' Iterate through each command in the list
-            For Each cmdInfo As CommandInfo In _commands
+            For Each StartupCommand As CommandCategory.CommandInfo In _commands.RuntimeCommands
                 ' Execute the command and parse the response
-                If SendCommandAndParseResponse(cmdInfo.Command) Then
+                If SendCommandAndParseResponse(StartupCommand.Command) Then
                     ' Set the parsed response to the Value property of CommandInfo
-                    cmdInfo.Value = ResponseValue
+                    StartupCommand.Value = ResponseValue
 
                     ' Optionally, log a message or handle success
-                    logger.writeLogLine(cmdInfo.LogMessage & cmdInfo.Value)
+                    logger.WriteLogLine(StartupCommand.LogMessage & StartupCommand.Value)
                 Else
                     ' Optionally, log a message or handle failure
-                    logger.writeLogLine($"Failed to execute command '{cmdInfo.Command}'.")
+                    logger.WriteLogLine($"Failed to execute command '{StartupCommand.Command}'.")
                 End If
             Next
         Else

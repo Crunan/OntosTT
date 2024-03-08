@@ -115,7 +115,7 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommandInfo.vb" />
+    <Compile Include="CommandCategory.vb" />
     <Compile Include="exeConfig.vb" />
     <Compile Include="configpaths.vb" />
     <Compile Include="IDevice.vb" />

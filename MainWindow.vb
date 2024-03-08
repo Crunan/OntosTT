@@ -1322,6 +1322,7 @@ Public Class MainWindow
             End If
 
             'Reset the controller PCB and give it time to do so
+            CTL.C
             WriteCommand("$90%", 4)  'SOFT_RESET   $90% ; resp[!90#] Resets CTL PCB
             ResponseLen = ReadResponse(0)
             CTLResetTimeOut = 2500 / Timer1.Interval  'interval in milliseconds, so get close to 2.5 second wait
