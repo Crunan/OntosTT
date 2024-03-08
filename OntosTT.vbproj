@@ -117,9 +117,10 @@
   <ItemGroup>
     <Compile Include="CommandInfo.vb" />
     <Compile Include="exeConfig.vb" />
-    <Compile Include="pathfinder.vb" />
+    <Compile Include="configpaths.vb" />
     <Compile Include="IDevice.vb" />
     <Compile Include="Logger.vb" />
+    <Compile Include="pathfinder.vb" />
     <Compile Include="SerialController.vb" />
     <Compile Include="MainWindow.vb">
       <SubType>Form</SubType>

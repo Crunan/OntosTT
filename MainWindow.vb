@@ -8,8 +8,10 @@ Imports Guna.UI2.WinForms
 
 Public Class MainWindow
     Dim CTL As SerialController
-    Dim logger As Logger
+    Dim pathHandler As ConfigPaths
     Dim commandHandler As CommandInfo
+    Dim configHandler As ExeConfig
+    Dim logger as Logger
 
     Public Shared SelectedWaferSize As Integer = 0 'Public to be shared between OTTForm and DiameterEntryDialog
 
@@ -1226,6 +1228,7 @@ Public Class MainWindow
         'Make sure we check the Configuration for a known Port
         GetExeCfg()  ' get the exe config parameters
 
+        CTL.Config = configHandler.LoadExeConfigData(pathHandler.ExeConfig)
         'Calls to the system for a list of ports
         ar_myPort = IO.Ports.SerialPort.GetPortNames()
 
@@ -1270,6 +1273,8 @@ Public Class MainWindow
             'start up the log file
             OpenLogFile()
 
+            'TODO: Remove old code after this works
+            logger.OpenLogFile(pathHandler.Logs)
 
             'Set the Dropdown to have the known port 
             com_portBox.Items.Add(st_KnownComPort)
@@ -1758,9 +1763,7 @@ Public Class MainWindow
     End Sub
     Private Sub RunCTLStartUp()
         Dim Index As Integer
-        Dim StrVar As String
         Dim IntVar As Integer
-        Dim ResponseLen As Integer
         Dim CMDIndex() As String = {"0", "01%", "02%", "03%", "04%"}
 
         'Set initial stageTest values
