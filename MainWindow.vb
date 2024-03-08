@@ -8,8 +8,7 @@ Imports Guna.UI2.WinForms
 
 Public Class MainWindow
     Dim CTL As SerialController
-    Dim CTL_CMDS As List(Of CommandInfo)
-    Dim AUX_CMDS As List(Of CommandInfo)
+    Dim commandHandler As CommandInfo
 
     Public Shared SelectedWaferSize As Integer = 0 'Public to be shared between OTTForm and DiameterEntryDialog
 
@@ -1778,8 +1777,8 @@ Public Class MainWindow
         End If
 
         'TODO: Read all the available commands
-        CTL_CMDS.LoadCommandsFromFile(CommandsPath & "ctl_commands.json")
-
+        CTL.Commands = commandHandler.LoadCommandsFromFile(CommandsPath & "ctl_commands.json")
+        CTL.ExecuteCommandsInList()
         'First things first, log the CTL & Axis firmware. 
         CTL.SendCommandAndParseResponse("$8F%")
         WriteLogLine("CTL Firmware Version: " + CTL.ResponseValue)

@@ -3,7 +3,8 @@ Imports Newtonsoft.Json
 
 Public Class CommandInfo
     Public Property Command As String
-    Public Property Variable As String
+    Public Property Variable_Name As String
+    Public Property Value As String
     Public Property LogMessage As String
 
     Public Function LoadCommandsFromFile(filepath As String) As List(Of CommandInfo)
