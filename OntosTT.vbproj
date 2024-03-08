@@ -116,6 +116,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandInfo.vb" />
+    <Compile Include="exeConfig.vb" />
     <Compile Include="pathfinder.vb" />
     <Compile Include="IDevice.vb" />
     <Compile Include="Logger.vb" />
@@ -233,6 +234,7 @@
     <None Include="aux_commands.json" />
     <None Include="ctl_commands.json" />
     <None Include="filepaths.json" />
+    <None Include="Execonfig.json" />
     <None Include="Version.json" />
     <None Include="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
