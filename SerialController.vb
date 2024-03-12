@@ -6,7 +6,6 @@ Public Class SerialController
     Implements IDevice
     Implements IDisposable
 
-    Private _commands As CommandCategory
     Private _serialPort As SerialPort
     Private _rawResponse As String
     Private _responseValue As String
@@ -22,14 +21,6 @@ Public Class SerialController
         End Get
         Set(data As String)
             _responseValue = data
-        End Set
-    End Property
-    Public Property Commands() As CommandCategory
-        Get
-            Return _commands
-        End Get
-        Set(value As CommandCategory)
-            _commands = value
         End Set
     End Property
 
@@ -92,29 +83,6 @@ Public Class SerialController
         Read()
         Return Parse()
     End Function
-    Public Sub ExecuteCommandsInList(logger As Logger)
-        ' Ensure the list of commands is not null
-        If _commands IsNot Nothing Then
-            ' Iterate through each command in the list
-            For Each StartupCommand As CommandCategory.CommandInfo In _commands.RuntimeCommands
-                ' Execute the command and parse the response
-                If SendCommandAndParseResponse(StartupCommand.Command) Then
-                    ' Set the parsed response to the Value property of CommandInfo
-                    StartupCommand.Value = ResponseValue
-
-                    ' Optionally, log a message or handle success
-                    logger.WriteLogLine(StartupCommand.LogMessage & StartupCommand.Value)
-                Else
-                    ' Optionally, log a message or handle failure
-                    logger.WriteLogLine($"Failed to execute command '{StartupCommand.Command}'.")
-                End If
-            Next
-        Else
-            ' Log or handle the case where the list of commands is null
-            logger.writeLogLine("List of commands is null.")
-        End If
-    End Sub
-
 
     Public Sub Dispose() Implements IDisposable.Dispose
         ' Dispose of any resources here

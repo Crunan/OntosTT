@@ -9,7 +9,6 @@ Imports Guna.UI2.WinForms
 Public Class MainWindow
     Dim CTL As SerialController
     Dim pathHandler As ConfigPaths
-    Dim commandHandler As CommandInfo
     Dim configHandler As ExeConfig
     Dim logger as Logger
 
@@ -1228,7 +1227,7 @@ Public Class MainWindow
         'Make sure we check the Configuration for a known Port
         GetExeCfg()  ' get the exe config parameters
 
-        CTL.Config = configHandler.LoadExeConfigData(pathHandler.ExeConfig)
+        'CTL.Config = configHandler.LoadExeConfigData(pathHandler.ExeConfig)
         'Calls to the system for a list of ports
         ar_myPort = IO.Ports.SerialPort.GetPortNames()
 
@@ -1322,7 +1321,7 @@ Public Class MainWindow
             End If
 
             'Reset the controller PCB and give it time to do so
-            CTL.C
+
             WriteCommand("$90%", 4)  'SOFT_RESET   $90% ; resp[!90#] Resets CTL PCB
             ResponseLen = ReadResponse(0)
             CTLResetTimeOut = 2500 / Timer1.Interval  'interval in milliseconds, so get close to 2.5 second wait
@@ -1782,8 +1781,8 @@ Public Class MainWindow
         End If
 
         'TODO: Read all the available commands
-        CTL.Commands = commandHandler.LoadCommandsFromFile(CommandsPath & "ctl_commands.json")
-        CTL.ExecuteCommandsInList(logger)
+        'CTL.Commands = commandHandler.LoadCommandsFromFile(CommandsPath & "ctl_commands.json")
+        'CTL.ExecuteCommandsInList(logger)
         'First things first, log the CTL & Axis firmware. 
         CTL.SendCommandAndParseResponse("$8F%")
         WriteLogLine("CTL Firmware Version: " + CTL.ResponseValue)
