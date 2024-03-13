@@ -62,25 +62,26 @@ Public Class CommandManager
 
         Return fullCommand
     End Function
-    Public Function GetCommandByName(name As String, userData As String, logger As Logger) As String
+    Public Function GetCommandByName(name As String, logger As Logger, Optional userData As String = "") As CommandMetadata
         ' Find the command based on the provided name
         Dim commandToExecute = _commands.FirstOrDefault(Function(cmd) cmd.Name = name)
 
         If commandToExecute Is Nothing Then
             ' Handle the case where the command is not found
             logger.WriteLogLine($"Command not found for name: {name}")
-            Return ""
+            Return Nothing
         End If
 
         ' Check if the command requires user data
         If commandToExecute.RequiresUserData Then
             ' Use the FormatCommand function to get the formatted command
-            Return FormatCommand(commandToExecute, userData, logger)
-        Else
-            ' If no user data is required, return the command as is
-            Return commandToExecute.Command
+            commandToExecute.Command = FormatCommand(commandToExecute, userData, logger)
         End If
+
+        ' Return the CommandMetadata object
+        Return commandToExecute
     End Function
+
 
 
 

@@ -174,6 +174,7 @@
     <Compile Include="picture box.vb">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="SystemStatus.vb" />
     <Compile Include="Timer.Designer.vb">
       <DependentUpon>Timer.vb</DependentUpon>
     </Compile>
@@ -232,9 +233,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="aux_commands.json" />
-    <None Include="ctl_commands.json" />
+    <None Include="ctl_startup_commands.json" />
     <None Include="filepaths.json" />
     <None Include="Execonfig.json" />
+    <None Include="ctl_runtime_commands.json" />
     <None Include="Version.json" />
     <None Include="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>

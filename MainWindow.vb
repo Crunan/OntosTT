@@ -2127,27 +2127,36 @@ Public Class MainWindow
         CloseLogFile() 'done logging
     End Sub
 
-    Private Sub RunPolling() 'Poll the Control and Axis PCBs for status (every 1 second)
-        Dim Index As Integer
-        Dim IntVal As Integer
-        Dim DoubVal As Double
-        Dim StrVar As String
-        Dim ResponseLen As Integer
-        Dim ar_CTL_ParamVals As Array
-        Dim b_StatusChanged As Boolean = False
+    Private Sub RunPolling(serialController As SerialController, commandManager As CommandManager, logger As Logger) 'Poll the Control and Axis PCBs for status (every 1 second)
+        'Dim Index As Integer
+        'Dim IntVal As Integer
+        'Dim DoubVal As Double
+        'Dim StrVar As String
+        'Dim ResponseLen As Integer
+        'Dim ar_CTL_ParamVals As Array
+        'Dim b_StatusChanged As Boolean = False
 
-        'Get Controller Status        
-        If gamepad IsNot Nothing Then
-            If gamepad.IsConnected() = False Then
-                contollerONSquare.BackColor = Color.Gainsboro
-            End If
-        End If
+        ''Get Controller Status        
+        'If gamepad IsNot Nothing Then
+        '    If gamepad.IsConnected() = False Then
+        '        contollerONSquare.BackColor = Color.Gainsboro
+        '    End If
+        'End If
+        Dim command As CommandMetadata
 
+        'Get the status command for the PCB
+        command = commandManager.GetCommandByName("Get_PCB_Status", logger)
 
+        'Send the status command for the PCB
+        serialController.SendCommand(command.Command)
 
-        WriteCommand("$91%", 4) 'GET_STATUS    $91% ; resp[!91LLRR#] LL = left LEDS, RR = right LEDS
-        ResponseLen = ReadResponse(0)
-        If ResponseLen < 50 Then Return 'EMMETT.. this happens sometimes FIX IT!
+        'Read the response from the controller and store it
+        command.Value = serialController.ReadResponse()
+
+        'serialController.SendCommand()
+        'WriteCommand("$91%", 4) 'GET_STATUS    $91% ; resp[!91LLRR#] LL = left LEDS, RR = right LEDS
+        'ResponseLen = ReadResponse(0)
+        'If ResponseLen < 50 Then Return 'EMMETT.. this happens sometimes FIX IT!
 
 
         st_RCV = st_RCV.Substring(3) 'lop off the first three chars
