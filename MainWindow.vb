@@ -8,6 +8,7 @@ Imports Guna.UI2.WinForms
 
 Public Class MainWindow
     Dim CTL As SerialController
+    Dim CTL_Commands As CommandManager
     Dim pathHandler As ConfigPaths
     Dim configHandler As ExeConfig
     Dim logger as Logger
@@ -1725,8 +1726,8 @@ Public Class MainWindow
                     CTLResetTimeOut -= 1
                 Else
                     WriteLogLine("Main State Machine Start Up")
-                    RunCTLStartUp()
-                    RunAUXStartUp()
+                    'RunCTLStartUp()
+                    'RunAUXStartUp()
                     SM_State = POLLING
                 End If
 
@@ -1761,117 +1762,137 @@ Public Class MainWindow
         End Select
 
     End Sub
-    Private Sub RunCTLStartUp()
-        Dim Index As Integer
-        Dim IntVar As Integer
-        Dim CMDIndex() As String = {"0", "01%", "02%", "03%", "04%"}
+    Public Sub RunCTLStartUp(serialController As SerialController, commandManager As CommandManager, logger As Logger)
+        ' Load startup commands from file
+        commandManager.LoadCommandsFromFile(pathHandler.Startup_Commands.GetPath, logger)
 
-        'Set initial stageTest values
-        'TODO: Remove stage test from responsibilities here
-        StageTestSM.SetDetailedLog(True)
-        StageTestSM.SetTestZ(True)
+        ' Loop through each startup command
+        For Each cmd In commandManager.GetCommands()
+            ' Send command
+            serialController.SendCommand(cmd.Command)
 
-        'TODO: Remove Controller from responsibilities
-        'Check if controller is connected.
-        If gamepad IsNot Nothing Then
-            If gamepad.IsConnected() Then
-                contollerONSquare.BackColor = Color.Lime
-                WriteLogLine("Controller is connected")
-            End If
-        End If
+            ' Read response
+            Dim response As String = serialController.ReadResponse()
 
-        'TODO: Read all the available commands
-        'CTL.Commands = commandHandler.LoadCommandsFromFile(CommandsPath & "ctl_commands.json")
-        'CTL.ExecuteCommandsInList(logger)
-        'First things first, log the CTL & Axis firmware. 
-        CTL.SendCommandAndParseResponse("$8F%")
-        WriteLogLine("CTL Firmware Version: " + CTL.ResponseValue)
+            ' Store response in CommandMetadata object
+            cmd.Value = response
 
-        'How many MFCs?
-
-        CTL.SendCommandAndParseResponse("$2A002%") 'GET Number of MFCs (1-4) $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
-        NumMFC = CInt(CTL.ResponseValue)
-        WriteLogLine("Number of MFCs: " & CTL.ResponseValue)
-        'TODO: Create the MFC Class that when it sets MFC if its 0, it will throw an exception.
-        'If (NumMFC = 0) Then
-        '        If b_ErrorStateActive = False Then
-        '       b_ErrorStateActive = True
-        '      MsgBox("Error: Control PCB Configuration Missing => Exit")
-        '     'Restart the App after operator ack
-        '    Application.Exit()
-        '   End If
-        '  End If
-
-        'This is for Batch Logging systems only
-        CTL.SendCommandAndParseResponse("$2A011%") 'GET BatchIDLogging $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
-        'TODO: Create BatchID member for MainWindow, this gets set here.
-        'CTL.ResponseValue = "1" 
-        'If StrVar = "1" Then b_batchActive = True
-        '    If b_batchActive = True Then
-        '        BatchIDTextBox.Visible = True
-        '        BatchLoggingBTN.Visible = True
-        '        Form4.BatchChkBox.Checked = True
-        '        b_togglebatchIDLogging = True 'this is the flag to set Batch ID on/off 
-        '    End If
-        'End If
-
-        For Index = 1 To NumMFC
-            CTL.SendCommandAndParseResponse("$85" & CMDIndex(Index)) 'GET_MFC_RANGE $850m% 1<=m<=4; resp[!850xxx.yy#]
-            MFC(Index).db_Range = CDbl(CTL.ResponseValue)
-            MFCRange(Index).Text = MFC(Index).db_Range.ToString("F")
-            SetGUILoadedProgressNumbers(Index)
+            ' Log the response
+            logger.WriteLogLine($"{cmd.LogMessage}{response}")
         Next
-
-        CTL.SendCommandAndParseResponse("$2A606%") 'GET RECIPE MB Start Position () $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
-        TUNER.Strikepoint = Convert.ToInt32(CTL.ResponseValue, 10) 'integer approximation to %            
-        'TODO: Figure out what all of this was even needed for.
-        'StrVar = st_RCV.Substring(7, 7)
-        'TUNER.db_LoadedSetPointPct = Convert.ToDouble(StrVar)
-        'LoadedTunerTxt.Text = TUNER.db_LoadedSetPointPct.ToString("F") '2 decimal points
-        'RecipeTunerTxt.Text = TUNER.db_LoadedSetPointPct.ToString("F")
-        'WriteLogLine("Initial Tuner SetPoint: " & LoadedTunerTxt.Text)
-
-        CTL.SendCommandAndParseResponse("$2A605%") 'GET RECIPE RF PWR Setpoint (Watts) $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value        
-        RF.LoadedSetPoint = Convert.ToInt32(CTL.ResponseValue, 10)
-        LoadedWattsTxt.Text = CStr(RF.LoadedSetPoint)
-        RecipeWattsTxt.Text = CStr(RF.LoadedSetPoint) 'this is for the New GUI to view Loaded values
-
-        For Index = 1 To NumMFC
-            CTL.SendCommandAndParseResponse("$2A60" & Index & "%") 'GET RECIPE MFC4 Flow (SLPM) $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
-            MFC(Index).db_LoadedFlow = CDbl(CTL.ResponseValue)
-            MFCLoadedFlow(Index).Text = MFC(Index).db_LoadedFlow.ToString("F3")
-            MFCRecipeFlow(Index).Text = MFC(Index).db_LoadedFlow.ToString("F3") 'this is for the New GUI to view Loaded values
-            SetGUILoadProgressBars(Index, MFCRecipeFlow(Index).Text)
-        Next
-
-        CTL.SendCommandAndParseResponse("$2A705%") 'Get Max RF power forward  $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value 
-        MAXRF_PF_WATTS = Convert.ToInt32(CTL.ResponseValue)
-
-
-        CTL.SendCommandAndParseResponse("$89%") 'GET_AUTO_MAN   $89%; resp [!890p#] p=1 AutoMode, p=0 ManualMode        
-        b_AutoModeOn = Convert.ToBoolean(CTL.ResponseValue)
-        'TODO: Create encapsulation for automode.
-        If IntVar > 0 Then
-            b_AutoModeOn = True
-            AutoManBtn.Checked = True
-        End If
-
-        'turn off Exec Recipe
-        CTL.SendCommandAndParseResponse("$8700%") 'SET_EXEC_RECIPE  $870p% p=1 Execute Recipe, p=0 RF off, Recipe off
-        b_RunRecipeOn = Convert.ToBoolean(CTL.ResponseValue)
-
-        'enable service menu
-        EnableServiceMenuToolStripMenuItem.Enabled = True
-
-        CTL.SendCommandAndParseResponse("$1E00%")
-        'TODO: Has handshake to be encapsulated.
-
-        SettingsBtn.Enabled = True
-        FileToolStripMenuItem.Enabled = True
-
-
-        Operator_Mode()
     End Sub
+
+    'Private Sub RunCTLStartUp()
+    '    Dim Index As Integer
+    '    Dim IntVar As Integer
+    '    Dim CMDIndex() As String = {"0", "01%", "02%", "03%", "04%"}
+
+    '    'Set initial stageTest values
+    '    'TODO: Remove stage test from responsibilities here
+    '    StageTestSM.SetDetailedLog(True)
+    '    StageTestSM.SetTestZ(True)
+
+    '    'TODO: Remove Controller from responsibilities
+    '    'Check if controller is connected.
+    '    If gamepad IsNot Nothing Then
+    '        If gamepad.IsConnected() Then
+    '            contollerONSquare.BackColor = Color.Lime
+    '            WriteLogLine("Controller is connected")
+    '        End If
+    '    End If
+
+    '    CTL_Commands.LoadCommandsFromFile(pathHandler.Startup_Commands.GetPath, logger)
+
+    '    'CTL.ExecuteCommandsInList(logger)
+    '    'First things first, log the CTL & Axis firmware. 
+    '    CTL.SendCommandAndParseResponse("$8F%")
+    '    WriteLogLine("CTL Firmware Version: " + CTL.ResponseValue)
+
+    '    'How many MFCs?
+
+    '    CTL.SendCommandAndParseResponse("$2A002%") 'GET Number of MFCs (1-4) $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
+    '    NumMFC = CInt(CTL.ResponseValue)
+    '    WriteLogLine("Number of MFCs: " & CTL.ResponseValue)
+    '    'TODO: Create the MFC Class that when it sets MFC if its 0, it will throw an exception.
+    '    'If (NumMFC = 0) Then
+    '    '        If b_ErrorStateActive = False Then
+    '    '       b_ErrorStateActive = True
+    '    '      MsgBox("Error: Control PCB Configuration Missing => Exit")
+    '    '     'Restart the App after operator ack
+    '    '    Application.Exit()
+    '    '   End If
+    '    '  End If
+
+    '    'This is for Batch Logging systems only
+    '    CTL.SendCommandAndParseResponse("$2A011%") 'GET BatchIDLogging $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
+    '    'TODO: Create BatchID member for MainWindow, this gets set here.
+    '    'CTL.ResponseValue = "1" 
+    '    'If StrVar = "1" Then b_batchActive = True
+    '    '    If b_batchActive = True Then
+    '    '        BatchIDTextBox.Visible = True
+    '    '        BatchLoggingBTN.Visible = True
+    '    '        Form4.BatchChkBox.Checked = True
+    '    '        b_togglebatchIDLogging = True 'this is the flag to set Batch ID on/off 
+    '    '    End If
+    '    'End If
+
+    '    For Index = 1 To NumMFC
+    '        CTL.SendCommandAndParseResponse("$85" & CMDIndex(Index)) 'GET_MFC_RANGE $850m% 1<=m<=4; resp[!850xxx.yy#]
+    '        MFC(Index).db_Range = CDbl(CTL.ResponseValue)
+    '        MFCRange(Index).Text = MFC(Index).db_Range.ToString("F")
+    '        SetGUILoadedProgressNumbers(Index)
+    '    Next
+
+    '    CTL.SendCommandAndParseResponse("$2A606%") 'GET RECIPE MB Start Position () $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
+    '    TUNER.Strikepoint = Convert.ToInt32(CTL.ResponseValue, 10) 'integer approximation to %            
+    '    'TODO: Figure out what all of this was even needed for.
+    '    'StrVar = st_RCV.Substring(7, 7)
+    '    'TUNER.db_LoadedSetPointPct = Convert.ToDouble(StrVar)
+    '    'LoadedTunerTxt.Text = TUNER.db_LoadedSetPointPct.ToString("F") '2 decimal points
+    '    'RecipeTunerTxt.Text = TUNER.db_LoadedSetPointPct.ToString("F")
+    '    'WriteLogLine("Initial Tuner SetPoint: " & LoadedTunerTxt.Text)
+
+    '    CTL.SendCommandAndParseResponse("$2A605%") 'GET RECIPE RF PWR Setpoint (Watts) $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value        
+    '    RF.LoadedSetPoint = Convert.ToInt32(CTL.ResponseValue, 10)
+    '    LoadedWattsTxt.Text = CStr(RF.LoadedSetPoint)
+    '    RecipeWattsTxt.Text = CStr(RF.LoadedSetPoint) 'this is for the New GUI to view Loaded values
+
+    '    For Index = 1 To NumMFC
+    '        CTL.SendCommandAndParseResponse("$2A60" & Index & "%") 'GET RECIPE MFC4 Flow (SLPM) $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value
+    '        MFC(Index).db_LoadedFlow = CDbl(CTL.ResponseValue)
+    '        MFCLoadedFlow(Index).Text = MFC(Index).db_LoadedFlow.ToString("F3")
+    '        MFCRecipeFlow(Index).Text = MFC(Index).db_LoadedFlow.ToString("F3") 'this is for the New GUI to view Loaded values
+    '        SetGUILoadProgressBars(Index, MFCRecipeFlow(Index).Text)
+    '    Next
+
+    '    CTL.SendCommandAndParseResponse("$2A705%") 'Get Max RF power forward  $2Axxx% xxxx = any length index number =>resp [!2Axxx;vv..vv#] vv..vv = value 
+    '    MAXRF_PF_WATTS = Convert.ToInt32(CTL.ResponseValue)
+
+
+    '    CTL.SendCommandAndParseResponse("$89%") 'GET_AUTO_MAN   $89%; resp [!890p#] p=1 AutoMode, p=0 ManualMode        
+    '    b_AutoModeOn = Convert.ToBoolean(CTL.ResponseValue)
+    '    'TODO: Create encapsulation for automode.
+    '    If IntVar > 0 Then
+    '        b_AutoModeOn = True
+    '        AutoManBtn.Checked = True
+    '    End If
+
+    '    'turn off Exec Recipe
+    '    CTL.SendCommandAndParseResponse("$8700%") 'SET_EXEC_RECIPE  $870p% p=1 Execute Recipe, p=0 RF off, Recipe off
+    '    b_RunRecipeOn = Convert.ToBoolean(CTL.ResponseValue)
+
+    '    'enable service menu
+    '    EnableServiceMenuToolStripMenuItem.Enabled = True
+
+    '    CTL.SendCommandAndParseResponse("$1E00%")
+    '    'TODO: Has handshake to be encapsulated.
+
+    '    SettingsBtn.Enabled = True
+    '    FileToolStripMenuItem.Enabled = True
+
+
+    '    Operator_Mode()
+    'End Sub
     'Public Function RunAuxStartup() As Boolean
     '    ' Iterate through the dictionary and execute commands
     '    For Each kvp As KeyValuePair(Of String, String) In _commandsAndResponses
@@ -1892,87 +1913,87 @@ Public Class MainWindow
     '    ' All commands executed successfully
     '    Return True
     'End Function
-    Private Sub RunAUXStartUp()
-        CTL.SendCommandAndParseResponse("$2A006%") 'AUX_PCB_EXISTS_ADDR  Aux PCB Exists (0 = false, else true)           
-        has3AxisBoard = Convert.ToBoolean(CTL.ResponseValue)
-        If (has3AxisBoard) Then
+    'Private Sub RunAUXStartUp()
+    '    CTL.SendCommandAndParseResponse("$2A006%") 'AUX_PCB_EXISTS_ADDR  Aux PCB Exists (0 = false, else true)           
+    '    has3AxisBoard = Convert.ToBoolean(CTL.ResponseValue)
+    '    If (has3AxisBoard) Then
 
-            CTL.SendCommandAndParseResponse("$A1%") 'GET FW VERSION $A1% resp[!A1xx#]; xx = hard coded FW rev in Hex
-            WriteLogLine("Axis Firmware Version: " + CTL.ResponseValue)
+    '        CTL.SendCommandAndParseResponse("$A1%") 'GET FW VERSION $A1% resp[!A1xx#]; xx = hard coded FW rev in Hex
+    '        WriteLogLine("Axis Firmware Version: " + CTL.ResponseValue)
 
-            CTL.SendCommandAndParseResponse("$DA106%") 'GET_X_MAX_POSITION  X maximum allowed position in MM (float) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            Param.db_X_Max_Pos = Convert.ToDouble(CTL.ResponseValue)
+    '        CTL.SendCommandAndParseResponse("$DA106%") 'GET_X_MAX_POSITION  X maximum allowed position in MM (float) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+    '        Param.db_X_Max_Pos = Convert.ToDouble(CTL.ResponseValue)
 
-            CTL.SendCommandAndParseResponse("$DA206%") 'GET_Y_MAX_POSITION Y maximum allowed position in MM (float) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            Param.db_Y_Max_Pos = Convert.ToDouble(CTL.ResponseValue)
+    '        CTL.SendCommandAndParseResponse("$DA206%") 'GET_Y_MAX_POSITION Y maximum allowed position in MM (float) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+    '        Param.db_Y_Max_Pos = Convert.ToDouble(CTL.ResponseValue)
 
-            CTL.SendCommandAndParseResponse("$DA306%") 'GET_Z_MAX_POSITION  Z maximum allowed position in MM (float) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            Param.db_Z_Max_Pos = Convert.ToDouble(CTL.ResponseValue)
+    '        CTL.SendCommandAndParseResponse("$DA306%") 'GET_Z_MAX_POSITION  Z maximum allowed position in MM (float) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+    '        Param.db_Z_Max_Pos = Convert.ToDouble(CTL.ResponseValue)
 
-            CTL.SendCommandAndParseResponse("$DA107%") 'GET_X_MAX_SPEED  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            Param.db_X_Max_Speed = Convert.ToDouble(CTL.ResponseValue)
+    '        CTL.SendCommandAndParseResponse("$DA107%") 'GET_X_MAX_SPEED  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+    '        Param.db_X_Max_Speed = Convert.ToDouble(CTL.ResponseValue)
 
-            CTL.SendCommandAndParseResponse("$DA207%") 'GET_Y_MAX_SPEED  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            Param.db_Y_Max_Speed = Convert.ToDouble(CTL.ResponseValue)
+    '        CTL.SendCommandAndParseResponse("$DA207%") 'GET_Y_MAX_SPEED  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+    '        Param.db_Y_Max_Speed = Convert.ToDouble(CTL.ResponseValue)
 
-            CTL.SendCommandAndParseResponse("$DA307%") 'GET_Z_MAX_SPEED  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            Param.db_Z_Max_Speed = Convert.ToDouble(CTL.ResponseValue)
+    '        CTL.SendCommandAndParseResponse("$DA307%") 'GET_Z_MAX_SPEED  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+    '        Param.db_Z_Max_Speed = Convert.ToDouble(CTL.ResponseValue)
 
-            'get Coordinate system info from 3-Axis PCB
-            CTL.SendCommandAndParseResponse("$DA510%") 'GET db_Xp_2Base  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            CoordParam.db_Xp_2_Base = Convert.ToDouble(CTL.ResponseValue)
+    '        'get Coordinate system info from 3-Axis PCB
+    '        CTL.SendCommandAndParseResponse("$DA510%") 'GET db_Xp_2Base  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+    '        CoordParam.db_Xp_2_Base = Convert.ToDouble(CTL.ResponseValue)
 
-            CTL.SendCommandAndParseResponse("$DA520%") 'GET db_Yp_2Base  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            CoordParam.db_Yp_2_Base = Convert.ToDouble(CTL.ResponseValue)
+    '        CTL.SendCommandAndParseResponse("$DA520%") 'GET db_Yp_2Base  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+    '        CoordParam.db_Yp_2_Base = Convert.ToDouble(CTL.ResponseValue)
 
-            CTL.SendCommandAndParseResponse("$DA530%") 'GET db_Zp_2Base  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            CoordParam.db_Zp_2_Base = Convert.ToDouble(CTL.ResponseValue)
-            Param.db_Z_Head_Pos = Convert.ToDouble(CTL.ResponseValue) 'Used for running scan, need to know where the head is. 
+    '        CTL.SendCommandAndParseResponse("$DA530%") 'GET db_Zp_2Base  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+    '        CoordParam.db_Zp_2_Base = Convert.ToDouble(CTL.ResponseValue)
+    '        Param.db_Z_Head_Pos = Convert.ToDouble(CTL.ResponseValue) 'Used for running scan, need to know where the head is. 
 
-            CTL.SendCommandAndParseResponse("$DA511%") 'GET db_Xs_2_PH  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            CoordParam.db_Xs_2_PH = Convert.ToDouble(CTL.ResponseValue)
+    '        CTL.SendCommandAndParseResponse("$DA511%") 'GET db_Xs_2_PH  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+    '        CoordParam.db_Xs_2_PH = Convert.ToDouble(CTL.ResponseValue)
 
-            CTL.SendCommandAndParseResponse("$DA521%") 'GET db_Ys_2_PH  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            CoordParam.db_Ys_2_PH = Convert.ToDouble(CTL.ResponseValue)
+    '        CTL.SendCommandAndParseResponse("$DA521%") 'GET db_Ys_2_PH  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+    '        CoordParam.db_Ys_2_PH = Convert.ToDouble(CTL.ResponseValue)
 
-            CTL.SendCommandAndParseResponse("$DA540%") 'GET Plasma Head Slit Length (mm)  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            CoordParam.db_PlasmaHeadSlitLength = Convert.ToDouble(CTL.ResponseValue)
+    '        CTL.SendCommandAndParseResponse("$DA540%") 'GET Plasma Head Slit Length (mm)  $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+    '        CoordParam.db_PlasmaHeadSlitLength = Convert.ToDouble(CTL.ResponseValue)
 
-            CTL.SendCommandAndParseResponse("$DA541%") 'GET Plasma Head Slit Width (mm) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            CoordParam.db_PlasmaHeadSlitWidth = Convert.ToDouble(CTL.ResponseValue)
+    '        CTL.SendCommandAndParseResponse("$DA541%") 'GET Plasma Head Slit Width (mm) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+    '        CoordParam.db_PlasmaHeadSlitWidth = Convert.ToDouble(CTL.ResponseValue)
 
-            CTL.SendCommandAndParseResponse("$DA542%") 'GET Chuck to Plasma Head safety gap (mm) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            CoordParam.db_ChuckToPlasmaHeadSafetyGap = Convert.ToDouble(CTL.ResponseValue)
+    '        CTL.SendCommandAndParseResponse("$DA542%") 'GET Chuck to Plasma Head safety gap (mm) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+    '        CoordParam.db_ChuckToPlasmaHeadSafetyGap = Convert.ToDouble(CTL.ResponseValue)
 
-            CTL.SendCommandAndParseResponse("$DA543%") 'GET Z Pins Buried Pos (mm) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            CoordParam.db_ZPinsBuriedPos = Convert.ToDouble(CTL.ResponseValue)
+    '        CTL.SendCommandAndParseResponse("$DA543%") 'GET Z Pins Buried Pos (mm) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+    '        CoordParam.db_ZPinsBuriedPos = Convert.ToDouble(CTL.ResponseValue)
 
-            CTL.SendCommandAndParseResponse("$DA544%") 'GET Z Pins Exposed Pos (mm) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            CoordParam.db_ZPinsExposedPos = Convert.ToDouble(CTL.ResponseValue)
+    '        CTL.SendCommandAndParseResponse("$DA544%") 'GET Z Pins Exposed Pos (mm) $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+    '        CoordParam.db_ZPinsExposedPos = Convert.ToDouble(CTL.ResponseValue)
 
-            CTL.SendCommandAndParseResponse("$DA512%") 'GET db_LoadPos_X_Base $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            Param.db_X_Home_Pos = Convert.ToDouble(CTL.ResponseValue)
+    '        CTL.SendCommandAndParseResponse("$DA512%") 'GET db_LoadPos_X_Base $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+    '        Param.db_X_Home_Pos = Convert.ToDouble(CTL.ResponseValue)
 
-            CTL.SendCommandAndParseResponse("$DA522%") 'GET db_LoadPos_Y_Base $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            Param.db_Y_Home_Pos = Convert.ToDouble(CTL.ResponseValue)
+    '        CTL.SendCommandAndParseResponse("$DA522%") 'GET db_LoadPos_Y_Base $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+    '        Param.db_Y_Home_Pos = Convert.ToDouble(CTL.ResponseValue)
 
-            CTL.SendCommandAndParseResponse("$DA532%") 'GET db_LoadPos_Z_Base $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
-            Param.db_Z_Home_Pos = Convert.ToDouble(CTL.ResponseValue)
+    '        CTL.SendCommandAndParseResponse("$DA532%") 'GET db_LoadPos_Z_Base $DAxxxx% xxxx = index number =>resp [!DAxxxx;vv..vv#] vv..vv = value
+    '        Param.db_Z_Home_Pos = Convert.ToDouble(CTL.ResponseValue)
 
 
-            InitAxesBtn.Enabled = True
-            'Initialize sub-StateMachines        
-            SMTwoSpot.State = TSSM_IDLE
-            SMInitAxes.State = IASM_IDLE
-            SMScan.State = SCSM_IDLE
-            SMScan.SubState = SCSM_SUB_IDLE
-            SMScan.b_ExternalStateChange = False
-            SMHomeAxes.State = HASM_IDLE
-            SMTwoSpot.State = TSSM_IDLE
-            SMTwoSpot.b_ExternalStateChange = False
+    '        InitAxesBtn.Enabled = True
+    '        'Initialize sub-StateMachines        
+    '        SMTwoSpot.State = TSSM_IDLE
+    '        SMInitAxes.State = IASM_IDLE
+    '        SMScan.State = SCSM_IDLE
+    '        SMScan.SubState = SCSM_SUB_IDLE
+    '        SMScan.b_ExternalStateChange = False
+    '        SMHomeAxes.State = HASM_IDLE
+    '        SMTwoSpot.State = TSSM_IDLE
+    '        SMTwoSpot.b_ExternalStateChange = False
 
-        End If
-    End Sub
+    '    End If
+    'End Sub
 
     Private Sub GetAxesStatus() 'update the AxesStatus data structure
         Dim ResponseLen As Integer

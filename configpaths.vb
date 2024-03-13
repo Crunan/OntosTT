@@ -1,9 +1,11 @@
 ﻿Imports System.IO
 Imports Newtonsoft.Json
 
+
 Public Class ConfigPaths
     Public Property Logs As PathFinder
-    Public Property Commands As PathFinder
+    Public Property Startup_Commands As PathFinder
+    Public Property Runtime_Commands As PathFinder
     Public Property ExeConfig As PathFinder
 
     ' Define a shared constant for the known location of the file containing other file locations

@@ -1,10 +1,6 @@
 ﻿Imports System.IO
-Imports System.IO.Ports
 Imports Newtonsoft.Json
 
-Public Interface ICommand
-    Sub Execute(serialPort As SerialPort, data As Object)
-End Interface
 
 Public Class CommandMetadata
     Public Property Command As String
@@ -13,12 +9,15 @@ Public Class CommandMetadata
     Public Property LogMessage As String
     Public Property RequiresUserData As Boolean
     Public Property UserDataPlaceholder As String
+    Public Property Value As String
 End Class
-
-
 
 Public Class CommandManager
     Private _commands As List(Of CommandMetadata)
+
+    Public Function GetCommands() As List(Of CommandMetadata)
+        Return _commands
+    End Function
 
     Public Sub LoadCommandsFromFile(filePath As String, logger As Logger)
         Try
