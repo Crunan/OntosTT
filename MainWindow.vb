@@ -1276,6 +1276,10 @@ Public Class MainWindow
             'TODO: Remove old code after this works
             logger.OpenLogFile(pathHandler.Logs)
 
+            ' Load startup commands from file
+            CTL_Commands.LoadCommandsFromFile(pathHandler.Startup_Commands.GetPath, logger)
+
+
             'Set the Dropdown to have the known port 
             com_portBox.Items.Add(st_KnownComPort)
             com_portBox.Text = st_KnownComPort
@@ -1726,7 +1730,7 @@ Public Class MainWindow
                     CTLResetTimeOut -= 1
                 Else
                     WriteLogLine("Main State Machine Start Up")
-                    'RunCTLStartUp()
+                    RunCTLStartUp(CTL, CTL_Commands, logger)
                     'RunAUXStartUp()
                     SM_State = POLLING
                 End If
@@ -1763,9 +1767,6 @@ Public Class MainWindow
 
     End Sub
     Public Sub RunCTLStartUp(serialController As SerialController, commandManager As CommandManager, logger As Logger)
-        ' Load startup commands from file
-        commandManager.LoadCommandsFromFile(pathHandler.Startup_Commands.GetPath, logger)
-
         ' Loop through each startup command
         For Each cmd In commandManager.GetCommands()
             ' Send command

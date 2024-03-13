@@ -12,31 +12,45 @@ Public Class CommandMetadata
     Public Property Value As String
 End Class
 
-Public Class CommandManager
-    Private _commands As List(Of CommandMetadata)
+Public Class CommandFileReader
+    Public Function ReadCommandsFromFile(filePath As String, logger As Logger) As List(Of CommandMetadata)
+        Dim commands As New List(Of CommandMetadata)
 
-    Public Function GetCommands() As List(Of CommandMetadata)
-        Return _commands
-    End Function
-
-    Public Sub LoadCommandsFromFile(filePath As String, logger As Logger)
         Try
             ' Read the entire content of the file
             Dim jsonString As String = File.ReadAllText(filePath)
 
             ' Deserialize the JSON content into a list of CommandMetadata objects
-            _commands = JsonConvert.DeserializeObject(Of List(Of CommandMetadata))(jsonString)
-
+            commands = JsonConvert.DeserializeObject(Of List(Of CommandMetadata))(jsonString)
         Catch ex As Exception
-            ' Handle exceptions by calling the error handling function
+            ' Handle exceptions by logging them
             HandleErrorsFromFileRead(ex, logger)
         End Try
-    End Sub
+
+        Return commands
+    End Function
 
     Private Sub HandleErrorsFromFileRead(ex As Exception, logger As Logger)
         ' Handle errors by logging them
         logger.WriteLogLine($"Error loading commands from file: {ex.Message}")
     End Sub
+End Class
+
+Public Class CommandManager
+    Private _commands As List(Of CommandMetadata)
+    Private _fileReader As CommandFileReader
+
+    Public Sub New(fileReader As CommandFileReader)
+        _fileReader = fileReader
+    End Sub
+
+    Public Sub LoadCommandsFromFile(filePath As String, logger As Logger)
+        _commands = _fileReader.ReadCommandsFromFile(filePath, logger)
+    End Sub
+
+    Public Function GetCommands() As List(Of CommandMetadata)
+        Return _commands
+    End Function
 
 
     Public Function FormatCommand(commandToExecute As CommandMetadata, userData As String, logger As Logger) As String
