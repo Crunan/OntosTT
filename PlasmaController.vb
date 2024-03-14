@@ -17,6 +17,22 @@
         _status.ReadStatusKeysFromFile(filepath, _logger)
     End Sub
 
+    Public Sub ExecuteCommand(commandName As String, Optional data As String = "")
+        Dim command As CommandMetadata
+
+        command = _commands.GetCommandByName(commandName, _logger, data)
+
+        If command.RequiresUserData Then
+            _serial.SendCommand(command.Formatted_Command, _logger)
+        Else
+            _serial.SendCommand(command.Command, _logger)
+        End If
+
+        Dim response As String = _serial.ReadResponse(_logger)
+
+        command.Value = response
+    End Sub
+
     Public Sub LoadCommandsFromFile(filepath As String)
         _commands.LoadCommandsFromFile(filepath, _logger)
     End Sub
@@ -25,10 +41,10 @@
         ' Loop through each startup command
         For Each cmd In _commands.GetCommands()
             ' Send command
-            _serial.SendCommand(cmd.Command)
+            _serial.SendCommand(cmd.Command, _logger)
 
             ' Read response
-            Dim response As String = _serial.ReadResponse()
+            Dim response As String = _serial.ReadResponse(_logger)
 
             ' Store response in CommandMetadata object
             cmd.Value = response
@@ -45,10 +61,10 @@
         command = _commands.GetCommandByName("Get_PCB_Status", _logger)
 
         'Send the status command for the PCB
-        _serial.SendCommand(command.Command)
+        _serial.SendCommand(command.Command, _logger)
 
         'Read the response from the controller and store it
-        command.Value = _serial.ReadResponse()
+        command.Value = _serial.ReadResponse(_logger)
 
         'Store the parsed data in the status
         _status.ParseStatus(command.Value)

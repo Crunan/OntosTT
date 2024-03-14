@@ -3,8 +3,8 @@
 Public Interface ISerialCommunication
     Sub Open()
     Sub Close()
-    Sub SendCommand(command As String)
-    Function ReadResponse() As String
+    Sub SendCommand(command As String, logger As Logger)
+    Function ReadResponse(logger As Logger) As String
 End Interface
 
 Public Class SerialCommunication
@@ -18,6 +18,7 @@ Public Class SerialCommunication
     Public Sub Open() Implements ISerialCommunication.Open
         If Not _serialPort.IsOpen Then
             _serialPort.Open()
+
         End If
     End Sub
 
@@ -27,21 +28,22 @@ Public Class SerialCommunication
         End If
     End Sub
 
-    Public Sub SendCommand(command As String) Implements ISerialCommunication.SendCommand
+    Public Sub SendCommand(command As String, logger As Logger) Implements ISerialCommunication.SendCommand
         If _serialPort.IsOpen Then
             _serialPort.Write(command)
         Else
             ' Handle error or log message
+            logger.WriteLogLine($"Unable to send command: {command}, check serial communication")
         End If
     End Sub
 
-    Public Function ReadResponse() As String Implements ISerialCommunication.ReadResponse
+    Public Function ReadResponse(logger As Logger) As String Implements ISerialCommunication.ReadResponse
         Dim response As String = ""
 
         If _serialPort.IsOpen Then
             response = _serialPort.ReadLine()
         Else
-            ' Handle error or log message
+            logger.WriteLogLine($"Unable to read response, check serial communication")
         End If
 
         Return response
@@ -55,12 +57,12 @@ Public Class SerialController
         _serialCommunication = serialCommunication
     End Sub
 
-    Public Sub SendCommand(command As String)
-        _serialCommunication.SendCommand(command)
+    Public Sub SendCommand(command As String, logger As Logger)
+        _serialCommunication.SendCommand(command, logger)
     End Sub
 
-    Public Function ReadResponse() As String
-        Return _serialCommunication.ReadResponse()
+    Public Function ReadResponse(logger As Logger) As String
+        Return _serialCommunication.ReadResponse(logger)
     End Function
 
     Public Sub OpenConnection()

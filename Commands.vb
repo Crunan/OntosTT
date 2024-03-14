@@ -3,7 +3,8 @@ Imports Newtonsoft.Json
 
 
 Public Class CommandMetadata
-    Public Property Command As String
+    Public ReadOnly Property Command As String
+    Public Property Formatted_Command As String
     Public Property Name As String
     Public Property Description As String
     Public Property LogMessage As String
@@ -75,7 +76,7 @@ Public Class CommandManager
         ' Check if the command requires user data
         If commandToExecute.RequiresUserData Then
             ' Use the FormatCommand function to get the formatted command
-            commandToExecute.Command = FormatCommand(commandToExecute, userData, logger)
+            commandToExecute.Formatted_Command = FormatCommand(commandToExecute, userData, logger)
         End If
 
         ' Return the CommandMetadata object
