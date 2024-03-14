@@ -1741,7 +1741,7 @@ Public Class MainWindow
                 SM_PollCounter += 1 'increment every main tick loop (100 msec period)
                 If SM_PollCounter >= SM_POLL_PERIOD Then
                     SM_PollCounter = 0
-                    RunPolling() 'poll the main PCB
+                    pollSystemStatus(CTL, CTL_Commands, logger) 'poll the main PCB
                     If has3AxisBoard Then
                         RunInitAxesSM() 'run the Initialize Axes state machine
                         RunTwoSpotSM() 'run the Two Spot state machine                                   
@@ -2127,21 +2127,7 @@ Public Class MainWindow
         CloseLogFile() 'done logging
     End Sub
 
-    Private Sub RunPolling(serialController As SerialController, commandManager As CommandManager, logger As Logger) 'Poll the Control and Axis PCBs for status (every 1 second)
-        'Dim Index As Integer
-        'Dim IntVal As Integer
-        'Dim DoubVal As Double
-        'Dim StrVar As String
-        'Dim ResponseLen As Integer
-        'Dim ar_CTL_ParamVals As Array
-        'Dim b_StatusChanged As Boolean = False
-
-        ''Get Controller Status        
-        'If gamepad IsNot Nothing Then
-        '    If gamepad.IsConnected() = False Then
-        '        contollerONSquare.BackColor = Color.Gainsboro
-        '    End If
-        'End If
+    Private Sub pollSystemStatus(serialController As SerialController, commandManager As CommandManager, logger As Logger, parser As SystemStatusParser, system As SystemStatus) 'Poll the Control and Axis PCBs for status (every 1 second)
         Dim command As CommandMetadata
 
         'Get the status command for the PCB
@@ -2153,247 +2139,266 @@ Public Class MainWindow
         'Read the response from the controller and store it
         command.Value = serialController.ReadResponse()
 
-        'serialController.SendCommand()
-        'WriteCommand("$91%", 4) 'GET_STATUS    $91% ; resp[!91LLRR#] LL = left LEDS, RR = right LEDS
-        'ResponseLen = ReadResponse(0)
-        'If ResponseLen < 50 Then Return 'EMMETT.. this happens sometimes FIX IT!
+        system.ParseStatus(command.Value)
 
-
-        st_RCV = st_RCV.Substring(3) 'lop off the first three chars
-        If st_CTLPCBStatus <> st_RCV Then 'only write log line if status has changed
-            b_StatusChanged = True
-        End If
-        st_CTLPCBStatus = st_RCV 'for next time
-        ar_CTL_ParamVals = st_RCV.Split(New Char() {";"c})
-
-        StrVar = ar_CTL_ParamVals(0)
-        b_IsStringANumber(StrVar, st_HexChars, "CTL Status Bits") 'restarts if = False
-        'CTL LEDS is reliant on these 4 (nibbles) characters (16 bits, 4nibbles). 
-        CTLLEDS.Statusbits = Convert.ToInt32(StrVar, 16) 'parse status bits to boolean
-
-
-        StrVar = ar_CTL_ParamVals(1) 'MB Motor Position (to update slider bar)
-        b_IsStringANumber(StrVar, st_DoubleChars, "MB Motor Pos")
-        MB_Pos_Bar.Value = CInt(StrVar)
-        DoubVal = CDbl(StrVar) 'Convert the string value to a floating point
-        TUNER.CurrentPosition = DoubVal
-
-        If (b_AutoModeOn = False) Or (b_RunRecipeOn = False) Then 'watch for end limits when in manual MB Motor control
-            If TUNER.CurrentPosition > 98 Then
-                MB_Right_Arrow.Visible = False
-            ElseIf TUNER.CurrentPosition < 2 Then
-                MB_Left_Arrow.Visible = False
-            Else
-                ' MB_Right_Arrow.Visible = True
-                'MB_Left_Arrow.Visible = True
-            End If
-        End If
-        ActTunerTxt.Text = TUNER.CurrentPosition.ToString("F") '2 decimal points
-
-        StrVar = ar_CTL_ParamVals(2) 'RF Power Forward A/D
-        b_IsStringANumber(StrVar, st_IntChars, "RF Pwr Fwd")
-        RF.ActualPForward = Convert.ToInt32(StrVar, 10)
-        If b_RunRecipeOn = True Then
-            ActWattsTxt.Text = CStr(RF.ActualPForward)
-            RF_Radial.Value = RF.ActualPForward / 2 'For Operator Mode Radial (divide by 2 since max watts is 200 and radial max is 100)
-        Else
-            ActWattsTxt.Text = "0"
-            RF_Radial.Value = 0
-        End If
-        StrVar = ar_CTL_ParamVals(3) 'RF Power reflected A/D
-        b_IsStringANumber(StrVar, st_IntChars, "RF Pwr Ref")
-        RF.ActualPReflected = Convert.ToInt32(StrVar, 10)
-        If b_RunRecipeOn = True Then
-            RflWattsTxt.Text = CStr(RF.ActualPReflected)
-            RF_Reflected_Radial.Value = RF.ActualPReflected * 3.3  'For Operator Mode Radial (multiply by 3.3 since reflected max is 30 and dial max is 100)
-        Else
-            RflWattsTxt.Text = "0"
-            RF_Reflected_Radial.Value = 0
-        End If
-
-        StrVar = ar_CTL_ParamVals(4) 'Plasma Status
-        b_IsStringANumber(StrVar, st_HexChars, "Plasma Status") 'restarts if = False
-        IntVal = Convert.ToInt32(StrVar, 16)
-        'watch for CTL PCB changes in ExecRecipe status
-        If ((b_RunRecipeOn = False) And (IntVal > 0)) Then 'have inconsistent condition
-            b_RunRecipeOn = True
-        End If
-        If ((b_RunRecipeOn = True) And (IntVal = 0)) Then 'have inconsistent condition
-            b_RunRecipeOn = False
-        End If
-
-        'Get MFC FLows
-        For Index = 1 To NumMFC
-            StrVar = ar_CTL_ParamVals(Index + 4)
-            If b_IsStringANumber(StrVar, st_DoubleChars, "MFC Flow") Then
-                MFC(Index).SetActualFlow(StrVar)
-                SetGUIFlowBars(Index)
-                SetGUITextFlow(Index)
-            Else
-                WriteLogLine("Unable to retrieve poll of MFC" + Index + " actual flow.")
-            End If
-        Next 'For Index = 1 To NumMFC
-
-
-        'Get Plasma Head Temperature
-        WriteCommand("$8c%", 4)  'GET_TEMP  $8C%: resp[!8Cxx.xx#]; xx.xx = head temp degrees C base 10
-        ResponseLen = ReadResponse(0)
-        If ResponseLen > 3 Then
-            StrVar = st_RCV.Substring(3, 7)
-            If b_IsStringANumber(StrVar, st_DoubleChars, st_EmptyChars) = True Then 'st_EmptyChars
-                DoubVal = Convert.ToDouble(StrVar)
-                IntVal = Math.Ceiling(DoubVal)
-                StrVar = IntVal.ToString()
-                Temp_Radial.Value = (IntVal / Temp_Radial.Maximum) * 100 'Set the Temperature Radial for Operator
-                PHTempTxt.Text = StrVar 'Display the val in deg C
-                If Temp_Radial.Value < 135 Then
-                    Temp_Radial.ProgressColor = Color.DodgerBlue
-                    Temp_Radial.ProgressColor2 = Color.DodgerBlue
-                ElseIf Temp_Radial.Value < 145 Then
-                    Temp_Radial.ProgressColor = Color.Yellow
-                    Temp_Radial.ProgressColor2 = Color.Yellow
-                Else
-                    Temp_Radial.ProgressColor = Color.Red
-                    Temp_Radial.ProgressColor2 = Color.Red
-                End If
-
-            Else
-                PHTempTxt.Text = "???" 'allow for disconnected or bad temperature probe
-            End If
-        End If
-
-        'Check Abort flag and if active, flash Abort Clear button
-        If b_ClearAbort Then
-            RunRcpBtn.Enabled = False
-            If b_toggleClearAbort = True Then
-                ClearAbortbtn.FillColor = Color.Black
-            Else
-                ClearAbortbtn.FillColor = Color.FromArgb(201, 42, 38)
-            End If
-            b_toggleClearAbort = Not b_toggleClearAbort
-        End If
-
-        'Get Doors Open status 
-        If AxesStatus.b_DoorsOpen = True Then 'Toggle the Doors open label to Accentuate doors open
-            'Disable the stage buttons
-            If InitAxesBtn.Enabled = True Then 'Disable the butons once, not every Poll period
-                For Each element In StageButtons
-                    element.enabled = False
-                Next
-            End If
-
-            'display label for Doors Open and make it flash
-            Door_Open_Label.Visible = True
-            If b_toggleDoorsOpen = True Then
-                Door_Open_Label.ForeColor = Color.Red
-            Else
-                Door_Open_Label.ForeColor = Color.Black
-            End If
-            b_toggleDoorsOpen = Not b_toggleDoorsOpen
-        Else
-            If Door_Open_Label.Visible = True Then 'Enable the butons once, not every Poll period
-                Door_Open_Label.Visible = False
-                For Each element In StageButtons
-                    element.enabled = True
-                Next
-            End If
-
-        End If
-
-        'Plasma running or not
-        If b_RunRecipeOn = True Then 'Toggle the Button Color to Accentuate Recipe Running
-            RunRcpBtn.Text = "TURN PLASMA OFF"
-            If b_RunRcpBtnColor = True Then
-                RunRcpBtn.FillColor = Color.DarkGray
-            Else
-                RunRcpBtn.FillColor = Color.LightSteelBlue
-            End If
-            b_RunRcpBtnColor = Not b_RunRcpBtnColor
-            If b_ENG_mode = False And RunScanBtn.Enabled = False And AxesStatus.b_DoorsOpen = False Then 'Enable the Run Scan button for operators while plasma is on
-                RunScanBtn.Enabled = True
-            End If
-        Else
-            RunRcpBtn.FillColor = Color.BlueViolet
-            RunRcpBtn.Text = "START PLASMA"
-
-        End If
-
-        If b_togglebatchIDLogging = True Then 'Settings button
-            b_togglebatchIDLogging = False
-
-            If b_batchActive = True Then
-                WriteCommand("$28011;1%", 9) ' $28xxx;vv..vv%, xxxx = any length index number, vv..vv = value; =>resp [!28xxxx;vv..vv#]            
-                ReadResponse(0)
-                BatchIDTextBox.Visible = True 'show the batch designs
-                BatchLoggingBTN.Visible = True
-                WriteLogLine("Batch ID logging toggled ON")
-            Else
-                WriteCommand("$28011;0%", 9) ' $28xxx;vv..vv%, xxxx = any length index number, vv..vv = value; =>resp [!28xxxx;vv..vv#]
-                ReadResponse(0)
-                BatchIDTextBox.Visible = False 'hide the batch designs
-                BatchLoggingBTN.Visible = False
-                WriteLogLine("Batch ID logging toggled OFF")
-            End If
-        End If
-
-
-        'This controls the AUTO START SCAN setting 
-        If CTLLEDS.isPlasmaActive() And b_autoScanActive = True And b_toggleAutoScan = True Then
-            If SMScan.State = SCSM_IDLE Then 'IDLE, so must want me to start up
-                'Are my axis initialized
-                If AxesStatus.XState >= ASM_IDLE And AxesStatus.YState >= ASM_IDLE And AxesStatus.ZState >= ASM_IDLE And RunScanBtn.Visible = True Then
-                    SMScan.ExternalNewState = SCSM_START_UP
-                    SMScan.b_ExternalStateChange = True
-                End If
-            End If
-            b_toggleAutoScan = False
-        End If
-
-
-        'Get Axes Status
-        If (has3AxisBoard = "1") Then
-            GetAxesStatus() 'Update AxesStatus Data Structure
-            'Manage Axes Status Message
-            If AxesStatus.b_XYZSameState = True And AxesStatus.XState < ASM_IDLE Then
-                CurrentStepTxtBox.Text = "Stage Not Initialized"
-            End If
-
-
-            'Manage Actual Position Windows
-            If AxesStatus.XState >= ASM_IDLE Then
-                DoubVal = db_C_XPos_RefB_2_RefPH(AxesStatus.db_XPos)
-                AxesXActual.Text = DoubVal.ToString("F") '2 decimal point
-            Else
-                AxesXActual.Text = "???"
-            End If
-            If AxesStatus.YState >= ASM_IDLE Then
-                DoubVal = db_C_YPos_RefB_2_RefPH(AxesStatus.db_YPos)
-                AxesYActual.Text = DoubVal.ToString("F") '2 decimal point
-            Else
-                AxesYActual.Text = "???"
-            End If
-            If AxesStatus.ZState >= ASM_IDLE Then
-                DoubVal = db_C_ZPos_RefB_2_RefPH(AxesStatus.db_ZPos)
-                AxesZActual.Text = DoubVal.ToString("F") '2 decimal point
-            Else
-                AxesZActual.Text = "???"
-            End If
-        End If
-
-
-        If (b_StatusChanged = True) And (b_RunRecipeOn = True) Then
-            WriteLogLine("Tuner: " & ActTunerTxt.Text & " Temp: " & PHTempTxt.Text _
-                & " MFC1: " & MFCActualFlow(1).Text & " MFC2: " & MFCActualFlow(2).Text & " MFC3: " & MFCActualFlow(3).Text & " MFC4: " & MFCActualFlow(4).Text _
-                & " Pfwd: " & ActWattsTxt.Text & " Pref: " & RflWattsTxt.Text)
-        End If
-
-        If CTLLEDS.isAbortActive() Then PublishAbortCode()
-
-        If CTLLEDS.isEstopActive() Then
-            WriteLogLine("ESTOP active, application shutting down.")
-            Application.Exit()
-        End If
     End Sub
+
+    'Dim Index As Integer
+    'Dim IntVal As Integer
+    'Dim DoubVal As Double
+    'Dim StrVar As String
+    'Dim ResponseLen As Integer
+    'Dim ar_CTL_ParamVals As Array
+    'Dim b_StatusChanged As Boolean = False
+
+    ''Get Controller Status        
+    'If gamepad IsNot Nothing Then
+    '    If gamepad.IsConnected() = False Then
+    '        contollerONSquare.BackColor = Color.Gainsboro
+    '    End If
+    'End If
+
+    'serialController.SendCommand()
+    'WriteCommand("$91%", 4) 'GET_STATUS    $91% ; resp[!91LLRR#] LL = left LEDS, RR = right LEDS
+    'ResponseLen = ReadResponse(0)
+    'If ResponseLen < 50 Then Return 'EMMETT.. this happens sometimes FIX IT!
+
+
+    'st_RCV = st_RCV.Substring(3) 'lop off the first three chars
+    'If st_CTLPCBStatus <> st_RCV Then 'only write log line if status has changed
+    '    b_StatusChanged = True
+    'End If
+    'st_CTLPCBStatus = st_RCV 'for next time
+    'ar_CTL_ParamVals = st_RCV.Split(New Char() {";"c})
+
+    'StrVar = ar_CTL_ParamVals(0)
+    'b_IsStringANumber(StrVar, st_HexChars, "CTL Status Bits") 'restarts if = False
+    ''CTL LEDS is reliant on these 4 (nibbles) characters (16 bits, 4nibbles). 
+    'CTLLEDS.Statusbits = Convert.ToInt32(StrVar, 16) 'parse status bits to boolean
+
+
+    'StrVar = ar_CTL_ParamVals(1) 'MB Motor Position (to update slider bar)
+    'b_IsStringANumber(StrVar, st_DoubleChars, "MB Motor Pos")
+    'MB_Pos_Bar.Value = CInt(StrVar)
+    'DoubVal = CDbl(StrVar) 'Convert the string value to a floating point
+    'TUNER.CurrentPosition = DoubVal
+
+    'If (b_AutoModeOn = False) Or (b_RunRecipeOn = False) Then 'watch for end limits when in manual MB Motor control
+    '    If TUNER.CurrentPosition > 98 Then
+    '        MB_Right_Arrow.Visible = False
+    '    ElseIf TUNER.CurrentPosition < 2 Then
+    '        MB_Left_Arrow.Visible = False
+    '    Else
+    '        ' MB_Right_Arrow.Visible = True
+    '        'MB_Left_Arrow.Visible = True
+    '    End If
+    'End If
+    'ActTunerTxt.Text = TUNER.CurrentPosition.ToString("F") '2 decimal points
+
+    'StrVar = ar_CTL_ParamVals(2) 'RF Power Forward A/D
+    'b_IsStringANumber(StrVar, st_IntChars, "RF Pwr Fwd")
+    'RF.ActualPForward = Convert.ToInt32(StrVar, 10)
+    'If b_RunRecipeOn = True Then
+    '    ActWattsTxt.Text = CStr(RF.ActualPForward)
+    '    RF_Radial.Value = RF.ActualPForward / 2 'For Operator Mode Radial (divide by 2 since max watts is 200 and radial max is 100)
+    'Else
+    '    ActWattsTxt.Text = "0"
+    '    RF_Radial.Value = 0
+    'End If
+    'StrVar = ar_CTL_ParamVals(3) 'RF Power reflected A/D
+    'b_IsStringANumber(StrVar, st_IntChars, "RF Pwr Ref")
+    'RF.ActualPReflected = Convert.ToInt32(StrVar, 10)
+    'If b_RunRecipeOn = True Then
+    '    RflWattsTxt.Text = CStr(RF.ActualPReflected)
+    '    RF_Reflected_Radial.Value = RF.ActualPReflected * 3.3  'For Operator Mode Radial (multiply by 3.3 since reflected max is 30 and dial max is 100)
+    'Else
+    '    RflWattsTxt.Text = "0"
+    '    RF_Reflected_Radial.Value = 0
+    'End If
+
+    'StrVar = ar_CTL_ParamVals(4) 'Plasma Status
+    'b_IsStringANumber(StrVar, st_HexChars, "Plasma Status") 'restarts if = False
+    'IntVal = Convert.ToInt32(StrVar, 16)
+    ''watch for CTL PCB changes in ExecRecipe status
+    'If ((b_RunRecipeOn = False) And (IntVal > 0)) Then 'have inconsistent condition
+    '    b_RunRecipeOn = True
+    'End If
+    'If ((b_RunRecipeOn = True) And (IntVal = 0)) Then 'have inconsistent condition
+    '    b_RunRecipeOn = False
+    'End If
+
+    ''Get MFC FLows
+    'For Index = 1 To NumMFC
+    '    StrVar = ar_CTL_ParamVals(Index + 4)
+    '    If b_IsStringANumber(StrVar, st_DoubleChars, "MFC Flow") Then
+    '        MFC(Index).SetActualFlow(StrVar)
+    '        SetGUIFlowBars(Index)
+    '        SetGUITextFlow(Index)
+    '    Else
+    '        WriteLogLine("Unable to retrieve poll of MFC" + Index + " actual flow.")
+    '    End If
+    'Next 'For Index = 1 To NumMFC
+
+
+    ''Get Plasma Head Temperature
+    'WriteCommand("$8c%", 4)  'GET_TEMP  $8C%: resp[!8Cxx.xx#]; xx.xx = head temp degrees C base 10
+    'ResponseLen = ReadResponse(0)
+    'If ResponseLen > 3 Then
+    '    StrVar = st_RCV.Substring(3, 7)
+    '    If b_IsStringANumber(StrVar, st_DoubleChars, st_EmptyChars) = True Then 'st_EmptyChars
+    '        DoubVal = Convert.ToDouble(StrVar)
+    '        IntVal = Math.Ceiling(DoubVal)
+    '        StrVar = IntVal.ToString()
+    '        Temp_Radial.Value = (IntVal / Temp_Radial.Maximum) * 100 'Set the Temperature Radial for Operator
+    '        PHTempTxt.Text = StrVar 'Display the val in deg C
+    '        If Temp_Radial.Value < 135 Then
+    '            Temp_Radial.ProgressColor = Color.DodgerBlue
+    '            Temp_Radial.ProgressColor2 = Color.DodgerBlue
+    '        ElseIf Temp_Radial.Value < 145 Then
+    '            Temp_Radial.ProgressColor = Color.Yellow
+    '            Temp_Radial.ProgressColor2 = Color.Yellow
+    '        Else
+    '            Temp_Radial.ProgressColor = Color.Red
+    '            Temp_Radial.ProgressColor2 = Color.Red
+    '        End If
+
+    '    Else
+    '        PHTempTxt.Text = "???" 'allow for disconnected or bad temperature probe
+    '    End If
+    'End If
+
+    ''Check Abort flag and if active, flash Abort Clear button
+    'If b_ClearAbort Then
+    '    RunRcpBtn.Enabled = False
+    '    If b_toggleClearAbort = True Then
+    '        ClearAbortbtn.FillColor = Color.Black
+    '    Else
+    '        ClearAbortbtn.FillColor = Color.FromArgb(201, 42, 38)
+    '    End If
+    '    b_toggleClearAbort = Not b_toggleClearAbort
+    'End If
+
+    ''Get Doors Open status 
+    'If AxesStatus.b_DoorsOpen = True Then 'Toggle the Doors open label to Accentuate doors open
+    '    'Disable the stage buttons
+    '    If InitAxesBtn.Enabled = True Then 'Disable the butons once, not every Poll period
+    '        For Each element In StageButtons
+    '            element.enabled = False
+    '        Next
+    '    End If
+
+    '    'display label for Doors Open and make it flash
+    '    Door_Open_Label.Visible = True
+    '    If b_toggleDoorsOpen = True Then
+    '        Door_Open_Label.ForeColor = Color.Red
+    '    Else
+    '        Door_Open_Label.ForeColor = Color.Black
+    '    End If
+    '    b_toggleDoorsOpen = Not b_toggleDoorsOpen
+    'Else
+    '    If Door_Open_Label.Visible = True Then 'Enable the butons once, not every Poll period
+    '        Door_Open_Label.Visible = False
+    '        For Each element In StageButtons
+    '            element.enabled = True
+    '        Next
+    '    End If
+
+    'End If
+
+    ''Plasma running or not
+    'If b_RunRecipeOn = True Then 'Toggle the Button Color to Accentuate Recipe Running
+    '    RunRcpBtn.Text = "TURN PLASMA OFF"
+    '    If b_RunRcpBtnColor = True Then
+    '        RunRcpBtn.FillColor = Color.DarkGray
+    '    Else
+    '        RunRcpBtn.FillColor = Color.LightSteelBlue
+    '    End If
+    '    b_RunRcpBtnColor = Not b_RunRcpBtnColor
+    '    If b_ENG_mode = False And RunScanBtn.Enabled = False And AxesStatus.b_DoorsOpen = False Then 'Enable the Run Scan button for operators while plasma is on
+    '        RunScanBtn.Enabled = True
+    '    End If
+    'Else
+    '    RunRcpBtn.FillColor = Color.BlueViolet
+    '    RunRcpBtn.Text = "START PLASMA"
+
+    'End If
+
+    'If b_togglebatchIDLogging = True Then 'Settings button
+    '    b_togglebatchIDLogging = False
+
+    '    If b_batchActive = True Then
+    '        WriteCommand("$28011;1%", 9) ' $28xxx;vv..vv%, xxxx = any length index number, vv..vv = value; =>resp [!28xxxx;vv..vv#]            
+    '        ReadResponse(0)
+    '        BatchIDTextBox.Visible = True 'show the batch designs
+    '        BatchLoggingBTN.Visible = True
+    '        WriteLogLine("Batch ID logging toggled ON")
+    '    Else
+    '        WriteCommand("$28011;0%", 9) ' $28xxx;vv..vv%, xxxx = any length index number, vv..vv = value; =>resp [!28xxxx;vv..vv#]
+    '        ReadResponse(0)
+    '        BatchIDTextBox.Visible = False 'hide the batch designs
+    '        BatchLoggingBTN.Visible = False
+    '        WriteLogLine("Batch ID logging toggled OFF")
+    '    End If
+    'End If
+
+
+    ''This controls the AUTO START SCAN setting 
+    'If CTLLEDS.isPlasmaActive() And b_autoScanActive = True And b_toggleAutoScan = True Then
+    '    If SMScan.State = SCSM_IDLE Then 'IDLE, so must want me to start up
+    '        'Are my axis initialized
+    '        If AxesStatus.XState >= ASM_IDLE And AxesStatus.YState >= ASM_IDLE And AxesStatus.ZState >= ASM_IDLE And RunScanBtn.Visible = True Then
+    '            SMScan.ExternalNewState = SCSM_START_UP
+    '            SMScan.b_ExternalStateChange = True
+    '        End If
+    '    End If
+    '    b_toggleAutoScan = False
+    'End If
+
+
+    ''Get Axes Status
+    'If (has3AxisBoard = "1") Then
+    '    GetAxesStatus() 'Update AxesStatus Data Structure
+    '    'Manage Axes Status Message
+    '    If AxesStatus.b_XYZSameState = True And AxesStatus.XState < ASM_IDLE Then
+    '        CurrentStepTxtBox.Text = "Stage Not Initialized"
+    '    End If
+
+
+    '    'Manage Actual Position Windows
+    '    If AxesStatus.XState >= ASM_IDLE Then
+    '        DoubVal = db_C_XPos_RefB_2_RefPH(AxesStatus.db_XPos)
+    '        AxesXActual.Text = DoubVal.ToString("F") '2 decimal point
+    '    Else
+    '        AxesXActual.Text = "???"
+    '    End If
+    '    If AxesStatus.YState >= ASM_IDLE Then
+    '        DoubVal = db_C_YPos_RefB_2_RefPH(AxesStatus.db_YPos)
+    '        AxesYActual.Text = DoubVal.ToString("F") '2 decimal point
+    '    Else
+    '        AxesYActual.Text = "???"
+    '    End If
+    '    If AxesStatus.ZState >= ASM_IDLE Then
+    '        DoubVal = db_C_ZPos_RefB_2_RefPH(AxesStatus.db_ZPos)
+    '        AxesZActual.Text = DoubVal.ToString("F") '2 decimal point
+    '    Else
+    '        AxesZActual.Text = "???"
+    '    End If
+    'End If
+
+
+    'If (b_StatusChanged = True) And (b_RunRecipeOn = True) Then
+    '    WriteLogLine("Tuner: " & ActTunerTxt.Text & " Temp: " & PHTempTxt.Text _
+    '        & " MFC1: " & MFCActualFlow(1).Text & " MFC2: " & MFCActualFlow(2).Text & " MFC3: " & MFCActualFlow(3).Text & " MFC4: " & MFCActualFlow(4).Text _
+    '        & " Pfwd: " & ActWattsTxt.Text & " Pref: " & RflWattsTxt.Text)
+    'End If
+
+    'If CTLLEDS.isAbortActive() Then PublishAbortCode()
+
+    'If CTLLEDS.isEstopActive() Then
+    '    WriteLogLine("ESTOP active, application shutting down.")
+    '    Application.Exit()
+    'End If
+    End Function
     Public Sub SetGUIFlowBars(index As Integer)
         Dim actualFlow As Double = MFC(index).GetActualFlow()
         Dim range As Double = MFC(index).GetRange()
