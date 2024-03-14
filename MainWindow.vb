@@ -1100,28 +1100,23 @@ Public Class MainWindow
         Dim i As Integer
         Dim ar_myPort As String()
         Dim responseLen As Integer
-        Dim pathHandler As ConfigPaths = New ConfigPaths
-        Dim configHandler As ExeConfig = New ExeConfig
-        Dim CTL As SerialController
-        Dim CTL_Commands As CommandManager
+        'Handle paths for file reading
+        Dim pathHandler As New ConfigPaths
 
         'Declare the logger
-        Dim logger As Logger = New Logger
+        Dim logger As New Logger
 
         'Open the Log File from the log path
         logger.OpenLogFile(pathHandler.Logs)
 
-        'These are the keys that are used to parse the GET_STATUS data for the PCB Controller
-        Dim CTL_Keys As StatusKeysData = New StatusKeysData
+        'Setup the Plasma Controller with the logger
+        Dim CTL As New PlasmaController(logger)
 
-        'Set the order of the CTL status keys for parsing status
-        CTL_Keys.ReadStatusKeysFromFile(pathHandler.CTL_Keys.GetPath, logger)
+        'Read the status keys from file
+        CTL.ReadStatusKeysFromFile(pathHandler.CTL_Keys.GetPath)
 
-        'This is the parser for CTL Status
-        Dim CTL_Parser As SystemStatusParser = New SystemStatusParser(CTL_Keys.Keys)
-
-        'CTL status will handle parsing the status and storing it as a dictionary
-        Dim CTL_Status As SystemStatus = New SystemStatus(CTL_Parser)
+        ' Load startup commands from file
+        CTL.LoadCommandsFromFile(pathHandler.Startup_Commands.GetPath)
 
 
         DateTimeLabel1.Text = DateTime.Now.ToString("hh:mm dddd, dd MMMM yyyy")
@@ -1244,7 +1239,7 @@ Public Class MainWindow
         GUI_CTL_LEDS.Add(Guna2TextBox8)
 
         'Make sure we check the Configuration for a known Port
-        GetExeCfg()  ' get the exe config parameters
+        'GetExeCfg()  ' get the exe config parameters
 
         'CTL.Config = configHandler.LoadExeConfigData(pathHandler.ExeConfig)
         'Calls to the system for a list of ports
@@ -1294,8 +1289,7 @@ Public Class MainWindow
             'TODO: Remove old code after this works
 
 
-            ' Load startup commands from file
-            CTL_Commands.LoadCommandsFromFile(pathHandler.Startup_Commands.GetPath, logger)
+
 
 
             'Set the Dropdown to have the known port 
@@ -1748,7 +1742,7 @@ Public Class MainWindow
                     CTLResetTimeOut -= 1
                 Else
                     WriteLogLine("Main State Machine Start Up")
-                    RunCTLStartUp(CTL, CTL_Commands, logger)
+                    'CTL.RunStartUp()
                     'RunAUXStartUp()
                     SM_State = POLLING
                 End If
@@ -1759,7 +1753,7 @@ Public Class MainWindow
                 SM_PollCounter += 1 'increment every main tick loop (100 msec period)
                 If SM_PollCounter >= SM_POLL_PERIOD Then
                     SM_PollCounter = 0
-                    pollSystemStatus(CTL, CTL_Commands, logger) 'poll the main PCB
+                    'CTL.pollSystemStatus() 'poll the main PCB
                     If has3AxisBoard Then
                         RunInitAxesSM() 'run the Initialize Axes state machine
                         RunTwoSpotSM() 'run the Two Spot state machine                                   
@@ -1784,22 +1778,7 @@ Public Class MainWindow
         End Select
 
     End Sub
-    Public Sub RunCTLStartUp(serialController As SerialController, commandManager As CommandManager, logger As Logger)
-        ' Loop through each startup command
-        For Each cmd In commandManager.GetCommands()
-            ' Send command
-            serialController.SendCommand(cmd.Command)
 
-            ' Read response
-            Dim response As String = serialController.ReadResponse()
-
-            ' Store response in CommandMetadata object
-            cmd.Value = response
-
-            ' Log the response
-            logger.WriteLogLine($"{cmd.LogMessage}{response}")
-        Next
-    End Sub
 
     'Private Sub RunCTLStartUp()
     '    Dim Index As Integer
@@ -2145,21 +2124,7 @@ Public Class MainWindow
         CloseLogFile() 'done logging
     End Sub
 
-    Private Sub pollSystemStatus(serialController As SerialController, commandManager As CommandManager, logger As Logger, system As SystemStatus) 'Poll the Control and Axis PCBs for status (every 1 second)
-        Dim command As CommandMetadata
 
-        'Get the status command for the PCB
-        command = commandManager.GetCommandByName("Get_PCB_Status", logger)
-
-        'Send the status command for the PCB
-        serialController.SendCommand(command.Command)
-
-        'Read the response from the controller and store it
-        command.Value = serialController.ReadResponse()
-
-        system.ParseStatus(command.Value)
-
-    End Sub
 
     'Dim Index As Integer
     'Dim IntVal As Integer

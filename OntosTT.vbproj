@@ -174,6 +174,7 @@
     <Compile Include="picture box.vb">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="PlasmaController.vb" />
     <Compile Include="SystemStatus.vb" />
     <Compile Include="Timer.Designer.vb">
       <DependentUpon>Timer.vb</DependentUpon>

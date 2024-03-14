@@ -40,8 +40,8 @@ Public Class CommandManager
     Private _commands As List(Of CommandMetadata)
     Private _fileReader As CommandFileReader
 
-    Public Sub New(fileReader As CommandFileReader)
-        _fileReader = fileReader
+    Public Sub New()
+        _fileReader = New CommandFileReader
     End Sub
 
     Public Sub LoadCommandsFromFile(filePath As String, logger As Logger)
@@ -81,9 +81,6 @@ Public Class CommandManager
         ' Return the CommandMetadata object
         Return commandToExecute
     End Function
-
-
-
 
 End Class
 

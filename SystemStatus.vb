@@ -1,16 +1,9 @@
 ﻿Imports Newtonsoft.Json
 Imports System.IO
 
-Public Class StatusKeysData
+Public Class SystemStatusParser
     Private _statusKeys As List(Of String)
 
-    ' Read-only property to get the status keys
-    Public ReadOnly Property Keys As List(Of String)
-        Get
-            Return _statusKeys
-        End Get
-    End Property
-    ' Read JSON data from file and set the status keys
     Public Sub ReadStatusKeysFromFile(filePath As String, logger As Logger)
         Try
             ' Read JSON content from file
@@ -31,21 +24,6 @@ Public Class StatusKeysData
             logger.WriteLogLine($"CTL_Status Keys could not be loaded: {ex.Message}")
         End Try
     End Sub
-
-End Class
-
-
-
-Public Class SystemStatusParser
-    Private _statusKeys As List(Of String)
-
-    Public Sub New(statusKeys As List(Of String))
-        If statusKeys Is Nothing OrElse statusKeys.Count = 0 Then
-            Throw New ArgumentException("statusKeys must be provided and cannot be empty.")
-        End If
-
-        _statusKeys = statusKeys
-    End Sub
     Public Function ParseSystemStatus(statusString As String) As Dictionary(Of String, String)
         Dim statusDictionary As New Dictionary(Of String, String)()
 
@@ -64,12 +42,12 @@ End Class
 Public Class SystemStatus
     Private _status As Dictionary(Of String, String)
     Private _statusChanged As Boolean
-    Private _parser As SystemStatusParser
+    Public _parser As SystemStatusParser
 
-    Public Sub New(parser As SystemStatusParser)
+    Public Sub New()
         _status = New Dictionary(Of String, String)()
         _statusChanged = False
-        _parser = parser
+        _parser = New SystemStatusParser()
     End Sub
 
     Public ReadOnly Property Status As Dictionary(Of String, String)
@@ -94,5 +72,8 @@ Public Class SystemStatus
 
     Public Sub ParseStatus(unparsedStatus As String)
         SetStatus(_parser.ParseSystemStatus(unparsedStatus))
+    End Sub
+    Public Sub ReadStatusKeysFromFile(filepath As String, logger As Logger)
+        _parser.ReadStatusKeysFromFile(filepath, logger)
     End Sub
 End Class
