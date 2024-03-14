@@ -7,6 +7,7 @@ Public Class ConfigPaths
     Public Property Startup_Commands As PathFinder
     Public Property Runtime_Commands As PathFinder
     Public Property ExeConfig As PathFinder
+    Public Property CTL_Keys As PathFinder
 
     ' Define a shared constant for the known location of the file containing other file locations
     Public Shared ReadOnly KnownLocationFilePath As String = "C:\OTT_PLUS\ConfigPath\paths.json"

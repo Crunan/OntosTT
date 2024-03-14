@@ -7,11 +7,7 @@ Imports Guna.UI2.WinForms
 
 
 Public Class MainWindow
-    Dim CTL As SerialController
-    Dim CTL_Commands As CommandManager
-    Dim pathHandler As ConfigPaths
-    Dim configHandler As ExeConfig
-    Dim logger as Logger
+
 
     Public Shared SelectedWaferSize As Integer = 0 'Public to be shared between OTTForm and DiameterEntryDialog
 
@@ -1099,11 +1095,33 @@ Public Class MainWindow
         End If
     End Sub
 
-    '------------------------- Load the form
-    Private Sub Form1_Load(sender As System.Object, e As System.EventArgs) Handles MyBase.Load
+    '------------------------- This is the one place to tie everything together! 
+    Private Sub Main(sender As System.Object, e As System.EventArgs) Handles MyBase.Load
         Dim i As Integer
         Dim ar_myPort As String()
         Dim responseLen As Integer
+        Dim pathHandler As ConfigPaths = New ConfigPaths
+        Dim configHandler As ExeConfig = New ExeConfig
+        Dim CTL As SerialController
+        Dim CTL_Commands As CommandManager
+
+        'Declare the logger
+        Dim logger As Logger = New Logger
+
+        'Open the Log File from the log path
+        logger.OpenLogFile(pathHandler.Logs)
+
+        'These are the keys that are used to parse the GET_STATUS data for the PCB Controller
+        Dim CTL_Keys As StatusKeysData = New StatusKeysData
+
+        'Set the order of the CTL status keys for parsing status
+        CTL_Keys.ReadStatusKeysFromFile(pathHandler.CTL_Keys.GetPath, logger)
+
+        'This is the parser for CTL Status
+        Dim CTL_Parser As SystemStatusParser = New SystemStatusParser(CTL_Keys.Keys)
+
+        'CTL status will handle parsing the status and storing it as a dictionary
+        Dim CTL_Status As SystemStatus = New SystemStatus(CTL_Parser)
 
 
         DateTimeLabel1.Text = DateTime.Now.ToString("hh:mm dddd, dd MMMM yyyy")
@@ -1274,7 +1292,7 @@ Public Class MainWindow
             OpenLogFile()
 
             'TODO: Remove old code after this works
-            logger.OpenLogFile(pathHandler.Logs)
+
 
             ' Load startup commands from file
             CTL_Commands.LoadCommandsFromFile(pathHandler.Startup_Commands.GetPath, logger)
@@ -2127,7 +2145,7 @@ Public Class MainWindow
         CloseLogFile() 'done logging
     End Sub
 
-    Private Sub pollSystemStatus(serialController As SerialController, commandManager As CommandManager, logger As Logger, parser As SystemStatusParser, system As SystemStatus) 'Poll the Control and Axis PCBs for status (every 1 second)
+    Private Sub pollSystemStatus(serialController As SerialController, commandManager As CommandManager, logger As Logger, system As SystemStatus) 'Poll the Control and Axis PCBs for status (every 1 second)
         Dim command As CommandMetadata
 
         'Get the status command for the PCB
@@ -2398,7 +2416,7 @@ Public Class MainWindow
     '    WriteLogLine("ESTOP active, application shutting down.")
     '    Application.Exit()
     'End If
-    End Function
+
     Public Sub SetGUIFlowBars(index As Integer)
         Dim actualFlow As Double = MFC(index).GetActualFlow()
         Dim range As Double = MFC(index).GetRange()

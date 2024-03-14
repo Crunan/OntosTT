@@ -1,4 +1,42 @@
-﻿Public Class SystemStatusParser
+﻿Imports Newtonsoft.Json
+Imports System.IO
+
+Public Class StatusKeysData
+    Private _statusKeys As List(Of String)
+
+    ' Read-only property to get the status keys
+    Public ReadOnly Property Keys As List(Of String)
+        Get
+            Return _statusKeys
+        End Get
+    End Property
+    ' Read JSON data from file and set the status keys
+    Public Sub ReadStatusKeysFromFile(filePath As String, logger As Logger)
+        Try
+            ' Read JSON content from file
+            Dim jsonContent As String = File.ReadAllText(filePath)
+
+            ' Deserialize JSON array into List(Of String)
+            _statusKeys = JsonConvert.DeserializeObject(Of List(Of String))(jsonContent)
+
+            ' Log the header
+            logger.WriteLogLine($"CTL_Status Keys: ")
+
+            ' Log each status key individually
+            For Each key As String In _statusKeys
+                logger.WriteLogLine($"{key}")
+            Next
+        Catch ex As Exception
+            ' Handle exceptions here
+            logger.WriteLogLine($"CTL_Status Keys could not be loaded: {ex.Message}")
+        End Try
+    End Sub
+
+End Class
+
+
+
+Public Class SystemStatusParser
     Private _statusKeys As List(Of String)
 
     Public Sub New(statusKeys As List(Of String))
@@ -28,10 +66,10 @@ Public Class SystemStatus
     Private _statusChanged As Boolean
     Private _parser As SystemStatusParser
 
-    Public Sub New(statusKeys As List(Of String))
+    Public Sub New(parser As SystemStatusParser)
         _status = New Dictionary(Of String, String)()
         _statusChanged = False
-        _parser = New SystemStatusParser(statusKeys)
+        _parser = parser
     End Sub
 
     Public ReadOnly Property Status As Dictionary(Of String, String)
