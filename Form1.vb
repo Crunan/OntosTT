@@ -26,7 +26,7 @@ Public Class MainWindow
     Public Shared b_autoScanActive As Boolean = True
     Public Shared st_AutoScanSave As String = 1 'For saving the AUTO SCAN state   
     '
-    Public Shared st_has3AxisBoard As String
+    Public Shared st_has3AxisBoard As String = 1
     Public Shared st_password As String
     Public Shared st_hasHandshake As String
     Public Shared b_HasCollision As Boolean = False 'the tool has a Collision System on 
@@ -793,38 +793,7 @@ Public Class MainWindow
     Const SERIAL_RESPONSE_TIMEOUT = 1000 'timeout waiting for control pcb response (milliseconds)
 
     ' Controller Error Codes
-    Public Enum AbortCode
-        AC_OK = &H0
-        AC_NO_N2 = &H1
-        AC_NO_HEARTBEAT = &H2
-        AC_NO_GAS_1 = &H3
-        AC_NO_GAS_2 = &H4
-        AC_NO_GAS_3 = &H5
-        AC_NO_GAS_4 = &H6
-        AC_BAD_HELIUM = &H7
-        AC_ESTOP = &H8
-        AC_DOORS_OPEN = &H9
-        AC_PWR_FWD_LOW = &HA
-        AC_OVER_TEMP = &HB
-        AC_NO_CDA = &HC
-    End Enum
 
-
-    ' At the top of your class/module
-    Private AbortCodeMessages As Dictionary(Of String, String) = New Dictionary(Of String, String) From {
-        {AbortCode.AC_NO_N2.ToString(), "NO PURGE N2"},
-        {AbortCode.AC_NO_HEARTBEAT.ToString(), "NO HEARTBEAT"},
-        {AbortCode.AC_NO_GAS_1.ToString(), "MFC_1 Low Flow"},
-        {AbortCode.AC_NO_GAS_2.ToString(), "MFC_2 Low Flow"},
-        {AbortCode.AC_NO_GAS_3.ToString(), "MFC_3 Low Flow"},
-        {AbortCode.AC_NO_GAS_4.ToString(), "MFC_4 Low Flow"},
-        {AbortCode.AC_BAD_HELIUM.ToString(), "BAD HELIUM"},
-        {AbortCode.AC_ESTOP.ToString(), "ESTOP ACTIVE"},
-        {AbortCode.AC_DOORS_OPEN.ToString(), "ABORT: DOOR OPENED"},
-        {AbortCode.AC_PWR_FWD_LOW.ToString(), "Power Fwd Low"},
-        {AbortCode.AC_OVER_TEMP.ToString(), "Head Too Hot"},
-        {AbortCode.AC_NO_CDA.ToString(), "No CDA"}
-    }
 
 
 
@@ -1136,7 +1105,7 @@ Public Class MainWindow
         Dim responseLen As Integer
 
 
-        DateTimeLabel1.Text = DateTime.Now.ToString("hh:mm dddd, dd MMMM yyyy")
+
 
         'friend the collections with existing display objects to enable array indexing
         MFCActualFlow.Add(MFC_1_Read_Flow)
@@ -2268,6 +2237,8 @@ Public Class MainWindow
         Dim ar_CTL_ParamVals As Array
         Dim b_StatusChanged As Boolean = False
 
+        DateTimeLabel1.Text = DateTime.Now.ToString("hh:mm dddd, dd MMMM yyyy")
+
         'Get Controller Status        
         If gamepad IsNot Nothing Then
             If gamepad.isConnected() = False Then
@@ -2716,22 +2687,18 @@ Public Class MainWindow
 
     Public Sub PublishAbortCode()
         Dim ResponseLen As Integer
-        WriteCommand("$8B%", 4) 'GETSET_ABORT_CODE  $8B%; resp [!8Bcccc#] cccc = Base10 Abort Code
-        ReadResponse(0)
+        WriteCommand("$88%", 4) 'GETSET_ABORT_CODE  $8B%; resp [!8Bcccc#] cccc = Base10 Abort Code
+        ResponseLen = ReadResponse(0)
         ParseAbortCode(ResponseLen)
     End Sub
     Public Sub ParseAbortCode(length As Integer)
         Dim StrVar As String
-        Dim errorMessage As String
-        If length > 7 Then
-            StrVar = st_RCV.Substring(3, 4)
-            If AbortCodeMessages.ContainsKey(StrVar) Then
-                errorMessage = AbortCodeMessages(StrVar)
-                MsgBox(errorMessage)
-            Else
-                MsgBox("Abort occurred, no corresponding abort code found.")
-            End If
-        End If
+        StrVar = st_RCV.Substring(1, st_RCV.Length - 2)
+        AC_CODE.Text = StrVar
+        AC_CODE.Visible = True
+        ClearAbortbtn.Visible = True
+        WriteLogLine("ABORT: " & StrVar)
+        b_ClearAbort = True
     End Sub
 
     Private Sub OpenLogFile()
@@ -2783,14 +2750,11 @@ Public Class MainWindow
                     Exe_Cfg.KNOWN_COM_PORT = ExeConfigParamValue
                     st_KnownComPort = Exe_Cfg.KNOWN_COM_PORT
                 Case "HAS_3_AXIS_BOARD"
-                    Exe_Cfg.KNOWN_COM_PORT = ExeConfigParamValue
-                    st_has3AxisBoard = Exe_Cfg.KNOWN_COM_PORT
+                    st_has3AxisBoard = ExeConfigParamValue
                 Case "PW"
-                    Exe_Cfg.KNOWN_COM_PORT = ExeConfigParamValue
-                    st_password = Exe_Cfg.KNOWN_COM_PORT
+                    st_password = ExeConfigParamValue
                 Case "HANDSHAKE"
-                    Exe_Cfg.KNOWN_COM_PORT = ExeConfigParamValue
-                    st_hasHandshake = Exe_Cfg.KNOWN_COM_PORT
+                    st_hasHandshake = ExeConfigParamValue
 
 
                 Case "LED1", "LED2", "LED3", "LED4", "LED5", "LED6", "LED7", "LED8", "LED9", "LED10", "LED11", "LED12", "LED13", "LED14", "LED15", "LED16"

@@ -77,8 +77,6 @@ C:\Users\OES\source\repos\Crunan\OntosTT\bin\Release\OTT_PLUS.xml
 C:\Users\OES\source\repos\Crunan\OntosTT\bin\Release\Guna.UI2.dll
 C:\Users\OES\source\repos\Crunan\OntosTT\bin\Release\System.ValueTuple.dll
 C:\Users\OES\source\repos\Crunan\OntosTT\bin\Release\System.ValueTuple.xml
-C:\Users\OES\source\repos\Crunan\OntosTT\obj\Release\OntosTT.vbproj.AssemblyReference.cache
-C:\Users\OES\source\repos\Crunan\OntosTT\obj\Release\WindowsApplication1.AboutBox1.resources
 C:\Users\OES\source\repos\Crunan\OntosTT\obj\Release\WindowsApplication1.MainWindow.resources
 C:\Users\OES\source\repos\Crunan\OntosTT\obj\Release\WindowsApplication1.DiameterEntryDialog.resources
 C:\Users\OES\source\repos\Crunan\OntosTT\obj\Release\WindowsApplication1.Form4.resources
