@@ -11,14 +11,18 @@ Public Class SerialCommunication
     Implements ISerialCommunication
     Private _serialPort As SerialPort
 
-    Public Sub New(serialPort As SerialPort)
-        _serialPort = serialPort
+    Public Sub New(serialPortName As String)
+        _serialPort = New SerialPort(serialPortName)
     End Sub
 
     Public Sub Open() Implements ISerialCommunication.Open
         If Not _serialPort.IsOpen Then
+            _serialPort.Parity = Parity.None
+            _serialPort.StopBits = StopBits.One
+            _serialPort.DataBits = 8
+            _serialPort.BaudRate = 57600
+            _serialPort.ReadTimeout = 2500
             _serialPort.Open()
-
         End If
     End Sub
 

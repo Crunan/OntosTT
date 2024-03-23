@@ -183,6 +183,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="TunerSystemManager.vb" />
+    <Compile Include="UI.vb" />
     <Compile Include="UserControl1.Designer.vb">
       <DependentUpon>UserControl1.vb</DependentUpon>
     </Compile>

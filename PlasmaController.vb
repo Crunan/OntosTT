@@ -1,5 +1,5 @@
 ﻿Public Class PlasmaController
-    Private _serial As SerialController
+    Private _serial As SerialCommunication
     Private _commands As CommandManager
     Private _status As SystemStatus
     Private _logger As Logger
@@ -10,14 +10,28 @@
         _logger = logger
     End Sub
 
-    Public Sub SetupComms(serial As ISerialCommunication)
-        _serial = serial
+    Public Sub ConnectToPlasmaTool(serialPortName As String)
+        ' Initialize SerialCommunication object
+        _serial = New SerialCommunication(serialPortName)
+
+        ' Perform connection steps (open port, send initialization commands, etc.)
+        _serial.Open()
+
+        ' Once connected, send a reset command
+        ExecuteCommand("Reset")
+    End Sub
+    Public Sub DisconnectToPlasmaTool()
+        ' Before disconnection, send a reset command
+        ExecuteCommand("Reset")
+
+        'Close the port
+        _serial.Close()
     End Sub
     Public Sub ReadStatusKeysFromFile(filepath As String)
         _status.ReadStatusKeysFromFile(filepath, _logger)
     End Sub
 
-    Public Sub ExecuteCommand(commandName As String, Optional data As String = "")
+    Public Function ExecuteCommand(commandName As String, Optional data As String = "") As String
         Dim command As CommandMetadata
 
         command = _commands.GetCommandByName(commandName, _logger, data)
@@ -31,7 +45,9 @@
         Dim response As String = _serial.ReadResponse(_logger)
 
         command.Value = response
-    End Sub
+
+        Return response
+    End Function
 
     Public Sub LoadCommandsFromFile(filepath As String)
         _commands.LoadCommandsFromFile(filepath, _logger)
@@ -69,4 +85,9 @@
         'Store the parsed data in the status
         _status.ParseStatus(command.Value)
     End Sub
+
+    Public Function GetStatusValueByKey(key As String) As String
+        Return _status.GetValueByKey(key)
+    End Function
+
 End Class

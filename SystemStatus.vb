@@ -69,6 +69,15 @@ Public Class SystemStatus
             _statusChanged = True
         End If
     End Sub
+    Public Function GetValueByKey(key As String) As String
+        If _status.ContainsKey(key) Then
+            Return _status(key)
+        Else
+            ' Key not found, you can handle this case as needed
+            ' For example, you could throw an exception, return a default value, or log a message
+            Return Nothing ' Or throw New KeyNotFoundException("Key not found: " & key)
+        End If
+    End Function
 
     Public Sub ParseStatus(unparsedStatus As String)
         SetStatus(_parser.ParseSystemStatus(unparsedStatus))

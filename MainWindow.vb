@@ -7,7 +7,17 @@ Imports Guna.UI2.WinForms
 
 
 Public Class MainWindow
+    Private _plasmaController As PlasmaController
+    Private _logger As Logger
 
+    'Public Sub New(plasmaController As PlasmaController)
+
+    '    ' This call is required by the designer.
+    '    InitializeComponent()
+
+    '    ' Add any initialization after the InitializeComponent() call.
+    '    _plasmaController = plasmaController
+    'End Sub
 
     Public Shared SelectedWaferSize As Integer = 0 'Public to be shared between OTTForm and DiameterEntryDialog
 
@@ -1097,35 +1107,35 @@ Public Class MainWindow
 
     '------------------------- This is the one place to tie everything together! 
     Private Sub Main(sender As System.Object, e As System.EventArgs) Handles MyBase.Load
-        Dim i As Integer
-        Dim ar_myPort As String()
-        Dim responseLen As Integer
+        'Dim i As Integer
+        'Dim ar_myPort As String()
+        'Dim responseLen As Integer
         'Handle paths for file reading
         Dim pathHandler As New ConfigPaths
 
         'Declare the logger
-        Dim logger As New Logger
+        _logger = New Logger
 
         'Open the Log File from the log path
-        logger.OpenLogFile(pathHandler.Logs)
+        _logger.OpenLogFile(pathHandler.Logs)
 
         'Setup the Plasma Controller with the logger
-        Dim CTL As New PlasmaController(logger)
+        _plasmaController = New PlasmaController(_logger)
 
         'Read the status keys from file
-        CTL.ReadStatusKeysFromFile(pathHandler.CTL_Keys.GetPath)
+        _plasmaController.ReadStatusKeysFromFile(pathHandler.CTL_Keys.GetPath)
 
         ' Load startup commands from file
-        CTL.LoadCommandsFromFile(pathHandler.Startup_Commands.GetPath)
+        _plasmaController.LoadCommandsFromFile(pathHandler.Startup_Commands.GetPath)
 
 
-        DateTimeLabel1.Text = DateTime.Now.ToString("hh:mm dddd, dd MMMM yyyy")
+
 
         'friend the collections with existing display objects to enable array indexing
-        MFCActualFlow.Add(MFC_1_Read_Flow)
-        MFCActualFlow.Add(MFC_2_Read_Flow)
-        MFCActualFlow.Add(MFC_3_Read_Flow)
-        MFCActualFlow.Add(MFC_4_Read_Flow)
+        MFCActualFlow.Add(MFC_1_ActualValueDisplay)
+        MFCActualFlow.Add(MFC_2_ActualValueDisplay)
+        MFCActualFlow.Add(MFC_3_ActualValueDisplay)
+        MFCActualFlow.Add(MFC_4_ActualValueDisplay)
 
         MFCRecipeFlow.Add(MFC_1_Recipe_Flow)
         MFCRecipeFlow.Add(MFC_2_Recipe_Flow)
@@ -1242,120 +1252,111 @@ Public Class MainWindow
         'GetExeCfg()  ' get the exe config parameters
 
         'CTL.Config = configHandler.LoadExeConfigData(pathHandler.ExeConfig)
-        'Calls to the system for a list of ports
-        ar_myPort = IO.Ports.SerialPort.GetPortNames()
+        ''Calls to the system for a list of ports
+        'ar_myPort = IO.Ports.SerialPort.GetPortNames()
 
-        'If you recognise the com Port from what is stored in EXE_CONFIG, set a flag that we found it
-        For i = 0 To UBound(ar_myPort)
-            If ar_myPort(i) = st_KnownComPort Then b_foundKnownComPort = True
-        Next
+        ''If you recognise the com Port from what is stored in EXE_CONFIG, set a flag that we found it
+        'For i = 0 To UBound(ar_myPort)
+        '    If ar_myPort(i) = st_KnownComPort Then b_foundKnownComPort = True
+        'Next
 
-        'If you found a recognised port, connect to it NOW.
-        If b_foundKnownComPort = True Then
-            'Start up the serial port
-            SerialPort1.Parity = Parity.None
-            SerialPort1.StopBits = StopBits.One
-            SerialPort1.DataBits = 8
-            SerialPort1.BaudRate = "57600"
-            SerialPort1.PortName = st_KnownComPort
-            SerialPort1.ReadTimeout = SERIAL_RESPONSE_TIMEOUT            'serial port timeout default is 500
-            SerialPort1.Open()
+        ''If you found a recognised port, connect to it NOW.
+        'If b_foundKnownComPort = True Then
+        '    'Start up the serial port
+        '    SerialPort1.Parity = Parity.None
+        '    SerialPort1.StopBits = StopBits.One
+        '    SerialPort1.DataBits = 8
+        '    SerialPort1.BaudRate = "57600"
+        '    SerialPort1.PortName = st_KnownComPort
+        '    SerialPort1.ReadTimeout = SERIAL_RESPONSE_TIMEOUT            'serial port timeout default is 500
+        '    SerialPort1.Open()
 
-            'Ensure the Comms button is set because we AUTO CONNECTED
-            b_Start_Stop_ON_OFF = True 'This is true so that if we click the button, it will shut down comms
-            Start_Stop_Toggle.BackColor = Color.Green
-            Start_Stop_Toggle.Text = "CONNECTED"
-            RunRcpBtn.Visible = True
-            If b_ENG_mode Then
-                AutoManBtn.Visible = True
-            End If
+        '    'Ensure the Comms button is set because we AUTO CONNECTED
+        '    b_Start_Stop_ON_OFF = True 'This is true so that if we click the button, it will shut down comms
+        '    Start_Stop_Toggle.BackColor = Color.Green
+        '    Start_Stop_Toggle.Text = "CONNECTED"
+        '    RunRcpBtn.Visible = True
+        '    If b_ENG_mode Then
+        '        AutoManBtn.Visible = True
+        '    End If
 
-            If (has3AxisBoard = "1") Then
-                'Reset the controller PCB and give it time to do so
-                WriteCommand("$A9%", 4)  'SOFT_RESET   $A9%; resp[!A9#]; causes Aux PCB Soft Reset
-                responseLen = ReadResponse(0)
-                AUXResetTimeOut = 2500 / Timer1.Interval  'interval in milliseconds, so get close to 2.5 second wait
-            End If
+        '    If (has3AxisBoard = "1") Then
+        '        'Reset the controller PCB and give it time to do so
+        '        WriteCommand("$A9%", 4)  'SOFT_RESET   $A9%; resp[!A9#]; causes Aux PCB Soft Reset
+        '        responseLen = ReadResponse(0)
+        '        AUXResetTimeOut = 2500 / Timer1.Interval  'interval in milliseconds, so get close to 2.5 second wait
+        '    End If
 
-            'Reset the controller PCB and give it time to do so
-            WriteCommand("$90%", 4)  'SOFT_RESET   $90% ; resp[!90#] Resets CTL PCB
-            responseLen = ReadResponse(0)
-            CTLResetTimeOut = 2500 / Timer1.Interval  'interval in milliseconds, so get close to 2.5 second wait
+        '    'Reset the controller PCB and give it time to do so
+        '    WriteCommand("$90%", 4)  'SOFT_RESET   $90% ; resp[!90#] Resets CTL PCB
+        '    responseLen = ReadResponse(0)
+        '    CTLResetTimeOut = 2500 / Timer1.Interval  'interval in milliseconds, so get close to 2.5 second wait
 
-            SM_State = STARTUP
-            'start up the log file
-            OpenLogFile()
+        '    SM_State = STARTUP
+        '    'start up the log file
+        '    OpenLogFile()
 
-            'TODO: Remove old code after this works
-
-
+        '    'TODO: Remove old code after this works
 
 
 
-            'Set the Dropdown to have the known port 
-            com_portBox.Items.Add(st_KnownComPort)
-            com_portBox.Text = st_KnownComPort
+
+
+        '    'Set the Dropdown to have the known port 
+        '    com_portBox.Items.Add(st_KnownComPort)
+        '    com_portBox.Text = st_KnownComPort
+        'Else
+        '    'set-up the comm port drop-box 
+        '    com_portBox.Items.AddRange(ar_myPort)
+        '    com_portBox.Visible = True
+        '    Com_Port_Label.Visible = True
+        'End If
+
+
+
+    End Sub
+    ''------------------------ comm port selection makes the Start-Stop toggle button visible
+    'Private Sub com_portBox_SelectionChangeCommitted(sender As Object, e As EventArgs) Handles com_portBox.SelectionChangeCommitted
+    '    'We don't want COMMS to show up if a blank value is selected
+    '    If com_portBox.Text <> "" And b_foundKnownComPort = False Then Start_Stop_Toggle.Visible = True
+    'End Sub
+    Private Structure ConnectionToggleButtonState
+        Public Property IsConnected As Boolean
+        Public Property Text As String
+        Public Property BackColor As Color
+    End Structure
+
+    Private _connectionToggleState As ConnectionToggleButtonState
+
+    Private Sub InitializeConnectionToggleState()
+        _connectionToggleState = New ConnectionToggleButtonState With {
+        .IsConnected = False,
+        .Text = "CONNECT",
+        .BackColor = Color.Red
+    }
+        Start_Stop_Toggle.Text = _connectionToggleState.Text
+        Start_Stop_Toggle.BackColor = _connectionToggleState.BackColor
+    End Sub
+
+    Private Sub UpdateConnectionToggleState(connected As Boolean)
+        _connectionToggleState.IsConnected = connected
+        _connectionToggleState.Text = If(connected, "CONNECTED", "CONNECT")
+        _connectionToggleState.BackColor = If(connected, Color.Green, Color.Red)
+        Start_Stop_Toggle.Text = _connectionToggleState.Text
+        Start_Stop_Toggle.BackColor = _connectionToggleState.BackColor
+    End Sub
+
+    Private Sub ConnectButton_Click(sender As Object, e As EventArgs) Handles Start_Stop_Toggle.Click
+        If Not _connectionToggleState.IsConnected Then
+            _plasmaController.ConnectToPlasmaTool(com_portBox.Text)
+            UpdateConnectionToggleState(True)
+            'SM_State = STARTUP
         Else
-            'set-up the comm port drop-box 
-            com_portBox.Items.AddRange(ar_myPort)
-            com_portBox.Visible = True
-            Com_Port_Label.Visible = True
+            _plasmaController.DisconnectToPlasmaTool()
+            UpdateConnectionToggleState(False)
         End If
-
-
-
     End Sub
-    '------------------------ comm port selection makes the Start-Stop toggle button visible
-    Private Sub com_portBox_SelectionChangeCommitted(sender As Object, e As EventArgs) Handles com_portBox.SelectionChangeCommitted
-        'We don't want COMMS to show up if a blank value is selected
-        If com_portBox.Text <> "" And b_foundKnownComPort = False Then Start_Stop_Toggle.Visible = True
-    End Sub
-    Private Sub Start_Stop_CheckedChanged(sender As Object, e As EventArgs) Handles Start_Stop_Toggle.Click
-        Dim ResponseLen As Integer
 
-        b_Start_Stop_ON_OFF = Not b_Start_Stop_ON_OFF 'keeps track of what the button is doing.
-
-        If b_Start_Stop_ON_OFF Then
-            SerialPort1.Parity = Parity.None
-            SerialPort1.StopBits = StopBits.One
-            SerialPort1.DataBits = 8
-            SerialPort1.BaudRate = "57600"
-            SerialPort1.PortName = com_portBox.Text()
-            SerialPort1.ReadTimeout = SERIAL_RESPONSE_TIMEOUT            'serial port timeout default is 500
-            SerialPort1.Open()
-
-            Start_Stop_Toggle.BackColor = Color.Green
-            Start_Stop_Toggle.Text = "CONNECTED"
-            RunRcpBtn.Visible = True
-            If b_ENG_mode Then
-                AutoManBtn.Visible = True
-            End If
-            If (has3AxisBoard = "1") Then
-                'Reset the controller PCB and give it time to do so
-                WriteCommand("$A9%", 4)  'SOFT_RESET   $A9%; resp[!A9#]; causes Aux PCB Soft Reset
-                ResponseLen = ReadResponse(0)
-                AUXResetTimeOut = 2500 / Timer1.Interval  'interval in milliseconds, so get close to 2.5 second wait
-            End If
-
-            'Reset the controller PCB and give it time to do so
-
-            WriteCommand("$90%", 4)  'SOFT_RESET   $90% ; resp[!90#] Resets CTL PCB
-            ResponseLen = ReadResponse(0)
-            CTLResetTimeOut = 2500 / Timer1.Interval  'interval in milliseconds, so get close to 2.5 second wait
-
-            SM_State = STARTUP
-            'start up the log file
-            OpenLogFile()
-
-        Else
-            Start_Stop_Toggle.BackColor = Color.Red
-            Start_Stop_Toggle.Text = "CONNECT"
-
-            b_ShutDownComms = True
-        End If
-
-
-    End Sub
     Private Sub WriteCommand(CMD_Str As String, CMD_Len As Integer)
         Dim Index As Integer
 
@@ -1381,8 +1382,6 @@ Public Class MainWindow
             Application.Exit()
             End
         End If
-
-
     End Sub
     Private Function ReadChar() As Integer
         Dim ReturnValue As Integer = 0
@@ -1448,10 +1447,10 @@ Public Class MainWindow
 
         ResponseLen = 0
         If b_ShutDownComms Then
-            WriteCommand("$90%", 4) 'SOFT_RESET  $90% ; resp[!90#] Resets CTL PCB
-            ResponseLen = ReadResponse(0)
-            SerialPort1.Close() 'close the port
-            b_ShutDownComms = False
+            'WriteCommand("$90%", 4) 'SOFT_RESET  $90% ; resp[!90#] Resets CTL PCB
+            'ResponseLen = ReadResponse(0)
+            'SerialPort1.Close() 'close the port
+            'b_ShutDownComms = False
             SM_State = SHUTDOWN
         End If
 
@@ -1741,8 +1740,8 @@ Public Class MainWindow
                 If CTLResetTimeOut > 0 Then
                     CTLResetTimeOut -= 1
                 Else
-                    WriteLogLine("Main State Machine Start Up")
-                    'CTL.RunStartUp()
+                    _logger.WriteLogLine("Main State Machine Start Up")
+                    _plasmaController.RunStartup()
                     'RunAUXStartUp()
                     SM_State = POLLING
                 End If
@@ -1753,7 +1752,13 @@ Public Class MainWindow
                 SM_PollCounter += 1 'increment every main tick loop (100 msec period)
                 If SM_PollCounter >= SM_POLL_PERIOD Then
                     SM_PollCounter = 0
-                    'CTL.pollSystemStatus() 'poll the main PCB
+                    'Update system time every 1 second
+                    DateTimeLabel1.Text = DateTime.Now.ToString("hh:mm dddd, dd MMMM yyyy")
+
+                    'Poll the plasma system every 1 second 
+                    _plasmaController.PollSystemStatus() 'poll the main PCB
+                    UpdateUI(_plasmaController)
+
                     If has3AxisBoard Then
                         RunInitAxesSM() 'run the Initialize Axes state machine
                         RunTwoSpotSM() 'run the Two Spot state machine                                   
@@ -1767,7 +1772,7 @@ Public Class MainWindow
                 End If
 
             Case SHUTDOWN
-                WriteLogLine("Main State Machine Shut Down")
+                _logger.WriteLogLine("Main State Machine Shut Down")
                 RunShutDown()
                 SM_State = IDLE
 
@@ -1778,7 +1783,19 @@ Public Class MainWindow
         End Select
 
     End Sub
+    Public Sub UpdateUI(plasmaController As PlasmaController)
 
+        ' Update each UI element based on the corresponding key in the status dictionary
+        'TODO: Need to figure out how to parse Status bits? Each bit probably corresponds with UI element
+        'CTLStatusLabel.Text = plasmaController.GetStatusValueByKey("CTLStatusBits")
+        MBPositionActualValueDisplay.Text = plasmaController.GetStatusValueByKey("MBMotorPosition")
+        RFPowerActualValueDisplay.Text = plasmaController.GetStatusValueByKey("RFPowerForwardAD")
+        RFReflectedPowerActualValueDisplay.Text = plasmaController.GetStatusValueByKey("RFPowerReflectedAD")
+        MFC_1_ActualValueDisplay.Text = plasmaController.GetStatusValueByKey("MFC1Flow")
+        MFC_2_ActualValueDisplay.Text = plasmaController.GetStatusValueByKey("MFC2Flow")
+        MFC_3_ActualValueDisplay.Text = plasmaController.GetStatusValueByKey("MFC3Flow")
+        MFC_4_ActualValueDisplay.Text = plasmaController.GetStatusValueByKey("MFC4Flow")
+    End Sub
 
     'Private Sub RunCTLStartUp()
     '    Dim Index As Integer
@@ -2883,23 +2900,7 @@ Public Class MainWindow
 
     End Sub
 
-    Private Function ReadCustomFolderFromConfigFile() As String
-        Dim configFilePath As String = "C:\OTT_PLUS\Execonfig\default.cfg"
 
-        ' Read the config file and search for custom folder entries
-        Using configFile As New StreamReader(configFilePath)
-            Dim line As String
-            While Not configFile.EndOfStream
-                line = configFile.ReadLine()
-                If line.Contains("<ACTIVE_FOLDER>") Then
-                    st_RecipePath = line.Substring(line.IndexOf("<ACTIVE_FOLDER>") + "<ACTIVE_FOLDER>".Length)
-                    Exit While
-                End If
-            End While
-        End Using
-
-        Return st_RecipePath
-    End Function
 
     Private Sub SaveAsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SaveAsToolStripMenuItem.Click
         st_RecipeFileName = InputBox("No extension", "Enter Recipe Name", st_RecipeFileName)
@@ -2924,13 +2925,8 @@ Public Class MainWindow
         WriteLogLine("Saved As" + st_RecipeFileName + " : " + st_RecipeString.Replace(vbCr, "").Replace(vbLf, "")) 'Log this recipe entry
 
     End Sub
-    Private Sub SetDefaultToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SetDefaultToolStripMenuItem.Click
-        b_SetDefaultRecipe = True
-    End Sub
-    Private Sub RestartAllToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles RestartAllToolStripMenuItem.Click
-        WriteCommand("$90%", 4)         'SOFT_RESET  $90% ; resp[!90#]
-        Application.Restart()
-    End Sub
+
+
     Private Sub EnableServiceMenuToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles EnableServiceMenuToolStripMenuItem.Click
         If ServiceToolStripMenuItem.Visible = False Then
             ServiceToolStripMenuItem.Visible = True

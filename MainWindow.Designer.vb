@@ -26,15 +26,15 @@ Partial Class MainWindow
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(MainWindow))
         Me.Door_Open_Label = New System.Windows.Forms.Label()
         Me.SerialPort1 = New System.IO.Ports.SerialPort(Me.components)
-        Me.MFC_1_Read_Flow = New System.Windows.Forms.TextBox()
+        Me.MFC_1_ActualValueDisplay = New System.Windows.Forms.TextBox()
         Me.MFC_1_Read_Range = New System.Windows.Forms.TextBox()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
         Me.MFC_2_Read_Range = New System.Windows.Forms.TextBox()
         Me.MFC_3_Read_Range = New System.Windows.Forms.TextBox()
         Me.MFC_4_Read_Range = New System.Windows.Forms.TextBox()
-        Me.ActWattsTxt = New System.Windows.Forms.TextBox()
+        Me.RFPowerActualValueDisplay = New System.Windows.Forms.TextBox()
         Me.RF_Label = New System.Windows.Forms.Label()
-        Me.RflWattsTxt = New System.Windows.Forms.TextBox()
+        Me.RFReflectedPowerActualValueDisplay = New System.Windows.Forms.TextBox()
         Me.Watts_Label = New System.Windows.Forms.Label()
         Me.PHTempTxt = New System.Windows.Forms.TextBox()
         Me.C_Label = New System.Windows.Forms.Label()
@@ -74,7 +74,7 @@ Partial Class MainWindow
         Me.MB_Tune_Label = New System.Windows.Forms.Label()
         Me.RecipeTunerTxt = New System.Windows.Forms.TextBox()
         Me.LoadedTunerTxt = New System.Windows.Forms.TextBox()
-        Me.ActTunerTxt = New System.Windows.Forms.TextBox()
+        Me.MBPositionActualValueDisplay = New System.Windows.Forms.TextBox()
         Me.MB_Left_Arrow = New System.Windows.Forms.PictureBox()
         Me.MB_Right_Arrow = New System.Windows.Forms.PictureBox()
         Me.MB_Big_Step_Button = New System.Windows.Forms.PictureBox()
@@ -140,11 +140,11 @@ Partial Class MainWindow
         Me.Loaded_Progress_1_100 = New System.Windows.Forms.Label()
         Me.Loaded_Progress_1_50 = New System.Windows.Forms.Label()
         Me.Label16 = New System.Windows.Forms.Label()
-        Me.MFC_2_Read_Flow = New System.Windows.Forms.TextBox()
+        Me.MFC_2_ActualValueDisplay = New System.Windows.Forms.TextBox()
         Me.MFC_2_Recipe_Flow = New System.Windows.Forms.TextBox()
-        Me.MFC_3_Read_Flow = New System.Windows.Forms.TextBox()
+        Me.MFC_3_ActualValueDisplay = New System.Windows.Forms.TextBox()
         Me.MFC_3_Recipe_Flow = New System.Windows.Forms.TextBox()
-        Me.MFC_4_Read_Flow = New System.Windows.Forms.TextBox()
+        Me.MFC_4_ActualValueDisplay = New System.Windows.Forms.TextBox()
         Me.MFC_4_Recipe_Flow = New System.Windows.Forms.TextBox()
         Me.Loaded_Progress_2 = New Guna.UI2.WinForms.Guna2VProgressBar()
         Me.Loaded_Progress_1 = New Guna.UI2.WinForms.Guna2VProgressBar()
@@ -271,21 +271,21 @@ Partial Class MainWindow
         '
         Me.SerialPort1.BaudRate = 57600
         '
-        'MFC_1_Read_Flow
+        'MFC_1_ActualValueDisplay
         '
-        Me.MFC_1_Read_Flow.BackColor = System.Drawing.Color.White
-        Me.MFC_1_Read_Flow.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.MFC_1_Read_Flow.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.MFC_1_Read_Flow.ForeColor = System.Drawing.Color.Red
-        Me.MFC_1_Read_Flow.Location = New System.Drawing.Point(140, 780)
-        Me.MFC_1_Read_Flow.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
-        Me.MFC_1_Read_Flow.Name = "MFC_1_Read_Flow"
-        Me.MFC_1_Read_Flow.ReadOnly = True
-        Me.MFC_1_Read_Flow.Size = New System.Drawing.Size(79, 25)
-        Me.MFC_1_Read_Flow.TabIndex = 16
-        Me.MFC_1_Read_Flow.Text = "0.00"
-        Me.MFC_1_Read_Flow.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
-        Me.MFC_1_Read_Flow.WordWrap = False
+        Me.MFC_1_ActualValueDisplay.BackColor = System.Drawing.Color.White
+        Me.MFC_1_ActualValueDisplay.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.MFC_1_ActualValueDisplay.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.MFC_1_ActualValueDisplay.ForeColor = System.Drawing.Color.Red
+        Me.MFC_1_ActualValueDisplay.Location = New System.Drawing.Point(140, 780)
+        Me.MFC_1_ActualValueDisplay.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
+        Me.MFC_1_ActualValueDisplay.Name = "MFC_1_ActualValueDisplay"
+        Me.MFC_1_ActualValueDisplay.ReadOnly = True
+        Me.MFC_1_ActualValueDisplay.Size = New System.Drawing.Size(79, 25)
+        Me.MFC_1_ActualValueDisplay.TabIndex = 16
+        Me.MFC_1_ActualValueDisplay.Text = "0.00"
+        Me.MFC_1_ActualValueDisplay.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me.MFC_1_ActualValueDisplay.WordWrap = False
         '
         'MFC_1_Read_Range
         '
@@ -355,21 +355,21 @@ Partial Class MainWindow
         Me.MFC_4_Read_Range.Visible = False
         Me.MFC_4_Read_Range.WordWrap = False
         '
-        'ActWattsTxt
+        'RFPowerActualValueDisplay
         '
-        Me.ActWattsTxt.BackColor = System.Drawing.Color.White
-        Me.ActWattsTxt.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.ActWattsTxt.Font = New System.Drawing.Font("Arial", 36.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.ActWattsTxt.ForeColor = System.Drawing.SystemColors.WindowText
-        Me.ActWattsTxt.Location = New System.Drawing.Point(968, 258)
-        Me.ActWattsTxt.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
-        Me.ActWattsTxt.Name = "ActWattsTxt"
-        Me.ActWattsTxt.ReadOnly = True
-        Me.ActWattsTxt.Size = New System.Drawing.Size(139, 56)
-        Me.ActWattsTxt.TabIndex = 16
-        Me.ActWattsTxt.Text = "0"
-        Me.ActWattsTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
-        Me.ActWattsTxt.WordWrap = False
+        Me.RFPowerActualValueDisplay.BackColor = System.Drawing.Color.White
+        Me.RFPowerActualValueDisplay.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.RFPowerActualValueDisplay.Font = New System.Drawing.Font("Arial", 36.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.RFPowerActualValueDisplay.ForeColor = System.Drawing.SystemColors.WindowText
+        Me.RFPowerActualValueDisplay.Location = New System.Drawing.Point(968, 258)
+        Me.RFPowerActualValueDisplay.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
+        Me.RFPowerActualValueDisplay.Name = "RFPowerActualValueDisplay"
+        Me.RFPowerActualValueDisplay.ReadOnly = True
+        Me.RFPowerActualValueDisplay.Size = New System.Drawing.Size(139, 56)
+        Me.RFPowerActualValueDisplay.TabIndex = 16
+        Me.RFPowerActualValueDisplay.Text = "0"
+        Me.RFPowerActualValueDisplay.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me.RFPowerActualValueDisplay.WordWrap = False
         '
         'RF_Label
         '
@@ -383,21 +383,21 @@ Partial Class MainWindow
         Me.RF_Label.TabIndex = 13
         Me.RF_Label.Text = "RF POWER"
         '
-        'RflWattsTxt
+        'RFReflectedPowerActualValueDisplay
         '
-        Me.RflWattsTxt.BackColor = System.Drawing.Color.White
-        Me.RflWattsTxt.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.RflWattsTxt.Font = New System.Drawing.Font("Arial", 36.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.RflWattsTxt.ForeColor = System.Drawing.SystemColors.WindowText
-        Me.RflWattsTxt.Location = New System.Drawing.Point(971, 567)
-        Me.RflWattsTxt.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
-        Me.RflWattsTxt.Name = "RflWattsTxt"
-        Me.RflWattsTxt.ReadOnly = True
-        Me.RflWattsTxt.Size = New System.Drawing.Size(139, 56)
-        Me.RflWattsTxt.TabIndex = 16
-        Me.RflWattsTxt.Text = "0"
-        Me.RflWattsTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
-        Me.RflWattsTxt.WordWrap = False
+        Me.RFReflectedPowerActualValueDisplay.BackColor = System.Drawing.Color.White
+        Me.RFReflectedPowerActualValueDisplay.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.RFReflectedPowerActualValueDisplay.Font = New System.Drawing.Font("Arial", 36.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.RFReflectedPowerActualValueDisplay.ForeColor = System.Drawing.SystemColors.WindowText
+        Me.RFReflectedPowerActualValueDisplay.Location = New System.Drawing.Point(971, 567)
+        Me.RFReflectedPowerActualValueDisplay.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
+        Me.RFReflectedPowerActualValueDisplay.Name = "RFReflectedPowerActualValueDisplay"
+        Me.RFReflectedPowerActualValueDisplay.ReadOnly = True
+        Me.RFReflectedPowerActualValueDisplay.Size = New System.Drawing.Size(139, 56)
+        Me.RFReflectedPowerActualValueDisplay.TabIndex = 16
+        Me.RFReflectedPowerActualValueDisplay.Text = "0"
+        Me.RFReflectedPowerActualValueDisplay.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me.RFReflectedPowerActualValueDisplay.WordWrap = False
         '
         'Watts_Label
         '
@@ -771,21 +771,21 @@ Partial Class MainWindow
         Me.LoadedTunerTxt.Visible = False
         Me.LoadedTunerTxt.WordWrap = False
         '
-        'ActTunerTxt
+        'MBPositionActualValueDisplay
         '
-        Me.ActTunerTxt.BackColor = System.Drawing.Color.White
-        Me.ActTunerTxt.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.ActTunerTxt.Font = New System.Drawing.Font("Arial", 26.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.ActTunerTxt.ForeColor = System.Drawing.Color.Black
-        Me.ActTunerTxt.Location = New System.Drawing.Point(1307, 272)
-        Me.ActTunerTxt.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
-        Me.ActTunerTxt.Name = "ActTunerTxt"
-        Me.ActTunerTxt.ReadOnly = True
-        Me.ActTunerTxt.Size = New System.Drawing.Size(121, 41)
-        Me.ActTunerTxt.TabIndex = 16
-        Me.ActTunerTxt.Text = "0"
-        Me.ActTunerTxt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
-        Me.ActTunerTxt.WordWrap = False
+        Me.MBPositionActualValueDisplay.BackColor = System.Drawing.Color.White
+        Me.MBPositionActualValueDisplay.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.MBPositionActualValueDisplay.Font = New System.Drawing.Font("Arial", 26.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.MBPositionActualValueDisplay.ForeColor = System.Drawing.Color.Black
+        Me.MBPositionActualValueDisplay.Location = New System.Drawing.Point(1307, 272)
+        Me.MBPositionActualValueDisplay.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
+        Me.MBPositionActualValueDisplay.Name = "MBPositionActualValueDisplay"
+        Me.MBPositionActualValueDisplay.ReadOnly = True
+        Me.MBPositionActualValueDisplay.Size = New System.Drawing.Size(121, 41)
+        Me.MBPositionActualValueDisplay.TabIndex = 16
+        Me.MBPositionActualValueDisplay.Text = "0"
+        Me.MBPositionActualValueDisplay.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me.MBPositionActualValueDisplay.WordWrap = False
         '
         'MB_Left_Arrow
         '
@@ -1714,21 +1714,21 @@ Partial Class MainWindow
         Me.Label16.TabIndex = 107
         Me.Label16.Text = "0 SLPM"
         '
-        'MFC_2_Read_Flow
+        'MFC_2_ActualValueDisplay
         '
-        Me.MFC_2_Read_Flow.BackColor = System.Drawing.Color.White
-        Me.MFC_2_Read_Flow.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.MFC_2_Read_Flow.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.MFC_2_Read_Flow.ForeColor = System.Drawing.Color.Red
-        Me.MFC_2_Read_Flow.Location = New System.Drawing.Point(343, 780)
-        Me.MFC_2_Read_Flow.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
-        Me.MFC_2_Read_Flow.Name = "MFC_2_Read_Flow"
-        Me.MFC_2_Read_Flow.ReadOnly = True
-        Me.MFC_2_Read_Flow.Size = New System.Drawing.Size(79, 25)
-        Me.MFC_2_Read_Flow.TabIndex = 116
-        Me.MFC_2_Read_Flow.Text = "0.00"
-        Me.MFC_2_Read_Flow.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
-        Me.MFC_2_Read_Flow.WordWrap = False
+        Me.MFC_2_ActualValueDisplay.BackColor = System.Drawing.Color.White
+        Me.MFC_2_ActualValueDisplay.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.MFC_2_ActualValueDisplay.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.MFC_2_ActualValueDisplay.ForeColor = System.Drawing.Color.Red
+        Me.MFC_2_ActualValueDisplay.Location = New System.Drawing.Point(343, 780)
+        Me.MFC_2_ActualValueDisplay.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
+        Me.MFC_2_ActualValueDisplay.Name = "MFC_2_ActualValueDisplay"
+        Me.MFC_2_ActualValueDisplay.ReadOnly = True
+        Me.MFC_2_ActualValueDisplay.Size = New System.Drawing.Size(79, 25)
+        Me.MFC_2_ActualValueDisplay.TabIndex = 116
+        Me.MFC_2_ActualValueDisplay.Text = "0.00"
+        Me.MFC_2_ActualValueDisplay.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me.MFC_2_ActualValueDisplay.WordWrap = False
         '
         'MFC_2_Recipe_Flow
         '
@@ -1747,21 +1747,21 @@ Partial Class MainWindow
         Me.MFC_2_Recipe_Flow.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         Me.MFC_2_Recipe_Flow.WordWrap = False
         '
-        'MFC_3_Read_Flow
+        'MFC_3_ActualValueDisplay
         '
-        Me.MFC_3_Read_Flow.BackColor = System.Drawing.Color.White
-        Me.MFC_3_Read_Flow.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.MFC_3_Read_Flow.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.MFC_3_Read_Flow.ForeColor = System.Drawing.Color.Red
-        Me.MFC_3_Read_Flow.Location = New System.Drawing.Point(547, 779)
-        Me.MFC_3_Read_Flow.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
-        Me.MFC_3_Read_Flow.Name = "MFC_3_Read_Flow"
-        Me.MFC_3_Read_Flow.ReadOnly = True
-        Me.MFC_3_Read_Flow.Size = New System.Drawing.Size(79, 25)
-        Me.MFC_3_Read_Flow.TabIndex = 119
-        Me.MFC_3_Read_Flow.Text = "0.00"
-        Me.MFC_3_Read_Flow.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
-        Me.MFC_3_Read_Flow.WordWrap = False
+        Me.MFC_3_ActualValueDisplay.BackColor = System.Drawing.Color.White
+        Me.MFC_3_ActualValueDisplay.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.MFC_3_ActualValueDisplay.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.MFC_3_ActualValueDisplay.ForeColor = System.Drawing.Color.Red
+        Me.MFC_3_ActualValueDisplay.Location = New System.Drawing.Point(547, 779)
+        Me.MFC_3_ActualValueDisplay.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
+        Me.MFC_3_ActualValueDisplay.Name = "MFC_3_ActualValueDisplay"
+        Me.MFC_3_ActualValueDisplay.ReadOnly = True
+        Me.MFC_3_ActualValueDisplay.Size = New System.Drawing.Size(79, 25)
+        Me.MFC_3_ActualValueDisplay.TabIndex = 119
+        Me.MFC_3_ActualValueDisplay.Text = "0.00"
+        Me.MFC_3_ActualValueDisplay.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me.MFC_3_ActualValueDisplay.WordWrap = False
         '
         'MFC_3_Recipe_Flow
         '
@@ -1780,21 +1780,21 @@ Partial Class MainWindow
         Me.MFC_3_Recipe_Flow.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         Me.MFC_3_Recipe_Flow.WordWrap = False
         '
-        'MFC_4_Read_Flow
+        'MFC_4_ActualValueDisplay
         '
-        Me.MFC_4_Read_Flow.BackColor = System.Drawing.Color.White
-        Me.MFC_4_Read_Flow.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.MFC_4_Read_Flow.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.MFC_4_Read_Flow.ForeColor = System.Drawing.Color.Red
-        Me.MFC_4_Read_Flow.Location = New System.Drawing.Point(751, 780)
-        Me.MFC_4_Read_Flow.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
-        Me.MFC_4_Read_Flow.Name = "MFC_4_Read_Flow"
-        Me.MFC_4_Read_Flow.ReadOnly = True
-        Me.MFC_4_Read_Flow.Size = New System.Drawing.Size(79, 25)
-        Me.MFC_4_Read_Flow.TabIndex = 122
-        Me.MFC_4_Read_Flow.Text = "0.00"
-        Me.MFC_4_Read_Flow.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
-        Me.MFC_4_Read_Flow.WordWrap = False
+        Me.MFC_4_ActualValueDisplay.BackColor = System.Drawing.Color.White
+        Me.MFC_4_ActualValueDisplay.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.MFC_4_ActualValueDisplay.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.MFC_4_ActualValueDisplay.ForeColor = System.Drawing.Color.Red
+        Me.MFC_4_ActualValueDisplay.Location = New System.Drawing.Point(751, 780)
+        Me.MFC_4_ActualValueDisplay.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
+        Me.MFC_4_ActualValueDisplay.Name = "MFC_4_ActualValueDisplay"
+        Me.MFC_4_ActualValueDisplay.ReadOnly = True
+        Me.MFC_4_ActualValueDisplay.Size = New System.Drawing.Size(79, 25)
+        Me.MFC_4_ActualValueDisplay.TabIndex = 122
+        Me.MFC_4_ActualValueDisplay.Text = "0.00"
+        Me.MFC_4_ActualValueDisplay.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me.MFC_4_ActualValueDisplay.WordWrap = False
         '
         'MFC_4_Recipe_Flow
         '
@@ -3681,11 +3681,11 @@ Partial Class MainWindow
         Me.Controls.Add(Me.Loaded_Progress_1)
         Me.Controls.Add(Me.Loaded_Progress_2)
         Me.Controls.Add(Me.Loaded_Progress_3)
-        Me.Controls.Add(Me.MFC_4_Read_Flow)
+        Me.Controls.Add(Me.MFC_4_ActualValueDisplay)
         Me.Controls.Add(Me.MFC_4_Recipe_Flow)
-        Me.Controls.Add(Me.MFC_3_Read_Flow)
+        Me.Controls.Add(Me.MFC_3_ActualValueDisplay)
         Me.Controls.Add(Me.MFC_3_Recipe_Flow)
-        Me.Controls.Add(Me.MFC_2_Read_Flow)
+        Me.Controls.Add(Me.MFC_2_ActualValueDisplay)
         Me.Controls.Add(Me.MFC_2_Recipe_Flow)
         Me.Controls.Add(Me.PictureBox6)
         Me.Controls.Add(Me.Loaded_Progress_1_100)
@@ -3743,9 +3743,9 @@ Partial Class MainWindow
         Me.Controls.Add(Me.RecipeGapTxt)
         Me.Controls.Add(Me.NextStepTxtBox)
         Me.Controls.Add(Me.RecipeThicknessTxt)
-        Me.Controls.Add(Me.RflWattsTxt)
+        Me.Controls.Add(Me.RFReflectedPowerActualValueDisplay)
         Me.Controls.Add(Me.MFC_1_Read_Range)
-        Me.Controls.Add(Me.MFC_1_Read_Flow)
+        Me.Controls.Add(Me.MFC_1_ActualValueDisplay)
         Me.Controls.Add(Me.MFC_4_Loaded_Flow)
         Me.Controls.Add(Me.MFC_3_Loaded_Flow)
         Me.Controls.Add(Me.MFC_2_Loaded_Flow)
@@ -3756,8 +3756,8 @@ Partial Class MainWindow
         Me.Controls.Add(Me.Watts_Label)
         Me.Controls.Add(Me.CurrentStepTxtBox)
         Me.Controls.Add(Me.RunRcpBtn)
-        Me.Controls.Add(Me.ActTunerTxt)
-        Me.Controls.Add(Me.ActWattsTxt)
+        Me.Controls.Add(Me.MBPositionActualValueDisplay)
+        Me.Controls.Add(Me.RFPowerActualValueDisplay)
         Me.Controls.Add(Me.RF_Radial)
         Me.Controls.Add(Me.RF_Reflected_Radial)
         Me.Controls.Add(Me.PHTempTxt)
@@ -3797,15 +3797,15 @@ Partial Class MainWindow
 
     End Sub
     Friend WithEvents SerialPort1 As System.IO.Ports.SerialPort
-    Friend WithEvents MFC_1_Read_Flow As System.Windows.Forms.TextBox
+    Friend WithEvents MFC_1_ActualValueDisplay As System.Windows.Forms.TextBox
     Friend WithEvents MFC_1_Read_Range As System.Windows.Forms.TextBox
     Friend WithEvents Timer1 As System.Windows.Forms.Timer
     Friend WithEvents MFC_2_Read_Range As System.Windows.Forms.TextBox
     Friend WithEvents MFC_3_Read_Range As System.Windows.Forms.TextBox
     Friend WithEvents MFC_4_Read_Range As System.Windows.Forms.TextBox
-    Friend WithEvents ActWattsTxt As System.Windows.Forms.TextBox
+    Friend WithEvents RFPowerActualValueDisplay As System.Windows.Forms.TextBox
     Friend WithEvents RF_Label As System.Windows.Forms.Label
-    Friend WithEvents RflWattsTxt As System.Windows.Forms.TextBox
+    Friend WithEvents RFReflectedPowerActualValueDisplay As System.Windows.Forms.TextBox
     Friend WithEvents Watts_Label As System.Windows.Forms.Label
     Friend WithEvents PHTempTxt As System.Windows.Forms.TextBox
     Friend WithEvents C_Label As System.Windows.Forms.Label
@@ -3832,7 +3832,7 @@ Partial Class MainWindow
     Friend WithEvents MB_Tune_Label As System.Windows.Forms.Label
     Friend WithEvents RecipeTunerTxt As System.Windows.Forms.TextBox
     Friend WithEvents LoadedTunerTxt As System.Windows.Forms.TextBox
-    Friend WithEvents ActTunerTxt As System.Windows.Forms.TextBox
+    Friend WithEvents MBPositionActualValueDisplay As System.Windows.Forms.TextBox
     Friend WithEvents RestartAllToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents EnableServiceMenuToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents SetCTLToPLSimModeToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
@@ -3917,11 +3917,11 @@ Partial Class MainWindow
     Friend WithEvents Label16 As Label
     Friend WithEvents RecipeWattsTxt As TextBox
     Public WithEvents MFC_1_Recipe_Flow As TextBox
-    Friend WithEvents MFC_2_Read_Flow As TextBox
+    Friend WithEvents MFC_2_ActualValueDisplay As TextBox
     Public WithEvents MFC_2_Recipe_Flow As TextBox
-    Friend WithEvents MFC_3_Read_Flow As TextBox
+    Friend WithEvents MFC_3_ActualValueDisplay As TextBox
     Public WithEvents MFC_3_Recipe_Flow As TextBox
-    Friend WithEvents MFC_4_Read_Flow As TextBox
+    Friend WithEvents MFC_4_ActualValueDisplay As TextBox
     Public WithEvents MFC_4_Recipe_Flow As TextBox
     Friend WithEvents Loaded_Progress_2 As Guna.UI2.WinForms.Guna2VProgressBar
     Friend WithEvents Loaded_Progress_1 As Guna.UI2.WinForms.Guna2VProgressBar
