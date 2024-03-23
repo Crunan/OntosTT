@@ -1757,6 +1757,8 @@ Public Class MainWindow
 
                     'Poll the plasma system every 1 second 
                     _plasmaController.PollSystemStatus() 'poll the main PCB
+
+                    'After the status is polled on the plasmacontroller, update the UI
                     UpdateUI(_plasmaController)
 
                     If has3AxisBoard Then
@@ -1796,6 +1798,29 @@ Public Class MainWindow
         MFC_3_ActualValueDisplay.Text = plasmaController.GetStatusValueByKey("MFC3Flow")
         MFC_4_ActualValueDisplay.Text = plasmaController.GetStatusValueByKey("MFC4Flow")
     End Sub
+    Public Function HexStringToLEDSequence(hexString As String) As List(Of Boolean)
+        ' Parse the hex string into an integer
+        Dim intValue As Integer = Convert.ToInt32(hexString, 16)
+
+        ' Convert the integer into its binary representation
+        Dim binaryString As String = Convert.ToString(intValue, 2)
+
+        ' Ensure that the binary representation is exactly 16 bits long
+        binaryString = binaryString.PadLeft(16, "0"c)
+
+        ' Create a list to store the LED sequence
+        Dim ledSequence As New List(Of Boolean)
+
+        ' Map each bit of the binary representation to the state of an LED
+        For i As Integer = 0 To 15
+            Dim isOn As Boolean = (binaryString(i) = "1"c)
+            ledSequence.Add(isOn)
+        Next
+
+        Return ledSequence
+    End Function
+
+
 
     'Private Sub RunCTLStartUp()
     '    Dim Index As Integer
